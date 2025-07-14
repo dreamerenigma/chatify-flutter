@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- icon666.com - MILLIONS OF FREE VECTOR ICONS -->
+
+<svg
+   id="Layer_1"
+   enable-background="new 0 0 100 100"
+   viewBox="0 0 100 100"
+   version="1.1"
+   sodipodi:docname="arrow_cancel.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="4.035"
+     inkscape:cx="10.532838"
+     inkscape:cy="61.090459"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <linearGradient
+     id="SVGID_1_"
+     gradientUnits="userSpaceOnUse"
+     x1="5.853"
+     x2="56.344"
+     y1="18.776"
+     y2="76.859">
+    <stop
+       offset="0"
+       stop-color="#3fa5f5"
+       id="stop1" />
+    <stop
+       offset="1"
+       stop-color="#3a00e2"
+       id="stop2" />
+  </linearGradient>
+  <path
+     d="m 21.157719,4.2072151 c 1.688063,0.0029 3.022204,1.34145 2.949158,2.959057 L 22.336762,23.588101 39.078331,6.9025241 C 49.978729,-3.9614232 69.814302,-2.0235633 81.470503,9.6717581 93.126706,21.367077 93.702421,38.374426 82.008347,50.031882 L 31.582527,100.2998 c -1.197613,1.1938 -3.02644,1.19065 -4.220155,-0.007 -1.193594,-1.197826 -1.190531,-3.026346 0.007,-4.220156 L 77.79527,45.804657 C 85.985675,37.6399 86.582291,23.255189 77.243288,13.884842 67.904281,4.5144921 51.320259,3.1009122 43.291423,11.129748 37.987212,16.433958 26.549848,27.81532 26.549848,27.81532 l 17.023625,-1.067395 c 1.684754,-0.105634 3.022205,1.341452 2.949158,2.959058 -0.07301,1.617609 -1.341446,3.022207 -2.959056,2.949156 l -24.268338,1.125599 c -1.68806,-0.0029 -3.022204,-1.34145 -2.949158,-2.959058 L 18.128207,7.2265921 c 0.127123,-1.68327 1.34145,-3.022204 3.029536,-3.019354 z"
+     fill="url(#SVGID_1_)"
+     id="path2"
+     style="fill:#000000;stroke-width:0.994702"
+     sodipodi:nodetypes="sccssssssssscsscccsss" />
+</svg>

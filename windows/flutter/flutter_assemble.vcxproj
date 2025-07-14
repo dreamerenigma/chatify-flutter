@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|x64">
+      <Configuration>Profile</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5F3375B3-0E2D-318A-BE9C-995D4B48AE68}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>flutter_assemble</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\a3e2da75403797ad646d9c95306e1326\flutter_windows.dll.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ephemeral/flutter_windows.dll, ephemeral/flutter_export.h, ephemeral/flutter_windows.h, ephemeral/flutter_messenger.h, ephemeral/flutter_plugin_registrar.h, ephemeral/flutter_texture_registrar.h, ephemeral/cpp_client_wrapper/core_implementations.cc, ephemeral/cpp_client_wrapper/standard_codec.cc, ephemeral/cpp_client_wrapper/plugin_registrar.cc, ephemeral/cpp_client_wrapper/flutter_engine.cc, ephemeral/cpp_client_wrapper/flutter_view_controller.cc, _phony_</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=D:\Programming\Framework\flutter PROJECT_DIR=D:\Programming\Languages\Dart\Projects\chatify FLUTTER_ROOT=D:\Programming\Framework\flutter FLUTTER_EPHEMERAL_DIR=D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral PROJECT_DIR=D:\Programming\Languages\Dart\Projects\chatify FLUTTER_TARGET=D:\Programming\Languages\Dart\Projects\chatify\lib\main.dart DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9WRVJTSU9OPTMuMzIuNA==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049NmZiYTI0NDdlOQ==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049OGNkMTllNTA5ZA==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My44LjE= DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=D:\Programming\Languages\Dart\Projects\chatify\.dart_tool\package_config.json D:/Programming/Framework/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.dll;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_export.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_messenger.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_plugin_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_texture_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\_phony_</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Generating ephemeral/flutter_windows.dll, ephemeral/flutter_export.h, ephemeral/flutter_windows.h, ephemeral/flutter_messenger.h, ephemeral/flutter_plugin_registrar.h, ephemeral/flutter_texture_registrar.h, ephemeral/cpp_client_wrapper/core_implementations.cc, ephemeral/cpp_client_wrapper/standard_codec.cc, ephemeral/cpp_client_wrapper/plugin_registrar.cc, ephemeral/cpp_client_wrapper/flutter_engine.cc, ephemeral/cpp_client_wrapper/flutter_view_controller.cc, _phony_</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=D:\Programming\Framework\flutter PROJECT_DIR=D:\Programming\Languages\Dart\Projects\chatify FLUTTER_ROOT=D:\Programming\Framework\flutter FLUTTER_EPHEMERAL_DIR=D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral PROJECT_DIR=D:\Programming\Languages\Dart\Projects\chatify FLUTTER_TARGET=D:\Programming\Languages\Dart\Projects\chatify\lib\main.dart DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9WRVJTSU9OPTMuMzIuNA==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049NmZiYTI0NDdlOQ==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049OGNkMTllNTA5ZA==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My44LjE= DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=D:\Programming\Languages\Dart\Projects\chatify\.dart_tool\package_config.json D:/Programming/Framework/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Profile
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.dll;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_export.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_messenger.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_plugin_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_texture_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\_phony_</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ephemeral/flutter_windows.dll, ephemeral/flutter_export.h, ephemeral/flutter_windows.h, ephemeral/flutter_messenger.h, ephemeral/flutter_plugin_registrar.h, ephemeral/flutter_texture_registrar.h, ephemeral/cpp_client_wrapper/core_implementations.cc, ephemeral/cpp_client_wrapper/standard_codec.cc, ephemeral/cpp_client_wrapper/plugin_registrar.cc, ephemeral/cpp_client_wrapper/flutter_engine.cc, ephemeral/cpp_client_wrapper/flutter_view_controller.cc, _phony_</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=D:\Programming\Framework\flutter PROJECT_DIR=D:\Programming\Languages\Dart\Projects\chatify FLUTTER_ROOT=D:\Programming\Framework\flutter FLUTTER_EPHEMERAL_DIR=D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral PROJECT_DIR=D:\Programming\Languages\Dart\Projects\chatify FLUTTER_TARGET=D:\Programming\Languages\Dart\Projects\chatify\lib\main.dart DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9WRVJTSU9OPTMuMzIuNA==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049NmZiYTI0NDdlOQ==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049OGNkMTllNTA5ZA==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My44LjE= DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=D:\Programming\Languages\Dart\Projects\chatify\.dart_tool\package_config.json D:/Programming/Framework/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Release
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.dll;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_export.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_messenger.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_plugin_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_texture_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\_phony_</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\97badab8cd498c665819b3956b8cdfa7\flutter_assemble.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.dll;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_export.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_messenger.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_plugin_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_texture_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\flutter_assemble</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Profile|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.dll;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_export.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_messenger.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_plugin_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_texture_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\flutter_assemble</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.dll;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_export.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_windows.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_messenger.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_plugin_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\flutter_texture_registrar.h;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\flutter_assemble</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Programming/Languages/Dart/Projects/chatify/windows/flutter/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/Languages/Dart/Projects/chatify/windows -BD:/Programming/Languages/Dart/Projects/chatify/windows --check-stamp-file D:/Programming/Languages/Dart/Projects/chatify/windows/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\generated_config.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Building Custom Rule D:/Programming/Languages/Dart/Projects/chatify/windows/flutter/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/Languages/Dart/Projects/chatify/windows -BD:/Programming/Languages/Dart/Projects/chatify/windows --check-stamp-file D:/Programming/Languages/Dart/Projects/chatify/windows/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\generated_config.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Programming/Languages/Dart/Projects/chatify/windows/flutter/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/Languages/Dart/Projects/chatify/windows -BD:/Programming/Languages/Dart/Projects/chatify/windows --check-stamp-file D:/Programming/Languages/Dart/Projects/chatify/windows/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\ephemeral\generated_config.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\CMakeFiles\flutter_assemble">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\ZERO_CHECK.vcxproj">
+      <Project>{75BE8ACB-74B3-3523-8587-CB7F79418D34}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

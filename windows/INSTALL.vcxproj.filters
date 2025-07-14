@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\d30d84fab9ceb4f665b0d2176db0c5ac\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{EEB0C3BA-B676-3809-B951-A3B14848094B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

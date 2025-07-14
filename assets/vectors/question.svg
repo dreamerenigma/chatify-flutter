@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- icon666.com - MILLIONS OF FREE VECTOR ICONS -->
+
+<svg
+   id="Layer_1"
+   viewBox="0 0 512 512"
+   data-name="Layer 1"
+   version="1.1"
+   sodipodi:docname="questiony.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="1.1145218"
+     inkscape:cx="317.62501"
+     inkscape:cy="355.75795"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <path
+     d="m256 17a239 239 0 0 0 -169 408 239 239 0 1 0 338-338 237.435 237.435 0 0 0 -169-70zm0 450c-116.346 0-211-94.654-211-211s94.654-211 211-211 211 94.654 211 211-94.654 211-211 211z"
+     id="path1" />
+  <path
+     d="m 256,113.429 c -43.21567,0.0485 -78.286,41.7255 -78.286,78.285 0,6.44074 7.84083,11.91315 13.96013,11.92176 6.13954,0.009 14.03987,-7.65485 14.03987,-11.92176 0,-15.52585 22.51381,-50.28598 50.286,-50.28598 27.77219,0 50.286,22.51377 50.286,50.28598 0,26.344 -12.375,38.719 -28.043,54.387 C 261.255,263.089 242,300.30344 242,320.286 c 0,7.91291 7.93245,12.44219 14.21975,12.3932 C 262.39736,332.63108 270,326.99782 270,320.286 c 0,-20.32995 12.375,-38.72 28.042,-54.387 16.989,-16.988 36.244,-36.243 36.244,-74.185 C 334.2369,148.49833 299.21567,113.4775 256,113.429 Z"
+     id="path2"
+     sodipodi:nodetypes="csasssssasccc" />
+  <circle
+     style="fill:#000000;fill-rule:evenodd;stroke-width:0.852018"
+     id="path4"
+     cx="255.99998"
+     cy="368.89996"
+     r="15.068152" />
+</svg>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- icon666.com - MILLIONS OF FREE VECTOR ICONS -->
+
+<svg
+   id="Layer_1"
+   enable-background="new 0 0 48 48"
+   viewBox="0 0 48 48"
+   version="1.1"
+   sodipodi:docname="chats_regular.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="4"
+     inkscape:cx="20.125"
+     inkscape:cy="44.625"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <path
+     id="path1"
+     d="m 0.9589844,8.4023438 c -1.88106054,0 1.1091202,2.7416052 2.1210937,3.8125002 C 4.0908052,13.28442 6.140625,15.49304 6.140625,16.1875 v 20.167969 c 0,2.389926 2.1302184,4.046875 3.896484,4.046875 h 32.103516 c 2.2,0 4,-1.8 4,-4 v -24 c 0,-2.2 -1.8,-4.0000002 -4,-4.0000002 z M 6.5094567,11.125 H 39.451172 c 1.894131,0 3.443359,1.549228 3.443359,3.443359 v 19.539063 c 0,1.894131 -1.549228,3.443359 -3.443359,3.443359 H 12.185547 c -1.520699,0 -2.9804689,-1.424771 -2.9804689,-3.482422 V 15.512216 c 0,-0.16603 -0.5861542,-1.144536 -0.9689044,-1.683536 C 7.8484434,13.282667 6.1043694,11.125 6.5094567,11.125 Z"
+     sodipodi:nodetypes="sssssssssszssssssssz" />
+  <rect
+     style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
+     id="rect7"
+     width="27.407742"
+     height="2.851634"
+     x="12.337107"
+     y="17.695974"
+     rx="1.3734086"
+     ry="1.425817" />
+  <rect
+     style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
+     id="rect7-1"
+     width="20.413984"
+     height="2.851634"
+     x="12.339844"
+     y="27.421875"
+     rx="1.5123262"
+     ry="1.425817" />
+</svg>

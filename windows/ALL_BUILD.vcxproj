@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ResolveNugetPackages>false</ResolveNugetPackages>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|x64">
+      <Configuration>Profile</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F14E2DF1-59A0-39BD-8405-9370C90F7035}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Programming/Languages/Dart/Projects/chatify/windows/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/Languages/Dart/Projects/chatify/windows -BD:/Programming/Languages/Dart/Projects/chatify/windows --check-stamp-file D:/Programming/Languages/Dart/Projects/chatify/windows/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeCXXCompiler.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeRCCompiler.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeSystem.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\generated_plugins.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Building Custom Rule D:/Programming/Languages/Dart/Projects/chatify/windows/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/Languages/Dart/Projects/chatify/windows -BD:/Programming/Languages/Dart/Projects/chatify/windows --check-stamp-file D:/Programming/Languages/Dart/Projects/chatify/windows/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeCXXCompiler.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeRCCompiler.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeSystem.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\generated_plugins.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Programming/Languages/Dart/Projects/chatify/windows/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/Languages/Dart/Projects/chatify/windows -BD:/Programming/Languages/Dart/Projects/chatify/windows --check-stamp-file D:/Programming/Languages/Dart/Projects/chatify/windows/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeCXXCompiler.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeRCCompiler.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\4.1.0-rc1\CMakeSystem.cmake;D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\generated_plugins.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Programming\Languages\Dart\Projects\chatify\windows\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\ZERO_CHECK.vcxproj">
+      <Project>{75BE8ACB-74B3-3523-8587-CB7F79418D34}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\agora_rtc_engine\agora_rtc_engine_plugin.vcxproj">
+      <Project>{344E7D5C-BEF2-30F8-AABE-EE4A6683936E}</Project>
+      <Name>agora_rtc_engine_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\audioplayers_windows\audioplayers_windows_plugin.vcxproj">
+      <Project>{E673C0E8-1488-3407-AB3F-69AFFC725D41}</Project>
+      <Name>audioplayers_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\bitsdojo_window_windows\bitsdojo_window_windows_plugin.vcxproj">
+      <Project>{C21A9538-5CA5-366D-A1B1-9D42CB1961B7}</Project>
+      <Name>bitsdojo_window_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\camera_windows\camera_windows_plugin.vcxproj">
+      <Project>{465C41AB-5486-39D3-98C1-0E201D9D1789}</Project>
+      <Name>camera_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\runner\chatify.vcxproj">
+      <Project>{88786EC2-9282-32A1-A6A7-A75DD25DA643}</Project>
+      <Name>chatify</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\cloud_firestore\cloud_firestore_plugin.vcxproj">
+      <Project>{C0402E5D-F17A-3380-8066-E98C18F81A6E}</Project>
+      <Name>cloud_firestore_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\connectivity_plus\connectivity_plus_plugin.vcxproj">
+      <Project>{BFBB06B8-1832-3720-8E2A-4484417F76E4}</Project>
+      <Name>connectivity_plus_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\emoji_picker_flutter\emoji_picker_flutter_plugin.vcxproj">
+      <Project>{0B992D4F-0EA6-33AA-986C-D288531AF665}</Project>
+      <Name>emoji_picker_flutter_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\file_selector_windows\file_selector_windows_plugin.vcxproj">
+      <Project>{660BD175-512C-3E35-8B32-367C4E6F67C7}</Project>
+      <Name>file_selector_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\firebase_auth\firebase_auth_plugin.vcxproj">
+      <Project>{738FAEE3-500E-3222-9642-2A453DFE0372}</Project>
+      <Name>firebase_auth_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\firebase_core\firebase_core_plugin.vcxproj">
+      <Project>{7C5F225E-18DB-392F-88E4-D9C7B2026414}</Project>
+      <Name>firebase_core_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\firebase_storage\firebase_storage_plugin.vcxproj">
+      <Project>{42CDE169-B967-3389-9DB7-756D30E082E1}</Project>
+      <Name>firebase_storage_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\flutter_local_notifications_windows\shared\flutter_local_notifications_windows.vcxproj">
+      <Project>{E1598ED1-3CA4-3CC6-8702-AE51E92C5BB7}</Project>
+      <Name>flutter_local_notifications_windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\flutter_webrtc\flutter_webrtc_plugin.vcxproj">
+      <Project>{8C8BEE2D-C2E0-34BF-912F-FF78CC86EBCD}</Project>
+      <Name>flutter_webrtc_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\flutter_wrapper_app.vcxproj">
+      <Project>{C30980BA-EC90-36F2-B844-583A20303205}</Project>
+      <Name>flutter_wrapper_app</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\flutter\flutter_wrapper_plugin.vcxproj">
+      <Project>{310685FD-CA83-3405-ABE2-0A021CB40570}</Project>
+      <Name>flutter_wrapper_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\iris_method_channel\shared\iris_method_channel.vcxproj">
+      <Project>{690191F1-FCA5-3B79-9AA0-E398EC80F7D6}</Project>
+      <Name>iris_method_channel</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\iris_method_channel\iris_method_channel_plugin.vcxproj">
+      <Project>{81279587-5EC4-357E-8D92-AC87557B4304}</Project>
+      <Name>iris_method_channel_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\local_auth_windows\local_auth_windows_plugin.vcxproj">
+      <Project>{5E301CF5-9C28-37FB-A6AD-55BA2D5B9D13}</Project>
+      <Name>local_auth_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_ANGLE_EXTRACT.vcxproj">
+      <Project>{79B48C1B-3AB2-3AF0-A269-CA6CD9D1C5F0}</Project>
+      <Name>media_kit_libs_windows_video_ANGLE_EXTRACT</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_LIBMPV_EXTRACT.vcxproj">
+      <Project>{AE614A0F-9C37-31FB-B142-D2B41CD528D7}</Project>
+      <Name>media_kit_libs_windows_video_LIBMPV_EXTRACT</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_plugin.vcxproj">
+      <Project>{4AC30053-D0A0-3706-A69D-2A26DCC909F1}</Project>
+      <Name>media_kit_libs_windows_video_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\media_kit_video\media_kit_video_plugin.vcxproj">
+      <Project>{E22F6AEF-872E-3932-B610-6995B3F19FA8}</Project>
+      <Name>media_kit_video_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\permission_handler_windows\permission_handler_windows_plugin.vcxproj">
+      <Project>{F65EC269-1EFF-312E-B14D-D1EB669E6030}</Project>
+      <Name>permission_handler_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\record_windows\record_windows_plugin.vcxproj">
+      <Project>{9221CA77-22C1-3877-AE4B-2FC29964A6C9}</Project>
+      <Name>record_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\screen_retriever_windows\screen_retriever_windows_plugin.vcxproj">
+      <Project>{F7F25008-914F-3494-96DB-F8896B5A3BBB}</Project>
+      <Name>screen_retriever_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\share_plus\share_plus_plugin.vcxproj">
+      <Project>{5BE164DA-6CA5-3891-A8E0-5C1070BE0295}</Project>
+      <Name>share_plus_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\url_launcher_windows\url_launcher_windows_plugin.vcxproj">
+      <Project>{BDDF1F7C-9B78-3F37-868E-9613EE4C8BE9}</Project>
+      <Name>url_launcher_windows_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\volume_controller\volume_controller_plugin.vcxproj">
+      <Project>{D943279D-497A-33B9-B8EC-A5B07AB5ACD1}</Project>
+      <Name>volume_controller_plugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Programming\Languages\Dart\Projects\chatify\windows\plugins\window_manager\window_manager_plugin.vcxproj">
+      <Project>{67B3209A-5976-37CF-9262-1F2958362CF7}</Project>
+      <Name>window_manager_plugin</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

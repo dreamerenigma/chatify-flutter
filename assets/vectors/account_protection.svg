@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- icon666.com - MILLIONS vector ICONS FREE -->
+
+<svg
+   id="Layer_2"
+   enable-background="new 0 0 60 60"
+   viewBox="0 0 60 60"
+   version="1.1"
+   sodipodi:docname="account_protection.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="4.7906484"
+     inkscape:cx="72.432783"
+     inkscape:cy="51.454412"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g5"
+     showguides="true" />
+  <g
+     id="g5">
+    <g
+       id="g2"
+       transform="matrix(1.1962156,0,0,1.1962156,-5.6658705,-5.7820983)">
+      <path
+         d="M 50.51,11.07 C 50.51,11.07 36.73,12.34 30,6 23.27,12.34 9.49,11.07 9.49,11.07 v 9.27 C 9.49,50.81 30,54 30,54 30,54 50.51,50.81 50.51,20.34 Z"
+         fill="#2ba4f5"
+         id="path1"
+         style="fill:#e6ffda;fill-opacity:1" />
+      <path
+         d="M 30,55 C 29.95,55 29.9,55 29.85,54.99 29.63,54.95 8.49,51.3 8.49,20.34 v -9.27 c 0,-0.28 0.12,-0.55 0.33,-0.74 0.21,-0.19 0.49,-0.29 0.77,-0.26 0.13,0.01 13.42,1.15 19.74,-4.8 0.39,-0.36 0.99,-0.36 1.37,0 6.32,5.95 19.6,4.82 19.74,4.8 0.28,-0.03 0.56,0.07 0.77,0.26 0.21,0.19 0.33,0.46 0.33,0.74 v 9.27 C 51.54,51.31 30.39,54.96 30.18,54.99 30.1,55 30.05,55 30,55 Z M 10.49,12.14 v 8.2 c 0,27.91 17.7,32.27 19.52,32.65 2,-0.38 19.51,-4.52 19.51,-32.65 v -8.2 c -3.34,0.15 -13.47,0.17 -19.51,-4.8 -6.05,4.97 -16.18,4.95 -19.52,4.8 z"
+         id="path2" />
+    </g>
+    <g
+       id="g4"
+       style="fill:#e6ffda;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+       transform="matrix(1.1962156,0,0,1.1962156,-5.6658705,-6.7531957)">
+      <path
+         d="m 31.814922,39.613361 h -3.722094 c -0.865108,0 -1.242935,-0.458532 -1.242935,-1.36054 v -5.078343 h -4.975222 c -1.074616,0 -1.414232,-0.533649 -1.414232,-1.251535 v -3.598007 c 0,-1.205079 0.248293,-1.499414 1.427278,-1.499414 h 4.962176 v -5.082979 c 0,-0.918061 0.339615,-1.355904 1.231584,-1.355904 h 3.71963 c 1.009385,0 1.349,0.359566 1.349,1.355904 v 5.082979 h 5.497072 c 0.684015,0 0.892382,0.764458 0.892382,1.259065 v 3.913852 c 0,0.570874 -0.47259,1.176039 -0.892382,1.176039 h -5.497072 v 5.078343 c 0,0.938909 -0.478286,1.36054 -1.335185,1.36054 z"
+         id="path4"
+         style="fill:#e6ffda;fill-opacity:1;stroke:#000000;stroke-width:2.3;stroke-dasharray:none;stroke-opacity:1"
+         sodipodi:nodetypes="ssscsssscsssscsssscss" />
+    </g>
+  </g>
+</svg>

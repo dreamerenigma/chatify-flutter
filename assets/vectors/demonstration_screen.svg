@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24mm"
+   height="24mm"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xml:space="preserve"
+   sodipodi:docname="demonstration_screen.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="8.1336326"
+     inkscape:cx="26.740819"
+     inkscape:cy="48.994099"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" /><defs
+     id="defs1" /><g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1"><path
+       id="arrow-down-left"
+       d="M 11.727821,15.271149 11.727576,9.4414134 9.6908104,11.478182 A 0.26380633,0.26380633 0 0 1 9.3177364,11.105107 L 11.804931,8.6179095 a 0.26486157,0.26486157 0 0 1 0.373064,0 l 2.487198,2.4871975 A 0.26380633,0.26380633 0 0 1 14.29212,11.47818 l -2.036766,-2.0367671 -2.47e-4,5.8297361 a 0.26380633,0.26380633 0 0 1 -0.527286,0 z"
+       fill="#000000"
+       style="stroke:#000000;stroke-width:0.312524;stroke-dasharray:none;stroke-opacity:1" /><rect
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.08863;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:16.1;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="rect1"
+       width="14.84242"
+       height="10.600945"
+       x="4.6821113"
+       y="6.7951779"
+       rx="0.55147201" /></g></svg>
