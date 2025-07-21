@@ -185,14 +185,29 @@ class APIs {
 
   /// -- Getting current user info.
   static Future<void> getSelfInfo() async {
-    final userDoc = await firestore.collection('Users').doc(user.uid).get();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      log("No user is logged in");
+      return;
+    }
 
-    if (userDoc.exists) {
-      me = UserModel.fromJson(userDoc.data()!);
-      await getFirebaseMessagingToken();
-      APIs.updateActiveStatus(true);
-    } else {
-      log("User data not found in Firestore");
+    try {
+      final userDoc = await firestore.collection('Users').doc(user.uid).get();
+
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        if (data != null) {
+          me = UserModel.fromJson(data);
+          await getFirebaseMessagingToken();
+          APIs.updateActiveStatus(true);
+        } else {
+          log("User data is null in Firestore");
+        }
+      } else {
+        log("User data not found in Firestore");
+      }
+    } catch (e) {
+      log("Error getting user info: $e");
     }
   }
 
@@ -345,19 +360,13 @@ class APIs {
         return null;
       }
 
-      log("Logged in user UID: ${firebaseUser.uid}");
-
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('Users').doc(firebaseUser.uid).get();
 
       if (userSnapshot.exists) {
-        log("User data from Firestore: ${userSnapshot.data()}");
-
         final userData = userSnapshot.data() as Map<String, dynamic>;
-        log("Parsed user data: $userData");
 
         return UserModel.fromJson(userData);
       } else {
-        log("User not found in Firestore");
         return null;
       }
     } catch (e) {
@@ -393,7 +402,6 @@ class APIs {
 
   /// -- Update online or last active status of user.
   static Future<void> updateActiveStatus(bool isOnline) async {
-    log("Updating online status to: $isOnline");
     firestore.collection('Users').doc(user.uid).update({
       'is_online': isOnline,
       'last_active': Timestamp.now(),
@@ -411,32 +419,29 @@ class APIs {
   /// -- Google Sign In (Android, iOS).
   static Future<UserCredential?> signInWithGoogle() async {
     try {
-      final connected = await _hasInternetConnection();
+      final connected = kIsWeb ? true : await _hasInternetConnection();
       if (!connected) {
         throw Exception('Нет подключения к интернету');
       }
       log('Интернет-соединение успешно установлено.');
 
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      await googleSignIn.initialize(clientId: Config.googleClientId);
       log('GoogleSignIn инициализирован.');
 
       await googleSignIn.signOut();
       log('Пользователь успешно вышел из Google.');
 
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        log('Пользователь отменил вход.');
-        return null;
-      }
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
 
       log('GoogleSignInAccount получен: ${googleUser.email}');
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
       log('GoogleSignInAuthentication успешно получен.');
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       log('GoogleSignInCredential успешно создан.');
@@ -708,7 +713,7 @@ class APIs {
         await userDocRef.delete();
         log('Deleted user document: ${user.uid}');
 
-        await GoogleSignIn().signOut();
+        await GoogleSignIn.instance.signOut();
         await auth.signOut();
         await user.delete();
 
@@ -723,23 +728,13 @@ class APIs {
   }
 
   static Future<bool> _hasInternetConnection() async {
-    if (kIsWeb) {
-      try {
-        final response = await http.get(Uri.parse('https://clients3.google.com/generate_204')).timeout(Duration(seconds: 5));
-        log("Status Code: ${response.statusCode}");
-        return response.statusCode == 204;
-      } catch (e) {
-        log("Error during web connection check: $e");
-        return false;
-      }
-    } else {
-      try {
-        final result = await InternetAddress.lookup('google.com');
-        return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      } catch (e) {
-        log("Error during native connection check: $e");
-        return false;
-      }
+    if (kIsWeb) return true;
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } catch (_) {
+      return false;
     }
   }
 
@@ -1631,7 +1626,6 @@ class APIs {
       final querySnapshot = await firestore.collection('SupportChats').get();
 
       final supports = querySnapshot.docs.map((doc) {
-        log('Support from Firestore: ${doc.data()}');
         return SupportAppModel.fromMap(doc.data());
       }).toList();
 

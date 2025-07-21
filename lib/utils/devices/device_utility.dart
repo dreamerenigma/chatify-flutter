@@ -94,14 +94,6 @@ class DeviceUtils {
     }
   }
 
-  static bool isIOS() {
-    return Platform.isIOS;
-  }
-
-  static bool isAndroid() {
-    return Platform.isAndroid;
-  }
-
   static void launchUrl(String url) async {
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url);

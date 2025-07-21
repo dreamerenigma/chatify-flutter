@@ -48,6 +48,7 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.zero,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: List.generate(5, (index) {
@@ -66,14 +67,14 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
                 child: Stack(
                   children: [
                     FutureBuilder<Uint8List?>(
-                      future: image.thumbnailDataWithSize(const ThumbnailSize(110, 110)),
+                      future: image.thumbnailDataWithSize(const ThumbnailSize(112, 112)),
                       builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
                         if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding: EdgeInsets.only(left: index == 0 ? 0 : 4, right: 4),
                             child: Container(
-                              width: 110,
-                              height: 110,
+                              width: 112,
+                              height: 112,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 image: DecorationImage(image: MemoryImage(snapshot.data!), fit: BoxFit.cover),
@@ -82,10 +83,10 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
                           );
                         } else {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding: EdgeInsets.only(left: index == 0 ? 0 : 4, right: 4),
                             child: SizedBox(
-                              width: 110,
-                              height: 110,
+                              width: 112,
+                              height: 112,
                               child: Center(
                                 child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
                               ),
@@ -100,7 +101,7 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
             );
           } else {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              padding: EdgeInsets.only(left: index == 0 ? 0 : 4, right: 4),
               child: Material(
                 color: ChatifyColors.transparent,
                 child: InkWell(
@@ -111,8 +112,8 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
                   splashColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey,
                   highlightColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey,
                   child: Ink(
-                    width: 110,
-                    height: 110,
+                    width: 112,
+                    height: 112,
                     decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey, borderRadius: BorderRadius.circular(8)),
                     child: Center(
                       child: Container(

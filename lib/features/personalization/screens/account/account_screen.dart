@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:radix_icons/radix_icons.dart';
 import 'package:chatify/features/personalization/screens/account/request_account_information_screen.dart';
 import 'package:chatify/features/personalization/screens/account/two_step_verification_screen.dart';
@@ -8,7 +9,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mono_icons/mono_icons.dart';
 import '../../../../../generated/l10n/l10n.dart';
@@ -154,11 +154,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       onConfirm: () async {
                         Navigator.pop(context);
                         Dialogs.showProgressBar(context);
+                        final googleSignIn = GoogleSignIn.instance;
 
                         try {
                           await APIs.updateActiveStatus(false);
                           await APIs.auth.signOut();
-                          await GoogleSignIn().signOut();
+                          await googleSignIn.signOut();
                           APIs.auth = FirebaseAuth.instance;
 
                           Dialogs.hideProgressBar(context);

@@ -29,6 +29,7 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    log("onInit called");
     _loadUserData();
   }
 
@@ -36,11 +37,15 @@ class UserController extends GetxController {
     final firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser == null) {
+      log("No Firebase user found");
       return;
     }
 
+    log("Firebase user found: ${firebaseUser.uid}");
     try {
+      log("Fetching user data from Firestore with UID: ${firebaseUser.uid}");
       DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Users').doc(firebaseUser.uid).get();
+      log("Snapshot data: ${snapshot.data()}");
 
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
@@ -54,9 +59,9 @@ class UserController extends GetxController {
           about: data['about'] ?? '',
           status: data['status'] ?? '',
           phoneNumber: data['phone_number'] ?? '',
-          createdAt: data['created_at'] ?? '',
+          createdAt: (data['created_at'] as Timestamp).toDate(),
           isOnline: data['is_online'] ?? false,
-          lastActive: data['last_active'] ?? '',
+          lastActive: (data['last_active'] as Timestamp).toDate(),
           pushToken: data['push_token'] ?? '',
           email: data['email'] ?? '',
           isTyping: data['is_typing'] ?? false,
@@ -72,12 +77,11 @@ class UserController extends GetxController {
   }
 
   void updateUser(UserModel newUser) {
-    final oldUser = user.value; // сохранить старое значение
-    _saveUserDataToFirestore(newUser, oldUser); // сравнить с ним
-    user.value = newUser; // потом обновить
+    final oldUser = user.value;
+    user.value = newUser;
+    _saveUserDataToFirestore(newUser, oldUser);
     update();
   }
-
 
   Future<void> _saveUserDataToFirestore(UserModel newUser, UserModel oldUser) async {
     try {

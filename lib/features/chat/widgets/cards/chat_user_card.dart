@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
@@ -15,6 +14,7 @@ import '../../../../../utils/helper/date_util.dart';
 import '../../../../common/enums/date_format_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
 import '../../../home/widgets/dialogs/profile_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -45,19 +45,19 @@ class ChatUserCardState extends State<ChatUserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8, bottom: 6),
-      elevation: Platform.isWindows ? widget.isSelected ? 2 : 0.5 : isSelected ? 2 : 0.5,
+      margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8, bottom: 6),
+      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: GestureDetector(
         onSecondaryTapDown: (details) {
-          if (Platform.isWindows) {
+          if (isWindows) {
             Future.delayed(Duration(milliseconds: 100), () {
               showEditSettingsChatDialog(context, details.globalPosition);
             });
           }
         },
         onLongPress: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = true;
             });
@@ -68,7 +68,7 @@ class ChatUserCardState extends State<ChatUserCard> {
           }
         },
         onLongPressUp: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = false;
             });
@@ -77,7 +77,7 @@ class ChatUserCardState extends State<ChatUserCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Platform.isWindows
+            color: isWindows
               ? isLongPressed || widget.isSelected
                 ? context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt())
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground
@@ -89,7 +89,7 @@ class ChatUserCardState extends State<ChatUserCard> {
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
             onTap: () {
-              if (Platform.isWindows) {
+              if (isWindows) {
                 widget.onUserSelected(widget.user);
               } else {
                 Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
@@ -119,7 +119,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                         children: [
                           InkWell(
                             onTap: () {
-                              if (!Platform.isWindows) {
+                              if (!isWindows) {
                                 showDialog(context: context, builder: (_) => ProfileDialog(user: widget.user));
                               }
                             },
@@ -127,8 +127,8 @@ class ChatUserCardState extends State<ChatUserCard> {
                             borderRadius: BorderRadius.circular(30),
                             child: ClipOval(
                               child: CachedNetworkImage(
-                                width: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                                height: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                                width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                                height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                                 imageUrl: widget.user.image,
                                 fit: BoxFit.cover,
                                 errorWidget: (context, url, error) => CircleAvatar(
@@ -139,7 +139,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                               ),
                             ),
                           ),
-                          if (!Platform.isWindows && isSelected)
+                          if (!isWindows && isSelected)
                           Positioned(
                             bottom: -3,
                             right: -2,
@@ -167,7 +167,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 Expanded(
                                   child: Text(
                                     '${widget.user.name}${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
-                                    style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Helvetica', fontWeight: Platform.isWindows ? FontWeight.w400 : FontWeight.bold),
+                                    style: TextStyle(fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Helvetica', fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -179,7 +179,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       time: DateTime.fromMillisecondsSinceEpoch(int.parse(message!.sent)),
                                       formatType: DateFormatType.numeric
                                     ),
-                                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: Platform.isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
+                                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                                   ),
                                 ],
                               ],

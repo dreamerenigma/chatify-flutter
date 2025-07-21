@@ -167,7 +167,10 @@ class LanguageController extends GetxController {
                                   Text(getLanguageLabelByCode(code, context), style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                                   Padding(
                                     padding: const EdgeInsets.only(right: 12),
-                                    child: SvgPicture.asset(image, width: 25, height: 25),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: SvgPicture.asset(image, width: 25, height: 25, fit: BoxFit.cover),
+                                    ),
                                   ),
                                 ],
                               ),

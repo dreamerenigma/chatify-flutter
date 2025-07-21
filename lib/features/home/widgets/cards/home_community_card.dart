@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/helper/date_util.dart';
 import 'package:flutter/material.dart';
 import 'package:chatify/features/community/models/community_model.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../app.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -43,19 +43,19 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8),
-      elevation: Platform.isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
+      margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
+      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: GestureDetector(
         onSecondaryTapDown: (details) {
-          if (Platform.isWindows) {
+          if (isWindows) {
             Future.delayed(Duration(milliseconds: 100), () {
               showEditSettingsChatDialog(context, details.globalPosition);
             });
           }
         },
         onLongPress: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = true;
             });
@@ -64,7 +64,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
           }
         },
         onLongPressUp: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = false;
             });
@@ -73,7 +73,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Platform.isWindows
+            color: isWindows
               ? isLongPressed || widget.isSelected
                 ? context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt())
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground
@@ -85,7 +85,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
             onTap: () {
-              if (Platform.isWindows) {
+              if (isWindows) {
                 widget.onCommunitySelected(widget.community);
               } else {
                 Navigator.push(
@@ -104,8 +104,8 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                 children: [
                   ClipOval(
                     child: CachedNetworkImage(
-                      width: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                      height: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                      width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                      height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                       imageUrl: widget.community.image,
                       fit: BoxFit.cover,
                       errorWidget: (context, error, stackTrace) => CircleAvatar(
@@ -127,18 +127,18 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                               child: Text(
                                 widget.community.name.isNotEmpty ? widget.community.name : S.of(context).unknownCommunity,
                                 style: TextStyle(
-                                  fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                  fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
                                   fontFamily: 'Helvetica',
-                                  fontWeight: Platform.isWindows ? FontWeight.w400 : FontWeight.bold,
+                                  fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Platform.isWindows
+                            isWindows
                           ? Text(
                               DateUtil.getCommunityCreationDate(context: context, creationDate: widget.community.createdAt, includeTime: true),
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: Platform.isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
+                              style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                             )
                           : Icon(Icons.arrow_forward_ios_rounded, size: 16, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                           ],

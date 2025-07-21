@@ -59,7 +59,7 @@ class LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  handleGoogleBtnClick() {
+  void handleGoogleBtnClick() {
     Dialogs.showProgressBar(context);
 
     APIs.signInWithGoogle().then((user) async {
@@ -104,7 +104,7 @@ class LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            height: 55,
+            height: (isWebOrWindows && !isMobile) ? 55 : 75,
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
               boxShadow: [
@@ -146,13 +146,15 @@ class LoginScreenState extends State<LoginScreen> {
                           mouseCursor: SystemMouseCursors.basic,
                           splashFactory: NoSplash.splashFactory,
                           borderRadius: BorderRadius.circular(8),
-                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                          splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
                             clipBehavior: Clip.hardEdge,
-                            child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                            child: !isWebOrWindows && isMobile
+                              ? Container()
+                              : Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
                           ),
                         ),
                       ),
@@ -164,7 +166,10 @@ class LoginScreenState extends State<LoginScreen> {
                       children: [
                         Align(
                           alignment: Alignment.center,
-                          child: Text(S.of(context).welcome, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: isMobile ? 0 : 8),
+                            child: Text(S.of(context).welcome, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+                          ),
                         ),
                       ],
                     ),
@@ -266,7 +271,7 @@ class LoginScreenState extends State<LoginScreen> {
                           if (isWebOrMobile)
                             SizedBox(
                               width: isWebOrWindows ? mq.width < 600 ? mq.width * 0.5 : mq.width < 900 ? mq.width * 0.40 : mq.width * 0.3 : double.infinity,
-                              height: 45,
+                              height: isWebOrWindows ? 45 : 55,
                               child: ElevatedButton.icon(
                                 style: ElevatedButton.styleFrom(
                                   splashFactory: NoSplash.splashFactory,

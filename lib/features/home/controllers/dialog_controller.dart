@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 
@@ -13,13 +12,11 @@ class DialogController extends GetxController {
   void openWindowsDialog() {
     isWindowsDialogOpen.value = true;
     isSettingsDialogOpen.value = false;
-    log('Открыт диалог Windows');
   }
 
   void openSettingsDialog() {
     isSettingsDialogOpen.value = true;
     isWindowsDialogOpen.value = false;
-    log('Открыт диалог настроек');
   }
 
   void closeWindowsDialog() {

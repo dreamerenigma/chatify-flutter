@@ -215,7 +215,12 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                       height: 1.5,
                     ),
                     recognizer: TapGestureRecognizer()..onTap = () async {
-                      Navigator.push(context, createPageRoute(const HelpCenterScreen()));
+                      Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) => const HelpCenterScreen(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(opacity: animation, child: child);
+                        },
+                      ));
                     },
                   ),
                 ],

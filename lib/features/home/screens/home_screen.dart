@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/features/newsletter/models/newsletter.dart';
 import 'package:chatify/features/status/widgets/images/camera_screen.dart';
@@ -12,6 +11,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_vectors.dart';
+import '../../../utils/platforms/platform_utils.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/models/community_model.dart';
@@ -203,7 +203,7 @@ class HomeScreenState extends State<HomeScreen> {
           }
         },
         child: Scaffold(
-          backgroundColor: Platform.isWindows ? context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : null,
+          backgroundColor: isWebOrWindows ? context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : null,
           appBar: defaultTargetPlatform == TargetPlatform.windows
             ? null
             : isSelecting

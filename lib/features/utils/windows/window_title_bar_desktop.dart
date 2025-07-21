@@ -18,14 +18,12 @@ import '../../../common/widgets/buttons/custom_minimize_button.dart';
 class WindowTitleBar extends StatefulWidget {
   final OverlayEntry overlayEntry;
   final ValueNotifier<bool> backButtonNotifier;
-  final GlobalKey<NavigatorState> navigatorKey;
   final ValueNotifier<String?> currentRouteNotifier;
 
   const WindowTitleBar({
     super.key,
     required this.overlayEntry,
     required this.backButtonNotifier,
-    required this.navigatorKey,
     required this.currentRouteNotifier,
   });
 
@@ -135,7 +133,7 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
       builder: (context, currentRoute, _) {
         final isSplashScreen = currentRoute == '/splash';
         final backgroundColor = (Platform.isWindows || Platform.isMacOS || Platform.isLinux)
-          ? (isSplashScreen ? (context.isDarkMode ? ChatifyColors.black : ChatifyColors.white) : (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt())))
+          ? (isSplashScreen ? (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white) : (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt())))
           : ChatifyColors.transparent;
 
         return ValueListenableBuilder<bool>(

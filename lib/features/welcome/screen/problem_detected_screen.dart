@@ -6,6 +6,7 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/platforms/platform_utils.dart';
 import '../../../utils/popups/custom_tooltip.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
@@ -32,7 +33,7 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
       body: Stack(
         children: [
           Container(
-            height: 55,
+            height: (isWebOrWindows && !isMobile) ? 55 : 75,
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
               boxShadow: [
@@ -46,41 +47,45 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
             ),
             clipBehavior: Clip.none,
             child: Padding(
-              padding: EdgeInsets.only(left: 5, right: 5, top: Platform.isWindows ? 10 : 40),
+              padding: EdgeInsets.only(top: isMobile ? 35 : 5),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CustomTooltip(
-                    message: 'Назад',
-                    horizontalOffset: -35,
-                    verticalOffset: 10,
-                    child: MouseRegion(
-                      onEnter: (_) {
-                        setState(() {
-                          isHovered = true;
-                        });
-                      },
-                      onExit: (_) {
-                        setState(() {
-                          isHovered = false;
-                        });
-                      },
-                      child: Material(
-                        color: ChatifyColors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          mouseCursor: SystemMouseCursors.basic,
-                          splashFactory: NoSplash.splashFactory,
-                          borderRadius: BorderRadius.circular(8),
-                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
-                            clipBehavior: Clip.hardEdge,
-                            child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                  Padding(
+                    padding: EdgeInsets.only(left: 5, right: 5),
+                    child: CustomTooltip(
+                      message: 'Назад',
+                      horizontalOffset: -35,
+                      verticalOffset: 10,
+                      child: MouseRegion(
+                        onEnter: (_) {
+                          setState(() {
+                            isHovered = true;
+                          });
+                        },
+                        onExit: (_) {
+                          setState(() {
+                            isHovered = false;
+                          });
+                        },
+                        child: Material(
+                          color: ChatifyColors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            mouseCursor: SystemMouseCursors.basic,
+                            splashFactory: NoSplash.splashFactory,
+                            borderRadius: BorderRadius.circular(8),
+                            splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
+                              clipBehavior: Clip.hardEdge,
+                              child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                            ),
                           ),
                         ),
                       ),
@@ -102,21 +107,23 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: Platform.isWindows
-                ? Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, top: 70, bottom: 15),
-                  child: Container(
-                      constraints: const BoxConstraints(maxWidth: 900),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: verticalPadding),
-                      decoration: BoxDecoration(color: ChatifyColors.deepNight, borderRadius: BorderRadius.circular(15)),
-                      child: _buildContent(),
-                    ),
-                )
-                : _buildContent(),
+            child: Align(
+              alignment: isMobile ? Alignment.topCenter : Alignment.center,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10, right: 10, top: isMobile ? 40 : 70, bottom: 15),
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 900),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: verticalPadding),
+                  decoration: BoxDecoration(
+                    color: isAndroid ? ChatifyColors.transparent : ChatifyColors.deepNight,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: _buildContent(),
+                ),
+              ),
             ),
           ),
-          if (Platform.isAndroid || Platform.isIOS) ...[
+          if (isMobile) ...[
             GestureDetector(
               onTap: () async {
                 await Dialogs.showCustomDialog(context: context, message: S.of(context).connected, duration: const Duration(seconds: 4));

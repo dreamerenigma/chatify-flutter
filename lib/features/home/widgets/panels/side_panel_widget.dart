@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -87,7 +86,6 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
       builder: (context, constraints) {
         bool isWideScreen = constraints.maxWidth >= 600;
         bool hideSidePanel = (selectedUser != null && constraints.maxWidth < 600);
-        log("Screen width: ${constraints.maxWidth}, isWideScreen: $isWideScreen");
 
         return Stack(
           children: [

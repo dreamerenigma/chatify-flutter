@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Applications for messaging, calling and creating shared groups">
+  <meta name="google-signin-client_id" content="927162900320-1fvitvcdtvauvsqijj6i047c98qjdh1p.apps.googleusercontent.com" />
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="chatify">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -90,7 +91,6 @@
       }
     }
 
-    // Run the function to remove the splash on page load
     window.onload = function() {
       removeSplashFromWeb();
     };
@@ -125,8 +125,6 @@
         appId: "1:927162900320:web:e9b3144265f1eea96b4805"
     };
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
   </script>
 
 </body></html>

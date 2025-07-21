@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:chatify/features/newsletter/models/newsletter.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,6 +11,7 @@ import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../screens/newsletter_chat_screen.dart';
 import '../dialogs/edit_settings_chat_dialog.dart';
@@ -73,19 +73,19 @@ class _NewsletterCardState extends State<NewsletterCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8),
-      elevation: Platform.isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
+      margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
+      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: GestureDetector(
         onSecondaryTapDown: (details) {
-          if (Platform.isWindows) {
+          if (isWindows) {
             Future.delayed(Duration(milliseconds: 100), () {
               showEditSettingsChatDialog(context, details.globalPosition);
             });
           }
         },
         onLongPress: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = true;
             });
@@ -94,7 +94,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
           }
         },
         onLongPressUp: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = false;
             });
@@ -103,7 +103,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Platform.isWindows
+            color: isWindows
               ? isLongPressed || widget.isSelected
                 ? context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt())
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground
@@ -115,7 +115,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
             onTap: () {
-              if (Platform.isWindows) {
+              if (isWindows) {
                 widget.onNewsletterSelected(widget.newsletter);
               } else {
                 Navigator.push(context, createPageRoute(NewsletterChatScreen(newsletters: widget.newsletters, createdAt: widget.createdAt)));
@@ -148,8 +148,8 @@ class _NewsletterCardState extends State<NewsletterCard> {
                         },
                         child: CachedNetworkImage(
                           imageUrl: widget.newsletterImage,
-                          width: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                          height: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                          width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                          height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                           imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
                           placeholder: (context, url) => CircleAvatar(
                             backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
@@ -163,7 +163,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                           ),
                         ),
                       ),
-                      if (!Platform.isWindows && isSelected)
+                      if (!isWindows && isSelected)
                       Positioned(
                         bottom: -3,
                         right: -2,
@@ -209,7 +209,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                                   return Expanded(
                                     child: Text(
                                       newsletterNames,
-                                      style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Helvetica', fontWeight: Platform.isWindows ? FontWeight.w400 : FontWeight.bold),
+                                      style: TextStyle(fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Helvetica', fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   );
@@ -222,7 +222,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                             Center(
                               child: Text(
                                 formattedDate.isNotEmpty ? formattedDate : S.of(context).invalidDate,
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: Platform.isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                               ),
                             ),
                           ],

@@ -88,8 +88,8 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                 mouseCursor: SystemMouseCursors.basic,
                 splashFactory: NoSplash.splashFactory,
                 borderRadius: BorderRadius.circular(8),
-                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
@@ -100,7 +100,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
             ),
           ),
           Positioned(
-            top: 10,
+            top: isWebOrWindows ? 0 : (isMobile ? 30 : 10),
             right: !kIsWeb && Platform.isWindows ? 5 : 0,
             child: CustomTooltip(
               message: 'Войти',
@@ -119,7 +119,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                       color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
                       position: RelativeRect.fromLTRB(
                         position.dx,
-                        position.dy,
+                        isWebOrWindows ? position.dy : position.dy + renderBox.size.height,
                         position.dx + renderBox.size.width,
                         0,
                       ),
@@ -189,8 +189,8 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                   mouseCursor: SystemMouseCursors.basic,
                   splashFactory: NoSplash.splashFactory,
                   borderRadius: BorderRadius.circular(8),
-                  splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                  splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                  highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
@@ -335,7 +335,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                     foregroundColor: context.isDarkMode ? ChatifyColors.popupColor : ChatifyColors.white,
                     backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.grey,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
                     side: BorderSide.none,
                     elevation: 2,
                     shadowColor: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
@@ -381,7 +381,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         side: BorderSide.none,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
                       ).copyWith(
                         mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
                       ),

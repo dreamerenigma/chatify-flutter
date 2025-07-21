@@ -128,6 +128,7 @@ class ChatifyVectors {
   static const String handFavorite = "assets/vectors/hand_favorite.svg";
   static const String ai = "assets/vectors/ai.svg";
   static const String question = "assets/vectors/question.svg";
+  static const String questionSupport = "assets/vectors/question_support.svg";
 
   /// -- Flags country
   static const String abw = '${pathFlags}abw$format';

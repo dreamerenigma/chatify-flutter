@@ -1,13 +1,9 @@
-import 'dart:developer';
 import 'package:chatify/features/home/widgets/panels/side_panel_widget.dart';
-import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import '../../../../core/services/dialogs/dialog_manager.dart';
-import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/theme/seasons/effects/leaf_effect.dart';
@@ -18,21 +14,18 @@ import '../../../calls/screens/calls_screen.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
 import '../../../community/screens/community_screen.dart';
-import '../../../community/widgets/lists/community_list.dart';
 import '../../../group/models/group_model.dart';
 import '../../../personalization/controllers/seasons_controller.dart';
 import '../../../personalization/controllers/user_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../personalization/widgets/lists/group_list.dart';
 import '../../../status/screens/status_screen.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
 import '../../../newsletter/models/newsletter.dart';
-import '../../screens/archive_screen.dart';
-import '../dialogs/chats_calls_privacy_sheet_dialog.dart';
-import '../lists/newsletter_list.dart';
-import '../lists/support_list.dart';
-import '../lists/user_list.dart';
+import '../dialogs/new_list_bottom_dialog.dart';
+import '../lists/main_home_content_list.dart';
 import '../navs/side_nav_bar.dart';
+import '../sections/archive_privacy_section.dart';
+import '../texts/pressable_text.dart';
 
 class HomeScreenWidget extends StatefulWidget {
   final int selectedIndex;
@@ -74,7 +67,7 @@ class HomeScreenWidget extends StatefulWidget {
   State<HomeScreenWidget> createState() => _HomeScreenWidgetState();
 }
 
-class _HomeScreenWidgetState extends State<HomeScreenWidget> {
+class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerProviderStateMixin {
   double sidePanelWidth = 350.0;
   double minSidePanelWidth = 350.0;
   double maxSidePanelWidth = 700.0;
@@ -85,18 +78,31 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   bool isCalling = false;
   final ScrollController _scrollController = ScrollController();
   final dialogManager = DialogManager();
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       double screenWidth = MediaQuery.of(context).size.width;
-      log("Before adjusting sidePanelWidth, screen width: $screenWidth");
       adjustSidePanelSize(screenWidth);
       dialogManager.showMonthlyRatingDialog(context);
-      log("After adjusting sidePanelWidth, sidePanelWidth: $sidePanelWidth");
     });
     _scrollController.addListener(_handleScroll);
+    _tabController = TabController(length: 5, vsync: this);
+    _tabController.index = 0;
+    _tabController.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    setState(() {});
   }
 
   void toggleMenu() {
@@ -106,40 +112,31 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   }
 
   void adjustSidePanelSize(double screenWidth) {
-    log("Before adjusting sidePanelWidth, screen width: $screenWidth");
-
     if (screenWidth < 600) {
       setState(() {
         sidePanelWidth = 250.0;
         minSidePanelWidth = 250.0;
         maxSidePanelWidth = screenWidth * 0.4;
-        log("Updated sidePanelWidth: $sidePanelWidth, maxSidePanelWidth: $maxSidePanelWidth");
       });
     } else if (screenWidth < 750) {
       setState(() {
-        log("Setting sidePanelWidth to: ${screenWidth * 0.25}");
         sidePanelWidth = screenWidth * 0.25;
         minSidePanelWidth = 270.0;
         maxSidePanelWidth = screenWidth * 0.35;
-        log("Updated sidePanelWidth: $sidePanelWidth, maxSidePanelWidth: $maxSidePanelWidth");
       });
     } else if (screenWidth < 1200) {
       setState(() {
         sidePanelWidth = screenWidth * 0.35;
         minSidePanelWidth = 270.0;
         maxSidePanelWidth = screenWidth * 0.45;
-        log("Updated sidePanelWidth: $sidePanelWidth, maxSidePanelWidth: $maxSidePanelWidth");
       });
     } else {
       setState(() {
         sidePanelWidth = screenWidth * 0.2;
         minSidePanelWidth = 270.0;
         maxSidePanelWidth = screenWidth * 0.3;
-        log("Updated sidePanelWidth: $sidePanelWidth, maxSidePanelWidth: $maxSidePanelWidth");
       });
     }
-
-    log("After adjusting sidePanelWidth, sidePanelWidth: $sidePanelWidth");
   }
 
   void _handleScroll() {
@@ -158,9 +155,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   Widget build(BuildContext context) {
     final userController = Get.find<UserController>();
     double screenWidth = MediaQuery.of(context).size.width;
-    log("Before adjusting sidePanelWidth, screen width: $screenWidth");
     adjustSidePanelSize(screenWidth);
-    log("After adjusting sidePanelWidth, sidePanelWidth: $sidePanelWidth");
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -203,122 +198,45 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                               children: <Widget>[
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: <Widget>[
+                                  children: [
                                     _buildCategoryMessages(),
-                                    if (widget.groups.isEmpty) const SizedBox(height: 6),
-                                    Visibility(
-                                      visible: widget.groups.isNotEmpty,
-                                      replacement: const SizedBox.shrink(),
-                                      child: Obx(() {
-                                        final userController = Get.find<UserController>();
-                                        final currentUserName = userController.currentUser.name;
-                                        return GroupList(groups: widget.groups, currentUser: currentUserName, onGroupSelected: (group) {});
-                                      }),
-                                    ),
-                                    Visibility(
-                                      visible: widget.newsletters.isNotEmpty,
-                                      replacement: const SizedBox.shrink(),
-                                      child: NewsletterList(newsletters: widget.newsletters, onNewsletterSelected: (newsletter) {}),
-                                    ),
-                                    Visibility(
-                                      visible: widget.communities.isNotEmpty,
-                                      replacement: const SizedBox.shrink(),
-                                      child: CommunityList(communities: widget.communities, isHomeScreen: true, onCommunitySelected: (community) {}),
-                                    ),
-                                    Visibility(
-                                      visible: widget.users.isEmpty,
-                                      replacement: const SizedBox.shrink(),
-                                      child: UserList(
-                                        isSearching: widget.isSearching,
-                                        searchList: widget.searchList,
-                                        list: widget.users,
-                                        isSharing: false,
-                                        onUserSelected: widget.onUserSelected,
-                                        onSelectionModeChanged: (bool selecting) {},
-                                      ),
-                                    ),
-                                    Visibility(
-                                      visible: widget.supports.isEmpty,
-                                      child: SupportList(supports: widget.supports, onSupportSelected: (support) {}),
-                                    ),
-                                    SizedBox(height: 8),
                                     Expanded(
-                                      child: Column(
+                                      child: TabBarView(
+                                        controller: _tabController,
                                         children: [
-                                          InkWell(
-                                            onTap: () {
-                                              Navigator.push(context, createPageRoute(ArchiveScreen()));
-                                            },
-                                            splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                                            highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 36, right: 22, top: 14, bottom: 14),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.archive_outlined,
-                                                    size: 24,
-                                                    color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
-                                                  ),
-                                                  const SizedBox(width: 22),
-                                                  Text(
-                                                    'В архиве',
-                                                    style: TextStyle(
-                                                      fontSize: ChatifySizes.fontSizeMd,
-                                                      color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
-                                                    ),
-                                                  ),
-                                                  const Spacer(),
-                                                  Text('3', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey)),
-                                                ],
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                                            children: [
+                                              MainHomeContentList(
+                                                groups: widget.groups,
+                                                newsletters: widget.newsletters,
+                                                communities: widget.communities,
+                                                users: widget.users,
+                                                supports: widget.supports,
+                                                isSearching: widget.isSearching,
+                                                searchList: widget.searchList,
+                                                onUserSelected: widget.onUserSelected,
                                               ),
-                                            ),
+                                              ArchivePrivacySection(),
+                                            ],
                                           ),
-                                          Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
-                                            child: Row(
+                                          Center(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                Expanded(
-                                                  child: Center(
-                                                    child: RichText(
-                                                      textAlign: TextAlign.center,
-                                                      text: TextSpan(
-                                                        children: [
-                                                          WidgetSpan(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(right: 12),
-                                                              child: Icon(
-                                                                Icons.lock_outline,
-                                                                color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
-                                                                size: 14,
-                                                              ),
-                                                            ),
-                                                            alignment: PlaceholderAlignment.middle,
-                                                          ),
-                                                          TextSpan(
-                                                            text: S.of(context).yourPrivateMessagesProtected,
-                                                            style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
-                                                          ),
-                                                          TextSpan(
-                                                            text: S.of(context).encryption,
-                                                            style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                                            recognizer: TapGestureRecognizer()..onTap = () {
-                                                              showChatsCallsPrivacyBottomSheet(
-                                                                context,
-                                                                headerText: S.of(context).yourChatsCallsConfidential,
-                                                                titleText: S.of(context).yourPrivateMessagesAndCalls,
-                                                              );
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
+                                                Text('Нет непрочитанных чатов', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm)),
+                                                SizedBox(height: 25),
+                                                PressableText(
+                                                  text: 'Просмотреть все чаты',
+                                                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w400),
+                                                  onTap: () {},
                                                 ),
                                               ],
                                             ),
                                           ),
+                                          Center(child: Text('Избранное')),
+                                          Center(child: Text('Группы')),
+                                          Container(),
                                         ],
                                       ),
                                     ),
@@ -385,7 +303,6 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                     searchList: widget.searchList,
                     selectedIndex: widget.selectedIndex,
                     user: userController.currentUser,
-
                   ),
                 ],
               ),
@@ -398,39 +315,77 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
 
   Widget _buildCategoryMessages() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: DefaultTabController(
-        length: 5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TabBar(
-              isScrollable: true,
-              labelColor: Colors.blue,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.blue,
-              tabs: const [
-                Tab(text: 'Все'),
-                Tab(text: 'Личные'),
-                Tab(text: 'Группы'),
-                Tab(text: 'Каналы'),
-                Tab(text: 'Боты'),
-              ],
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TabBar(
+            controller: _tabController,
+            isScrollable: true,
+            dividerColor: ChatifyColors.transparent,
+            indicatorColor: ChatifyColors.transparent,
+            labelColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+            splashBorderRadius: BorderRadius.circular(30),
+            unselectedLabelColor: ChatifyColors.grey,
+            tabAlignment: TabAlignment.center,
+            indicatorPadding: EdgeInsets.zero,
+            labelPadding: EdgeInsets.zero,
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.all(ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt())),
+            tabs: [
+              _buildCustomTab('Все', 0),
+              _buildCustomTab('Непрочитанное', 1),
+              _buildCustomTab('Избранное', 2),
+              _buildCustomTab('Группы', 3),
+              _buildCustomTab('+', 4),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomTab(String text, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 20),
+      child: InkWell(
+        onTap: () {
+          if (index == 4) {
+            newListBottomSheetDialog(context);
+          } else {
+            _tabController.index = index;
+          }
+        },
+        splashColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
+        highlightColor: ChatifyColors.blue.withAlpha((0.2 * 255).toInt()),
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          height: 34,
+          decoration: BoxDecoration(
+            color: _tabController.index == index ? ChatifyColors.blue.withAlpha((0.2 * 255).toInt()) : ChatifyColors.transparent,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: _tabController.index == index ? ChatifyColors.blue.withAlpha((0.1 * 255).toInt()) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey),
+              width: 1,
             ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 300,
-              child: TabBarView(
-                children: [
-                  Center(child: Text('Все сообщения')),
-                  Center(child: Text('Личные чаты')),
-                  Center(child: Text('Групповые чаты')),
-                  Center(child: Text('Каналы')),
-                  Center(child: Text('Боты')),
-                ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Tab(
+            child: _tabController.index == index && index == 4
+                ? Icon(
+              Icons.add,
+              color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.steelGrey,
+              size: 20,
+            )
+                : Text(
+              text,
+              style: TextStyle(
+                fontSize: index == 4 ? ChatifySizes.fontSizeMg : ChatifySizes.fontSizeSm,
+                fontWeight: FontWeight.w400,
+                color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.darkGrey,
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

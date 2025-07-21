@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,7 @@ class StatusWidget extends StatefulWidget {
 class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  final GlobalKey _statusPrivacyKey = GlobalKey();
   final UserController userController = Get.find<UserController>();
 
   @override
@@ -47,6 +49,99 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(S.of(context).status, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+                  if (kIsWeb)
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline_rounded),
+                        tooltip: 'Help',
+                        onPressed: () {
+                          showMenu(
+                            context: context,
+                            position: RelativeRect.fromLTRB(1000, 100, 0, 0),
+                            items: [
+                              PopupMenuItem(
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.photo_camera, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('Фото и видео'),
+                                  ],
+                                ),
+                                onTap: () {
+
+                                },
+                              ),
+                              PopupMenuItem(
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.text_fields, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('Текст'),
+                                  ],
+                                ),
+                                onTap: () {
+
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      IconButton(
+                        key: _statusPrivacyKey,
+                        icon: const Icon(Icons.more_vert),
+                        tooltip: 'More',
+                        onPressed: () {
+                          final RenderBox renderBox = _statusPrivacyKey.currentContext?.findRenderObject() as RenderBox;
+                          final position = renderBox.localToGlobal(Offset.zero);
+
+                          showMenu(
+                            context: context,
+                            color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
+                            position: RelativeRect.fromLTRB(
+                              position.dx,
+                              position.dy,
+                              position.dx + renderBox.size.width,
+                              0,
+                            ),
+                            items: [
+                              PopupMenuItem(
+                                value: 1,
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.privacy_tip, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('Status Privacy'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          ).then((value) {
+                            if (value == 1) {
+                              // Ждём, чтобы меню успело закрыться
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: const Text('Status Privacy'),
+                                    content: const Text('Настройки конфиденциальности статуса.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Закрыть'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

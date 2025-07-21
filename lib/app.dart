@@ -102,6 +102,7 @@ class App extends StatelessWidget {
       ],
       child: Obx(() {
         return GetMaterialApp(
+          initialBinding: GeneralBindings(),
           debugShowCheckedModeBanner: false,
           themeMode: themesController.getThemeMode(),
           theme: ChatifyAppTheme.getLightTheme(),

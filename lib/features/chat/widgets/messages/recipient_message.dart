@@ -40,7 +40,6 @@ class RecipientMessageState extends State<RecipientMessage> {
   bool isDialogVisible = false;
   bool get isHovered => hoveredMessage == widget.message;
   final GlobalKey _containerKey = GlobalKey();
-  final isWindows = Platform.isWindows;
   static MessageModel? hoveredMessage;
   Timer? hoverTimer;
   Duration? videoDuration;

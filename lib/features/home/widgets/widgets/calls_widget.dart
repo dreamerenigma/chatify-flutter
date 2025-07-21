@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/popups/custom_tooltip.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -10,6 +9,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../calls/widgets/dialog/new_calls_dialog.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -183,8 +183,8 @@ class _CallsWidgetState extends State<CallsWidget> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(23),
                     child: CachedNetworkImage(
-                      width: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                      height: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                      width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                      height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                       imageUrl: widget.groupImage,
                       fit: BoxFit.cover,
                       imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
@@ -323,8 +323,8 @@ class _CallsWidgetState extends State<CallsWidget> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(23),
                     child: CachedNetworkImage(
-                      width: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                      height: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                      width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                      height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                       imageUrl: widget.groupImage,
                       fit: BoxFit.cover,
                       imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),

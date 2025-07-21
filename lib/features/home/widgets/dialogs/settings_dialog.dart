@@ -3,6 +3,7 @@ import 'package:chatify/features/home/widgets/dialogs/options/help_option_widget
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../controllers/dialog_controller.dart';
 import 'options/account_option_widget.dart';
@@ -58,7 +60,7 @@ void showSettingsDialog(BuildContext context, Offset position, {int initialIndex
             builder: (context, child) {
               return Positioned(
                 left: position.dx + 5,
-                bottom: animation.value - 35,
+                bottom: kIsWeb ? animation.value + 5 : (isWindows ? animation.value - 35 : animation.value),
                 child: Material(
                   color: ChatifyColors.transparent,
                   child: GestureDetector(
@@ -103,7 +105,7 @@ void showSettingsDialog(BuildContext context, Offset position, {int initialIndex
                             child: Row(
                               children: [
                                 Container(
-                                  width: 180,
+                                  width: isWindows ? 180 : (kIsWeb ? 200 : 180),
                                   height: double.infinity,
                                   decoration: BoxDecoration(
                                     color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.softGrey,

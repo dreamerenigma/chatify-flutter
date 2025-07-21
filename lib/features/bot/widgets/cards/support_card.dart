@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/helper/date_util.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../screens/support_info_screen.dart';
@@ -35,19 +35,19 @@ class _SupportCardState extends State<SupportCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8),
-      elevation: Platform.isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
+      margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
+      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: GestureDetector(
         onSecondaryTapDown: (details) {
-          if (Platform.isWindows) {
+          if (isWindows) {
             Future.delayed(Duration(milliseconds: 100), () {
               showEditSettingsChatDialog(context, details.globalPosition);
             });
           }
         },
         onLongPress: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = true;
             });
@@ -56,7 +56,7 @@ class _SupportCardState extends State<SupportCard> {
           }
         },
         onLongPressUp: () {
-          if (Platform.isWindows) {
+          if (isWindows) {
             setState(() {
               isLongPressed = false;
             });
@@ -65,7 +65,7 @@ class _SupportCardState extends State<SupportCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Platform.isWindows
+            color: isWindows
               ? isLongPressed || widget.isSelected
                 ? context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt())
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground
@@ -77,7 +77,7 @@ class _SupportCardState extends State<SupportCard> {
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
             onTap: () {
-              if (Platform.isWindows) {
+              if (isWindows) {
                 widget.onSupportSelected(widget.support);
               } else {
                 Navigator.push(context, createPageRoute(SupportInfoScreen()));
@@ -102,7 +102,7 @@ class _SupportCardState extends State<SupportCard> {
                         foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         child: SvgPicture.asset(ChatifyVectors.logoApp, color: ChatifyColors.white, width: 28, height: 28),
                       ),
-                      if (!Platform.isWindows && isSelected)
+                      if (!isWindows && isSelected)
                       Positioned(
                         bottom: -3,
                         right: -2,
@@ -131,9 +131,9 @@ class _SupportCardState extends State<SupportCard> {
                               child: Text(
                                 widget.support.name,
                                 style: TextStyle(
-                                  fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                  fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
                                   fontFamily: 'Helvetica',
-                                  fontWeight: Platform.isWindows ? FontWeight.w400 : FontWeight.bold,
+                                  fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -143,7 +143,7 @@ class _SupportCardState extends State<SupportCard> {
                               DateUtil.getCommunityCreationDate(context: context, creationDate: widget.support.createdAt, includeTime: true),
                               style: TextStyle(
                                 fontSize: ChatifySizes.fontSizeLm,
-                                color: Platform.isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                                color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
                                 fontWeight: FontWeight.w300,
                                 fontFamily: 'Roboto',
                               ),
