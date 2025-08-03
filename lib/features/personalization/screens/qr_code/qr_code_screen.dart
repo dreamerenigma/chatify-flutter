@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:math';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -82,19 +83,13 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
       child: Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
-          title: Text(
-            'QR-код',
-            style: TextStyle(
-              fontSize: ChatifySizes.fontSizeMg,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          title: Text(S.of(context).qrCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           actions: _tabController.index == 0
           ? <Widget>[
             IconButton(
               icon: const Icon(Icons.share_outlined),
               onPressed: () {
-                Dialogs.showCustomDialog(context: context, message: 'Пожалуйста, подождите', duration: const Duration(seconds: 1));
+                Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
                 Future.delayed(const Duration(milliseconds: 200), () {
                   Navigator.pop(context);
                   Share.share(shareLink);
@@ -113,18 +108,10 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
               itemBuilder: (context) => [
                 PopupMenuItem(
                   value: 1,
-
-                  child: Text(
-                    'Сбросить QR-код',
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: Text(S.of(context).resetQrCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis),
                 ),
               ],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
           ]
           : null,
@@ -138,13 +125,9 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
               indicatorSize: TabBarIndicatorSize.tab,
               overlayColor: WidgetStateProperty.all(ChatifyColors.darkerGrey),
               dividerColor: ChatifyColors.transparent,
-              tabs: const [
-                Tab(
-                  text: 'Мой код',
-                ),
-                Tab(
-                  text: 'Сканировать код',
-                ),
+              tabs: [
+                Tab(text: S.of(context).myCode),
+                Tab(text: S.of(context).scanCode),
               ],
             ),
           ),
@@ -162,17 +145,14 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
 
   Widget _buildQrCodeTab() {
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(12.0),
             width: 350,
-            decoration: BoxDecoration(
-              color: ChatifyColors.blackGrey,
-              borderRadius: BorderRadius.circular(12.0),
-            ),
+            decoration: BoxDecoration(color: ChatifyColors.blackGrey, borderRadius: BorderRadius.circular(12)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -180,7 +160,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                   clipBehavior: Clip.none,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 90.0, bottom: 30),
+                      padding: const EdgeInsets.only(top: 90, bottom: 30),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -194,10 +174,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                               backgroundColor: ChatifyColors.white,
                             ),
                           ),
-                          SvgPicture.asset(
-                            ChatifyVectors.logo,
-                            height: 35,
-                          ),
+                          SvgPicture.asset(ChatifyVectors.logo, height: 35),
                         ],
                       ),
                     ),
@@ -215,36 +192,19 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                               radius: 24,
                               backgroundColor: ChatifyColors.transparent,
                               child: widget.user.image.isNotEmpty
-                                  ? CircleAvatar(
-                                radius: 24,
-                                backgroundImage:
-                                NetworkImage(widget.user.image),
-                                backgroundColor: ChatifyColors.darkerGrey,
-                              )
-                                  : SvgPicture.asset(
-                                ChatifyVectors.profile,
-                                height: 40,
-                                width: 40,
-                              ),
+                                ? CircleAvatar(
+                                    radius: 24,
+                                    backgroundImage:
+                                    NetworkImage(widget.user.image),
+                                    backgroundColor: ChatifyColors.darkerGrey,
+                                  )
+                                : SvgPicture.asset(ChatifyVectors.profile, height: 40, width: 40),
                             ),
                           ),
                           const SizedBox(height: 8.0),
-                          Text(
-                            widget.user.name,
-                            style: const TextStyle(
-                              color: ChatifyColors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text(widget.user.name, style: const TextStyle(color: ChatifyColors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4.0),
-                          Text(
-                            'Контакт Chatify',
-                            style: TextStyle(
-                              color: ChatifyColors.darkGrey,
-                              fontSize: ChatifySizes.fontSizeLm,
-                            ),
-                          ),
+                          Text(S.of(context).contactApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm)),
                         ],
                       ),
                     )
@@ -254,14 +214,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
             ),
           ),
           const SizedBox(height: 24.0),
-          const Text(
-            'Ваш QR-код конфиденциален. Пользователи, с которыми вы им поделитесь, смогут просканировать его с помощью камеры Chatify, чтобы добавить вас в свой список контактов.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: ChatifyColors.darkGrey,
-              fontSize: 14.0,
-            ),
-          ),
+          Text(S.of(context).yourQrCodePrivateContacts, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 14)),
         ],
       ),
     );
@@ -276,7 +229,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Сбросить QR-код?'),
+              Text(S.of(context).resetQrCode),
               IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
@@ -286,11 +239,8 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
             ],
           ),
           content: Text(
-            'Прежний QR-код больше не будет действителен.',
-            style: TextStyle(
-              color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.blackGrey,
-              fontSize: ChatifySizes.fontSizeMd,
-            ),
+            S.of(context).previousQrCodeLongerValid,
+            style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.blackGrey, fontSize: ChatifySizes.fontSizeMd),
           ),
           actions: <Widget>[
             TextButton(
@@ -303,7 +253,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
               child: Text(
-                'Сохранить',
+                S.of(context).save,
                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
               ),
             ),
@@ -320,7 +270,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
               child: Text(
-                'Сброс',
+                S.of(context).reset,
                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
               ),
             ),
@@ -348,7 +298,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
           left: 0,
           right: 0,
           child: Center(
-            child: Text('Сканировать QR-код Chatify',style: TextStyle(color: ChatifyColors.white,fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
+            child: Text(S.of(context).scanAppQrCode,style: TextStyle(color: ChatifyColors.white,fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
           ),
         ),
         Positioned(

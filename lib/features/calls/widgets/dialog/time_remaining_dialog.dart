@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -11,8 +12,8 @@ void showTimeRemainingDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Истекло время предварительного просмотра звонка'),
-        content: const Text('Пожалуйста, повторите попытку.'),
+        title: Text(S.of(context).callPreviewTimedOut),
+        content: Text(S.of(context).pleaseTryAgain),
         backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
         actions: [
           TextButton(
@@ -24,7 +25,7 @@ void showTimeRemainingDialog(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.push(context, createPageRoute(const CreateLinkCallScreen()));
             },
-            child: Text('OK', style: TextStyle(fontSize: ChatifySizes.fontSizeMd,  color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+            child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd,  color: colorsController.getColor(colorsController.selectedColorScheme.value))),
           ),
         ],
       );

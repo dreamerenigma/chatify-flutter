@@ -21,23 +21,28 @@ class InviteFriendScreen extends StatefulWidget {
 class InviteFriendScreenState extends State<InviteFriendScreen> {
   final TextEditingController searchController = TextEditingController();
   FocusNode searchFocusNode = FocusNode();
-  bool isSearching = false;
-
   List<Contact> contacts = [];
   List<Contact> filteredContacts = [];
+  bool isSearching = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _getContacts();
+    getContacts();
   }
 
-  Future<void> _getContacts() async {
+  Future<void> getContacts() async {
     if (await Permission.contacts.request().isGranted) {
       List<Contact> contactsFromDevice = await FlutterContacts.getContacts(withProperties: true);
       setState(() {
         contacts = contactsFromDevice;
         filteredContacts = contactsFromDevice;
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -94,8 +99,7 @@ class InviteFriendScreenState extends State<InviteFriendScreen> {
                   focusNode: searchFocusNode,
                   cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   controller: searchController,
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
                   decoration: InputDecoration(
                     hintText: S.of(context).settingsSearch,
                     hintStyle:
@@ -107,97 +111,92 @@ class InviteFriendScreenState extends State<InviteFriendScreen> {
                   onChanged: onSearchChanged,
                 ),
               )
-              : Text('Пригласить друга', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  if (isSearching) {
-                    toggleSearch();
-                  } else {
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-              centerTitle: false,
-              actions: [
-                IconButton(
-                  icon: Icon(isSearching
-                    ? CupertinoIcons.clear_circled_solid
-                    : Icons.search),
-                  onPressed: toggleSearch,
+              : Text(S.of(context).inviteFriend, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      if (isSearching) {
+                        toggleSearch();
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                  centerTitle: false,
+                  actions: [
+                    IconButton(
+                      icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                      onPressed: toggleSearch,
+                    ),
+                  ],
                 ),
-              ],
-            ),
           ),
         ),
         body: ScrollConfiguration(
           behavior: NoGlowScrollBehavior(),
-          child: ListView.builder(
-            itemCount: filteredContacts.length + 3,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return InkWell(
-                  onTap: () {
-                    Share.share('Давайте будем общаться в Chatify. Это быстрое, удобное и безопасное приложение для бесплатного общения друг с другом. Скачать https://inputstudios.ru/download');
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: const BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.share_outlined,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Поделиться ссылкой',
-                                style: TextStyle(
-                                  fontSize: ChatifySizes.fontSizeMd,
-                                  fontWeight: FontWeight.bold,
-                                ),
+          child: ScrollbarTheme(
+            data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+            child: Scrollbar(
+              thickness: 4,
+              thumbVisibility: false,
+              radius: Radius.circular(12),
+              child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: 4),
+                itemCount: filteredContacts.length + 3,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return InkWell(
+                      onTap: () {
+                        SharePlus.instance.share(ShareParams(text: S.of(context).appConvenientCommunication));
+                      },
+                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 2),
+                                child: const Icon(Icons.share_outlined, color: ChatifyColors.black, size: 24),
                               ),
-                              const SizedBox(height: 4),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 4),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              } else if (index == 1) {
-                return const SizedBox(height: 15);
-              } else if (index == 2) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-                  child: Text(
-                    'Из контактов',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                    ),
-                  ),
-                );
-              } else {
-                final contactIndex = index - 3;
-                final contact = filteredContacts[contactIndex];
-                return InviteUserCard(
-                  contact: contact,
-                  onInvite: () {},
-                  onContactSelected: (Contact selectedContact) {},
-                );
-              }
-            },
+                      ),
+                    );
+                  } else if (index == 1) {
+                    return const SizedBox(height: 15);
+                  } else if (index == 2) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                      child: Text(S.of(context).fromContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                    );
+                  } else {
+                    final contactIndex = index - 3;
+                    final contact = filteredContacts[contactIndex];
+                    
+                    return InviteUserCard(
+                      contact: contact,
+                      onInvite: () {},
+                      onContactSelected: (Contact selectedContact) {},
+                    );
+                  }
+                },
+              ),
+            ),
           ),
         ),
       ),

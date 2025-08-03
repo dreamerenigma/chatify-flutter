@@ -128,15 +128,30 @@ class _SupportCardState extends State<SupportCard> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: Text(
-                                widget.support.name,
-                                style: TextStyle(
-                                  fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                                  fontFamily: 'Helvetica',
-                                  fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    widget.support.name,
+                                    style: TextStyle(
+                                      fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                      fontFamily: 'Helvetica',
+                                      fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    widget.support.surname,
+                                    style: TextStyle(
+                                      fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                      fontFamily: 'Helvetica',
+                                      fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
                             Text(

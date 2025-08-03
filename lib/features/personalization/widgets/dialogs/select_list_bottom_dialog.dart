@@ -1,6 +1,7 @@
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import 'light_dialog.dart';
 
@@ -23,7 +24,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
         Align(
           alignment: Alignment.center,
           child: Text(
-            'Выберите список',
+            S.of(context).selectList,
             style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.normal, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.blackGrey),
           ),
         ),
@@ -36,7 +37,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
           ),
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text('Новый список', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+            child: Text(S.of(context).newList, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
           ),
           splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {},
@@ -48,7 +49,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
           ),
           title: Padding(
             padding: const EdgeInsets.only(left: 10),
-            child: Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+            child: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
           ),
           trailing: Icon(
             isSelected ? Icons.check_circle : Icons.circle_outlined,
@@ -79,7 +80,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
                 side: BorderSide.none,
                 elevation: 2,
               ),
-              child: Text('Готово', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal, color: ChatifyColors.black)),
+              child: Text(S.of(context).ready, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal, color: ChatifyColors.black)),
             ),
           ),
         ),

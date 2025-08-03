@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../checkboxes/custom_checkbox.dart';
 
@@ -14,12 +15,18 @@ class StorageOptionWidget extends StatefulWidget {
 class _StorageOptionWidgetState extends State<StorageOptionWidget> {
   final GetStorage _storage = GetStorage();
   final RxList<bool> selectedOptions = List.generate(4, (index) => true).obs;
-  final List<String> options = ["Фото", "Аудио", "Видео", "Документы"];
+  late List<String> options;
 
   @override
   void initState() {
     super.initState();
     _loadCheckboxState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    options = [S.of(context).photo, S.of(context).audio, S.of(context).video, S.of(context).documents];
   }
 
   void _loadCheckboxState() {
@@ -40,12 +47,12 @@ class _StorageOptionWidgetState extends State<StorageOptionWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Хранилище", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+          Text(S.of(context).storage, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
           const SizedBox(height: 25),
-          Text("Автозагрузка", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+          Text(S.of(context).autoload, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
           const SizedBox(height: 10),
           Text(
-            "Выберите какие медиафайлы будут загружаться автоматически из получаемых вами сообщений.",
+            S.of(context).chooseMediaFilesDownloadedAutoMessages,
             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
           ),
           const SizedBox(height: 12),

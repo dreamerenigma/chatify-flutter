@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../personalization/controllers/colors_controller.dart';
@@ -264,11 +265,11 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Персонализация", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+                Text(S.of(context).personalization, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 25),
-                const Text("Тема", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+                Text(S.of(context).theme, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 10),
-                Text("Цветовая тема приложения", style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300)),
+                Text(S.of(context).appColorTheme, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 10),
                 CompositedTransformTarget(
                   link: _layerThemeLink,
@@ -331,7 +332,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                                   ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    selectedOption == 'light' ? 'Светлая' : selectedOption == 'dark' ? 'Темная' : 'Системная',
+                                    selectedOption == 'light' ? S.of(context).light : selectedOption == 'dark' ? S.of(context).dark : S.of(context).systemTheme,
                                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                                   ),
                                 ],
@@ -349,7 +350,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text("Цвет приложения", style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300)),
+                Text(S.of(context).appColor, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 10),
                 CompositedTransformTarget(
                   link: _layerColorAppLink,
@@ -416,7 +417,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                   ),
                 ),
                 const SizedBox(height: 25),
-                const Text("Обои чата", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+                Text(S.of(context).chatWallpaper, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: GridView.builder(
@@ -530,7 +531,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                           selectedOptions[0] = !selectedOptions[0];
                           _saveCheckboxState();
                         },
-                        child: Text('Рисунки Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                        child: Text(S.of(context).appDrawings, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                       ),
                     ],
                   ),
@@ -555,14 +556,14 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                         mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
                       ),
                       child: Text(
-                        'Сброс',
+                        S.of(context).reset,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(height: 16),
-                Text("Размер шрифта", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+                Text(S.of(context).fontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
                 CompositedTransformTarget(
                   link: _layerFontLink,
                   child: Padding(
@@ -611,7 +612,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                             children: [
                               Obx(() {
                                 return Text(
-                                  fontsController.getFontDescription(FontsController.instance.selectedFont.value),
+                                  fontsController.getFontDescription(context, FontsController.instance.selectedFont.value),
                                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                                 );
                               }),
@@ -627,7 +628,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                     ),
                   ),
                 ),
-                Text("Увеличить или уменьшить размер шрифта можно с помощью клавиш Ctrl +/-", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                Text(S.of(context).increaseOrDecreaseFontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 SizedBox(height: 12),
               ],
             ),

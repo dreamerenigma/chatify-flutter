@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -33,7 +34,7 @@ class TwoStepVerificationScreen extends StatelessWidget {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Двухшаговая проверка', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).twoStepVerification, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -61,13 +62,7 @@ class TwoStepVerificationScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          ChatifyVectors.hiddenPinCode,
-                          width: 100,
-                          height: 100,
-                        ),
-                      ),
+                      child: Center(child: SvgPicture.asset(ChatifyVectors.hiddenPinCode, width: 100, height: 100)),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -76,18 +71,14 @@ class TwoStepVerificationScreen extends StatelessWidget {
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        style: TextStyle(
-                          fontSize: ChatifySizes.fontSizeSm,
-                          fontWeight: FontWeight.normal,
-                          color: ChatifyColors.darkGrey,
-                        ),
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
                         children: [
                           TextSpan(
-                            text: 'Чтобы обеспечить дополнительный уровень безопасности, включите двухшаговую проверку, которая будет требовать PIN при повторной регистрации вашего номера в Chatify. ',
+                            text: S.of(context).extraLayerSecurityTwoStepVerify,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                           ),
                           TextSpan(
-                            text: 'Подробнее',
+                            text: S.of(context).readMore,
                             style: TextStyle(fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                             recognizer: TapGestureRecognizer()..onTap = () {
                               Navigator.push(context, createPageRoute(const HelpCenterScreen()));
@@ -120,7 +111,7 @@ class TwoStepVerificationScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Включить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).turnOn, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
                 ],
               ),
             ),

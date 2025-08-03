@@ -3,6 +3,7 @@ import 'package:chatify/features/welcome/screen/empty_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -20,6 +21,8 @@ void showAddUserBottomSheet(BuildContext context, String userImage, String userN
       children: [
         InkWell(
           onTap: () {},
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -46,21 +49,9 @@ void showAddUserBottomSheet(BuildContext context, String userImage, String userN
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            userName,
-                            style: TextStyle(
-                              fontSize: ChatifySizes.fontSizeMd,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text(userName, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
-                          Text(
-                            phoneNumber,
-                            style: TextStyle(
-                              fontSize: ChatifySizes.fontSizeMd,
-                              color: ChatifyColors.darkGrey,
-                            ),
-                          ),
+                          Text(phoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey)),
                         ],
                       ),
                       CircleAvatar(
@@ -78,11 +69,13 @@ void showAddUserBottomSheet(BuildContext context, String userImage, String userN
         const SizedBox(height: 10),
         InkWell(
           onTap: () async {
-            await Dialogs.showCustomDialog(context: context, message: 'Загрузка...', duration: const Duration(seconds: 2));
+            await Dialogs.showCustomDialog(context: context, message: S.of(context).loading, duration: const Duration(seconds: 2));
             Navigator.push(context, createPageRoute(const EmptyScreen()));
           },
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
           child: Padding(
-            padding: const EdgeInsets.all(22.0),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 22),
             child: Row(
               children: [
                 const CircleAvatar(
@@ -90,8 +83,8 @@ void showAddUserBottomSheet(BuildContext context, String userImage, String userN
                   backgroundColor: ChatifyColors.darkSlate,
                   child: Icon(Icons.add, color: ChatifyColors.white, size: 20),
                 ),
-                const SizedBox(width: 12),
-                Text('Добавить аккаунт', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                const SizedBox(width: 16),
+                Text(S.of(context).addAccount, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ],
             ),
           ),

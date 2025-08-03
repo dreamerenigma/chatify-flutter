@@ -22,7 +22,7 @@ class FullScreenAppBarState extends State<FullScreenAppBar> {
     return AppBar(
       backgroundColor: ChatifyColors.blackGrey,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: ChatifyColors.white),
         onPressed: () {
           Navigator.pop(context);
         },
@@ -47,27 +47,27 @@ class FullScreenAppBarState extends State<FullScreenAppBar> {
               items: [
                 PopupMenuItem(
                   value: 1,
-                  padding: const EdgeInsets.only(left: 16.0, top: 4),
+                  padding: const EdgeInsets.only(left: 16, top: 4),
                   child: Text(S.of(context).change, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
                 PopupMenuItem(
                   value: 2,
-                  padding: const EdgeInsets.only(left: 16.0, top: 4),
+                  padding: const EdgeInsets.only(left: 16, top: 4),
                   child: Text(S.of(context).allMedia, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
                 PopupMenuItem(
                   value: 3,
-                  padding: const EdgeInsets.only(left: 16.0, top: 4),
+                  padding: const EdgeInsets.only(left: 16, top: 4),
                   child: Text(S.of(context).showInChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
                 PopupMenuItem(
                   value: 4,
-                  padding: const EdgeInsets.only(left: 16.0, top: 10, bottom: 10),
+                  padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
                   child: Text(S.of(context).share, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
                 PopupMenuItem(
                   value: 5,
-                  padding: const EdgeInsets.only(left: 16.0, top: 10, bottom: 10),
+                  padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
                   child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
                 PopupMenuItem(
@@ -77,12 +77,12 @@ class FullScreenAppBarState extends State<FullScreenAppBar> {
                 ),
                 PopupMenuItem(
                   value: 7,
-                  padding: const EdgeInsets.only(left: 16.0, top: 10, bottom: 10),
+                  padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
                   child: Text(S.of(context).rotation, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
                 PopupMenuItem(
                   value: 8,
-                  padding: const EdgeInsets.only(left: 16.0, top: 10, bottom: 10),
+                  padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
                   child: Text(S.of(context).delete, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
               ],

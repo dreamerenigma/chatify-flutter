@@ -18,21 +18,21 @@ class NoSoundDialog {
             return AlertDialog(
               backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              title: Text('Без звука', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+              title: Text(S.of(context).noSound, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
               contentPadding: EdgeInsets.zero,
               actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
                     child: Text(
-                      'Другие участиники не увидят, что вы отключили звук чата. Если вас упомянут, вы получите уведомление.',
+                      S.of(context).participantsNotifyMentioned,
                       style: TextStyle(color: ChatifyColors.darkGrey),
                     ),
                   ),
                   RadioListTile<int>(
-                    title: const Text('8 часов'),
+                    title: Text(S.of(context).nineHours),
                     value: 1,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -45,7 +45,7 @@ class NoSoundDialog {
                     contentPadding: const EdgeInsets.only(left: 12),
                   ),
                   RadioListTile<int>(
-                    title: const Text('1 неделя'),
+                    title: Text(S.of(context).oneWeek),
                     value: 5,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -58,7 +58,7 @@ class NoSoundDialog {
                     contentPadding: const EdgeInsets.only(left: 12),
                   ),
                   RadioListTile<int>(
-                    title: const Text('Всегда'),
+                    title: Text(S.of(context).always),
                     value: 60,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),

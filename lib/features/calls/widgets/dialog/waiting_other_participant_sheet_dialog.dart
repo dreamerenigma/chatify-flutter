@@ -1,6 +1,7 @@
 import 'package:chatify/features/calls/widgets/dialog/share_link_sheet_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -21,7 +22,7 @@ void showWaitingParticipantBottomSheetDialog(BuildContext context) {
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text('Ожидание других участников...', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                child: Text(S.of(context).waitingForOtherParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
               ),
             ),
             InkWell(
@@ -42,9 +43,9 @@ void showWaitingParticipantBottomSheetDialog(BuildContext context) {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Поделиться ссылкой', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                          Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
-                          Text('Любой пользователь у которого есть эта ссылка, может присоединиться.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
+                          Text(S.of(context).anyUserLinkCanJoin, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
                         ],
                       ),
                     ),
@@ -65,7 +66,7 @@ void showWaitingParticipantBottomSheetDialog(BuildContext context) {
                       child: const Icon(Icons.person_add_alt_1_rounded, color: ChatifyColors.white),
                     ),
                     const SizedBox(width: 18),
-                    const Text('Добавить участников', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(S.of(context).addParticipants, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -90,45 +89,36 @@ void showVerifyNumberAlertDialog(BuildContext context, String phoneNumber, UserM
 }
 
 void _sendOtp(BuildContext context, String phoneNumber, UserModel user) {
-  log('🚀 Начинаем процесс верификации для $phoneNumber');
-
   FirebaseAuth.instance.verifyPhoneNumber(
     phoneNumber: phoneNumber,
     timeout: const Duration(seconds: 60),
 
     verificationCompleted: (PhoneAuthCredential credential) async {
-      log('🔑 Автоматическая верификация завершена! Начинаем вход...');
       try {
         await FirebaseAuth.instance.signInWithCredential(credential);
-        log('✅ Вход успешен!');
 
         Navigator.of(context).pop();
 
         Navigator.push(context, createPageRoute(VerifyPhoneNumberScreen(verificationId: '', phoneNumber: phoneNumber, user: user)));
       } catch (e) {
-        log('❌ Ошибка при автоматической верификации: $e');
         Navigator.of(context).pop();
       }
     },
 
     verificationFailed: (FirebaseAuthException e) {
-      log('❌ Ошибка верификации: ${e.message}');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка верификации: ${e.message}'), backgroundColor: ChatifyColors.red),
+        SnackBar(content: Text('${S.of(context).verificationError}: ${e.message}'), backgroundColor: ChatifyColors.red),
       );
       Navigator.of(context).pop();
     },
 
     codeSent: (String verificationId, int? resendToken) async {
-      log('📩 Код отправлен на $phoneNumber. verificationId: $verificationId');
-
       Navigator.of(context).pop();
 
       Navigator.push(context, createPageRoute(VerifyPhoneNumberScreen(verificationId: verificationId, phoneNumber: phoneNumber, user: user)));
     },
 
     codeAutoRetrievalTimeout: (String verificationId) {
-      log('⌛ Тайм-аут автоматического получения: $verificationId');
       Navigator.of(context).pop();
     },
   );

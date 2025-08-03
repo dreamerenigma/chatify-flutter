@@ -55,7 +55,7 @@ class LoginScreenState extends State<LoginScreen> {
     try {
       await audioPlayer.play(AssetSource(ChatifySounds.clickButton));
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}:\n$e');
     }
   }
 
@@ -88,7 +88,7 @@ class LoginScreenState extends State<LoginScreen> {
       if (isOffline) {
         Dialogs.showSnackbar(context, S.of(context).checkInternet);
       } else {
-        log('\nError signing in with Google: $e');
+        log('\n${S.of(context).errorSigningInWithGoogle}: $e');
       }
     });
   }
@@ -123,7 +123,7 @@ class LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTooltip(
-                    message: 'Закрыть',
+                    message: S.of(context).close,
                     horizontalOffset: -35,
                     verticalOffset: 10,
                     child: MouseRegion(

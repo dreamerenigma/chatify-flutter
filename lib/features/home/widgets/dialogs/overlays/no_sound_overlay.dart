@@ -1,26 +1,25 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_sizes.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class NoSoundOverlayEntry {
   static OverlayEntry createNoSoundOverlayEntry(
+    BuildContext context,
     LayerLink soundsLink,
     String selectedOption,
     VoidCallback onOptionTap,
     bool isMessages, {
     required Function(String) onSoundSelected,
     required String overlayType,
-    required OverlayEntry overlayEntry,
   }) {
-    List<String> noSoundOptions = ['На 8 часов', 'На 1 неделю', 'Всегда'];
+    late OverlayEntry entry;
+    List<String> noSoundOptions = [S.of(context).forNineHours, S.of(context).forOneWeek, S.of(context).always];
 
-    log('No sound options: $noSoundOptions');
-
-    return OverlayEntry(
+    entry = OverlayEntry(
       builder: (context) {
         return Stack(
           children: [
@@ -53,19 +52,24 @@ class NoSoundOverlayEntry {
                         SizedBox(height: 4),
                         if (selectedOption.isEmpty)
                         ...noSoundOptions.map((label) {
-                          log('Rendering option: $label');
                           return _buildOption(
                             context: context,
                             label: label,
                             isSelected: selectedOption == label,
                             onTap: () {
                               onOptionTap();
-                              log('Selected sound: $label');
                               onSoundSelected(label);
                             },
                           );
                         }),
-                        if (selectedOption.isNotEmpty) _buildSelectedOption(context, selectedOption, overlayEntry),
+                        if (selectedOption.isNotEmpty)
+                          _buildSelectedOption(
+                            context,
+                            selectedOption, () {
+                              entry.remove();
+                              onSoundSelected('');
+                            },
+                          ),
                         SizedBox(height: 2),
                       ],
                     ),
@@ -77,6 +81,8 @@ class NoSoundOverlayEntry {
         );
       },
     );
+
+    return entry;
   }
 }
 
@@ -121,17 +127,17 @@ Widget _buildOption({required BuildContext context, required String label, requi
   );
 }
 
-Widget _buildSelectedOption(BuildContext context, String selectedOption, OverlayEntry? overlayEntry) {
-  String displayText = "Без звука";
+Widget _buildSelectedOption(BuildContext context, String selectedOption, VoidCallback onReset,) {
+  String displayText = S.of(context).noSound;
 
-  if (selectedOption == 'На 8 часов') {
+  if (selectedOption == S.of(context).forNineHours) {
     DateTime endTime = DateTime.now().add(Duration(hours: 8));
-    displayText = "Без звука до ${_formatDate(endTime)}";
-  } else if (selectedOption == 'На 1 неделю') {
+    displayText = "${S.of(context).noSoundUntil} ${_formatDate(endTime)}";
+  } else if (selectedOption == S.of(context).forOneWeek) {
     DateTime endTime = DateTime.now().add(Duration(days: 7));
-    displayText = "Без звука до ${_formatDate(endTime)}";
-  } else if (selectedOption == 'Всегда') {
-    displayText = "Всегда без звука";
+    displayText = "${S.of(context).noSoundUntil} ${_formatDate(endTime)}";
+  } else if (selectedOption == S.of(context).noSound) {
+    displayText = S.of(context).alwaysSilent;
   }
 
   return Column(
@@ -143,19 +149,12 @@ Widget _buildSelectedOption(BuildContext context, String selectedOption, Overlay
       ),
       Divider(),
       GestureDetector(
-        onTap: () {
-          if (overlayEntry != null) {
-            overlayEntry.remove();
-            selectedOption = '';
-            log('Sound enabled');
-          }
-        },
-        child: Text("Включить звук", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+        onTap: onReset,
+        child: Text(S.of(context).turnOnSound, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
       ),
     ],
   );
 }
-
 
 String _formatDate(DateTime dateTime) {
   return DateFormat('dd.MM.yyyy HH:mm').format(dateTime);

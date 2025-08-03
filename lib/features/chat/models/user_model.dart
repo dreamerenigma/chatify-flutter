@@ -24,6 +24,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
   late String pushToken;
   late String email;
   late bool isTyping;
+  late String role;
 
   UserModel({
     required this.id,
@@ -39,6 +40,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
     required this.pushToken,
     required this.email,
     required this.isTyping,
+    required this.role,
   });
 
   UserModel copyWith({
@@ -55,6 +57,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
     String? pushToken,
     String? email,
     bool? isTyping,
+    String? role,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -70,6 +73,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
       pushToken: pushToken ?? this.pushToken,
       email: email ?? this.email,
       isTyping: isTyping ?? this.isTyping,
+      role: role ?? this.role,
     );
   }
 
@@ -89,6 +93,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
       pushToken: data['push_token'] ?? '',
       email: data['email'] ?? '',
       isTyping: data['is_typing'] ?? false,
+      role: data['role'] ?? 'User',
     );
   }
 
@@ -106,6 +111,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
     pushToken = json['push_token'] ?? '';
     email = json['email'] ?? '';
     isTyping = json['is_typing'] ?? false;
+    role = json['role'] ?? 'User';
   }
 
   Map<String, dynamic> toJson() {
@@ -123,6 +129,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
       'push_token': pushToken,
       'email': email,
       'is_typing': isTyping,
+      'role': role,
     };
   }
 

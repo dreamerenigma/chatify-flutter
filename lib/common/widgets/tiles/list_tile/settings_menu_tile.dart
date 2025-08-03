@@ -89,9 +89,9 @@ class SettingsMenuTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: titleFontSize)),
+                      Text(title, style: TextStyle(fontSize: titleFontSize)),
                       if (subTitle.isNotEmpty)
-                      Text(subTitle, style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: subTitleFontSize, color: ChatifyColors.darkGrey)),
+                      Text(subTitle, style: TextStyle(fontSize: subTitleFontSize, color: ChatifyColors.darkGrey)),
                     ],
                   ),
                 ),

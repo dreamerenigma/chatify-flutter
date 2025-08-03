@@ -40,8 +40,8 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
               itemCount: favoriteMessages.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text('Сообщение ${index + 1}'),
-                  subtitle: Text('Текст сообщения'),
+                  title: Text('${S.of(context).message} ${index + 1}'),
+                  subtitle: Text(S.of(context).messageText),
                 );
               },
             )
@@ -53,10 +53,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      S.of(context).noResults,
-                      style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
-                    ),
+                    Text(S.of(context).noResults, style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black)),
                   ],
                 ),
               ),

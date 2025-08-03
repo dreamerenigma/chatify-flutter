@@ -1,8 +1,8 @@
-import 'dart:developer';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
@@ -16,7 +16,7 @@ void showCallsNumberBottomSheet(BuildContext context, String enteredNumber) {
       children: [
         InkWell(
           onTap: () {
-            _editPhoneNumber(enteredNumber);
+            _editPhoneNumber(context, enteredNumber);
           },
           splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
           highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
@@ -34,20 +34,11 @@ void showCallsNumberBottomSheet(BuildContext context, String enteredNumber) {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text( 'Позвонить по номеру: ',
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal),
-                              ),
-                              Text(enteredNumber,
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal),
-                              ),
+                              Text(S.of(context).callsNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                              Text(enteredNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                             ],
                           ),
-                          Text('Позвонить через сотового оператора',
-                            style: TextStyle(
-                              fontSize: ChatifySizes.fontSizeSm,
-                              color: ChatifyColors.darkGrey,
-                            ),
-                          ),
+                          Text(S.of(context).callViaMobileOperator, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                         ],
                       ),
                       Icon( Icons.phone, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
@@ -63,7 +54,7 @@ void showCallsNumberBottomSheet(BuildContext context, String enteredNumber) {
   );
 }
 
-Future<void> _editPhoneNumber(String phoneNumber) async {
+Future<void> _editPhoneNumber(BuildContext context, String phoneNumber) async {
   var status = await Permission.phone.status;
   if (!status.isGranted) {
     status = await Permission.phone.request();
@@ -75,11 +66,9 @@ Future<void> _editPhoneNumber(String phoneNumber) async {
     try {
       await intent.launch();
     } catch (e) {
-      log('Error launching intent: $e');
-      throw 'Could not launch $phoneNumber';
+      throw '${S.of(context).couldNotLaunch} $phoneNumber';
     }
   } else {
-    log('Phone call permission not granted');
-    throw 'Phone call permission not granted';
+    throw S.of(context).phoneCallPermissionNotGranted;
   }
 }

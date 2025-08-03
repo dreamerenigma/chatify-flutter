@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../widgets/dialogs/custom_radio_list_tile.dart';
 import '../widgets/dialogs/light_dialog.dart';
 
@@ -35,6 +36,21 @@ class SeasonsController extends GetxController {
         return 'Зима';
       default:
         return 'По умолчанию';
+    }
+  }
+
+  String getSeasonalIcon() {
+    switch (selectedSeason.value) {
+      case 'winter':
+        return ChatifyVectors.winter;
+      case 'spring':
+        return ChatifyVectors.spring;
+      case 'summer':
+        return ChatifyVectors.summer;
+      case 'autumn':
+        return ChatifyVectors.autumn;
+      default:
+        return '';
     }
   }
 
@@ -201,10 +217,7 @@ class SeasonsController extends GetxController {
                 ),
                 child: Text(
                   S.of(context).ok,
-                  style: TextStyle(
-                    color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    fontSize: ChatifySizes.fontSizeSm,
-                  ),
+                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm),
                 ),
               ),
             ],

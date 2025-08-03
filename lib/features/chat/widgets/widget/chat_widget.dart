@@ -211,7 +211,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
       });
       APIs.updateTypingStatus(widget.user.id, false);
     } else {
-      Dialogs.showSnackbar(context, S.of(context).pleaseEnterText);
+      Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
     }
   }
 

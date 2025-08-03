@@ -4,6 +4,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
@@ -61,14 +62,14 @@ void showImageMoreDialog(BuildContext context, Offset position) {
                           context: context,
                           onTap: () {},
                           icon: SvgPicture.asset(ChatifyVectors.save,width: 15, height: 15, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                          text: 'Сохранить как...',
+                          text: S.of(context).saveAs,
                           padding: const EdgeInsets.only(left: 13, right: 12, top: 6, bottom: 6),
                         ),
                         buildMenuItem(
                           context: context,
                           onTap: () {},
                           icon: const Icon(FluentIcons.open_48_regular, size: 20),
-                          text: "Открыть в другом приложении",
+                          text: S.of(context).openInAnotherApp,
                           padding: const EdgeInsets.only(left: 10, right: 12, top: 6, bottom: 6),
                         ),
                       ],

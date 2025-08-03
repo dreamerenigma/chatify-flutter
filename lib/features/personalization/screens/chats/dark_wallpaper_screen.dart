@@ -1,5 +1,6 @@
 import 'package:chatify/features/personalization/screens/chats/view_wallpaper_screen.dart';
 import 'package:flutter/material.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -34,7 +35,7 @@ class DarkWallpaperScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Тёмные', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).darkWallpaper, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       ),
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
@@ -54,12 +55,7 @@ class DarkWallpaperScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 height: 150,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(imagePaths[index]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(imagePaths[index]), fit: BoxFit.cover)),
               ),
             );
           },

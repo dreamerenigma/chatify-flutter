@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../utils/constants/app_sizes.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
@@ -13,11 +13,13 @@ class NewCommunityCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Material(
-      color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
+      color: ChatifyColors.transparent,
       child: InkWell(
         onTap: onTap,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         child: Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           child: Row(
             children: [
               Container(
@@ -26,42 +28,30 @@ class NewCommunityCard extends StatelessWidget {
                   clipBehavior: Clip.none,
                   children: [
                     Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(color: ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.groups, size: 30, color: ChatifyColors.white),
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, borderRadius: BorderRadius.circular(12)),
+                      child: const Icon(Icons.groups, size: 36, color: ChatifyColors.white),
                     ),
                     Positioned(
-                      bottom: -5,
+                      bottom: -3,
                       right: -5,
                       child: Container(
-                        width: 30,
-                        height: 30,
+                        width: 25,
+                        height: 25,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          border: Border.all(
-                            color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
-                            width: 2.0,
-                          ),
+                          border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                         ),
-                        child: const Center(
-                          child: Icon(Icons.add, color: Colors.white),
-                        ),
+                        child: const Center(child: Icon(Icons.add, color: ChatifyColors.black, size: 17)),
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 16),
-              Text(
-                'Новое сообщество',
-                style: TextStyle(
-                  fontSize: ChatifySizes.fontSizeMd,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(S.of(context).newCommunity, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             ],
           ),
         ),

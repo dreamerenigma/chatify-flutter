@@ -282,7 +282,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                                 duration: const Duration(milliseconds: 600),
                                 curve: Curves.easeInCubic,
                                 child: Text(
-                                  'данные контакта',
+                                  S.of(context).contactDetails,
                                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
@@ -293,7 +293,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                                 duration: const Duration(milliseconds: 600),
                                 curve: Curves.easeInCubic,
                                 child: Text(
-                                  isOnline ? S.of(context).online : isTyping ? 'Печатает...' : lastActiveText,
+                                  isOnline ? S.of(context).online : isTyping ? S.of(context).printing : lastActiveText,
                                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,

@@ -11,6 +11,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import '../../../api/apis.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../community/models/community_model.dart';
 
 class PhotoCommunityController extends GetxController {
@@ -34,7 +35,7 @@ class PhotoCommunityController extends GetxController {
         sharedImagePath.value = value.first.path;
       }
     }, onError: (err) {
-      log("getMediaStream error: $err");
+      log('${S.of(Get.context!).getMediaStreamError}: $err');
     });
 
     ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
@@ -48,7 +49,7 @@ class PhotoCommunityController extends GetxController {
     this.community = community;
   }
 
-  void onImagePicked(String? imagePath) async {
+  void onImagePicked(BuildContext context, String? imagePath) async {
     if (imagePath != null) {
       image.value = imagePath;
       _saveImageToStorage(imagePath);
@@ -57,12 +58,11 @@ class PhotoCommunityController extends GetxController {
         File imageFile = File(imagePath);
         if (community != null) {
           await APIs.updateCommunityPicture(community!.id, imageFile);
-          log('Community image updated successfully in database');
         } else {
-          log('Community is null, cannot update image');
+          log(S.of(context).communityNullCannotUpdateImage);
         }
       } catch (e) {
-        log('Failed to update community image in database: $e');
+        log('${S.of(context).failedUpdateCommunityImageDatabase}: $e');
       }
     } else {
       image.value = '';
@@ -72,15 +72,14 @@ class PhotoCommunityController extends GetxController {
           String? currentImageUrl = await _getCurrentImageUrlForCommunity(community!.id);
           if (currentImageUrl != null) {
             await APIs.deleteCommunityPicture(community!.id, currentImageUrl);
-            log('Community image cleared successfully in database');
           } else {
-            log('No image URL to delete');
+            log(S.of(context).noImageUrlDelete);
           }
         } else {
-          log('Community is null, cannot clear image');
+          log(S.of(context).communityNullCannotClearImage);
         }
       } catch (e) {
-        log('Failed to clear community image in database: $e');
+        log('${S.of(context).failedClearCommunityImageDatabase}: $e');
       }
     }
   }
@@ -90,7 +89,6 @@ class PhotoCommunityController extends GetxController {
       DocumentSnapshot doc = await FirebaseFirestore.instance.collection('Community').doc(communityId).get();
       return doc['image'] as String?;
     } catch (e) {
-      log('Error fetching current image URL: $e');
       return null;
     }
   }
@@ -106,26 +104,34 @@ class PhotoCommunityController extends GetxController {
       final url = html.Url.createObjectUrlFromBlob(blob);
       html.AnchorElement(href: url)..download = 'shared_image.png'..click();
       html.Url.revokeObjectUrl(url);
-      log('Image shared on web.');
     } else {
       final documentDirectory = await getApplicationDocumentsDirectory();
       final file = File('${documentDirectory.path}/shared_image.png');
       file.writeAsBytesSync(response.bodyBytes);
 
       final box = context.findRenderObject() as RenderBox?;
-      final xFile = XFile(file.path);
-      Share.shareXFiles([xFile], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+      final params = ShareParams(
+        text: S.of(context).herePicture,
+        files: [XFile(file.path)],
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      );
+
+      final result = await SharePlus.instance.share(params);
+
+      if (result.status == ShareResultStatus.success) {
+        log(S.of(context).imageSentSuccess);
+      } else if (result.status == ShareResultStatus.dismissed) {
+        log(S.of(context).userCancelSubmission);
+      }
     }
   }
 
   void _saveImageToStorage(String image) {
-    log('Saving image to GetStorage: $image');
     storage.write('image', image);
   }
 
   void _loadImageFromStorage() {
     String? savedImage = storage.read('image');
-    log('Loaded image from GetStorage: $savedImage');
     if (savedImage != null && savedImage.isNotEmpty) {
       image.value = savedImage;
     }

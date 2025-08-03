@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/get.dart';
+import '../../../../../../generated/l10n/l10n.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_sizes.dart';
 import '../../../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -17,10 +18,10 @@ OverlayEntry createColorOverlayEntry({
   void handleColorChange(String colorKey) {
     showConfirmationDialog(
       context: context,
-      title: 'Сменить цветовую схему?',
-      description: 'Это действие перезапустит приложение. Продолжить?',
-      confirmText: 'ОК',
-      cancelText: 'Отмена',
+      title: S.of(context).changeColorScheme,
+      description: S.of(context).actionWillRestartApp,
+      confirmText: S.of(context).ok,
+      cancelText: S.of(context).cancel,
       onConfirm: () async {
         onThemeSelected(colorKey);
         hideOverlay();
@@ -33,11 +34,11 @@ OverlayEntry createColorOverlayEntry({
   final defaultColor = Get.isDarkMode ? ChatifyColors.white : ChatifyColors.black;
 
   final colorOptions = {
-    'default': {'label': 'По умолчанию', 'color': defaultColor},
-    'blue': {'label': 'Синий', 'color': ChatifyColors.blue},
-    'red': {'label': 'Красный', 'color': ChatifyColors.red},
-    'green': {'label': 'Зеленый', 'color': ChatifyColors.green},
-    'orange': {'label': 'Оранжевый', 'color': ChatifyColors.orange},
+    'default': {'label': S.of(context).system, 'color': defaultColor},
+    'blue': {'label': S.of(context).blueColor, 'color': ChatifyColors.blue},
+    'red': {'label': S.of(context).redColor, 'color': ChatifyColors.red},
+    'green': {'label': S.of(context).greenColor, 'color': ChatifyColors.green},
+    'orange': {'label': S.of(context).orangeColor, 'color': ChatifyColors.orange},
   };
 
   return OverlayEntry(

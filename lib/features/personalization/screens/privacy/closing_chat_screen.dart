@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/closed_chats_cleared_opened_dialog.dart';
@@ -35,7 +36,7 @@ class ClosingChatScreenState extends State<ClosingChatScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Закрытие чата', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).closingChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
           ),
@@ -44,16 +45,7 @@ class ClosingChatScreenState extends State<ClosingChatScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -88,22 +80,18 @@ class ClosingChatScreenState extends State<ClosingChatScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: Center(
-                      child: Text(
-                        'Закрытые чаты не отображаются в общем списке',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500),
-                      ),
+                      child: Text(S.of(context).closedChatsDisplayedGeneralList, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     child: RichText(
                       text: TextSpan(
-                        text: 'Если у вас есть закрытые чаты, потяните список чатов вниз или введите свой секретный код в строке поиска, чтобы найти их. ',
+                        text: S.of(context).youHavePrivateChatsListEnterSearch,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                         children: [
                           TextSpan(
-                            text: 'Подробнее',
+                            text: S.of(context).readMore,
                             style: TextStyle(
                               fontSize: ChatifySizes.fontSizeSm,
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -129,11 +117,11 @@ class ClosingChatScreenState extends State<ClosingChatScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Открыть и очистить все закрытые чаты',
+                            S.of(context).openClearAllClosedChats,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal),
                           ),
                           Text(
-                            'Если вы забыли свой секретный код, его можно сбросить. При этом сообщения, фото и видео в закрытых чатах будут удалены, а сами чаты будут открыты.',
+                            S.of(context).youForgottenYourSecretCode,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey, height: 1),
                           ),
                         ],

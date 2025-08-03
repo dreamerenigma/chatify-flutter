@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:camera/camera.dart';
 import 'package:camera_windows/camera_windows.dart';
@@ -11,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:icon_forest/iconoir.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -54,16 +54,15 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
   final LayerLink speakerDeviceNotifyLink = LayerLink();
   late List<CameraDescription> cameras;
   CameraController? _controller;
-  ValueNotifier<String> selectedCamera = ValueNotifier<String>("Устройство по умолчанию");
-  ValueNotifier<String> selectedMicrophone = ValueNotifier<String>("Устройство по умолчанию");
-  ValueNotifier<String> selectedSpeaker = ValueNotifier<String>("Устройство по умолчанию");
+  late ValueNotifier<String> selectedCamera;
+  late ValueNotifier<String> selectedMicrophone;
+  late ValueNotifier<String> selectedSpeaker;
+  late String buttonText;
   Timer? _timer;
-  String buttonText = 'Воспроизвести звук для проверки';
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final alreadyConfirmed = box.read('microphoneConfirmed') ?? false;
 
@@ -72,8 +71,8 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
           width: 555,
           context: context,
           confirmButton: false,
-          title: 'Разрешить Chatify доступ к микрофону?',
-          description: 'Позже вы можете изменить этот параметр, перейдя в раздел "Настройки".',
+          title: S.of(context).allowAppAccessYourMicro,
+          description: S.of(context).changeSettingLaterGoing,
           onConfirm: () {},
           showTopTitleDuplicate: true,
         );
@@ -89,8 +88,8 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
           width: 555,
           context: context,
           confirmButton: false,
-          title: 'Разрешить Chatify доступ к камере?',
-          description: 'Вы всегда можете изменить это в настройках.',
+          title: S.of(context).allowAppAccessCamera,
+          description: S.of(context).alwaysChangeSettings,
           onConfirm: () {},
           showTopTitleDuplicate: true,
         );
@@ -108,6 +107,15 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
     _loadSelectedCamera();
     _loadSelectedMicrophone();
     _loadSelectedSpeaker();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedCamera = ValueNotifier<String>(S.of(context).defaultDevice);
+    selectedMicrophone = ValueNotifier<String>(S.of(context).defaultDevice);
+    selectedSpeaker = ValueNotifier<String>(S.of(context).defaultDevice);
+    buttonText = S.of(context).playSoundCheck;
   }
 
   @override
@@ -141,7 +149,6 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
         });
       }
     } catch (e) {
-      log('Error initializing camera: $e');
       setState(() {
         isCameraAvailable = false;
       });
@@ -161,7 +168,6 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
         });
       }
     } catch (e) {
-      log('Error initializing camera: $e');
       if (mounted) {
         setState(() {
           isCameraAvailable = false;
@@ -229,7 +235,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
 
   void _toggleText() {
     setState(() {
-      buttonText = buttonText == 'Воспроизвести звук для проверки' ? 'Прекратить воспроизведение звука' : 'Воспроизвести звук для проверки';
+      buttonText = buttonText == S.of(context).playSoundCheck ? S.of(context).stopPlayingSound : S.of(context).playSoundCheck;
     });
   }
 
@@ -278,7 +284,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Видео и аудио", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+                Text(S.of(context).videoAudio, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 15),
                 if (!isCameraAvailable)
                   Container(
@@ -300,13 +306,13 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: 12, right: 12, top: 12),
-                                child: Text("Разрешения камеры", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                                child: Text(S.of(context).cameraPermissions, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                               ),
                               SizedBox(height: 5),
                               Padding(
                                 padding: EdgeInsets.only(left: 12, right: 12),
                                 child: Text(
-                                  "Разрешения камеры отключены в настройках Windows. Включите разрешения, чтобы участвовать в видеозвонках.",
+                                  S.of(context).cameraPermissionsDisabledWindowsSettings,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                 ),
                               ),
@@ -324,7 +330,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                       child: Text(
-                                        "Настройки Windows: камера",
+                                        S.of(context).windowsSettingsCamera,
                                         style: TextStyle(
                                           fontSize: ChatifySizes.fontSizeSm,
                                           fontWeight: FontWeight.w400,
@@ -342,7 +348,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                     ),
                   ),
                 if (!isCameraAvailable) const SizedBox(height: 10),
-                const Text("Видео", style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300)),
+                Text(S.of(context).video, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 10),
                 CompositedTransformTarget(
                   link: cameraDeviceNotifyLink,
@@ -391,7 +397,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                 });
                               },
                               child: CustomTooltip(
-                                message: selectedDevice == "Устройство по умолчанию" ? "Устройство по умолчанию" : selectedDevice,
+                                message: selectedDevice == S.of(context).defaultDevice ? S.of(context).defaultDevice : selectedDevice,
                                 verticalOffset: -80,
                                 disableOnTap: _isTappedTest,
                                 disableTooltipOnLongPress: true,
@@ -413,7 +419,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                         children: [
                                           Iconoir(Iconoir.camera, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 20, height: 20),
                                           SizedBox(width: 8),
-                                          Text(FileUtil.cleanDeviceName(_controller?.description.name ?? 'Неизвестное устройство'), style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                          Text(FileUtil.cleanDeviceName(_controller?.description.name ?? S.of(context).unknownDevice), style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                         ],
                                       ),
                                       AnimatedContainer(
@@ -429,7 +435,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                           )
                         : Padding(
                             padding: const EdgeInsets.only(left: 5),
-                            child: Text("Камера не найдена", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
+                            child: Text(S.of(context).cameraNotFound, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                         );
                       },
                     ),
@@ -457,7 +463,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                             children: [
                               Icon(Icons.warning_amber_rounded, size: 20, color: ChatifyColors.black),
                               Text(
-                                "Камера не найдена",
+                                S.of(context).cameraNotFound,
                                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: ChatifyColors.black),
                                 textAlign: TextAlign.center,
                               ),
@@ -468,7 +474,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                     ),
                 ),
                 const SizedBox(height: 20),
-                Text("Микрофон", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+                Text(S.of(context).microphone, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
                 CompositedTransformTarget(
                   link: microphoneDeviceNotifyLink,
                   child: GestureDetector(
@@ -521,7 +527,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                               });
                             },
                             child: CustomTooltip(
-                              message: selectedDevice == "Устройство по умолчанию" ? "Устройство по умолчанию" : selectedDevice,
+                              message: selectedDevice == S.of(context).defaultDevice ? S.of(context).defaultDevice : selectedDevice,
                               verticalOffset: -80,
                               disableOnTap: _isTappedTest,
                               disableTooltipOnLongPress: true,
@@ -548,7 +554,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                           child: SizedBox(
                                             width: 180,
                                             child: Text(
-                                              selectedDevice == "Устройство по умолчанию" ? "Устройство по умолчанию" : selectedDevice,
+                                              selectedDevice == S.of(context).defaultDevice ? S.of(context).defaultDevice : selectedDevice,
                                               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                               maxLines: 1,
                                             ),
@@ -571,12 +577,12 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                     ),
                   ),
                 ),
-                Text("Тест", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                Text(S.of(context).test, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 5),
                 Row(
                   children: [
                     CustomTooltip(
-                      message: 'Нажмите, чтобы проверить, слышат ли вас другие.',
+                      message: S.of(context).clickCheckOthers,
                       verticalOffset: -80,
                       disableOnTap: _isTappedTest,
                       disableTooltipOnLongPress: true,
@@ -625,7 +631,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                             children: [
                               Text(Formatter.formatTime(_remainingTime), style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                               SizedBox(width: 10),
-                              Text('Идет запись с микрофона', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                              Text(S.of(context).recordMicrophoneInProgress, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                             ],
                           ),
                       ],
@@ -634,13 +640,13 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                     Row(
                       children: [
                         SizedBox(width: 8),
-                        Text('Записать с микрофона', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                        Text(S.of(context).recordFromMicrophone, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                       ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                Text("Динамики", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+                Text(S.of(context).speakers, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
                 CompositedTransformTarget(
                   link: speakerDeviceNotifyLink,
                   child: GestureDetector(
@@ -687,7 +693,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                               });
                             },
                             child: CustomTooltip(
-                              message: selectedDevice == "Устройство по умолчанию" ? "Устройство по умолчанию" : selectedDevice,
+                              message: selectedDevice == S.of(context).defaultDevice ? S.of(context).defaultDevice : selectedDevice,
                               verticalOffset: -80,
                               disableOnTap: _isTappedTest,
                               child: Container(
@@ -713,7 +719,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                           child: SizedBox(
                                             width: 180,
                                             child: Text(
-                                              selectedDevice == "Устройство по умолчанию" ? "Устройство по умолчанию" : selectedDevice,
+                                              selectedDevice == S.of(context).defaultDevice ? S.of(context).defaultDevice : selectedDevice,
                                               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                               maxLines: 1,
                                             ),
@@ -756,7 +762,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                     });
                   },
                   child: CustomTooltip(
-                    message: 'Нажмите, чтобы проверить, услышите ли вы других пользователей.',
+                    message: S.of(context).clickCheckHearOtherUsers,
                     verticalOffset: -95,
                     disableOnTap: _isTappedTest,
                     child: Container(

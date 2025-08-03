@@ -1,12 +1,14 @@
-import 'dart:developer';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/features/group/models/group_model.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
+import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/urls/url_utils.dart';
 import '../../../../chat/models/user_model.dart';
+import '../../../../community/models/community_model.dart';
 import '../../../../community/widgets/info/encryption_info_block.dart';
 import '../../../../home/widgets/dialogs/overlays/contacting_support_overlay.dart';
 import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -16,8 +18,9 @@ class EncryptionOptionWidget extends StatefulWidget {
   final UserModel? user;
   final GroupModel? group;
   final SupportAppModel? support;
+  final CommunityModel? community;
 
-  const EncryptionOptionWidget({super.key, this.user, this.group, this.support});
+  const EncryptionOptionWidget({super.key, this.user, this.group, this.support, this.community});
 
   @override
   State<EncryptionOptionWidget> createState() => _EncryptionOptionWidgetState();
@@ -38,7 +41,7 @@ class _EncryptionOptionWidgetState extends State<EncryptionOptionWidget> {
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
           child: Text(
-            widget.support != null ? 'Безопасность' : 'Шифрование',
+            widget.support != null ? S.of(context).security : S.of(context).encryption,
             style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w500),
           ),
         ),
@@ -60,7 +63,7 @@ class _EncryptionOptionWidgetState extends State<EncryptionOptionWidget> {
                   child: Column(
                     children: [
                       if (widget.group != null || widget.support != null) _buildEncryptionChat(),
-                      if (widget.user != null) _buildEncryptionGroup(),
+                      if (widget.user != null || widget.community != null) _buildEncryptionGroup(),
                     ],
                   ),
                 ),
@@ -82,9 +85,9 @@ class _EncryptionOptionWidgetState extends State<EncryptionOptionWidget> {
             text: TextSpan(
               style: TextStyle(fontSize: ChatifySizes.fontSizeLm),
               children: [
-                TextSpan(text: 'Вы общаетесь с официальным аккаунтом Службы поддержки Chatify. ', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                TextSpan(text: S.of(context).youCommunicatingOfficialAppSupport, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 TextSpan(
-                  text: 'Подробнее',
+                  text: S.of(context).readMore,
                   style: TextStyle(
                     color: colorsController.getColor(colorsController.selectedColorScheme.value),
                     fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, decoration: isHoveredSecurity ? TextDecoration.none : TextDecoration.underline,
@@ -114,7 +117,7 @@ class _EncryptionOptionWidgetState extends State<EncryptionOptionWidget> {
           onExit: (_) => setState(() => isHovered = false),
           child: RichText(
             text: TextSpan(
-              text: 'Подробнее',
+              text: S.of(context).readMore,
               style: TextStyle(
                 fontSize: ChatifySizes.fontSizeSm,
                 fontWeight: FontWeight.w300,
@@ -122,12 +125,7 @@ class _EncryptionOptionWidgetState extends State<EncryptionOptionWidget> {
                 decoration: isHovered ? TextDecoration.none : TextDecoration.underline,
               ),
               recognizer: TapGestureRecognizer()..onTap = () async {
-                final Uri uri = Uri.parse('https://faq.chatify.ru/?locale=ru_RU&eea=0');
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri);
-                } else {
-                  log("Не удалось открыть ссылку");
-                }
+                await UrlUtils.launchURL(AppLinks.helpCenter);
               },
             ),
           ),

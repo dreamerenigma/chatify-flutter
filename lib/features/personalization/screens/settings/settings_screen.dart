@@ -1,21 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/access_keys_screen.dart';
 import 'package:chatify/features/personalization/screens/account/email_address_screen.dart';
-import 'package:chatify/features/personalization/screens/lists/lists_screen.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
-import '../../../../api/apis.dart';
-import '../../../../common/widgets/tiles/list_tile/settings_menu_tile.dart';
+import '../../../../data/settings_data.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
@@ -23,16 +21,9 @@ import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
 import '../../controllers/language_controller.dart';
 import '../../widgets/dialogs/add_user_bottom_dialog.dart';
+import '../../widgets/dialogs/center_accounts_bottom_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
-import '../data_storage/data_storage_screen.dart';
-import '../favorite/favorite_screen.dart';
-import '../help/help_screen.dart';
-import '../invite_friend/invite_friend_screen.dart';
-import '../notifications/notifications_screen.dart';
-import '../privacy/privacy_screen.dart';
 import '../profile/profile_screen.dart';
-import '../account/account_screen.dart';
-import '../chats/chats_screen.dart';
 import '../qr_code/qr_code_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -51,6 +42,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   FocusNode searchFocusNode = FocusNode();
   bool isSearching = false;
   bool showFirst = true;
+  bool showSecond = true;
 
   List<String> settingsOptions = [
     'Account',
@@ -60,8 +52,10 @@ class SettingsScreenState extends State<SettingsScreen> {
     'Chats',
     'Notifications',
     'Data storage',
+    'Special features',
     'Application language',
     'Help',
+    'Report a bug',
     'Invite friend',
   ];
   List<String> filteredSettingsOptions = [];
@@ -94,8 +88,11 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadState() async {
     bool emailConfirmVisible = box.read('email_confirm_visible') ?? true;
+    bool secondBlockVisible = box.read('create_access_key') ?? true;
+
     setState(() {
       showFirst = emailConfirmVisible;
+      showSecond = secondBlockVisible;
     });
   }
 
@@ -103,11 +100,21 @@ class SettingsScreenState extends State<SettingsScreen> {
     await box.write('email_confirm_visible', false);
     setState(() {
       showFirst = false;
+      showSecond = true;
+    });
+  }
+
+  Future<void> _hideSecond() async {
+    await box.write('create_access_key', false);
+    setState(() {
+      showSecond = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final settingsMap = getSettingsOptions(languageController);
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -147,19 +154,11 @@ class SettingsScreenState extends State<SettingsScreen> {
         body: ScrollConfiguration(
           behavior: NoGlowScrollBehavior(),
           child: ScrollbarTheme(
-            data: ScrollbarThemeData(
-              thumbColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.dragged)) {
-                    return ChatifyColors.darkerGrey;
-                  }
-                  return ChatifyColors.darkerGrey;
-                },
-              ),
-            ),
+            data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
             child: Scrollbar(
               thickness: 4,
               thumbVisibility: false,
+              radius: Radius.circular(12),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -168,7 +167,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                            color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                             spreadRadius: 1,
                             blurRadius: 3,
                             offset: const Offset(0, 1),
@@ -180,29 +179,29 @@ class SettingsScreenState extends State<SettingsScreen> {
                       if (showFirst)
                         _buildEmailConfirm(
                           context,
-                          title: 'Подтвердите по электронной почте',
-                          subtitle: 'Используйте электронную почту для входа в аккаунт или его восстановление. ',
-                          actionText: 'Добавить электронный адрес',
+                          title: S.of(context).confirmByEmail,
+                          subtitle: S.of(context).useYourEmailSignInAccountRecover,
+                          actionText: S.of(context).addEmailAddress,
                           onActionTap: () async {
                             await Navigator.push(context, createPageRoute(EmailAddressScreen()));
                             _hideFirstShowSecond();
                           },
                           onClose: _hideFirstShowSecond,
                         )
-                      else
+                      else if (showSecond)
                         _buildEmailConfirm(
                           context,
-                          title: 'Защитите свой аккаунт',
-                          subtitle: 'Войдите с помощью функции распознавания лица, отпечатка пальца или с помощью функции блокировки экрана. ',
-                          actionText: 'Создать ключ доступа',
+                          title: S.of(context).protectYourAccount,
+                          subtitle: S.of(context).signInFaceRecognitionFingerprint,
+                          actionText: S.of(context).createAccessKey,
                           onActionTap: () async {
                             await Navigator.push(context, createPageRoute(AccessKeysScreen()));
-                            _hideFirstShowSecond();
+                            _hideSecond();
                           },
-                          onClose: () {},
+                          onClose: _hideSecond,
                         ),
                     ],
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     InkWell(
                       onTap: () {
                         Navigator.push(context, createPageRoute(ProfileScreen(user: widget.user)));
@@ -210,7 +209,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                       highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 8, top: 8, bottom: 8),
+                        padding: const EdgeInsets.only(left: 8, right: 6, top: 8, bottom: 8),
                         child: Row(
                           children: [
                             ClipRRect(
@@ -244,7 +243,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                 Obx(() {
                                   return IconButton(
                                     onPressed: () {
-                                      Dialogs.showCustomDialog(context: context, message: 'Пожалуйста, подождите', duration: const Duration(seconds: 1));
+                                      Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
                                       Future.delayed(const Duration(seconds: 2), () {
                                         Navigator.pop(context);
                                         Navigator.push(context, createPageRoute(QrCodeScreen(user: widget.user)));
@@ -275,115 +274,19 @@ class SettingsScreenState extends State<SettingsScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       itemCount: filteredSettingsOptions.length,
                       itemBuilder: (context, index) {
-                        String option = filteredSettingsOptions[index];
-                        return Obx(() {
-                          Color iconColor = colorsController.getColor(colorsController.selectedColorScheme.value);
+                        final optionKey = filteredSettingsOptions[index];
+                        final widgetBuilder = settingsMap[optionKey];
 
-                          switch (option) {
-                            case 'Account':
-                              return SettingsMenuTile(
-                                icon: Icons.key_outlined,
-                                title: S.of(context).account,
-                                subTitle: S.of(context).subtitleAccount,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(AccountScreen(user: APIs.me)));
-                                },
-                              );
-                            case 'Privacy':
-                              return SettingsMenuTile(
-                                icon: Icons.lock,
-                                title: S.of(context).privacy,
-                                subTitle: S.of(context).subtitlePrivacy,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const PrivacyScreen()));
-                                },
-                              );
-                            case 'Lists':
-                              return SettingsMenuTile(
-                                icon: PhosphorIcons.user_list_fill,
-                                title: S.of(context).lists,
-                                subTitle: S.of(context).subtitleLists,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const ListsScreen()));
-                                },
-                              );
-                            case 'Favorite':
-                              return SettingsMenuTile(
-                                icon: Icons.favorite,
-                                title: S.of(context).favorite,
-                                subTitle: S.of(context).subtitleFavorite,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const FavoriteScreen()));
-                                },
-                              );
-                            case 'Chats':
-                              return SettingsMenuTile(
-                                icon: Icons.chat_rounded,
-                                title: S.of(context).chats,
-                                subTitle: S.of(context).subtitleChats,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const ChatsScreen()));
-                                },
-                              );
-                            case 'Notifications':
-                              return SettingsMenuTile(
-                                icon: Icons.notifications,
-                                title: S.of(context).notifications,
-                                subTitle: S.of(context).subtitleNotifications,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const NotificationsScreen()));
-                                },
-                              );
-                            case 'Data storage':
-                              return SettingsMenuTile(
-                                icon: Icons.storage,
-                                title: S.of(context).dataStorage,
-                                subTitle: S.of(context).subtitleDataStorage,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const DataStorageScreen()));
-                                },
-                              );
-                            case 'Application language':
-                              return SettingsMenuTile(
-                                icon: Icons.language,
-                                title: S.of(context).applicationLanguage,
-                                subTitle: languageController.getSelectedLanguageSubtitle(context),
-                                iconColor: iconColor,
-                                onTap: () => languageController.selectLanguage(context),
-                              );
-                            case 'Help':
-                              return SettingsMenuTile(
-                                icon: Icons.help,
-                                title: S.of(context).help,
-                                subTitle: S.of(context).subtitleHelp,
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const HelpScreen()));
-                                },
-                              );
-                            case 'Invite friend':
-                              return SettingsMenuTile(
-                                icon: Icons.group_rounded,
-                                title: S.of(context).inviteFriend,
-                                subTitle: '',
-                                iconColor: iconColor,
-                                onTap: () {
-                                  Navigator.push(context, createPageRoute(const InviteFriendScreen()));
-                                },
-                              );
-                            default:
-                              return const SizedBox.shrink();
-                          }
+                        if (widgetBuilder == null) return const SizedBox.shrink();
+
+                        return Obx(() {
+                          final updatedIconColor = colorsController.getColor(colorsController.selectedColorScheme.value);
+                          return widgetBuilder(context, updatedIconColor);
                         });
                       },
                     ),
+                    Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey),
+                    _buildCenterAccounts(),
                   ],
                 ),
               ),
@@ -403,7 +306,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     required VoidCallback onClose,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Container(
         padding: EdgeInsets.only(left: 2, right: 8, top: 10, bottom: 10),
         decoration: BoxDecoration(
@@ -446,6 +349,48 @@ class SettingsScreenState extends State<SettingsScreen> {
               child: Icon(Icons.close, color: ChatifyColors.grey, size: 22),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCenterAccounts() {
+    final backgroundColor = context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+      child: Container(
+        decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(12)),
+        child: Material(
+          color: ChatifyColors.transparent,
+          child: InkWell(
+            onTap: () {
+              Dialogs.showCustomDialog(context: context, message: S.of(context).accountDownloadCenter, duration: const Duration(seconds: 1));
+
+              Future.delayed(const Duration(seconds: 1), () {
+                if (Navigator.canPop(context)) Navigator.pop(context);
+
+                Future.microtask(() => showCenterAccountsBottomDialog(context));
+              });
+            },
+            borderRadius: BorderRadius.circular(12),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(ChatifyImages.logoIS, height: 18),
+                  const SizedBox(height: 8),
+                  Text(S.of(context).accountCenter, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+                  const SizedBox(height: 4),
+                  Text(S.of(context).manageYourAccountsAppProducts, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: 13, fontWeight: FontWeight.w400)),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

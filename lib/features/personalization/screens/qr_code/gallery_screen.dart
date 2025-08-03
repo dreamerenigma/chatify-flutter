@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'dart:typed_data';
@@ -57,7 +58,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
       );
       await intent.launch();
     } catch (e) {
-      log('Failed to open system gallery: $e');
+      log('${S.of(context).failedOpenSystemGallery}: $e');
     }
   }
 
@@ -71,7 +72,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
     try {
       await intent.launch();
     } catch (e) {
-      log('Error launching Google Photos: $e');
+      log('${S.of(context).errorLaunchingGooglePhotos}: $e');
     }
   }
 
@@ -139,42 +140,29 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 1,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    SvgPicture.asset(
-                      ChatifyVectors.googlePhoto,
-                      width: 24.0,
-                      height: 24.0,
-                    ),
-                    const SizedBox(width: 16.0),
-                    Text('Галерея', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                    SvgPicture.asset(ChatifyVectors.googlePhoto, width: 24, height: 24),
+                    const SizedBox(width: 16),
+                    Text(S.of(context).gallery, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ],
                 ),
               ),
               PopupMenuItem(
                 value: 2,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    SvgPicture.asset(
-                      ChatifyVectors.googlePhoto,
-                      width: 24.0,
-                      height: 24.0,
-                    ),
-                    const SizedBox(width: 16.0),
-                    Text(
-                      'Фото',
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                    ),
+                    SvgPicture.asset(ChatifyVectors.googlePhoto, width: 24, height: 24),
+                    const SizedBox(width: 16),
+                    Text(S.of(context).photo, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ],
                 ),
               ),
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          )
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          ),
         ],
         bottom: TabBar(
           controller: _tabController,
@@ -184,13 +172,9 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
           indicatorSize: TabBarIndicatorSize.tab,
           overlayColor: WidgetStateProperty.all(ChatifyColors.darkerGrey),
           dividerColor: ChatifyColors.transparent,
-          tabs: const [
-            Tab(
-              text: 'Недавние',
-            ),
-            Tab(
-              text: 'Галерея',
-            ),
+          tabs: [
+            Tab(text: S.of(context).recent),
+            Tab(text: S.of(context).gallery),
           ],
         ),
       ),
@@ -213,15 +197,15 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (_hasRecentImages()) ...[
-          _buildLabel('Недавние'),
+          _buildLabel(S.of(context).recent),
           _buildImageGrid(recentImages),
         ],
         if (_hasLastWeekImages()) ...[
-          _buildLabel('На прошлой неделе'),
+          _buildLabel(S.of(context).lastWeek),
           _buildImageGrid(lastWeekImages),
         ],
         if (lastMonthImages.isNotEmpty) ...[
-          _buildLabel('В прошлом месяце'),
+          _buildLabel(S.of(context).lastMonth),
           _buildImageGrid(lastMonthImages),
         ],
       ],
@@ -231,13 +215,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: ChatifySizes.fontSizeSm,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
     );
   }
 
@@ -281,7 +259,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
 
   Widget _buildGalleryTab() {
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

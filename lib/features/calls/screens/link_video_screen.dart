@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
@@ -77,10 +78,10 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
           setState(() {});
         }
       } catch (e) {
-        log('Error initializing camera: $e');
+        log('${S.of(context).errorInitCamera}: $e');
       }
     } else {
-      log('No cameras available');
+      log(S.of(context).noCamerasAvailable);
     }
   }
 
@@ -100,7 +101,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
         _isRecording = true;
       });
     } catch (e) {
-      log('Error starting video recording: $e');
+      log('${S.of(context).errorStartingVideoRecording}: $e');
     }
   }
 
@@ -112,9 +113,8 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
       setState(() {
         _isRecording = false;
       });
-      log('Video saved to ${videoFile.path}');
     } catch (e) {
-      log('Error stopping video recording: $e');
+      log('${S.of(context).errorStoppingVideoRecording}: $e');
     }
   }
 
@@ -123,52 +123,46 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
     if (status.isGranted) {
       await _initializeRecorder();
     } else {
-      log('Microphone permission denied');
+      log(S.of(context).microPermissionDenied);
     }
   }
 
   Future<void> _initializeRecorder() async {
     try {
       await _recorder.openRecorder();
-      log('Recorder initialized');
+      log(S.of(context).recorderInitialized);
     } catch (e) {
-      log('Error initializing recorder: $e');
+      log('${S.of(context).errorInitRecorder}: $e');
     }
   }
 
   Future<void> _microphoneOn() async {
     if (_isMicrophone) {
-      log('Microphone is already on.');
       return;
     }
 
     try {
-      log('Starting microphone...');
       await _recorder.startRecorder(toFile: 'audio_recording.aac');
-      log('Microphone started.');
       setState(() {
         _isMicrophone = true;
       });
     } catch (e) {
-      log('Error starting microphone recording: $e');
+      log('${S.of(context).errorStartingMicroRecording}: $e');
     }
   }
 
   Future<void> _microphoneOff() async {
     if (!_isMicrophone) {
-      log('Microphone is already off.');
       return;
     }
 
     try {
-      log('Stopping microphone...');
       await _recorder.stopRecorder();
-      log('Microphone stopped.');
       setState(() {
         _isMicrophone = false;
       });
     } catch (e) {
-      log('Error stopping microphone recording: $e');
+      log('${S.of(context).errorStoppingMicroRecording}: $e');
     }
   }
 
@@ -199,14 +193,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Вы',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeMg,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(S.of(context).you, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, color: ChatifyColors.white, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 22),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * .1),
@@ -216,8 +203,8 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                       imageUrl: widget.user.image,
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) => const CircleAvatar(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: ChatifyColors.blue,
+                        foregroundColor: ChatifyColors.white,
                         child: Icon(CupertinoIcons.person),
                       ),
                     ),
@@ -234,13 +221,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      widget.user.name,
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeMg,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 16.0),
                   ],
                 ),
@@ -251,13 +232,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                 children: [
                   const Image(image: AssetImage(ChatifyImages.appLogoLight), width: 16, color: ChatifyColors.white),
                   const SizedBox(width: 6),
-                  Text(
-                    'Ссылка на звонок',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeLg,
-                      color: ChatifyColors.white,
-                    ),
-                  ),
+                  Text(S.of(context).callLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.white)),
                 ],
               ),
               const Spacer(),
@@ -282,11 +257,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                           minimumSize: const Size(60, 60),
                           side: BorderSide.none,
                         ),
-                        child: Icon(
-                          Icons.videocam,
-                          color: _isRecording ? ChatifyColors.white : ChatifyColors.black,
-                          size: 35,
-                        ),
+                        child: Icon(Icons.videocam, color: _isRecording ? ChatifyColors.white : ChatifyColors.black, size: 35),
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -306,11 +277,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                           minimumSize: const Size(60, 60),
                           side: BorderSide.none,
                         ),
-                        child: Icon(
-                          _isMicrophone ? Icons.mic_off : Icons.mic,
-                          color: _isMicrophone ? ChatifyColors.black : ChatifyColors.white,
-                          size: 30,
-                        ),
+                        child: Icon(_isMicrophone ? Icons.mic_off : Icons.mic, color: _isMicrophone ? ChatifyColors.black : ChatifyColors.white, size: 30),
                       ),
                     ),
                   ],
@@ -324,7 +291,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                        color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                         spreadRadius: 5,
                         blurRadius: 10,
                         offset: const Offset(0, -3),
@@ -350,7 +317,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             ),
                             child: Text(
-                              'Пропустить',
+                              S.of(context).skip,
                               style: TextStyle(fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                             ),
                           ),
@@ -367,7 +334,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             ),
                             child: Text(
-                              'Присоединиться',
+                              S.of(context).join,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,

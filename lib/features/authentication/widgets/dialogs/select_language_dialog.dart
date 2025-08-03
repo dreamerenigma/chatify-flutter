@@ -62,9 +62,7 @@ void showLanguageDialog(BuildContext context) {
             clipBehavior: Clip.none,
             children: [
               ScrollbarTheme(
-                data: ScrollbarThemeData(
-                  thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey),
-                ),
+                data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                 child: Scrollbar(
                   controller: scrollController,
                   thickness: 2,

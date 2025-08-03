@@ -1,5 +1,6 @@
 import 'package:chatify/features/personalization/screens/chats/select_chat_screen.dart';
 import 'package:flutter/material.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/archive_chats_dialog.dart';
@@ -16,20 +17,22 @@ class ChatsHistoryScreen extends StatefulWidget {
 
 class _ChatsHistoryScreenState extends State<ChatsHistoryScreen> {
   void _handleChatAction(BuildContext context, String action) {
+    final s = S.of(context);
     switch (action) {
       case 'Экспорт чата':
+      case var _ when action == s.exportChat:
         Navigator.push(
           context,
           createPageRoute(const SelectChatScreen()),
         );
         break;
-      case 'Архивировать все чаты':
-          showArchiveChatsDialog(context);
+      case var _ when action == s.archiveAllChats:
+        showArchiveChatsDialog(context);
         break;
-      case 'Очистить все чаты':
-          showClearAllChatsDialog(context);
+      case var _ when action == s.clearAllChats:
+        showClearAllChatsDialog(context);
         break;
-      case 'Удалить все чаты':
+      case var _ when action == s.deleteAllChats:
         showDeleteAllChatsDialog(context);
         break;
       default:
@@ -39,10 +42,10 @@ class _ChatsHistoryScreenState extends State<ChatsHistoryScreen> {
 
   Widget _buildHistoryChats(BuildContext context) {
     final List<Map<String, dynamic>> chats = [
-      {'icon': Icons.file_upload_outlined, 'text': 'Экспорт чата'},
-      {'icon': Icons.archive_outlined, 'text': 'Архивировать все чаты'},
-      {'icon': Icons.remove_circle_outline_rounded, 'text': 'Очистить все чаты'},
-      {'icon': Icons.delete_outline_outlined, 'text': 'Удалить все чаты'},
+      {'icon': Icons.file_upload_outlined, 'text': S.of(context).exportChat},
+      {'icon': Icons.archive_outlined, 'text': S.of(context).archiveAllChats},
+      {'icon': Icons.remove_circle_outline_rounded, 'text': S.of(context).clearAllChats},
+      {'icon': Icons.delete_outline_outlined, 'text': S.of(context).deleteAllChats},
     ];
 
     return ListView(
@@ -61,10 +64,7 @@ class _ChatsHistoryScreenState extends State<ChatsHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text(
-          'История чатов',
-          style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-        ),
+        title: Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       ),
       body: _buildHistoryChats(context),
     );

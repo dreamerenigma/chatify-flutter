@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/services/images/tenor_service.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../home/controllers/emoji_stickers_controller.dart';
@@ -62,7 +63,7 @@ class _GifContentWidgetState extends State<GifContentWidget> {
         gifs = results;
       });
     } catch (e) {
-      debugPrint('Error loading gifs: $e');
+      debugPrint('${S.of(context).errorLoadingGifs}: $e');
     } finally {
       setState(() => isLoading = false);
     }
@@ -73,7 +74,7 @@ class _GifContentWidgetState extends State<GifContentWidget> {
     final bytes = response.bodyBytes;
 
     final gif = img.decodeGif(bytes);
-    if (gif == null) throw Exception("Не удалось декодировать GIF");
+    if (gif == null) throw Exception(S.of(context).failedDecodeGif);
 
     final frames = gif.frames;
     final tempDir = await getTemporaryDirectory();
@@ -97,7 +98,7 @@ class _GifContentWidgetState extends State<GifContentWidget> {
       body: Column(
         children: [
           SearchTextInput(
-            hintText: 'Поиск Gif в Tenor',
+            hintText: S.of(context).searchGifTenor,
             controller: widget.stickerController,
             focusNode: widget.focusNode,
             showTooltip: false,

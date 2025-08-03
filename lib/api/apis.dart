@@ -19,18 +19,19 @@ import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import '../config.dart';
 import '../features/authentication/screens/add_account_screen.dart';
+import '../features/bot/models/info_app_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/community/models/community_model.dart';
 import '../features/group/models/group_model.dart';
 import '../features/home/screens/home_screen.dart';
-import '../features/newsletter/models/newsletter.dart';
+import '../features/newsletter/models/newsletter_model.dart';
 import '../generated/l10n/l10n.dart';
 import '../routes/custom_page_route.dart';
+import '../utils/constants/app_links.dart';
 import '../utils/constants/app_sounds.dart';
 import '../utils/popups/dialogs.dart';
 import '../utils/urls/url_utils.dart';
-import '../utils/urls/urls.dart';
 import 'access_firebase_token.dart';
 import 'package:path/path.dart' as path;
 
@@ -252,6 +253,7 @@ class APIs {
       lastActive: userData['lastActive'] ?? '',
       pushToken: userData['pushToken'] ?? '',
       isTyping: userData['isTyping'] ?? false,
+      role: userData['lastActive'] ?? 'User',
     );
   }
 
@@ -276,6 +278,7 @@ class APIs {
       lastActive: time,
       pushToken: '',
       isTyping: false,
+      role: 'User',
     );
 
     return await firestore
@@ -423,31 +426,26 @@ class APIs {
       if (!connected) {
         throw Exception('Нет подключения к интернету');
       }
-      log('Интернет-соединение успешно установлено.');
 
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       await googleSignIn.initialize(clientId: Config.googleClientId);
-      log('GoogleSignIn инициализирован.');
 
       await googleSignIn.signOut();
-      log('Пользователь успешно вышел из Google.');
 
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
-
-      log('GoogleSignInAccount получен: ${googleUser.email}');
-
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-      log('GoogleSignInAuthentication успешно получен.');
 
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
-      log('GoogleSignInCredential успешно создан.');
 
       final userCredential = await APIs.auth.signInWithCredential(credential);
-      log('Вход в Firebase успешно выполнен для пользователя: ${userCredential.user?.email}');
+
+      final userId = userCredential.user?.uid;
+      if (userId != null) {
+        await createInfoChat(userId);
+      }
 
       return userCredential;
     } catch (e) {
@@ -530,7 +528,7 @@ class APIs {
     } catch (e) {
       log("Error signing in with Google: $e");
 
-      String authorizationUrl = AppUrls.googleAuthUrl;
+      String authorizationUrl = AppLinks.googleAuthUrl;
       await UrlUtils.launchURL(authorizationUrl);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please complete the authentication in the browser.")));
@@ -727,6 +725,7 @@ class APIs {
     }
   }
 
+  /// -- Checks for an active internet connection.
   static Future<bool> _hasInternetConnection() async {
     if (kIsWeb) return true;
 
@@ -995,9 +994,7 @@ class APIs {
   }
 
   /// -- Audio recordings message.
-  static Future<void> audioRecording() async {
-
-  }
+  static Future<void> audioRecording() async {}
 
   /// -- Adding a user to the archive.
   static Future<void> archiveUser(String userId, UserModel user) async {
@@ -1562,9 +1559,7 @@ class APIs {
   }
 
   /// -- Send message newsletter chat.
-  static Future<void> sendMessageNewsletterChat({required String newsletterId, required String chatId, required String text}) async {
-
-  }
+  static Future<void> sendMessageNewsletterChat({required String newsletterId, required String chatId, required String text}) async {}
 
   ///******************* Sounds app APIs *******************
 
@@ -1585,11 +1580,7 @@ class APIs {
   /// --- Create new support chat.
   static Future<void> createSupportChat(String userId) async {
     final supportChatRef = FirebaseFirestore.instance.collection('SupportChats');
-
-    final existingChats = await supportChatRef
-        .where('userId', isEqualTo: userId)
-        .limit(1)
-        .get();
+    final existingChats = await supportChatRef.where('userId', isEqualTo: userId).limit(1).get();
 
     if (existingChats.docs.isNotEmpty) {
       return;
@@ -1637,7 +1628,47 @@ class APIs {
   }
 
   /// -- Send message support chat.
-  static Future<void> sendMessageSupportChat({required String supportId, required String chatId, required String text}) async {
+  static Future<void> sendMessageSupportChat({required String supportId, required String chatId, required String text}) async {}
 
+  ///******************* Infos App APIs *******************
+
+  /// --- Create new info chat.
+  static Future<void> createInfoChat(String userId) async {
+    final infoChatRef = FirebaseFirestore.instance.collection('InfoChats');
+    final existingChats = await infoChatRef.where('userId', isEqualTo: userId).limit(1).get();
+
+    if (existingChats.docs.isNotEmpty) {
+      return;
+    }
+
+    final newChatRef = infoChatRef.doc();
+
+    await newChatRef.set({
+      'id': newChatRef.id,
+      'userId': userId,
+      'name': 'Chatify',
+      'description': 'Официальный аккаунт Chatify',
+      'createdAt': FieldValue.serverTimestamp(),
+      'lastMessage': 'Здравствуйте!👋 Благодарим вас за обращение...',
+      'isAiHandled': true,
+      'status': 'open',
+      'isResolved': false,
+    });
+  }
+
+  /// -- Method to fetch info from Firestore.
+  static Future<List<InfoAppModel>> getInfoChat() async {
+    try {
+      final querySnapshot = await firestore.collection('InfoChats').get();
+
+      final infos = querySnapshot.docs.map((doc) {
+        return InfoAppModel.fromMap(doc.data());
+      }).toList();
+
+      return infos;
+    } catch (e) {
+      log('Error fetching info chat: $e');
+      return [];
+    }
   }
 }

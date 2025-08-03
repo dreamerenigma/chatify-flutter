@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/popups/dialogs.dart';
@@ -30,13 +31,11 @@ class InviteUserCardState extends State<InviteUserCard> {
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: mq.size.width * .04, vertical: 4),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       elevation: isSelected ? 4 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: isSelected ? Colors.blue.withAlpha((0.1 * 255).toInt()) : null,
+      color: isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
       child: GestureDetector(
         onLongPress: () {
           setState(() {
@@ -47,12 +46,8 @@ class InviteUserCardState extends State<InviteUserCard> {
           });
         },
         child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey,
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey),
           child: InkWell(
-            borderRadius: BorderRadius.circular(15),
             onTap: () async {
               await _showLoadingAndSendInvite(context, widget.contact);
               setState(() {
@@ -62,12 +57,15 @@ class InviteUserCardState extends State<InviteUserCard> {
                 }
               });
             },
+            borderRadius: BorderRadius.circular(15),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
             child: Padding(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.all(12),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(ChatifyVectors.profile, width: 45, height: 45),
+                  SvgPicture.asset(ChatifyVectors.profile, width: 42, height: 42),
                   SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -75,7 +73,7 @@ class InviteUserCardState extends State<InviteUserCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(widget.contact.displayName, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
-                        Text(widget.contact.phones.isNotEmpty ? widget.contact.phones.first.number : 'No phone',
+                        Text(widget.contact.phones.isNotEmpty ? widget.contact.phones.first.number : S.of(context).noPhone,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodySmall,
@@ -92,13 +90,13 @@ class InviteUserCardState extends State<InviteUserCard> {
                         if (states.contains(WidgetState.pressed)) {
                           return colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt());
                         }
-                        return Colors.transparent;
+                        return ChatifyColors.transparent;
                       }),
                       foregroundColor: WidgetStateProperty.all(colorsController.getColor(colorsController.selectedColorScheme.value)),
                       shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
                     ),
-                    child: Text('Пригласить', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                    child: Text(S.of(context).invite, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                   ),
                 ],
               ),
@@ -110,7 +108,7 @@ class InviteUserCardState extends State<InviteUserCard> {
   }
 
   Future<void> _showLoadingAndSendInvite(BuildContext context, Contact contact) async {
-    await Dialogs.showCustomDialog(context: context, message: 'Загрузка...', duration: const Duration(seconds: 2));
+    await Dialogs.showCustomDialog(context: context, message: S.of(context).loading, duration: const Duration(seconds: 2));
     _sendInvite(contact);
   }
 
@@ -129,14 +127,10 @@ class InviteUserCardState extends State<InviteUserCard> {
       try {
         await intent.launch();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Не удается открыть приложение сообщений')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).unableOpenMessagesApp)));
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Контакт не содержит номера телефона')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).contactContainPhoneNumber)));
     }
   }
 }

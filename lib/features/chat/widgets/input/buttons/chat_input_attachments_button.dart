@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../routes/custom_page_route.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
@@ -78,7 +79,7 @@ class ChatInputAttachments extends StatelessWidget {
                               icon: BootstrapIcons.file_earmark,
                               color1: ChatifyColors.violetDark,
                               color2: ChatifyColors.violet,
-                              label: 'Документы',
+                              label: S.of(context).documents,
                               onTap: () async {
                                 final result = await FilePicker.platform.pickFiles(
                                   type: FileType.custom,
@@ -105,7 +106,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 icon: Icons.videocam,
                                 color1: ChatifyColors.pinkDark,
                                 color2: ChatifyColors.pink,
-                                label: 'Камера',
+                                label: S.of(context).camera,
                                 onTap: () {
                                   Navigator.push(context, createPageRoute(const CameraScreen()));
                                 },
@@ -116,7 +117,7 @@ class ChatInputAttachments extends StatelessWidget {
                               icon: Icons.image,
                               color1: ChatifyColors.purpleDark,
                               color2: ChatifyColors.purple,
-                              label: 'Галерея',
+                              label: S.of(context).gallery,
                               onTap: () async {
                                 final result = await FilePicker.platform.pickFiles(
                                   type: FileType.custom,
@@ -150,7 +151,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 icon: Icons.headphones,
                                 color1: ChatifyColors.orangeDark,
                                 color2: ChatifyColors.orange,
-                                label: 'Аудио',
+                                label: S.of(context).audio,
                                 onTap: () async {
                                   final result = await FilePicker.platform.pickFiles(
                                     type: FileType.custom,
@@ -179,7 +180,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 icon: Icons.location_on,
                                 color1: ChatifyColors.greenDark,
                                 color2: ChatifyColors.green,
-                                label: 'Местоположен...',
+                                label: S.of(context).location,
                                 onTap: () {
                                   Navigator.pop(context);
                                   showAddGeolocationDialog(context);
@@ -193,7 +194,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 icon: Icons.person,
                                 color1: ChatifyColors.lightBlueDark,
                                 color2: ChatifyColors.lightBlue,
-                                label: 'Контакт',
+                                label: S.of(context).contact,
                                 onTap: () {
                                   Navigator.pop(context);
                                   Navigator.push(
@@ -216,7 +217,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 icon: LucideIcons.text,
                                 color1: ChatifyColors.blueGreenDark,
                                 color2: ChatifyColors.blueGreen,
-                                label: 'Опрос',
+                                label: S.of(context).survey,
                                 onTap: () {
                                   Navigator.pop(context);
                                   Navigator.push(
@@ -259,7 +260,7 @@ class ChatInputAttachments extends StatelessWidget {
               width: 60,
               height: 60,
               child: Center(
-                child: Icon(icon, color: Colors.white, size: 30),
+                child: Icon(icon, color: ChatifyColors.white, size: 30),
               ),
             ),
           ),

@@ -10,7 +10,7 @@ import '../../../../utils/popups/dialogs.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../newsletter/models/newsletter.dart';
+import '../../newsletter/models/newsletter_model.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
@@ -77,7 +77,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
         newsletters = querySnapshot.docs.map((doc) => NewsletterModel.fromDocument(doc)).toList();
       });
     } catch (e) {
-      log('Error fetching newsletters: $e');
+      log('${S.of(context).errorFetchingNewsletters}: $e');
     }
   }
 
@@ -283,7 +283,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'newsletterList',
           onPressed: () async {
@@ -296,13 +296,11 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
             }
 
             final createdAt = DateTime.now().millisecondsSinceEpoch.toString();
-            log('Created at timestamp: $createdAt');
-
             final newsletter = NewsletterModel(
               id: '',
               newsletterImage: '',
               newsletterName: newsletterName,
-              creatorName: APIs.user.displayName ?? 'Unknown User',
+              creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
               newsletters: newsletters,
               createdAt: createdAt,
             );

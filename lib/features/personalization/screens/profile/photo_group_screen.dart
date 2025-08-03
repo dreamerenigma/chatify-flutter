@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'dart:developer';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../generated/l10n/l10n.dart';
+import '../../../../utils/constants/app_colors.dart';
 import '../../../group/controllers/photo_group_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../widgets/dialogs/edit_image_bottom_dialog.dart';
@@ -34,13 +36,13 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
       Get.find<UserController>().clearUserImage();
 
       if (mounted) {
-        Get.snackbar('Success', 'Group photo removed');
+        Get.snackbar(S.of(context).success, S.of(context).groupPhotoRemoved);
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      log('Error deleting group photo: $e');
+      log('${S.of(context).errorDeletingGroupPhoto}: $e');
       if (mounted) {
-        Get.snackbar('Error', 'Failed to delete group photo');
+        Get.snackbar(S.of(context).error.replaceAll('!', ''), S.of(context).error.replaceAll('!', ''));
       }
     }
   }
@@ -57,9 +59,7 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
       final x = -position.dx * (scale - 1);
       final y = -position.dy * (scale - 1);
 
-      transformationController.value = Matrix4.identity()
-        ..translate(x, y)
-        ..scale(scale);
+      transformationController.value = Matrix4.identity()..translate(x, y)..scale(scale);
       setState(() {
         _isAppBarVisible = false;
       });
@@ -72,49 +72,43 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
 
     return Scaffold(
       appBar: _isAppBarVisible
-          ? PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha((0.2 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
+        ? PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                boxShadow: [
+                  BoxShadow(
+                    color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            title: Text('Картинка группы', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  showEditPhotoBottomSheet(
-                    context,
-                    controller.onImagePicked,
-                    () {
-                      deleteGroupPhoto();
+              child: AppBar(
+                backgroundColor: ChatifyColors.transparent,
+                title: Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      showEditPhotoBottomSheet(context, (path) => controller.onImagePicked(context, path), () => deleteGroupPhoto());
                     },
-                  );
-                },
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      )
-          : null,
+            ),
+          )
+        : null,
       body: Container(
-        color: Colors.black,
+        color: ChatifyColors.black,
         child: Center(
           child: Obx(() {
             final image = controller.image.value;
@@ -130,21 +124,13 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
                 minScale: 1.0,
                 maxScale: 4.0,
                 child: hasImage
-                    ? CachedNetworkImage(
-                  imageUrl: image,
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: double.infinity,
-                )
-                    : Center(
-                  child: Text(
-                    'Нет картинки группы',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: ChatifySizes.fontSizeMd,
-                    ),
-                  ),
-                ),
+                  ? CachedNetworkImage(
+                      imageUrl: image,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  : Center(child: Text(S.of(context).noGroupPicture, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd))),
               ),
             );
           }),

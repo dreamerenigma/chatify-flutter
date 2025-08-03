@@ -1,5 +1,5 @@
-import 'dart:developer';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../chat/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,6 @@ class WindowCall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('🔵 Окно WindowCall построено для пользователя: ${user.name}');
     return Scaffold(
       body: WindowBorder(
         color: ChatifyColors.transparent,
@@ -28,7 +27,7 @@ class WindowCall extends StatelessWidget {
             ),
             Expanded(
               child: Center(
-                child: Text('Звонок с ${user.name}'),
+                child: Text('${S.of(context).callFrom} ${user.name}'),
               ),
             ),
           ],

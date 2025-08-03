@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../common/widgets/buttons/custom_search_button.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -118,7 +119,7 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                   child: Row(
                     children: [
                       Text(
-                        'Chatify Support',
+                        S.of(context).chatifySupport,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
                       ),

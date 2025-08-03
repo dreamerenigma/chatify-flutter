@@ -2,10 +2,7 @@ import 'package:flutter/services.dart';
 
 class PhoneNumberInputFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     final RegExp regExp = RegExp(r'^[0-9]*$');
     final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
 

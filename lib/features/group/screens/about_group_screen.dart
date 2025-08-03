@@ -119,17 +119,17 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                         PopupMenuItem(
                           value: 1,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('Добавить участинков', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                         PopupMenuItem(
                           value: 2,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('Изменить название группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).changeGroupName, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                         PopupMenuItem(
                           value: 3,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('Разрешения группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).groupPermissions, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ],
                       shape: RoundedRectangleBorder(
@@ -144,15 +144,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               child: ScrollConfiguration(
                 behavior: NoGlowScrollBehavior(),
                 child: ScrollbarTheme(
-                  data: ScrollbarThemeData(
-                    thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                      if (states.contains(WidgetState.dragged)) {
-                        return ChatifyColors.darkerGrey;
-                      }
-                      return ChatifyColors.darkerGrey;
-                    },
-                    ),
-                  ),
+                  data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                   child: Scrollbar(
                     thickness: 4,
                     thumbVisibility: false,
@@ -202,7 +194,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               imageUrl: group.groupImage,
               errorWidget: (context, url, error) => CircleAvatar(
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                foregroundColor: Colors.white,
+                foregroundColor: ChatifyColors.white,
                 child: const Icon(CupertinoIcons.person),
               ),
             ),
@@ -210,17 +202,12 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
         ),
       ),
     );
-
     profileInfoWidgets.add(SizedBox(height: mq.height * .02));
-
     profileInfoWidgets.add(Center(child: Text(group.groupName, style: TextStyle(fontSize: ChatifySizes.fontSizeMg))));
-
     profileInfoWidgets.add(SizedBox(height: mq.height * .01));
-
     profileInfoWidgets.add(
-      Center(child:  Text('Группа • ${widget.members.length} участника', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey))),
+      Center(child:  Text('${S.of(context).aboutGroups} • ${widget.members.length} ${S.of(context).aboutGroups}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey))),
     );
-
     profileInfoWidgets.add(SizedBox(height: mq.height * .02));
 
     profileInfoWidgets.add(
@@ -246,7 +233,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   children: [
                     Icon(Icons.call_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
                     const SizedBox(height: 8),
-                    Text('Аудио', style: TextStyle(
+                    Text(S.of(context).audio, style: TextStyle(
                       fontSize: ChatifySizes.fontSizeSm,
                       color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                     )),
@@ -337,10 +324,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   children: [
                     Icon(Icons.search, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 28),
                     const SizedBox(height: 8),
-                    Text('Поиск', style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeMd,
-                      color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                    )),
+                    Text(S.of(context).search, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                   ],
                 ),
               ),
@@ -376,7 +360,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Добавьте описание группы',
+                  S.of(context).addGroupDescription,
                   style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                 ),
                 SizedBox(height: DeviceUtils.getScreenHeight(context) * 0.015),
@@ -384,7 +368,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Группа создана вами, ',
+                        text: S.of(context).groupCreatedByYou,
                         style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
                       ),
                       TextSpan(
@@ -420,7 +404,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Медиа, ссылки и документы', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                  Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                   const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
                 ],
               ),
@@ -465,7 +449,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   children: [
                     const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey),
                     const SizedBox(width: 25),
-                    Text('Уведомления', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                    Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                   ],
                 ),
               ),
@@ -478,7 +462,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   children: [
                     const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey),
                     const SizedBox(width: 25),
-                    Text('Видимость медиа', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                    Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                   ],
                 ),
               ),
@@ -510,8 +494,8 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Шифрование', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                          Text('Сообщения и звонки защищены сквозным шифрованием. \n' 'Подробнее.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey)),
+                          Text(S.of(context).encryption, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                          Text(S.of(context).messagesCallsProtectedEndToEndEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey)),
                         ],
                       ),
                     ),
@@ -532,8 +516,8 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Исчезающие сообщения', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                          Text('Выкл.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey)),
+                          Text(S.of(context).disappearingMessages, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                          Text(S.of(context).off, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey)),
                         ],
                       ),
                     ),
@@ -559,8 +543,8 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Закрытие чата', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                          Text('Закрыть и скрыть этот чат на данном устройстве.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey)),
+                          Text(S.of(context).closingChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                          Text(S.of(context).closeAndHideChatDevice, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey)),
                         ],
                       ),
                     ),
@@ -591,7 +575,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Разрешения группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                          Text(S.of(context).groupPermissions, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                         ],
                       ),
                     ),
@@ -627,9 +611,9 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Добавить группу в сообщество', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      Text(S.of(context).addGroupToCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                       const SizedBox(height: 2),
-                      Text('Объединяйте участников \n' 'в тематические группы', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                      Text(S.of(context).combineParticipantsThematicGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                     ],
                   ),
                 ),
@@ -655,7 +639,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${widget.members.length} участника', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
+                  Text('${widget.members.length} ${S.of(context).participant}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
                   IconButton(icon: const Icon(Icons.search, color: ChatifyColors.darkGrey), onPressed: () {}),
                 ],
               ),
@@ -674,7 +658,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                       child: const Icon(Icons.person_add_alt_1_sharp, color: ChatifyColors.black, size: 28),
                     ),
                     const SizedBox(width: 16),
-                    Text('Добавить участников', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                    Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ],
                 ),
               ),
@@ -693,7 +677,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                       child: const Icon(Icons.link, color: ChatifyColors.black, size: 28),
                     ),
                     const SizedBox(width: 16),
-                    Text('Пригласить по ссылке', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                    Text(S.of(context).inviteViaLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ],
                 ),
               ),
@@ -763,7 +747,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   : const Icon(Icons.favorite_outline_outlined, color: ChatifyColors.darkGrey, size: 26),
                   const SizedBox(width: 25),
                   Text(
-                    isFavorite ? 'Удалить из Избранного' : 'Добавить в Избранное',
+                    isFavorite ? S.of(context).removeFromFavorites : S.of(context).addToFavorites,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                   ),
                 ],
@@ -781,14 +765,14 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 children: [
                   const Icon(Icons.library_add_outlined, color: ChatifyColors.darkGrey),
                   const SizedBox(width: 25),
-                  Text('Добавить в список', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  Text(S.of(context).addToList, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ],
               ),
             ),
           ),
           InkWell(
             onTap: () {
-              Dialogs.showCustomDialog(context: context, message: 'Пожалуйста, подождите', duration: const Duration(seconds: 1));
+              Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
 
               Future.delayed(const Duration(seconds: 1), () {
 
@@ -804,14 +788,14 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 children: [
                   const SystemUicons(SystemUicons.exit_right, color: ChatifyColors.red, height: 30),
                   const SizedBox(width: 23),
-                  Text('Выйти из группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
+                  Text(S.of(context).leaveGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
                 ],
               ),
             ),
           ),
           InkWell(
             onTap: () {
-              Dialogs.showProgressBarDialog(context, title: 'Отправка жалобы...', message: 'Пожалуйста подождите');
+              Dialogs.showProgressBarDialog(context, title: S.of(context).submittingComplaint, message: S.of(context).pleaseWait);
 
               Future.delayed(const Duration(seconds: 1), () {
                 Navigator.pop(context);
@@ -824,7 +808,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 children: [
                   const Icon(Icons.thumb_down_alt_outlined, color: ChatifyColors.red),
                   const SizedBox(width: 25),
-                  Text('Пожаловаться на группу', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
+                  Text(S.of(context).reportGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
                 ],
               ),
             ),

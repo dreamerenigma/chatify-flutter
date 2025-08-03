@@ -1,6 +1,6 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
@@ -11,7 +11,7 @@ class VibrationController extends GetxController {
 
 void showVibrationDialog(BuildContext context, Function(String) onOptionSelected) {
   final vibrationController = Get.put(VibrationController());
-  String selectedText = 'По умолчанию';
+  String selectedText = S.of(context).system;
 
   showDialog<void>(
     context: context,
@@ -31,7 +31,7 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Вибрация', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+                      child: Text(S.of(context).vibration, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -45,11 +45,11 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                         onChanged: (value) {
                           setState(() {
                             vibrationController.selectedVibrationOption.value = value!;
-                            selectedText = 'Выкл.';
+                            selectedText = S.of(context).off;
                           });
                         },
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: const Text('Выкл.'),
+                        title: Text(S.of(context).off),
                       ),
                       RadioListTile<int>(
                         value: 2,
@@ -58,11 +58,11 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                         onChanged: (value) {
                           setState(() {
                             vibrationController.selectedVibrationOption.value = value!;
-                            selectedText = 'По умолчанию';
+                            selectedText = S.of(context).byDefault;
                           });
                         },
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: const Text('По умолчанию'),
+                        title: Text(S.of(context).byDefault),
                       ),
                       RadioListTile<int>(
                         value: 3,
@@ -71,11 +71,11 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                         onChanged: (value) {
                           setState(() {
                             vibrationController.selectedVibrationOption.value = value!;
-                            selectedText = 'Короткий';
+                            selectedText = S.of(context).short;
                           });
                         },
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: const Text('Короткий'),
+                        title: Text(S.of(context).short),
                       ),
                       RadioListTile<int>(
                         value: 4,
@@ -84,11 +84,11 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                         onChanged: (value) {
                           setState(() {
                             vibrationController.selectedVibrationOption.value = value!;
-                            selectedText = 'Длинный';
+                            selectedText = S.of(context).long;
                           });
                         },
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: const Text('Длинный'),
+                        title: Text(S.of(context).long),
                       ),
                     ],
                   ),
@@ -107,26 +107,25 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                         const SizedBox(width: 8),
                         TextButton(
                           onPressed: () {
                             switch (vibrationController.selectedVibrationOption.value) {
                               case 1:
-                                selectedText = 'Выкл.';
+                                selectedText = S.of(context).off;
                                 break;
                               case 2:
-                                selectedText = 'По умолчанию';
+                                selectedText = S.of(context).byDefault;
                                 break;
                               case 3:
-                                selectedText = 'Короткий';
+                                selectedText = S.of(context).short;
                                 break;
                               case 4:
-                                selectedText = 'Длинный';
+                                selectedText = S.of(context).long;
                                 break;
                             }
-                            log('Selected Option: ${vibrationController.selectedVibrationOption.value}');
                             onOptionSelected(selectedText);
                             Navigator.of(context).pop();
                           },
@@ -135,7 +134,7 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text('ОК', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ],
                     ),

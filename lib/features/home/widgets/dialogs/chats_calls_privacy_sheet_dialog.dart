@@ -3,8 +3,10 @@ import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_links.dart';
+import '../../../../utils/urls/url_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String headerText, required String titleText}) {
@@ -15,9 +17,7 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
     builder: (_) {
       return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,51 +31,23 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
                 },
               ),
             ),
-            Center(
-              child: SvgPicture.asset(colorsController.getImagePath(), width: 100, height: 100),
-            ),
+            Center(child: SvgPicture.asset(colorsController.getImagePath(), width: 100, height: 100)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-              child: Center(
-                child: Text(
-                  headerText,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeBg),
-                ),
-              ),
+              child: Center(child: Text(headerText, style: TextStyle(fontSize: ChatifySizes.fontSizeBg), textAlign: TextAlign.center)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8.0),
               child: Center(
-                child: Text(
-                  titleText,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
-                ),
+                child: Text(titleText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5), textAlign: TextAlign.center),
               ),
             ),
             const SizedBox(height: 16),
-            _buildIconTextRow(
-              icon: Icons.message_outlined,
-              text: 'Текстовые и голосовые сообщения',
-            ),
-            _buildIconTextRow(
-              icon: Icons.call_outlined,
-              text: 'Аудио- и видеозвонки',
-            ),
-            _buildIconTextRow(
-              icon: Icons.attach_file,
-              text: 'Фото, видео и документы',
-            ),
-            _buildIconTextRow(
-              icon: Icons.location_on_outlined,
-              text: 'Ваше местоположение',
-            ),
-            _buildIconTextRow(
-              icon: Icons.update,
-              text: 'Обновление статуса',
-              isSvg: true,
-            ),
+            _buildIconTextRow(icon: Icons.message_outlined, text: S.of(context).textVoiceMessages),
+            _buildIconTextRow(icon: Icons.call_outlined, text: S.of(context).audioVideoCalls),
+            _buildIconTextRow(icon: Icons.attach_file, text: S.of(context).photosVideosDocuments),
+            _buildIconTextRow(icon: Icons.location_on_outlined, text: S.of(context).yourLocation),
+            _buildIconTextRow(icon: Icons.update, text: S.of(context).statusUpdates, isSvg: true),
             const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -83,12 +55,7 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final Uri url = Uri.parse('https://chatify.inputstudios.ru/security');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
-                    } else {
-                      throw 'Не удалось открыть $url';
-                    }
+                    await UrlUtils.launchURL(AppLinks.security);
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
@@ -97,7 +64,7 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
                     backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     side: BorderSide.none,
                   ),
-                  child: Text('Подробнее', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ),
               ),
             ),
@@ -119,14 +86,7 @@ Widget _buildIconTextRow({required IconData icon, required String text, bool isS
           : Icon(icon, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 24),
         const SizedBox(width: 16),
         Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: ChatifySizes.fontSizeMd,
-              fontWeight: FontWeight.w500,
-              color: ChatifyColors.darkGrey,
-            ),
-          ),
+          child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500, color: ChatifyColors.darkGrey)),
         ),
       ],
     ),

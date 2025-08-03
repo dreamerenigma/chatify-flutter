@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -191,7 +192,7 @@ class _GroupCardState extends State<GroupCard> {
                           ],
                         ),
                         Text(
-                          isCreatedByCurrentUser ? 'Вы создали эту группу' : 'Группа создана ${widget.creatorName}',
+                          isCreatedByCurrentUser ? S.of(context).youCreatedGroup : '${S.of(context).groupHasBeenCreated} ${widget.creatorName}',
                           style: TextStyle(
                             fontSize: ChatifySizes.fontSizeSm,
                             color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,

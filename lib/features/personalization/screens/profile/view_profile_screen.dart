@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
@@ -60,7 +59,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             children: [
               SizedBox(width: mq.width, height: mq.height * .03),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   children: [
                     IconButton(
@@ -84,7 +83,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                           value: 1,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            'Добавить контакт',
+                            S.of(context).addContact,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -93,7 +92,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                         PopupMenuItem(
                           value: 2,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('Подтверждение кода безопасности', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).confirmSecureCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ],
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -105,16 +104,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 child: ScrollConfiguration(
                   behavior: NoGlowScrollBehavior(),
                   child: ScrollbarTheme(
-                    data: ScrollbarThemeData(
-                      thumbColor: WidgetStateProperty.resolveWith<Color>(
-                        (Set<WidgetState> states) {
-                          if (states.contains(WidgetState.dragged)) {
-                            return ChatifyColors.darkerGrey;
-                          }
-                          return ChatifyColors.darkerGrey;
-                        },
-                      ),
-                    ),
+                    data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                     child: Scrollbar(
                       thickness: 4,
                       thumbVisibility: false,
@@ -199,11 +189,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                   Clipboard.setData(ClipboardData(text: user.email));
                   Dialogs.showSnackbar(context, S.of(context).emailCopied);
                 },
-                child: Icon(
-                  Icons.copy,
-                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                  size: 15,
-                ),
+                child: Icon(Icons.copy, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 15),
               ),
             ],
           ),
@@ -222,16 +208,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             height: 80,
             child: OutlinedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  createPageRoute(ChatScreen(user: widget.user)),
-                );
+                Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
               },
-              style: OutlinedButton.styleFrom(
-                minimumSize: Size.zero,
-                padding: const EdgeInsets.all(0),
-                side: const BorderSide(color: ChatifyColors.darkerGrey),
-              ),
+              style: OutlinedButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.all(0), side: const BorderSide(color: ChatifyColors.darkerGrey)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -250,10 +229,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             height: 80,
             child: OutlinedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  createPageRoute(OutgoingAudioCallScreen(user: user)),
-                );
+                Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user)));
               },
               style: OutlinedButton.styleFrom(
                 minimumSize: Size.zero,
@@ -267,7 +243,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 children: [
                   Icon(Icons.call_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
                   const SizedBox(height: 8),
-                  Text('Аудио', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                  Text(S.of(context).audio, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                 ],
               ),
             ),
@@ -280,11 +256,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               onPressed: () {
                 Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
               },
-              style: OutlinedButton.styleFrom(
-                minimumSize: Size.zero,
-                padding: const EdgeInsets.all(0),
-                side: const BorderSide(color: ChatifyColors.darkerGrey),
-              ),
+              style: OutlinedButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.all(0), side: const BorderSide(color: ChatifyColors.darkerGrey)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -304,6 +276,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             child: OutlinedButton(
               onPressed: () {
                 final double maxHeight = MediaQuery.of(context).size.height * 0.62;
+
                 showAddNewContactBottomSheetDialog(context, maxHeight);
               },
               style: OutlinedButton.styleFrom(
@@ -333,10 +306,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.user.about,
-              style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd),
-            ),
+            Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(
@@ -367,14 +337,8 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Медиа, ссылки и документы',
-                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm),
-              ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: ChatifyColors.darkGrey,
-                size: 16,
-              ),
+              Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+              const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
             ],
           ),
           const SizedBox(height: 10),
@@ -390,10 +354,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {},
-                child: Image.network(
-                  mediaThumbnails[index],
-                  fit: BoxFit.cover,
-                ),
+                child: Image.network(mediaThumbnails[index], fit: BoxFit.cover),
               );
             },
           ),
@@ -414,7 +375,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               children: [
                 const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey),
                 const SizedBox(width: 25),
-                Text('Уведомления',
+                Text(S.of(context).notifications,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                 ),
               ],
@@ -429,11 +390,8 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               children: [
                 const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey),
                 const SizedBox(width: 25),
-                Text('Видимость медиа',
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeLg,
-                    color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                  ),
+                Text(S.of(context).mediaVisibility,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                 ),
               ],
             ),
@@ -459,15 +417,13 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Шифрование',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                        ),
+                      Text(
+                        S.of(context).endToEndEncryption,
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                       ),
-                      Text('Сообщения и звонки защищены сквозным шифрованием. Нажмите, чтобы подтвержить.',
-                        style: TextStyle(
-                          fontSize: ChatifySizes.fontSizeSm,
-                          color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
-                        ),
+                      Text(
+                        S.of(context).callsProtectedEndToEndEncryption,
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
                       ),
                     ],
                   ),
@@ -489,14 +445,10 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Исчезающие сообщения', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode
-                          ? ChatifyColors.white
-                          : ChatifyColors.black,
+                      Text(S.of(context).disappearingMessages, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                         ),
                       ),
-                      Text('Выкл.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode
-                          ? ChatifyColors.darkGrey
-                          : ChatifyColors.grey,
+                      Text(S.of(context).off, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
                         ),
                       ),
                     ],
@@ -523,10 +475,10 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Закрытие чата', style: TextStyle(fontSize: ChatifySizes.fontSizeMd,
+                      Text(S.of(context).closingChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd,
                         color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                       ),
-                      Text('Закрыть и скрыть этот чат на данном устройстве.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm,
+                      Text(S.of(context).closeHideChatDevice, style: TextStyle(fontSize: ChatifySizes.fontSizeSm,
                         color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
                       ),
                     ],
@@ -551,7 +503,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   }
 
   Widget _buildGeneralGroup() {
-    String groupText = groups.length == 1 ? 'общая группа' : 'общие группы';
+    String groupText = groups.length == 1 ? S.of(context).generalGroup : S.of(context).generalGroups;
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 25, top: 12, bottom: 12),
@@ -560,34 +512,16 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         children: [
           Row(
             children: [
-              Text(
-                '${groups.length} ',
-                style: TextStyle(
-                  fontSize: ChatifySizes.fontSizeSm,
-                  color: ChatifyColors.darkGrey,
-                ),
-              ),
-              Text(
-                groupText,
-                style: TextStyle(
-                  fontSize: ChatifySizes.fontSizeSm,
-                  color: ChatifyColors.darkGrey,
-                ),
-              ),
+              Text('${groups.length} ', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+              Text(groupText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
             ],
           ),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 10),
           Builder(
             builder: (context) {
               if (groups.isNotEmpty) {
-                log("GroupList is visible with ${groups.length} groups.");
-                return GroupList(
-                  groups: groups,
-                  currentUser: APIs.me.name,
-                  onGroupSelected: (group) {},
-                );
+                return GroupList(groups: groups, currentUser: APIs.me.name, onGroupSelected: (group) {});
               } else {
-                log("GroupList is not visible.");
                 return const SizedBox.shrink();
               }
             },
@@ -609,7 +543,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               children: [
                 const Icon(Icons.not_interested, color: ChatifyColors.red),
                 const SizedBox(width: 25),
-                Text('Заблокировать: ${widget.user.phoneNumber.toString()}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
+                Text('${S.of(context).block}: ${widget.user.phoneNumber.toString()}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
               ],
             ),
           ),
@@ -624,7 +558,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 const Icon(Icons.thumb_down_alt_outlined, color: ChatifyColors.red),
                 const SizedBox(width: 25),
                 Text(
-                  'Пожаловаться на ${widget.user.phoneNumber}',
+                  '${S.of(context).complainAbout} ${widget.user.phoneNumber}',
                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red),
                 ),
               ],

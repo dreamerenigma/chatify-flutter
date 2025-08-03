@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jam_icons/jam_icons.dart';
 import '../../../../../api/apis.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -16,7 +18,6 @@ import '../../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../../chat/widgets/dialogs/select_message_dialog.dart';
 import '../../../../personalization/controllers/user_controller.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../controls/no_text_selection_controls.dart';
 import '../../input/edit_text_input.dart';
 import '../confirmation_dialog.dart';
 import '../edit_profile_image_dialog.dart';
@@ -38,7 +39,6 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
   bool isEditingIntelligence = false;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController intelligenceController = TextEditingController();
-  final phoneController = TextEditingController(text: '+7 937 030-98-61');
   final FocusNode _focusNode = FocusNode();
   late Worker _userListener;
   late Future<void> Function(File) onImageSelected;
@@ -46,15 +46,20 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
   @override
   void initState() {
     super.initState();
-    usernameController.text = widget.user.name.isNotEmpty ? widget.user.name : 'Имя пользователя';
+    usernameController.text = widget.user.name.isNotEmpty ? widget.user.name : S.of(context).username;
 
     _userListener = ever(userController.user, (UserModel updatedUser) {
       if (!isEditingUsername && mounted) {
         usernameController.text = updatedUser.name;
       }
     });
+  }
 
-    intelligenceController.text = 'Как дела?';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    usernameController.text = widget.user.name.isNotEmpty ? widget.user.name : S.of(context).username;
+    intelligenceController.text = S.of(context).howAreYou;
   }
 
   @override
@@ -73,7 +78,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -100,11 +105,10 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                   if (result != null) {
                     String filePath = result.files.single.path!;
                     File selectedFile = File(filePath);
-                    log("Выбран файл: $filePath");
 
                     await onImageSelected(selectedFile);
                   } else {
-                    log("Файл не выбран");
+                    log(S.of(context).fileNotSelected);
                   }
                 } else {
                   showEditProfileImageDialog(context, this, _updateProfileImage);
@@ -159,9 +163,13 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                         if (updatedName.isEmpty) {
                           showConfirmationDialog(
                             context: context,
-                            title: 'Не удалось изменить ваше имя',
-                            description: 'Ваше имя не может быть пустым',
-                            cancelText: 'ОК',
+                            width: 410,
+                            title: S.of(context).unableChangeYourName,
+                            description: S.of(context).yourNameCannotEmpty,
+                            cancelText: S.of(context).ok,
+                            cancelButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            cancelTextColor: ChatifyColors.black,
+                            cancelButtonWidth: 180,
                             confirmButton: true,
                             onConfirm: () {
                               setState(() {
@@ -172,9 +180,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                         } else {
                           final updatedUser = userController.currentUser.copyWith(name: updatedName);
 
-                          log("Updating user with name: ${updatedUser.name}");
                           userController.updateUser(updatedUser);
-
                           usernameController.text = updatedName;
 
                           Future.delayed(Duration(milliseconds: 100), () {
@@ -187,13 +193,12 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                     )
                   : Theme(
                       data: Theme.of(context).copyWith(
-                        textSelectionTheme: TextSelectionThemeData(
-                          selectionColor: ChatifyColors.info,
-                          selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        ),
+                        textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
                       ),
                       child: Obx(() {
-                        usernameController.text = userController.user.value.name;
+                        final name = userController.user.value.name;
+                        usernameController.value = usernameController.value.copyWith(text: name);
+
                         return SelectableText(userController.user.value.name, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400, fontFamily: 'Roboto'));
                       }),
                 ),
@@ -213,7 +218,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                   highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                   hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
                   borderRadius: BorderRadius.circular(8),
-                  child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(JamIcons.pencil, size: 18)),
+                  child: Padding(padding: const EdgeInsets.all(8), child: Icon(JamIcons.pencil, size: 18)),
                 ),
               ),
             ],
@@ -222,62 +227,60 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
+              Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: isEditingIntelligence
-                        ? EditTextInput(
-                      controller: intelligenceController,
-                      focusNode: _focusNode,
-                      fontSize: 15,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 17),
-                      onUnFocus: () {
-                        if (intelligenceController.text.trim().isEmpty) {
-                          showConfirmationDialog(
-                            context: context,
-                            title: 'Не удалось изменить ваши сведения',
-                            description: 'Сведения не могут быть пустыми',
-                            cancelText: 'ОК',
-                            confirmButton: true,
-                            onConfirm: () {
-                              setState(() {
-                                isEditingIntelligence = false;
+                      ? EditTextInput(
+                          controller: intelligenceController,
+                          focusNode: _focusNode,
+                          fontSize: 15,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 17),
+                          onUnFocus: () {
+                            if (intelligenceController.text.trim().isEmpty) {
+                              showConfirmationDialog(
+                                context: context,
+                                title: S.of(context).unableEditYourDetails,
+                                description: S.of(context).informationCannotEmpty,
+                                cancelText: S.of(context).ok,
+                                confirmButton: true,
+                                onConfirm: () {
+                                  setState(() {
+                                    isEditingIntelligence = false;
+                                  });
+                                },
+                              );
+                            } else {
+                              final updatedStatus = intelligenceController.text.trim();
+
+                              final updatedUser = userController.currentUser.copyWith(status: updatedStatus);
+                              userController.updateUser(updatedUser);
+
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                setState(() {
+                                  isEditingIntelligence = false;
+                                });
                               });
-                            },
-                          );
-                        } else {
-                          final updatedStatus = intelligenceController.text.trim();
-
-                          final updatedUser = userController.currentUser.copyWith(status: updatedStatus);
-
-                          log("Updating user with status: ${updatedUser.status}");
-                          userController.updateUser(updatedUser);
-
-                          Future.delayed(Duration(milliseconds: 100), () {
-                            setState(() {
-                              isEditingIntelligence = false;
-                            });
-                          });
-                        }
-                      },
-                    )
-                        : Theme(
-                      data: Theme.of(context).copyWith(
-                        textSelectionTheme: TextSelectionThemeData(
-                          selectionColor: ChatifyColors.info,
-                          selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            }
+                          },
+                        )
+                      : Theme(
+                          data: Theme.of(context).copyWith(
+                            textSelectionTheme: TextSelectionThemeData(
+                              selectionColor: ChatifyColors.info,
+                              selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            ),
+                          ),
+                          child: Obx(() {
+                            intelligenceController.text = userController.user.value.status;
+                            return SelectableText(
+                              userController.user.value.status,
+                              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                            );
+                          }),
                         ),
-                      ),
-                      child: Obx(() {
-                        intelligenceController.text = userController.user.value.status;
-                        return SelectableText(
-                          userController.user.value.status,
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
-                        );
-                      }),
-                    ),
                   ),
                   if (!isEditingIntelligence)
                   Material(
@@ -294,7 +297,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                       highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                       hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
                       borderRadius: BorderRadius.circular(8),
-                      child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(JamIcons.pencil, size: 18)),
+                      child: Padding(padding: const EdgeInsets.all(8), child: Icon(JamIcons.pencil, size: 18)),
                     ),
                   ),
                 ],
@@ -306,7 +309,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Номер телефона',
+                S.of(context).phoneNumber,
                 style: TextStyle(
                   fontSize: ChatifySizes.fontSizeSm,
                   color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
@@ -324,60 +327,35 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                       MenuItem(
                         icon: Icons.copy,
                         iconSize: 17,
-                        text: 'Копировать',
+                        text: S.of(context).copy,
                         trailingText: 'Ctrl+C',
                         onTap: () {
-                          phoneController.selection = TextSelection(baseOffset: 0, extentOffset: phoneController.text.length);
+                          Clipboard.setData(ClipboardData(text: widget.user.phoneNumber));
                         },
                       ),
                       MenuItem(
-                        text: 'Выделить всё',
+                        text: S.of(context).selectAll,
                         trailingText: 'Ctrl+A',
-                        onTap: () {
-                          phoneController.selection = TextSelection(baseOffset: 0, extentOffset: phoneController.text.length);
-                        },
+                        onTap: () {},
                       ),
-                    ],
-                  );
-                },
-                onDoubleTapDown: (details) {
-                  showSelectMessageDialog(
-                    context: context,
-                    position: details.globalPosition,
-                    items: [
-                      MenuItem(text: 'Выделить всё', trailingText: 'Ctrl+A', onTap: () {
-                        phoneController.selection = TextSelection(baseOffset: 0, extentOffset: phoneController.text.length);
-                      }),
                     ],
                   );
                 },
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     textSelectionTheme: TextSelectionThemeData(
-                      selectionColor: ChatifyColors.info,
-                      selectionHandleColor: ChatifyColors.info,
+                    selectionColor: ChatifyColors.info,
+                    selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     ),
                   ),
-                  child: TextField(
-                    controller: phoneController,
-                    readOnly: true,
-                    showCursor: false,
-                    enableInteractiveSelection: true,
-                    selectionControls: NoTextSelectionControls(),
+                  child: SelectableText(
+                    widget.user.phoneNumber,
                     style: TextStyle(
                       fontSize: ChatifySizes.fontSizeSm,
                       color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
                       fontWeight: FontWeight.w300,
                       fontFamily: 'Roboto',
                       height: 1.2,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.zero,
-                      isDense: true,
                     ),
                   ),
                 ),
@@ -392,8 +370,8 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
               showConfirmationDialog(
                 context: context,
                 width: 420,
-                title: 'Подтверждение выхода',
-                description: 'Вы действительно хотите выйти?',
+                title: S.of(context).confirmExit,
+                description: S.of(context).areYouSureYouLogout,
                 confirmButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 reverseButtons: false,
                 onConfirm: () {
@@ -415,10 +393,13 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
               mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
               elevation: WidgetStateProperty.all(0),
             ),
-            child: Text('Выйти', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.error, fontWeight: FontWeight.w400)),
+            child: Text(
+              '${S.of(context).signOut[0].toUpperCase()}${S.of(context).signOut.substring(1)}',
+              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.error, fontWeight: FontWeight.w400),
+            ),
           ),
           SizedBox(height: 10),
-          Text('История чатов на этом компьюетре будет очищена, когда вы выйдете из аккаунта.', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
+          Text(S.of(context).chatHistoryComputerClearedSignOut, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
         ],
       ),
     );

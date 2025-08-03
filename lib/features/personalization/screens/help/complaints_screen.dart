@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../generated/l10n/l10n.dart';
+import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
 class ComplaintsScreen extends StatelessWidget {
@@ -12,10 +13,10 @@ class ComplaintsScreen extends StatelessWidget {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -38,18 +39,11 @@ class ComplaintsScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              (S.of(context).noComplaints),
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            Text(S.of(context).noComplaints, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                (S.of(context).submittingComplaint),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
-              ),
+              child: Text(S.of(context).submittingComplaint, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
             ),
           ],
         ),

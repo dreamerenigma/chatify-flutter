@@ -5,8 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../authentication/widgets/inputs/phone_input_formatter.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class SearchTextInput extends StatefulWidget {
@@ -165,7 +167,7 @@ class SearchTextInputState extends State<SearchTextInput> {
             cursorWidth: 1,
             onChanged: widget.onChanged,
             keyboardType: widget.allowOnlyDigits ? TextInputType.number : TextInputType.text,
-            inputFormatters: widget.allowOnlyDigits ? [FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$'))] : [],
+            inputFormatters: widget.allowOnlyDigits ? [PhoneNumberInputFormatter()] : [],
             decoration: InputDecoration(
               prefixIconConstraints: BoxConstraints(minWidth: 32, minHeight: 32),
               prefixIcon: widget.showPrefixIcon
@@ -182,6 +184,7 @@ class SearchTextInputState extends State<SearchTextInput> {
                     child: InkWell(
                       onTap: widget.showDialPad ? widget.onSuffixTap ?? () {} : () {
                         _clearText();
+                        widget.onSuffixTap?.call();
                       },
                       mouseCursor: SystemMouseCursors.basic,
                       splashFactory: NoSplash.splashFactory,
@@ -196,7 +199,7 @@ class SearchTextInputState extends State<SearchTextInput> {
                             Tooltip(
                               verticalOffset: -50,
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                              message: 'Номер телефона',
+                              message: S.of(context).phoneNumber,
                               textStyle: TextStyle(
                                 color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                                 fontSize: ChatifySizes.fontSizeLm,
@@ -210,7 +213,10 @@ class SearchTextInputState extends State<SearchTextInput> {
                                   width: 1,
                                 ),
                               ),
-                              child: Icon(Icons.dialpad_rounded, size: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground),
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: Icon(Icons.dialpad_rounded, size: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground),
+                              ),
                             ),
                           if (widget.showAdditionalSuffixIcon && _isPhoneValid(_controller.text))
                             Padding(

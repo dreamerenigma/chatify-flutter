@@ -102,10 +102,7 @@ class ConfidentialityStatusScreenState extends State<ConfidentialityStatusScreen
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      S.of(context).contactsExcept,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                    ),
+                    Text(S.of(context).contactsOtherThan, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                     InkWell(
                       onTap: () {
                         Navigator.push(context, createPageRoute(const ExceptionsScreen()));

@@ -1,5 +1,4 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart';
+import 'package:chatify/utils/platforms/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -13,6 +12,7 @@ class CustomRadioButton extends StatefulWidget {
   final String groupValue;
   final ValueChanged<String?> onChanged;
   final EdgeInsetsGeometry padding;
+  final double? fontSize;
 
   const CustomRadioButton({
     super.key,
@@ -22,6 +22,7 @@ class CustomRadioButton extends StatefulWidget {
     required this.groupValue,
     required this.onChanged,
     this.padding = const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+    this.fontSize,
   });
 
   @override
@@ -35,6 +36,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
   Widget build(BuildContext context) {
     final bool isSelected = widget.value == widget.groupValue;
     final Color selectedColor = colorsController.getColor(colorsController.selectedColorScheme.value);
+    final double textSize = widget.fontSize ?? (isWebOrWindows ? 15 : ChatifySizes.fontSizeMd);
 
     return GestureDetector(
       onTap: () => widget.onChanged(widget.value),
@@ -73,7 +75,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 150),
                     child: Text(
                       widget.title,
-                      style: TextStyle(fontSize: (!kIsWeb && Platform.isWindows) ? 15 : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300),
+                      style: TextStyle(fontSize: textSize, fontWeight: FontWeight.w300),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,
@@ -83,10 +85,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
               ),
             ),
             if (widget.imagePath.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(3),
-                child: SvgPicture.asset(widget.imagePath, width: 25, height: 25),
-              ),
+            ClipRRect(borderRadius: BorderRadius.circular(3), child: SvgPicture.asset(widget.imagePath, width: 25, height: 25)),
           ],
         ),
       ),

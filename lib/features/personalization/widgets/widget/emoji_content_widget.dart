@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:icon_forest/iconoir.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../data/emoji_data.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -62,13 +63,11 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final BuildContext? context = categoryKey.currentContext;
       if (context == null) {
-        log("Контекст категории не найден!");
         return;
       }
 
       final RenderBox renderBox = context.findRenderObject() as RenderBox;
       final position = renderBox.localToGlobal(Offset.zero).dy;
-      log("Позиция категории: $position");
       scrollController.animateTo(position, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     });
   }
@@ -78,7 +77,7 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
       body: Column(
         children: [
           SearchTextInput(
-            hintText: 'Поиск смайликов',
+            hintText: S.of(context).searchForEmoticons,
             controller: widget.emojiController,
             focusNode: widget.focusNode,
             padding: EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 12),
@@ -87,16 +86,7 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
           ),
           Expanded(
             child: ScrollbarTheme(
-              data: ScrollbarThemeData(
-                thumbColor: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.dragged)) {
-                      return ChatifyColors.darkerGrey;
-                    }
-                    return ChatifyColors.darkerGrey;
-                  },
-                ),
-              ),
+              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
               child: Scrollbar(
                 thickness: 3,
                 thumbVisibility: false,
@@ -118,21 +108,21 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(left: 12),
-                                child: Text('Недавние', style: TextStyle(color: ChatifyColors.buttonGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                child: Text(S.of(context).recent, style: TextStyle(color: ChatifyColors.buttonGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                               ),
                               SizedBox(height: 6),
                               _buildEmojiRow(context, widget.controller, widget.categoryKey0, widget.onEmojiSelected),
                             ],
                           );
                         }),
-                        _buildCategorySection(context, 'Смайлики и люди', peopleEmojis, widget.controller, widget.categoryKey1, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Животные и природа', animalEmojis, widget.controller, widget.categoryKey2, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Еда и напитки', foodEmojis, widget.controller, widget.categoryKey3, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Физическая активность', sportEmojis, widget.controller, widget.categoryKey4, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Путешестия и места', travelPlacesEmojis, widget.controller, widget.categoryKey5, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Объекты', objectsEmojis, widget.controller, widget.categoryKey6, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Символы', symbolsEmojis, widget.controller, widget.categoryKey7, widget.onEmojiSelected),
-                        _buildCategorySection(context, 'Флаги', flagsEmojis, widget.controller, widget.categoryKey8, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).emoticonsPeople, peopleEmojis, widget.controller, widget.categoryKey1, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).animalsNature, animalEmojis, widget.controller, widget.categoryKey2, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).foodDrinks, foodEmojis, widget.controller, widget.categoryKey3, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).physicalActivity, sportEmojis, widget.controller, widget.categoryKey4, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).travelPlaces, travelPlacesEmojis, widget.controller, widget.categoryKey5, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).objects, objectsEmojis, widget.controller, widget.categoryKey6, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).symbols, symbolsEmojis, widget.controller, widget.categoryKey7, widget.onEmojiSelected),
+                        _buildCategorySection(context, S.of(context).flags, flagsEmojis, widget.controller, widget.categoryKey8, widget.onEmojiSelected),
                       ],
                     ),
                   ),
@@ -188,13 +178,13 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
                             duration: Duration(milliseconds: 100),
                             decoration: BoxDecoration(
                               border: isSelected
-                                ? Border.all(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2)
-                                : null,
+                                  ? Border.all(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2)
+                                  : null,
                               color: isSelected
-                                ? (isPressed.value || isHovered.value
+                                  ? (isPressed.value || isHovered.value
                                   ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt())
                                   : colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt()))
-                                : (isPressed.value || isHovered.value
+                                  : (isPressed.value || isHovered.value
                                   ? ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())
                                   : ChatifyColors.transparent),
                               borderRadius: BorderRadius.circular(6),
@@ -221,7 +211,7 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
   }
 
   Widget _buildCategorySection(BuildContext context, String title, List<String> emojis, EmojiStickersController controller, GlobalKey categoryKey, Function(String) onEmojiSelected) {
-    double topPadding = title == 'Смайлики и люди' ? 0 : widget.topPadding;
+    double topPadding = title == S.of(context).emoticonsPeople ? 0 : widget.topPadding;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,7 +232,7 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
               final bool isSelected = controller.selectedEmojiInCategory.value == emoji;
 
               if (isSelected) {
-                log("Selected color: ${colorsController.getColor(colorsController.selectedColorScheme.value)}");
+                log("${S.of(context).selectedColor}: ${colorsController.getColor(colorsController.selectedColorScheme.value)}");
               }
 
               return Builder(
@@ -293,10 +283,10 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
                               decoration: BoxDecoration(
                                 border: isSelected ? Border.all(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2) : null,
                                 color: isSelected
-                                  ? (isPressed.value || isHovered.value
+                                    ? (isPressed.value || isHovered.value
                                     ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt())
                                     : colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt()))
-                                  : (isPressed.value || isHovered.value
+                                    : (isPressed.value || isHovered.value
                                     ? ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())
                                     : ChatifyColors.transparent),
                                 borderRadius: BorderRadius.circular(6),
@@ -342,47 +332,47 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
       ),
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Obx(() => Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(9, (index) {
-            final bool isHovered = hoverStates[index];
-            final bool isSelected = controller.panelSelectedIndex.value == index;
-            final Color iconColor = isSelected || isHovered ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black) : ChatifyColors.darkGrey;
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: List.generate(9, (index) {
+          final bool isHovered = hoverStates[index];
+          final bool isSelected = controller.panelSelectedIndex.value == index;
+          final Color iconColor = isSelected || isHovered ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black) : ChatifyColors.darkGrey;
 
-            List<Widget Function(Color)> icons = [
-              (color) => Icon(Ionicons.time_outline, size: 18, color: color),
-              (color) => Icon(Icons.emoji_emotions_outlined, size: 18, color: color),
-              (color) => SvgPicture.asset(ChatifyVectors.animal, width: 18, color: color),
-              (color) => Icon(FluentIcons.food_pizza_20_regular, size: 18, color: color),
-              (color) => Transform.rotate(angle: -0.5, child: Iconoir(Iconoir.basketball, width: 18, color: color)),
-              (color) => Icon(PhosphorIcons.car, size: 18, color: color),
-              (color) => Icon(FluentIcons.lightbulb_filament_20_regular, size: 18, color: color),
-              (color) => Icon(FluentIcons.symbols_20_regular, size: 18, color: color),
-              (color) => Icon(FluentIcons.flag_20_regular, size: 18, color: color),
-            ];
-            
-            return MouseRegion(
-              onEnter: (_) => hoverStates[index] = true,
-              onExit: (_) => hoverStates[index] = false,
-              child: GestureDetector(
-                onTap: () {
-                  controller.panelSelectedIndex.value = index;
-                  switch (index) {
-                    case 0: scrollToCategory(categoryKey0, scrollController); break;
-                    case 1: scrollToCategory(categoryKey1, scrollController); break;
-                    case 2: scrollToCategory(categoryKey2, scrollController); break;
-                    case 3: scrollToCategory(categoryKey3, scrollController); break;
-                    case 4: scrollToCategory(categoryKey4, scrollController); break;
-                    case 5: scrollToCategory(categoryKey5, scrollController); break;
-                    case 6: scrollToCategory(categoryKey6, scrollController); break;
-                    case 7: scrollToCategory(categoryKey7, scrollController); break;
-                    case 8: scrollToCategory(categoryKey8, scrollController); break;
-                  }
-                },
-                child: icons[index](iconColor),
-              ),
-            );
-          }),
-        ),
+          List<Widget Function(Color)> icons = [
+                (color) => Icon(Ionicons.time_outline, size: 18, color: color),
+                (color) => Icon(Icons.emoji_emotions_outlined, size: 18, color: color),
+                (color) => SvgPicture.asset(ChatifyVectors.animal, width: 18, color: color),
+                (color) => Icon(FluentIcons.food_pizza_20_regular, size: 18, color: color),
+                (color) => Transform.rotate(angle: -0.5, child: Iconoir(Iconoir.basketball, width: 18, color: color)),
+                (color) => Icon(PhosphorIcons.car, size: 18, color: color),
+                (color) => Icon(FluentIcons.lightbulb_filament_20_regular, size: 18, color: color),
+                (color) => Icon(FluentIcons.symbols_20_regular, size: 18, color: color),
+                (color) => Icon(FluentIcons.flag_20_regular, size: 18, color: color),
+          ];
+
+          return MouseRegion(
+            onEnter: (_) => hoverStates[index] = true,
+            onExit: (_) => hoverStates[index] = false,
+            child: GestureDetector(
+              onTap: () {
+                controller.panelSelectedIndex.value = index;
+                switch (index) {
+                  case 0: scrollToCategory(categoryKey0, scrollController); break;
+                  case 1: scrollToCategory(categoryKey1, scrollController); break;
+                  case 2: scrollToCategory(categoryKey2, scrollController); break;
+                  case 3: scrollToCategory(categoryKey3, scrollController); break;
+                  case 4: scrollToCategory(categoryKey4, scrollController); break;
+                  case 5: scrollToCategory(categoryKey5, scrollController); break;
+                  case 6: scrollToCategory(categoryKey6, scrollController); break;
+                  case 7: scrollToCategory(categoryKey7, scrollController); break;
+                  case 8: scrollToCategory(categoryKey8, scrollController); break;
+                }
+              },
+              child: icons[index](iconColor),
+            ),
+          );
+        }),
+      ),
       ),
     );
   }

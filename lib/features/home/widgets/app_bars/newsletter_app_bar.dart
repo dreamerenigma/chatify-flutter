@@ -108,27 +108,27 @@ class _NewsletterAppbarState extends State<NewsletterAppbar> {
               itemBuilder: (context) => [
                 PopupMenuItem(
                   value: 1,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).mailingListData, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ),
                 PopupMenuItem(
                   value: 2,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).mediaMailings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ),
                 PopupMenuItem(
                   value: 3,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).search, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ),
                 PopupMenuItem(
                   value: 4,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).wallpaper, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ),
                 PopupMenuItem(
                   value: 5,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ),
               ],

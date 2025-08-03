@@ -29,10 +29,10 @@ class ListsScreenState extends State<ListsScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -40,13 +40,7 @@ class ListsScreenState extends State<ListsScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              S.of(context).lists,
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeMg,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            title: Text(S.of(context).lists, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -81,7 +75,7 @@ class ListsScreenState extends State<ListsScreen> {
                       SvgPicture.asset(ChatifyVectors.createLists, height: 100),
                       const SizedBox(height: 8),
                       Text(
-                        'Любой созданный вами список становится фильтром в верхней части вкладки "Чаты".',
+                        S.of(context).listCreateFilterTopChats,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary),
                       ),
@@ -96,7 +90,7 @@ class ListsScreenState extends State<ListsScreen> {
                     showNewListBottomSheet(context);
                   },
                   icon: const Icon(Icons.add, color: ChatifyColors.black),
-                  label: const Text('Создание собственного списка', style: TextStyle(color: ChatifyColors.black)),
+                  label: Text(S.of(context).createYourOwnList, style: TextStyle(color: ChatifyColors.black)),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -111,33 +105,33 @@ class ListsScreenState extends State<ListsScreen> {
                   const SizedBox(height: 24),
                   Divider(height: 6, thickness: 6, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
                   const SizedBox(height: 16),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25),
-                    child: Text('Ваши списки', style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                    child: Text(S.of(context).yourLists, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                   ),
                   const SizedBox(height: 8),
 
-                  _buildListItem('Непрочитанное', 'Предустановка', () {
+                  _buildListItem(S.of(context).unread, S.of(context).preset, () {
                     Navigator.push(context, createPageRoute(const UnreadListScreen()));
                   }),
-                  _buildListItem('Избранное', 'Добавить людей или группы', () {
+                  _buildListItem(S.of(context).favorite, S.of(context).addPeopleOrGroups, () {
                     Navigator.push(context, createPageRoute(const FavoriteListScreen()));
                   }),
-                  _buildListItem('Группы', 'Предустановка', () {
+                  _buildListItem(S.of(context).groups, S.of(context).preset, () {
                     Navigator.push(context, createPageRoute(const GroupsListScreen()));
                   }),
                   const SizedBox(height: 6),
                   Divider(color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
                   const SizedBox(height: 15),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25),
-                    child: Text('Доступные предустановки', style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                    child: Text(S.of(context).availablePresets, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                   ),
                   const SizedBox(height: 12),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25),
                     child: Text(
-                      'Если вы удалите один из предустановленных списков, например "Непрочитанное" или "Группы", он будет доступен здесь.',
+                      S.of(context).deleteOnePresetListsUnreadGroups,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
                     ),
@@ -163,17 +157,8 @@ class ListsScreenState extends State<ListsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              ),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  color: ChatifyColors.buttonSecondary,
-                  fontSize: ChatifySizes.fontSizeSm,
-                ),
-              ),
+              Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              Text(subtitle, style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: ChatifySizes.fontSizeSm)),
             ],
           ),
         ),

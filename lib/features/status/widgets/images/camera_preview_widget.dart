@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../generated/l10n/l10n.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class CameraPreviewWidget extends StatefulWidget {
@@ -37,13 +38,13 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> {
 
           initializeControllerFuture = controller!.initialize();
         } else {
-          log('No cameras available');
+          log(S.of(context).noCamerasAvailable);
         }
       } catch (e) {
-        log('Error initializing camera: $e');
+        log('${S.of(context).errorInitCamera}: $e');
       }
     } else {
-      log('Camera permission denied');
+      log(S.of(context).cameraPermissionDenied);
     }
   }
 
@@ -61,7 +62,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> {
         if (snapshot.connectionState == ConnectionState.done) {
           return CameraPreview(controller!);
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('${S.of(context).error}: ${snapshot.error}'));
         } else {
           return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))));
         }

@@ -198,16 +198,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey.withAlpha((0.8 * 255).toInt());
-                }
-                return ChatifyColors.darkerGrey.withAlpha((0.8 * 255).toInt());
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 5,
             thumbVisibility: false,

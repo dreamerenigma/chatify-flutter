@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -49,7 +50,7 @@ class CreateLinkCallScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Создать ссылку на звонок', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+        title: Text(S.of(context).createCallLink, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,16 +58,13 @@ class CreateLinkCallScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
             child: Text(
-              'Любой пользователь Chatify может присоединиться к звонку по этой ссылке. Делитесь ей только с теми людьми, которым вы доверяете.',
+              S.of(context).anyAppUserJoinCallUsingLink,
               style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
             ),
           ),
           InkWell(
             onTap: () {
-              String invitationLink = _buildInvitationLink(
-                callTypeController.selectedCallType.value,
-                callTypeController.invitationId.value,
-              );
+              String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
 
               if (callTypeController.selectedCallType.value == 'Аудио') {
                 Navigator.push(context, createPageRoute(LinkAudioScreen(linkToSend: invitationLink, user: APIs.me)));
@@ -89,19 +87,13 @@ class CreateLinkCallScreen extends StatelessWidget {
                         ),
                         child: Obx(() {
                           IconData icon = callTypeController.selectedCallType.value == 'Видео' ? Icons.videocam_outlined : Icons.call_outlined;
-                          return Icon(
-                            icon,
-                            size: 32.0,
-                          );
+                          return Icon(icon, size: 32.0);
                         }),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Obx(() {
-                          String invitationLink = _buildInvitationLink(
-                            callTypeController.selectedCallType.value,
-                            callTypeController.invitationId.value,
-                          );
+                          String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
                           return Text(
                             invitationLink,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
@@ -120,7 +112,7 @@ class CreateLinkCallScreen extends StatelessWidget {
             onTap: () {
               showSelectCallDialog(
                 context,
-                'Выберите тип звонка',
+                S.of(context).selectCallType,
                 callTypeController.selectedCallType.value, (String newCallType) {
                   callTypeController.updateCallType(newCallType);
                 },
@@ -133,7 +125,7 @@ class CreateLinkCallScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Тип звонка', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold)),
+                  Text(S.of(context).callType, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Obx(() => Text(
                     callTypeController.selectedCallType.value,
@@ -147,10 +139,7 @@ class CreateLinkCallScreen extends StatelessWidget {
           const Divider(height: 0, thickness: 1),
           InkWell(
             onTap: () {
-              String invitationLink = _buildInvitationLink(
-                callTypeController.selectedCallType.value,
-                callTypeController.invitationId.value,
-              );
+              String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
 
               Navigator.push(context, createPageRoute(SendFileScreen(linkToSend: invitationLink, fileToSend: '')));
             },
@@ -165,11 +154,7 @@ class CreateLinkCallScreen extends StatelessWidget {
                   const SizedBox(width: 20),
                   SizedBox(
                     width: 200,
-                    child: Text(
-                      'Отправить ссылку через Chatify',
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeLg),
-                      softWrap: true,
-                    ),
+                    child: Text(S.of(context).sendLinkViaApp, style: TextStyle(fontSize: ChatifySizes.fontSizeLg), softWrap: true),
                   )
                 ],
               ),
@@ -177,12 +162,9 @@ class CreateLinkCallScreen extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              String invitationLink = _buildInvitationLink(
-                callTypeController.selectedCallType.value,
-                callTypeController.invitationId.value,
-              );
+              String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
               Clipboard.setData(ClipboardData(text: invitationLink)).then((_) {
-                Dialogs.showSnackbarMargin(context, 'Ссылка скопированна', margin: const EdgeInsets.only(left: 10, right: 10));
+                Dialogs.showSnackbarMargin(context, S.of(context).linkCopied, margin: const EdgeInsets.only(left: 10, right: 10));
               });
             },
             child: Padding(
@@ -194,7 +176,7 @@ class CreateLinkCallScreen extends StatelessWidget {
                     onPressed: () {},
                   ),
                   const SizedBox(width: 20),
-                  Text('Копировать ссылку', style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+                  Text(S.of(context).copyLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                 ],
               ),
             ),
@@ -205,7 +187,7 @@ class CreateLinkCallScreen extends StatelessWidget {
                 callTypeController.selectedCallType.value,
                 callTypeController.invitationId.value,
               );
-              Share.share(invitationLink);
+              SharePlus.instance.share(ShareParams(text: invitationLink));
             },
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -216,7 +198,7 @@ class CreateLinkCallScreen extends StatelessWidget {
                     onPressed: () {},
                   ),
                   const SizedBox(width: 20),
-                  Text('Поделиться ссылкой', style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+                  Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                 ],
               ),
             ),

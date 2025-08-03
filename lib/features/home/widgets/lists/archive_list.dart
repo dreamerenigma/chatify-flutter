@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/cards/chat_user_card.dart';
 import '../../../personalization/controllers/colors_controller.dart';
@@ -39,7 +40,7 @@ class _ArchiveListState extends State<ArchiveList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingIndicator();
         } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+          return Center(child: Text('${S.of(context).error.replaceAll('!', '')}: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final archivedUsers = snapshot.data ?? [];
 

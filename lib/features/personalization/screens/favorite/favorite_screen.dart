@@ -5,6 +5,7 @@ import 'package:jam_icons/jam_icons.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'add_favorite_screen.dart';
@@ -30,7 +31,7 @@ class FavoriteScreenState extends State<FavoriteScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text(_isEditing ? 'Редактировать Избранное' : 'Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(_isEditing ? S.of(context).editFavorites : S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         actions: [
           IconButton(icon: Icon(_isEditing ? Icons.check : JamIcons.pencil), onPressed: _toggleEdit),
           IconButton(icon: Icon(Icons.person_add_alt_outlined), onPressed: () {}),
@@ -43,22 +44,18 @@ class FavoriteScreenState extends State<FavoriteScreen> {
             child: SvgPicture.asset(ChatifyVectors.favorite, width: 100, height: 100),
           ),
           const SizedBox(height: 30),
-          Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
+          Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Text(
-              'Упростите поиск важных для вас людей и групп в Chatify.',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              textAlign: TextAlign.center,
-            ),
+            child: Text(S.of(context).easierFindPeopleGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), textAlign: TextAlign.center),
           ),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey)),
+                Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey)),
               ],
             ),
           ),
@@ -72,12 +69,12 @@ class FavoriteScreenState extends State<FavoriteScreen> {
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
                     child: const Icon(Icons.add, color: ChatifyColors.white),
                   ),
                   const SizedBox(width: 16),
-                  Text('Добавить в Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                  Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -85,8 +82,8 @@ class FavoriteScreenState extends State<FavoriteScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
             child: Text(
-              'Вы можете отредактировать Избранное здесь или изменить порядок отображения Избранного на вкладке "Звонки".',
-              style: TextStyle(fontSize: 14, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
+              S.of(context).favoritesChangeFavoritesCalls,
+              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
               textAlign: TextAlign.center,
             ),
           ),

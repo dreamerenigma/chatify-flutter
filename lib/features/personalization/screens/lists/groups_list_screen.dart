@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -21,10 +22,10 @@ class GroupsListScreenState extends State<GroupsListScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -32,7 +33,7 @@ class GroupsListScreenState extends State<GroupsListScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).groups, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -58,17 +59,17 @@ class GroupsListScreenState extends State<GroupsListScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 30),
                   child: Text(
-                    'Этот список обновляется дял вас автоматически, отображая все групповые чаты.',
+                    S.of(context).listUpdatedAutoDisplayGroupChats,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text('Включены в список', style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                  child: Text(S.of(context).includedInList, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                 ),
                 const SizedBox(height: 4),
                 Padding(
@@ -81,7 +82,7 @@ class GroupsListScreenState extends State<GroupsListScreen> {
                         child: Icon(Icons.group, size: 26, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white),
                       ),
                       const SizedBox(width: 16),
-                      Text('Групповые чаты', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      Text(S.of(context).groupChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                       const Divider(height: 0, thickness: 1),
                     ],
                   ),

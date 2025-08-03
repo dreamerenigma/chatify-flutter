@@ -17,6 +17,7 @@ class CallController extends GetxController {
     pushToken: '',
     email: '',
     isTyping: false,
+    role: 'User',
   ).obs;
 
   void startIncomingCall(UserModel user) {

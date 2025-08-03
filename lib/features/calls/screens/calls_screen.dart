@@ -11,7 +11,6 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../chat/models/user_model.dart';
 import '../../home/screens/home_screen.dart';
 import '../../home/widgets/app_bars/home_app_bar.dart';
-import '../../personalization/screens/favorite/favorite_screen.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../status/screens/status_screen.dart';
@@ -81,7 +80,7 @@ class CallsScreenState extends State<CallsScreen> {
               isSearching = !isSearching;
             });
           },
-          hintText: 'Поиск...',
+          hintText: S.of(context).settingsSearch,
           title: Text(S.of(context).calls),
           popupMenuButton: PopupMenuButton<int>(
             position: PopupMenuPosition.under,
@@ -102,7 +101,7 @@ class CallsScreenState extends State<CallsScreen> {
               ),
               PopupMenuItem(
                 value: 2,
-                padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+                padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
                 child: Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
             ],
@@ -111,7 +110,7 @@ class CallsScreenState extends State<CallsScreen> {
         ),
         floatingActionButton: selectedIndex == 3 ?
         Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.only(bottom: 5),
           child: FloatingActionButton(
             heroTag: 'calls',
             onPressed: () async {
@@ -120,7 +119,7 @@ class CallsScreenState extends State<CallsScreen> {
             elevation: 2,
             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
             foregroundColor: ChatifyColors.white,
-            child: const Icon(Icons.add_ic_call_rounded),
+            child: const Icon(Icons.add_ic_call_rounded, color: ChatifyColors.black, size: 26),
           ),
         )
             : null,
@@ -132,26 +131,23 @@ class CallsScreenState extends State<CallsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
-                  Material(
-                    color: ChatifyColors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(context, createPageRoute(const FavoriteScreen()));
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightBackground,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text('Ещё', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
-                      ),
-                    ),
-                  ),
+                  Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                  // Material(
+                  //   color: ChatifyColors.transparent,
+                  //   child: InkWell(
+                  //     onTap: () {
+                  //       Navigator.push(context, createPageRoute(const FavoriteScreen()));
+                  //     },
+                  //     borderRadius: BorderRadius.circular(20),
+                  //     splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                  //     highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                  //     child: Container(
+                  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  //       decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightBackground, borderRadius: BorderRadius.circular(20)),
+                  //       child: Text('Ещё', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -159,17 +155,19 @@ class CallsScreenState extends State<CallsScreen> {
               onTap: () {
                 Navigator.push(context, createPageRoute(const AddCallsFavoriteScreen()));
               },
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Row(
                   children: [
                     CircleAvatar(
                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      radius: 20,
-                      child: const Icon(Icons.favorite, color: ChatifyColors.white, size: 20),
+                      radius: 21,
+                      child: const Icon(Icons.favorite, color: ChatifyColors.black, size: 20),
                     ),
                     const SizedBox(width: 16),
-                    Expanded(child: Text('Добавить в Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
+                    Expanded(child: Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500))),
                   ],
                 ),
               ),
@@ -188,18 +186,18 @@ class CallsScreenState extends State<CallsScreen> {
                         color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
                       ),
                       children: <InlineSpan>[
-                        const TextSpan(text: 'Чтобы позвонить контактам, у которых есть Chatify, '),
+                        TextSpan(text: S.of(context).toCallContactsWhoHaveApp),
                         WidgetSpan(
                           child: Icon(Icons.add_ic_call_outlined, size: 20, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
                         ),
-                        const TextSpan(text: ' нажмите на иконку звонка в нижней части экрана'),
+                        TextSpan(text: S.of(context).clickOnCallIconBottomScreen),
                       ],
                     ),
                   ),
                 ),
               ),
             )
-            : Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('Недавние', style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
+            : Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text(S.of(context).recent, style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
           ],
         ),
       ),

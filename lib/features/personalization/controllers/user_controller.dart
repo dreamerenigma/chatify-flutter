@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../chat/models/user_model.dart';
+import 'package:flutter/material.dart';
 
 class UserController extends GetxController {
   Rx<UserModel> user = Rx<UserModel>(UserModel(
@@ -20,6 +21,7 @@ class UserController extends GetxController {
     pushToken: '',
     email: '',
     isTyping: false,
+    role: 'User',
   ));
 
   RxBool isDataLoaded = false.obs;
@@ -29,7 +31,7 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    log("onInit called");
+    log('UserController onInit called');
     _loadUserData();
   }
 
@@ -41,11 +43,8 @@ class UserController extends GetxController {
       return;
     }
 
-    log("Firebase user found: ${firebaseUser.uid}");
     try {
-      log("Fetching user data from Firestore with UID: ${firebaseUser.uid}");
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Users').doc(firebaseUser.uid).get();
-      log("Snapshot data: ${snapshot.data()}");
+      final snapshot = await _firestore.collection('Users').doc(firebaseUser.uid).get();
 
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
@@ -65,11 +64,12 @@ class UserController extends GetxController {
           pushToken: data['push_token'] ?? '',
           email: data['email'] ?? '',
           isTyping: data['is_typing'] ?? false,
+          role: data['is_typing'] ?? 'User',
         );
 
-        log("User data successfully updated: ${user.value.toJson()}");
-      } else {
-        log("User not found in Firestore");
+        isDataLoaded.value = true;
+
+        Get.lazyPut(() => TextEditingController(text: user.value.name));
       }
     } catch (e) {
       log("Error loading user data from Firestore: $e");

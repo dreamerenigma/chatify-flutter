@@ -52,10 +52,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -63,13 +63,7 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              S.of(context).dataStorage,
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeMg,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            title: Text(S.of(context).dataStorage, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -84,16 +78,7 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,

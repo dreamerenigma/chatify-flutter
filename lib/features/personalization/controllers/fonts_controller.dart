@@ -122,7 +122,7 @@ class FontsController extends GetxController {
     Get.forceAppUpdate();
   }
 
-  String getFontDescription(FontMode fontMode) {
+  String getFontDescription(BuildContext context, FontMode fontMode) {
     if (Platform.isWindows) {
       final fontScale = FontsController.instance.getFontScale(fontMode);
       final fontScalePercentage = (fontScale * 100).toInt();
@@ -130,11 +130,11 @@ class FontsController extends GetxController {
     } else {
       switch (fontMode) {
         case FontMode.small:
-          return 'Маленький';
+          return S.of(context).small;
         case FontMode.big:
-          return 'Большой';
+          return S.of(context).big;
         default:
-          return 'Средний';
+          return S.of(context).average;
       }
     }
   }

@@ -85,8 +85,6 @@ class SelectImagesScreenState extends State<SelectImagesScreen> {
   }
 
   void removeImage(Object item) {
-    log('Removing image: $item');
-
     setState(() {
       if (item is File) {
         _selectedFiles.remove(item);
@@ -117,7 +115,7 @@ class SelectImagesScreenState extends State<SelectImagesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomTooltip(
-                  message: 'Назад',
+                  message: S.of(context).back,
                   horizontalOffset: -35,
                   verticalOffset: 10,
                   child: MouseRegion(

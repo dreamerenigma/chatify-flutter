@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
@@ -24,10 +23,7 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  S.of(context).profilePhoto,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500),
-                ),
+                Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.delete),
@@ -46,7 +42,7 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: ChatifyColors.white,
                     shape: const CircleBorder(),
                     fixedSize: Size(mq.width * .1, mq.height * .1),
                   ),
@@ -54,7 +50,6 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
                     final ImagePicker picker = ImagePicker();
                     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
-                      log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
                       onImagePicked(image.path);
                       Navigator.pop(context);
                     }
@@ -63,7 +58,7 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: ChatifyColors.white,
                     shape: const CircleBorder(),
                     fixedSize: Size(mq.width * .1, mq.height * .1),
                   ),
@@ -71,7 +66,6 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
                     final ImagePicker picker = ImagePicker();
                     final XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
                     if (image != null) {
-                      log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
                       onImagePicked(image.path);
                       Navigator.pop(context);
                     }
@@ -99,18 +93,14 @@ void _showDeleteConfirmationDialog(BuildContext context, Function(String?) onIma
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.blue.withAlpha((0.1 * 255).toInt()),
+              foregroundColor: ChatifyColors.blue,
+              backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(
-              S.of(context).cancel,
-              style: TextStyle(color: Colors.blue, fontSize: ChatifySizes.fontSizeMd),
-            ),
+            child: Text(S.of(context).cancel, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
           ),
           TextButton(
             onPressed: () {
-              log('Profile photo deleted');
               onImagePicked(null);
               onDeletePressed();
               Navigator.pop(context);
@@ -123,10 +113,7 @@ void _showDeleteConfirmationDialog(BuildContext context, Function(String?) onIma
               backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(
-              S.of(context).delete,
-              style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd),
-            ),
+            child: Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
           ),
         ],
       );

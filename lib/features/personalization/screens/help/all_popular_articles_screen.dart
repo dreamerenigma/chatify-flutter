@@ -7,10 +7,12 @@ import '../../../../common/widgets/tiles/list_tile/settings_menu_tile.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../../utils/urls/url_utils.dart';
 import '../../../authentication/widgets/bars/auth_app_bar.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
@@ -56,14 +58,14 @@ class _AllPopularArticlesScreenState extends State<AllPopularArticlesScreen> {
   Widget build(BuildContext context) {
     final articles = [
       S.of(context).howMakeVideoCalls,
-      'Как оставаться в безопасности в Chatify',
-      'Временная блокировка аккаунта',
+      S.of(context).howStaySafeApp,
+      S.of(context).temporaryAccountBlocking,
       S.of(context).adStatusAndChannels,
-      'Двухшаговая проверка',
-      'Как восстановить историю чатов',
-      'Вы получили код подтверждения хотя не запрашивали его',
-      'Как изменить номер телефона',
-      'Как заблокировать пользователя и пожаловаться на него',
+      S.of(context).temporaryAccountBlocking,
+      S.of(context).howRecoverChatHistory,
+      S.of(context).receivedVerifyCode,
+      S.of(context).howChangePhoneNumber,
+      S.of(context).howBlockReportUser,
     ];
 
     return Scaffold(
@@ -72,8 +74,8 @@ class _AllPopularArticlesScreenState extends State<AllPopularArticlesScreen> {
         children: [
           AuthAppBar(
             title: S.of(context).helpCenter,
-            onMenuItemIndex1: () => DeviceUtils.launchUrl('https://faq.chatify.com'),
-            menuItem1Text: 'Открыть в браузере',
+            onMenuItemIndex1: () => UrlUtils.launchURL(AppLinks.helpCenter),
+            menuItem1Text: S.of(context).openInBrowser,
             leftIcon: Icons.search,
           ),
           SizedBox(height: 12),
@@ -145,7 +147,7 @@ class _AllPopularArticlesScreenState extends State<AllPopularArticlesScreen> {
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .02),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Все популярные статьи', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+          child: Text(S.of(context).allPopularArticles, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
         ),
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .01),
         Column(

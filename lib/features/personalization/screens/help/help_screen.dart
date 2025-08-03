@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mono_icons/mono_icons.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../common/widgets/tiles/list_tile/settings_menu_tile.dart';
+import '../../../../utils/constants/app_links.dart';
+import '../../../../utils/urls/url_utils.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'about_app_screen.dart';
 import 'complaints_screen.dart';
@@ -26,7 +27,7 @@ class _HelpScreenState extends State<HelpScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
                 color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
@@ -48,7 +49,7 @@ class _HelpScreenState extends State<HelpScreen> {
             title: Text(S.of(context).help, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
             iconTheme: IconThemeData(
-              color: context.isDarkMode ? Colors.white : Colors.black,
+              color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
             ),
           ),
         ),
@@ -56,8 +57,7 @@ class _HelpScreenState extends State<HelpScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            /// -- Body
-            const SizedBox(height: ChatifySizes.spaceBtwItems),
+            const SizedBox(height: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -65,6 +65,8 @@ class _HelpScreenState extends State<HelpScreen> {
                   icon: Icons.help,
                   title: S.of(context).helpCenter,
                   subTitle: S.of(context).subtitleHelpCenter,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   onTap: () => Get.to(() => const HelpCenterScreen()),
                 ),
@@ -72,22 +74,28 @@ class _HelpScreenState extends State<HelpScreen> {
                   icon: MonoIcons.document,
                   title: S.of(context).termsPrivacyPolicy,
                   subTitle: '',
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   onTap: () {
-                    launchUrl(Uri.parse('https://inputstudios.vercel.app/privacy'));
+                    UrlUtils.launchURL(AppLinks.privacyPolicy);
                   },
                 ),
                 SettingsMenuTile(
                   icon: Icons.warning_amber_rounded,
                   title: S.of(context).complaints,
-                  subTitle: '',
+                  subTitle: S.of(context).youSendComplaint,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   onTap: () => Get.to(() => const ComplaintsScreen()),
                 ),
                 SettingsMenuTile(
                   icon: Icons.info_outline,
                   title: S.of(context).subtitleAbout,
-                  subTitle: '',
+                  subTitle: S.of(context).aboutOurApp,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   onTap: () => Get.to(() => const AboutAppScreen()),
                 ),

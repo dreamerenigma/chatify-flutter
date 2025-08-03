@@ -6,6 +6,7 @@ import 'package:heroicons/heroicons.dart';
 import 'package:iconoir_icons/iconoir_icons.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../core/services/camera/camera_service.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../home/controllers/dialog_controller.dart';
 import '../../../home/widgets/dialogs/confirmation_dialog.dart';
@@ -25,9 +26,9 @@ void showTakePhotoDialog(BuildContext context) async {
       showConfirmationDialog(
         context: context,
         width: 535,
-        title: 'Chatify не удалось найти подключённую камеру.',
-        description: 'Для осуществления видеозвонков Chatify необходима камера. Подключите её к своему компьютеру.',
-        cancelText: 'ОК',
+        title: S.of(context).appFindConnectedCamera,
+        description: S.of(context).videoCallsAppCameraConnectComputer,
+        cancelText: S.of(context).ok,
         confirmButton: true,
         onConfirm: () {},
       );
@@ -91,7 +92,7 @@ void showTakePhotoDialog(BuildContext context) async {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Сделать фото',
+                                      S.of(context).takePhoto,
                                       style: TextStyle(
                                         fontSize: ChatifySizes.fontSizeBg,
                                         fontWeight: FontWeight.w500,
@@ -193,8 +194,8 @@ void showTakePhotoDialog(BuildContext context) async {
     showConfirmationDialog(
       context: context,
       width: 535,
-      description: 'Не удалось снять видео. Камера используется другим приложением.',
-      cancelText: 'ОК',
+      description: S.of(context).failedCaptureVideoCameraApp,
+      cancelText: S.of(context).ok,
       confirmButton: true,
       onConfirm: () {},
     );

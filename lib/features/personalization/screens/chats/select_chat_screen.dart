@@ -103,7 +103,7 @@ class SelectChatScreenState extends State<SelectChatScreen> {
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: const Offset(0, 1),
@@ -121,7 +121,7 @@ class SelectChatScreenState extends State<SelectChatScreen> {
                 ),
                 child: TextField(
                   focusNode: searchFocusNode,
-                  cursorColor: Colors.blue,
+                  cursorColor: ChatifyColors.blue,
                   controller: searchController,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
                   decoration: InputDecoration(
@@ -138,17 +138,13 @@ class SelectChatScreenState extends State<SelectChatScreen> {
                   : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Выберите чат',
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-                  ),
+                  Text(S.of(context).selectChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
                 ],
               ),
               centerTitle: false,
               actions: [
                 IconButton(
-                  icon: Icon(isSearching
-                      ? CupertinoIcons.clear_circled_solid
-                      : Icons.search),
+                  icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
                   onPressed: toggleSearch,
                 ),
               ],
@@ -161,13 +157,7 @@ class SelectChatScreenState extends State<SelectChatScreen> {
             if (index == 0) {
               return Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12, top: 12),
-                child: Text(
-                  'Другие контакты',
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeSm,
-                    color: ChatifyColors.darkGrey,
-                  ),
-                ),
+                child: Text(S.of(context).otherContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
               );
             } else {
               final adjustedIndex = index - 1;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -36,7 +37,7 @@ class EditPhoneScreenState extends State<EditPhoneScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Изменить номер', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).changeNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -50,30 +51,24 @@ class EditPhoneScreenState extends State<EditPhoneScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 40),
-                  Center(
-                    child: SvgPicture.asset(
-                      ChatifyVectors.simCard,
-                      width: 70,
-                      height: 70,
-                    ),
-                  ),
+                  Center(child: SvgPicture.asset(ChatifyVectors.simCard, width: 70, height: 70)),
                   const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
-                    child: Text('Изменение вашего номера телефона приведёт, к перемещению ваших групп, настроек и данных вашего аккаунта.',
+                    child: Text(S.of(context).changingYourPhoneNumber,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text('Прежде чем продолжить, убедитесь, что вы сможете принимать SMS или звонки на свой новый номер.',
+                    child: Text(S.of(context).beforeContinueReceiveCallsNumber,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                     ),
                   ),
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text('Если у вас сменился и телефон, и номер, сначала измените свой номер на старом телефоне.',
+                    child: Text(S.of(context).changedPhoneYourNumber,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                     ),
                   ),
@@ -95,7 +90,7 @@ class EditPhoneScreenState extends State<EditPhoneScreen> {
                 side: BorderSide.none,
                 padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
               ),
-              child: Text('Далее', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+              child: Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
             ),
           ),
         ],

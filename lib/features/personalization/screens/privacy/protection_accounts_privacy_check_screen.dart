@@ -2,6 +2,7 @@ import 'package:chatify/features/personalization/screens/privacy/privacy_blocked
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -36,7 +37,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
             ],
           ),
           child: AppBar(
-            title: Text('Проверка конфиденциальности', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).privacyCheck, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -51,16 +52,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              }
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -79,13 +71,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
                           height: 80,
                           width: 80,
                           decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              ChatifyVectors.user,
-                              height: 70,
-                              width: 70,
-                            ),
-                          ),
+                          child: Center(child: SvgPicture.asset(ChatifyVectors.user, height: 70, width: 70)),
                         ),
                         Positioned(
                           right: -40,
@@ -103,35 +89,29 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
                     const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Text('Дополнительная защита для вашего аккаунта', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                      child: Text(S.of(context).additionalProtectionYourAccount, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-                      child: Text('Обеспечте дополнительную защиту для вашего аккаунта', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+                      child: Text(S.of(context).provideAdditionalProtectionYourAccount, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 10),
                     _buildCheckPrivacy(
                       icon: Icons.fingerprint_outlined,
-                      text: 'Блокировка приложения',
-                      subtitle: 'Используйте отпечаток пальца или функцию распознавания лица дял открытия Chatify на своем устройстве.',
+                      text: S.of(context).blockingApp,
+                      subtitle: S.of(context).useFingerprintFaceRecognition,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          createPageRoute(const PrivacyBlockedAppScreen()),
-                        );
+                        Navigator.push(context, createPageRoute(const PrivacyBlockedAppScreen()));
                       },
                     ),
                     const SizedBox(height: 15),
                     _buildCheckPrivacy(
                       svgIconPath: ChatifyVectors.pinCode,
-                      text: 'Двухшаговая проверка',
-                      subtitle: 'Создайте PIN для повторной регистрации вашего номера телефона в Chatify.',
+                      text: S.of(context).twoStepVerification,
+                      subtitle: S.of(context).createRegisterApp,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          createPageRoute(const TwoStepVerificationScreen()),
-                        );
+                        Navigator.push(context, createPageRoute(const TwoStepVerificationScreen()));
                       },
                     ),
                   ],

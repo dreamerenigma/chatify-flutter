@@ -44,24 +44,11 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
             width: 21,
             height: 21,
             decoration: BoxDecoration(
-              color: selected
-                  ? color
-                  : isHovered.value
-                      ? ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt())
-                      : ChatifyColors.transparent,
-              border: Border.all(
-                color: selected ? color : ChatifyColors.darkerGrey,
-                width: 1,
-              ),
+              color: selected ? color : isHovered.value ? ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt()) : ChatifyColors.transparent,
+              border: Border.all(color: selected ? color : ChatifyColors.darkerGrey, width: 1),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: selected
-                ? Icon(
-                    Icons.check,
-                    color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey,
-                    size: 16,
-                  )
-                : null,
+            child: selected ? Icon(Icons.check, color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey, size: 16) : null,
           ),
         ),
       );

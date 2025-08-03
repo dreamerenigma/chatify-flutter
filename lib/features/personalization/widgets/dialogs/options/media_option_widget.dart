@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -30,7 +31,7 @@ class _MediaOptionWidgetState extends State<MediaOptionWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text('Медиа', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+          child: Text(S.of(context).media, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
         ),
         Expanded(
           child: CustomScrollbar(
@@ -52,7 +53,7 @@ class _MediaOptionWidgetState extends State<MediaOptionWidget> {
                       height: MediaQuery.of(context).size.height * 0.45,
                       child: Center(
                         child: Text(
-                          'Нет медиафайлов',
+                          S.of(context).noMediaFiles,
                           style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                           textAlign: TextAlign.center,
                         ),
@@ -92,7 +93,7 @@ class _MediaOptionWidgetState extends State<MediaOptionWidget> {
                 height: 100,
                 decoration: BoxDecoration(color: ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(12)),
                 alignment: Alignment.center,
-                child: Text('Элемент $index'),
+                child: Text('${S.of(context).element} $index'),
               ),
               AnimatedPositioned(
                 duration: Duration(milliseconds: 300),

@@ -70,9 +70,7 @@ void showSelectedLanguageDialog(BuildContext context) {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2, top: 5, bottom: 5),
                     child: ScrollbarTheme(
-                      data: ScrollbarThemeData(
-                        thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
-                      ),
+                      data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                       child: Scrollbar(
                         controller: scrollController,
                         thickness: 2,

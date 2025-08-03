@@ -9,6 +9,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/message_model.dart';
 import '../../chat/widgets/cards/message_card.dart';
 import '../../community/screens/add_user_screen.dart';
@@ -74,7 +75,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   borderRadius: BorderRadius.circular(9),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                       blurRadius: 3,
                       spreadRadius: 1,
                     ),
@@ -154,7 +155,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha((0.1 * 255).toInt()),
+            color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
             blurRadius: 3,
             spreadRadius: 1,
           ),
@@ -181,15 +182,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          Text('Вы создали эту группу', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+          Text(S.of(context).youCreatedGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-          Text('Группа • ${widget.members.length} участники', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
+          Text('${S.of(context).aboutGroups} • ${widget.members.length} ${S.of(context).participants.substring(1)}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
           const SizedBox(height: 10),
           GestureDetector(
             onTap: () {
               Navigator.push(context, createPageRoute(const DescriptionGroupScreen()));
             },
-            child: Text('Добавить описание...', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+            child: Text(S.of(context).addDescription, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
           ),
           const SizedBox(height: 20),
           SizedBox(
@@ -203,7 +204,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 color: colorsController.getColor(colorsController.selectedColorScheme.value),
               ),
               label: Text(
-                'О группе',
+                S.of(context).aboutGroup,
                 style: TextStyle(
                   color: colorsController.getColor(colorsController.selectedColorScheme.value),
                   fontWeight: FontWeight.w500,
@@ -211,7 +212,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
               ),
@@ -227,7 +228,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               },
               icon: Icon(Icons.person_add_alt_outlined, size: 20, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
               label: Text(
-                'Добавить участников',
+                S.of(context).addParticipants,
                 style: TextStyle(
                   color: colorsController.getColor(colorsController.selectedColorScheme.value),
                   fontWeight: FontWeight.w500,
@@ -237,7 +238,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               style: OutlinedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
                 side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
               ),
             ),
           ),

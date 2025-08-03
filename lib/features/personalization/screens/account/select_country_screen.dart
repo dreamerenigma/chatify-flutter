@@ -125,7 +125,7 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: context.isDarkMode ? ChatifyColors.popupColorDark.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.2 * 255).toInt()),
-                        hintText: 'Поиск стран',
+                        hintText: S.of(context).searchCountries,
                         hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
@@ -145,7 +145,7 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
           ),
           Expanded(
             child: ScrollbarTheme(
-              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => ChatifyColors.darkerGrey)),
+              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
               child: Scrollbar(
                 thickness: 4,
                 thumbVisibility: false,
@@ -153,11 +153,7 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
                   behavior: NoGlowScrollBehavior(),
                   child: ListView.separated(
                     itemCount: _filteredCountries.length,
-                    separatorBuilder: (context, index) => Divider(
-                      height: 0,
-                      thickness: 1,
-                      color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey,
-                    ),
+                    separatorBuilder: (context, index) => Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey),
                     itemBuilder: (context, index) {
                       final country = _filteredCountries[index];
                       final isSelected = country == countryController.selectedCountry.value;
@@ -167,12 +163,7 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
                         child: ListTile(
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(2),
-                            child: SvgPicture.asset(
-                              country.flag,
-                              width: 40,
-                              height: 20,
-                              fit: BoxFit.cover,
-                            ),
+                            child: SvgPicture.asset(country.flag, width: 40, height: 20, fit: BoxFit.cover),
                           ),
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

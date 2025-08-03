@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -31,10 +32,7 @@ class GeolocationScreenState extends State<GeolocationScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              'Геоданные',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-            ),
+            title: Text(S.of(context).geodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -54,21 +52,14 @@ class GeolocationScreenState extends State<GeolocationScreen> {
           const SizedBox(height: 35),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Вы не делитесь геоданными ни в одном чате',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-            ),
+            child: Text(S.of(context).youShareGeodataChat, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
           ),
           const SizedBox(height: 12),
           Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Геоданным требуется доступ к местоположению в фоновом режиме. Вы можете изменить это в настройках своего телефона.',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-            ),
+            child: Text(S.of(context).geodataRequiresBackgroundLocationAccess, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
           ),
         ],
       ),

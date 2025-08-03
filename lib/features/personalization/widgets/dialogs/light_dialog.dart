@@ -1,6 +1,6 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../controllers/colors_controller.dart';
@@ -38,7 +38,7 @@ void showLightDialog(BuildContext context) {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Свет', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+                      child: Text(S.of(context).lightNotify, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -75,12 +75,11 @@ void showLightDialog(BuildContext context) {
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value,).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),),
                           ),
-                          child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                         const SizedBox(width: 8),
                         TextButton(
                           onPressed: () {
-                            log('Selected Option: $selectedRadioButton');
                             Navigator.of(context).pop();
                           },
                           style: TextButton.styleFrom(
@@ -88,7 +87,7 @@ void showLightDialog(BuildContext context) {
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value,).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text('ОК', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ],
                     ),

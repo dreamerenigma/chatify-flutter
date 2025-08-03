@@ -1,4 +1,4 @@
-import 'package:chatify/features/newsletter/models/newsletter.dart';
+import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:flutter/material.dart';
 import '../cards/newsletter_card.dart';
 

@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 class NoTextSelectionControls extends TextSelectionControls {
   @override
   Widget buildToolbar(
-      BuildContext context,
-      Rect globalEditableRegion,
-      double textLineHeight,
-      Offset selectionMidpoint,
-      List<TextSelectionPoint> endpoints,
-      TextSelectionDelegate delegate,
-      ValueListenable<ClipboardStatus>? clipboardStatus,
-      Offset? lastSecondaryTapDownPosition,
-      ) {
+    BuildContext context,
+    Rect globalEditableRegion,
+    double textLineHeight,
+    Offset selectionMidpoint,
+    List<TextSelectionPoint> endpoints,
+    TextSelectionDelegate delegate,
+    ValueListenable<ClipboardStatus>? clipboardStatus,
+    Offset? lastSecondaryTapDownPosition,
+    ) {
     return const SizedBox.shrink();
   }
 

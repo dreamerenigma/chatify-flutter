@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jam_icons/jam_icons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 
@@ -61,17 +62,17 @@ Future <void> showFilterChatsDialog(BuildContext context, Offset position) async
                       children: [
                         Padding(
                           padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-                          child: Text('Фильтр чатов', style: TextStyle(color: ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                          child: Text(S.of(context).chatFilter, style: TextStyle(color: ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                         ),
                         SizedBox(height: 10),
                         Column(
                           children: [
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.messageNotification, text: 'Непрочитанное', iconSize: 18, icon: null),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Избранное', iconSize: 20, icon: Icons.favorite_border_rounded),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.contact, text: 'Контакты', iconSize: 20, icon: null),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.blockUser, text: 'Не являются контактами', iconSize: 22, icon: null),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.newGroup, text: 'Группы', iconSize: 22, icon: null),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Черновики', iconSize: 20, icon: JamIcons.pencil),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.messageNotification, text: S.of(context).unread, iconSize: 18, icon: null),
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).favorite, iconSize: 20, icon: Icons.favorite_border_rounded),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.contact, text: S.of(context).contacts, iconSize: 20, icon: null),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.blockUser, text: S.of(context).areNotContacts, iconSize: 22, icon: null),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.newGroup, text: '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', iconSize: 22, icon: null),
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).drafts, iconSize: 20, icon: JamIcons.pencil),
                             SizedBox(height: 8),
                           ],
                         ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -26,7 +27,7 @@ void showShareLinkBottomSheetDialog(BuildContext context) {
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20),
-                child: Text('Поделиться ссылкой', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                child: Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
               ),
             ),
             const Divider(height: 0, thickness: 1),
@@ -47,7 +48,7 @@ void showShareLinkBottomSheetDialog(BuildContext context) {
                     const SizedBox(width: 20),
                     SizedBox(
                       width: 230,
-                      child: Text('Отправить ссылку через Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeLg), softWrap: true),
+                      child: Text(S.of(context).sendLinkViaApp, style: TextStyle(fontSize: ChatifySizes.fontSizeLg), softWrap: true),
                     )
                   ],
                 ),
@@ -61,7 +62,7 @@ void showShareLinkBottomSheetDialog(BuildContext context) {
                 );
                 Navigator.pop(context);
                 Clipboard.setData(ClipboardData(text: invitationLink)).then((_) {
-                  Dialogs.showSnackbarMargin(context, 'Ссылка скопированна', margin: const EdgeInsets.only(left: 10, right: 10));
+                  Dialogs.showSnackbarMargin(context, S.of(context).linkCopied, margin: const EdgeInsets.only(left: 10, right: 10));
                 });
               },
               child: Padding(
@@ -73,17 +74,14 @@ void showShareLinkBottomSheetDialog(BuildContext context) {
                       onPressed: () {},
                     ),
                     const SizedBox(width: 20),
-                    Text('Копировать ссылку', style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+                    Text(S.of(context).copyLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                   ],
                 ),
               ),
             ),
             InkWell(
               onTap: () {
-                String invitationLink = _buildInvitationLink(
-                  callTypeController.selectedCallType.value,
-                  callTypeController.invitationId.value,
-                );
+                String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
                 SharePlus.instance.share(
                   ShareParams(text: invitationLink),
                 );
@@ -97,7 +95,7 @@ void showShareLinkBottomSheetDialog(BuildContext context) {
                       onPressed: () {},
                     ),
                     const SizedBox(width: 20),
-                    Text('Поделиться ссылкой', style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+                    Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                   ],
                 ),
               ),

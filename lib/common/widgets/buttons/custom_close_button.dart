@@ -54,7 +54,7 @@ class CustomCloseButtonState extends State<CustomCloseButton> {
             child: InkWell(
               onTap: () => windowManager.close(),
               mouseCursor: SystemMouseCursors.basic,
-              splashColor: Colors.transparent,
+              splashColor: ChatifyColors.transparent,
               highlightColor: widget.highlightColor,
               hoverColor: widget.hoverColor,
               child: Padding(

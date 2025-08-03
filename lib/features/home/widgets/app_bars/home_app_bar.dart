@@ -54,39 +54,32 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           centerTitle: centerTitle,
           titleSpacing: titleSpacing,
           title: showSearch && isSearching
-              ? TextSelectionTheme(
-            data: TextSelectionThemeData(
-              cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-              selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            ),
-            child: TextField(
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                hintText: hintText,
-                hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              ),
-              autofocus: true,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-              onChanged: onSearch,
-            ),
-          )
-              : title,
+            ? TextSelectionTheme(
+                data: TextSelectionThemeData(
+                  cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                  selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    hintText: hintText,
+                    hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                  ),
+                  autofocus: true,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                  onChanged: onSearch,
+                ),
+              )
+            : title,
           actions: [
             if (onCameraPressed != null)
-              IconButton(
-                icon: const Icon(Icons.camera_alt_outlined),
-                onPressed: onCameraPressed,
-              ),
+              IconButton(icon: const Icon(Icons.camera_alt_outlined), onPressed: onCameraPressed),
+            SizedBox(width: 4),
             if (showSearch)
-              IconButton(
-                onPressed: onToggleSearch,
-                icon: Icon(
-                  isSearching ? CupertinoIcons.clear_circled_solid : Icons.search,
-                ),
-              ),
+              IconButton(onPressed: onToggleSearch, icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search)),
             popupMenuButton,
           ],
         ),

@@ -5,12 +5,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/urls/url_utils.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
 
@@ -121,13 +122,7 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
                     onTap: () async {
-                      final Uri url = Uri.parse('https://inputstudios.vercel.app/chatify/security');
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url);
-                      } else {
-                        throw 'Не удалось открыть $url';
-                      }
-                      Navigator.pop(context);
+                      UrlUtils.launchURL(AppLinks.security);
                     },
                     child: Text(
                       S.of(context).readMore,
@@ -175,14 +170,7 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                           onExit: (_) => setState(() => isHovered  = false),
                           child: GestureDetector(
                             onTap: () async {
-                              final Uri url = Uri.parse('https://faq.chatify.ru/?cms_platform=android');
-
-                              if (await canLaunchUrl(url)) {
-                                await launchUrl(url);
-                              } else {
-                                throw 'Не удалось открыть $url';
-                              }
-                              Navigator.pop(context);
+                              UrlUtils.launchURL(AppLinks.helpCenter);
                             },
                             child: Text(
                               S.of(context).readMore,
@@ -208,13 +196,7 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                   onExit: (_) => setState(() => isHoveredDeleteAccount = false),
                   child: InkWell(
                     onTap: () async {
-                      final Uri url = Uri.parse('https://faq.chatify.ru/820124435853543/');
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url);
-                      } else {
-                        throw 'Не удалось открыть $url';
-                      }
-                      Navigator.pop(context);
+                      UrlUtils.launchURL(AppLinks.helpEncryption);
                     },
                     splashColor: ChatifyColors.transparent,
                     highlightColor: ChatifyColors.transparent,

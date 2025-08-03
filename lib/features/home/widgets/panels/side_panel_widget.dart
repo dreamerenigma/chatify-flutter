@@ -1,7 +1,9 @@
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../bot/models/info_app_model.dart';
 import '../../../bot/widgets/widget/support_chat_widget.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/widget/chat_widget.dart';
@@ -11,7 +13,7 @@ import '../../../group/models/group_model.dart';
 import '../../../personalization/controllers/user_controller.dart';
 import '../../../group/widgets/widget/group_chat_widget.dart';
 import '../../../newsletter/widgets/widget/newsletter_widget.dart';
-import '../../../newsletter/models/newsletter.dart';
+import '../../../newsletter/models/newsletter_model.dart';
 import '../widgets/archive_widget.dart';
 import '../widgets/calls_widget.dart';
 import '../widgets/chats_widget.dart';
@@ -33,6 +35,7 @@ class SidePanelWidget extends StatefulWidget {
   final List<CommunityModel> communities;
   final List<UserModel> users;
   final List<SupportAppModel> supports;
+  final List<InfoAppModel> infosApp;
   final bool isSearching;
   final List<UserModel> searchList;
   final int selectedIndex;
@@ -51,6 +54,7 @@ class SidePanelWidget extends StatefulWidget {
     required this.communities,
     required this.users,
     required this.supports,
+    required this.infosApp,
     required this.isSearching,
     required this.searchList,
     required this.selectedIndex,
@@ -62,12 +66,14 @@ class SidePanelWidget extends StatefulWidget {
 }
 
 class _SidePanelWidgetState extends State<SidePanelWidget> {
+  final GetStorage box = GetStorage();
   final userController = Get.find<UserController>();
   GroupModel? selectedGroup;
   NewsletterModel? selectedNewsletter;
   CommunityModel? selectedCommunity;
   UserModel? selectedUser;
   SupportAppModel? selectedSupport;
+  InfoAppModel? selectedInfoApp;
   double newSidePanelWidth = 0;
   bool isHovered = false;
   bool isClicked = false;
@@ -78,6 +84,18 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
   void initState() {
     super.initState();
     newSidePanelWidth = widget.sidePanelWidth;
+    _loadWidth();
+  }
+
+  void _loadWidth() {
+    double savedWidth = box.read('sidePanelWidth') ?? widget.sidePanelWidth;
+    setState(() {
+      newSidePanelWidth = savedWidth;
+    });
+  }
+
+  void _saveWidth() {
+    box.write('sidePanelWidth', newSidePanelWidth);
   }
 
   @override
@@ -115,6 +133,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                             communities: widget.communities,
                             users: widget.users,
                             supports: widget.supports,
+                            infosApp:  widget.infosApp,
                             isSearching: widget.isSearching,
                             searchList: widget.searchList,
                             selectedUser: selectedUser,
@@ -125,6 +144,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                                 selectedCommunity = null;
                                 selectedUser = null;
                                 selectedSupport = null;
+                                selectedInfoApp = null;
                               });
                             },
                             onNewsletterSelected: (newsletter) {
@@ -134,6 +154,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                                 selectedCommunity = null;
                                 selectedUser = null;
                                 selectedSupport = null;
+                                selectedInfoApp = null;
                               });
                             },
                             onCommunitySelected: (community) {
@@ -143,6 +164,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                                 selectedGroup = null;
                                 selectedNewsletter = null;
                                 selectedSupport = null;
+                                selectedInfoApp = null;
                               });
                             },
                             onUserSelected: (chatUser) {
@@ -152,6 +174,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                                 selectedNewsletter = null;
                                 selectedCommunity = null;
                                 selectedSupport = null;
+                                selectedInfoApp = null;
                               });
                             },
                             onSupportSelected: (support) {
@@ -159,8 +182,19 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                                 selectedSupport = support;
                                 selectedGroup = null;
                                 selectedNewsletter = null;
+                                selectedUser = null;
+                                selectedCommunity = null;
+                                selectedInfoApp = null;
+                              });
+                            },
+                            onInfoAppSelected: (infoApp) {
+                              setState(() {
+                                selectedInfoApp = infoApp;
+                                selectedGroup = null;
+                                selectedNewsletter = null;
                                 selectedCommunity = null;
                                 selectedUser = null;
+                                selectedSupport = null;
                               });
                             },
                           )
@@ -224,7 +258,10 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanStart: (_) => setState(() => isClicked = true),
-                  onPanEnd: (_) => setState(() => isClicked = false),
+                  onPanEnd: (_) {
+                    setState(() => isClicked = false);
+                    _saveWidth();
+                  },
                   onPanCancel: () => setState(() => isClicked = false),
                   onPanUpdate: (details) {
                     if (isClicked) {

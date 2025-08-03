@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 
 class DescriptionGroupScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Описание группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+        title: Text(S.of(context).groupDescription, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
         automaticallyImplyLeading: false,
       ),
       body: Stack(
@@ -84,7 +85,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
                 focusNode: textFocusNode,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  hintText: 'Добавьте описание группы',
+                  hintText: S.of(context).addGroupDescription,
                   hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey),
                   border: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey)),
                   enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey)),
@@ -124,10 +125,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
   Widget _textDescription() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        'Описание группы видно всем ее участникам, а также приглашенным в группу пользователям.',
-        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-      ),
+      child: Text(S.of(context).groupDescriptionVisible, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
     );
   }
 
@@ -151,7 +149,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
                   right: BorderSide.none,
                   bottom: BorderSide.none,
                 )),
-                child: Center(child: Text('Отмена', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value)))),
+                child: Center(child: Text(S.of(context).cancel, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value)))),
               ),
             ),
           ),
@@ -160,9 +158,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
           child: Material(
             color: ChatifyColors.transparent,
             child: InkWell(
-              onTap: () {
-
-              },
+              onTap: () {},
               splashColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
               highlightColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
               child: Container(
@@ -173,7 +169,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
                   right: BorderSide.none,
                   bottom: BorderSide.none,
                 )),
-                child: Center(child: Text('ОК', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value)))),
+                child: Center(child: Text(S.of(context).ok, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value)))),
               ),
             ),
           ),

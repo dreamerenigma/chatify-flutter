@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/add_new_contact_bottom_dialog.dart';
@@ -23,7 +24,7 @@ void showAddContactDialog(BuildContext context) {
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Создать новый контакт', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).createNewContactDialog, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
             ),
             GestureDetector(
@@ -32,7 +33,7 @@ void showAddContactDialog(BuildContext context) {
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Добавить к существующему контакту', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).addExistingContact, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
             ),
           ],

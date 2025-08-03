@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../authentication/models/country.dart';
 import '../../../../authentication/widgets/lists/country_list.dart';
@@ -15,6 +17,15 @@ Future<void> showSelectCountryOverlay(BuildContext context, Offset position, Fun
   final AnimationController animationController = AnimationController(vsync: Navigator.of(context), duration: Duration(milliseconds: 300));
   final Animation<Offset> slideAnimation = Tween<Offset>(begin: Offset(0, -0.1), end: Offset(0, 0)).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic));
   final TextEditingController searchCountryController = TextEditingController();
+  final FocusNode inputFocusNode = FocusNode();
+
+  inputFocusNode.addListener(() {
+    if (inputFocusNode.hasFocus) {
+      log("Focus gained on the input field.");
+    } else {
+      log("Focus lost from the input field.");
+    }
+  });
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -24,11 +35,16 @@ Future<void> showSelectCountryOverlay(BuildContext context, Offset position, Fun
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                animationController.reverse().then((_) {
-                  overlayEntry.remove();
-                  completer.complete();
-                  animationController.dispose();
-                });
+                if (!inputFocusNode.hasFocus) {
+                  log("Tap outside input field - Focus not in input.");
+                  animationController.reverse().then((_) {
+                    overlayEntry.remove();
+                    completer.complete();
+                    animationController.dispose();
+                  });
+                } else {
+                  log("Tap detected inside the input field - Focus remains.");
+                }
               },
             ),
           ),
@@ -57,8 +73,9 @@ Future<void> showSelectCountryOverlay(BuildContext context, Offset position, Fun
                         child: Column(
                           children: [
                             SearchTextInput(
-                              hintText: 'Поиск страны/региона',
                               controller: searchCountryController,
+                              focusNode: inputFocusNode,
+                              hintText: S.of(context).searchCountryRegion,
                               enabledBorderColor: context.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.black,
                               padding: EdgeInsets.zero,
                               showPrefixIcon: true,
@@ -92,6 +109,11 @@ Future<void> showSelectCountryOverlay(BuildContext context, Offset position, Fun
 
   overlay.insert(overlayEntry);
   animationController.forward();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    log("Requesting focus on input field.");
+    inputFocusNode.requestFocus();
+  });
 
   return completer.future;
 }
@@ -134,7 +156,7 @@ Widget buildCountryList(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
               child: Row(
                 children: [
-                  SvgPicture.asset(country.flag, width: 30, height: 20),
+                  ClipRRect(borderRadius: BorderRadius.circular(4), child: SvgPicture.asset(country.flag, width: 30, height: 20)),
                   SizedBox(width: 16),
                   Expanded(
                     child: Column(

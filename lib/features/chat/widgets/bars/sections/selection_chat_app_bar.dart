@@ -74,22 +74,22 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 1,
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: 16),
                 child: Text(S.of(context).copy, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
               PopupMenuItem(
                 value: 2,
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: 16),
                 child: Text(S.of(context).edit, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
               PopupMenuItem(
                 value: 3,
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: 16),
                 child: Text(S.of(context).pinIt, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
               PopupMenuItem(
                 value: 4,
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: 16),
                 child: Text(S.of(context).complain, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
             ],

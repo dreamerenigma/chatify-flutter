@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:chatify/features/newsletter/models/newsletter.dart';
+import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../api/apis.dart';
+import '../../../generated/l10n/l10n.dart';
 
 class PhotoNewsletterController extends GetxController {
   RxString image = RxString('');
@@ -46,7 +47,7 @@ class PhotoNewsletterController extends GetxController {
     this.newsletter = newsletter;
   }
 
-  void onImagePicked(String? imagePath) async {
+  void onImagePicked(BuildContext context, String? imagePath) async {
     if (imagePath != null) {
       image.value = imagePath;
       _saveImageToStorage(imagePath);
@@ -55,12 +56,12 @@ class PhotoNewsletterController extends GetxController {
         File imageFile = File(imagePath);
         if (newsletter != null) {
           await APIs.updateNewsletterPicture(newsletter!.id, imageFile);
-          log('Newsletter image updated successfully in database');
+          log(S.of(context).newsletterImageUpdatedSuccessDatabase);
         } else {
-          log('Newsletter is null, cannot update image');
+          log(S.of(context).newsletterNullCannotUpdateImage);
         }
       } catch (e) {
-        log('Failed to update newsletter image in database: $e');
+        log('${S.of(context).failedUpdateNewsletterImageDatabase}: $e');
       }
     } else {
       image.value = '';
@@ -70,15 +71,14 @@ class PhotoNewsletterController extends GetxController {
           String? currentImageUrl = await _getCurrentImageUrlForCommunity(newsletter!.id);
           if (currentImageUrl != null) {
             await APIs.deleteNewsletterPicture(newsletter!.id, currentImageUrl);
-            log('Newsletter image cleared successfully in database');
           } else {
-            log('No image URL to delete');
+            log(S.of(context).noImageUrlDelete);
           }
         } else {
-          log('Newsletter is null, cannot clear image');
+          log(S.of(context).newsletterNullCannotCleaImage);
         }
       } catch (e) {
-        log('Failed to clear newsletter image in database: $e');
+        log('${S.of(context).failedClearNewsletterImageDatabase}: $e');
       }
     }
   }
@@ -88,7 +88,6 @@ class PhotoNewsletterController extends GetxController {
       DocumentSnapshot doc = await FirebaseFirestore.instance.collection('Newsletters').doc(communityId).get();
       return doc['image'] as String?;
     } catch (e) {
-      log('Error fetching current image URL: $e');
       return null;
     }
   }
@@ -103,18 +102,27 @@ class PhotoNewsletterController extends GetxController {
     file.writeAsBytesSync(response.bodyBytes);
 
     final box = context.findRenderObject() as RenderBox?;
-    final xFile = XFile(file.path);
-    Share.shareXFiles([xFile], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+    final params = ShareParams(
+      files: [XFile(file.path)],
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      text: S.of(context).lookAtPicture,
+    );
+
+    final result = await SharePlus.instance.share(params);
+
+    if (result.status == ShareResultStatus.success) {
+      log(S.of(context).imageSentSuccess);
+    } else if (result.status == ShareResultStatus.dismissed) {
+      log(S.of(context).userCancelSubmission);
+    }
   }
 
   void _saveImageToStorage(String image) {
-    log('Saving image to GetStorage: $image');
     storage.write('image', image);
   }
 
   void _loadImageFromStorage() {
     String? savedImage = storage.read('image');
-    log('Loaded image from GetStorage: $savedImage');
     if (savedImage != null && savedImage.isNotEmpty) {
       image.value = savedImage;
     }

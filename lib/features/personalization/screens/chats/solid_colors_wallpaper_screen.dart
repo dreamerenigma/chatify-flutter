@@ -67,12 +67,7 @@ class SolidColorsWallpaperScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 height: 150,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(imagePaths[index]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(imagePaths[index]), fit: BoxFit.cover)),
               ),
             );
           },

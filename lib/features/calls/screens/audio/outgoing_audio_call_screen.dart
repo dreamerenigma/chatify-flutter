@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
@@ -50,12 +51,10 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
 
   Future<void> _startRingingTone() async {
     try {
-      log('Starting ringing tone...');
       await audioPlayer.setReleaseMode(ReleaseMode.loop);
       await audioPlayer.play(AssetSource(ChatifySounds.cellPhoneRing));
-      log('Ringing tone started successfully.');
     } catch (e) {
-      log('Error starting ringing tone: $e');
+      log('${S.of(context).errorStartingRingingTone}: $e');
     }
   }
 
@@ -63,17 +62,15 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
     try {
       await audioPlayer.stop();
     } catch (e) {
-      log('Error stopping ringing tone: $e');
+      log('${S.of(context).errorStopingRingingTone}: $e');
     }
   }
 
   Future<void> playClickButton(AudioPlayer audioPlayer) async {
     try {
-      log('Playing sound...');
       await audioPlayer.play(AssetSource(ChatifySounds.endCallButton));
-      log('Sound played successfully.');
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}: $e');
     }
   }
 
@@ -100,7 +97,6 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
       audioPlayer.setVolume(0);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +139,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                             const SizedBox(width: 4),
                             SizedBox(
                               width: 220,
-                              child: Text('Защищено скозным шифрованием',
+                              child: Text(S.of(context).protectedWithEndToEndEncryption,
                                 style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -189,7 +185,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                       spreadRadius: 5,
                       blurRadius: 10,
                       offset: const Offset(0, -3),
@@ -216,7 +212,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                                title: Text('Переключиться на видеозвонок?', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                                title: Text(S.of(context).switchToVideoCall, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
                                 content: SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.8,
@@ -233,7 +229,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                     ),
                                     child: Text(
-                                      'Отмена',
+                                      S.of(context).cancel,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                     ),
                                   ),
@@ -247,7 +243,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                     ),
                                     child: Text(
-                                      'Переключить',
+                                      S.of(context).toggle,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                     ),
                                   ),

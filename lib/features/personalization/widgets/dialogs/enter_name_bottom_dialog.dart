@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
@@ -30,7 +31,7 @@ void showEnterNameBottomDialog(BuildContext context, String initialName, Functio
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Введите своё имя', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.start),
+                Text(S.of(context).enterYourName, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.start),
                 const SizedBox(height: 16),
                 TextSelectionTheme(
                   data: TextSelectionThemeData(
@@ -92,7 +93,7 @@ void showEnterNameBottomDialog(BuildContext context, String initialName, Functio
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                     ),
                     const SizedBox(width: 12),
                     TextButton(
@@ -105,7 +106,7 @@ void showEnterNameBottomDialog(BuildContext context, String initialName, Functio
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      child: Text('Сохранить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                     ),
                   ],
                 ),

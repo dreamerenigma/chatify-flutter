@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
@@ -11,7 +12,7 @@ void showClosedChatsClearedOpenDialog(BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text('Закрытые чаты будут очищены и открыты', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).closedChatsClearedOpened, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             contentPadding: const EdgeInsets.symmetric(horizontal: 25),
             titlePadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
             actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
@@ -21,14 +22,11 @@ void showClosedChatsClearedOpenDialog(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Все сообщения, фото и видео в закрытых чатах будут удалены, а сами чаты станут открытыми в основном списке чатов.',
+                  S.of(context).messagesPhotosVideosClosedChats,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.3),
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  'Также будет сброшен секретный код (при наличии).',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.3),
-                ),
+                Text(S.of(context).secretCodeReset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.3)),
               ],
             ),
             actions: <Widget>[
@@ -48,7 +46,7 @@ void showClosedChatsClearedOpenDialog(BuildContext context) {
                         backgroundColor: ChatifyColors.red.withAlpha((0.1 * 255).toInt()),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      child: Text('Открыть и очистить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      child: Text(S.of(context).openClear, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
@@ -61,7 +59,7 @@ void showClosedChatsClearedOpenDialog(BuildContext context) {
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                     ),
                   ],
                 ),

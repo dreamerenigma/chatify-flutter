@@ -54,7 +54,7 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                     children: [
                       IconButton(
                         icon: const Icon(Icons.add_circle_outline_rounded),
-                        tooltip: 'Help',
+                        tooltip: S.of(context).help,
                         onPressed: () {
                           showMenu(
                             context: context,
@@ -62,10 +62,10 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                             items: [
                               PopupMenuItem(
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Icon(Icons.photo_camera, size: 20),
                                     SizedBox(width: 8),
-                                    Text('Фото и видео'),
+                                    Text(S.of(context).photosAndVideos),
                                   ],
                                 ),
                                 onTap: () {
@@ -74,15 +74,13 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                               ),
                               PopupMenuItem(
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Icon(Icons.text_fields, size: 20),
                                     SizedBox(width: 8),
-                                    Text('Текст'),
+                                    Text(S.of(context).text),
                                   ],
                                 ),
-                                onTap: () {
-
-                                },
+                                onTap: () {},
                               ),
                             ],
                           );
@@ -91,7 +89,7 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                       IconButton(
                         key: _statusPrivacyKey,
                         icon: const Icon(Icons.more_vert),
-                        tooltip: 'More',
+                        tooltip: S.of(context).more,
                         onPressed: () {
                           final RenderBox renderBox = _statusPrivacyKey.currentContext?.findRenderObject() as RenderBox;
                           final position = renderBox.localToGlobal(Offset.zero);
@@ -109,10 +107,10 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                               PopupMenuItem(
                                 value: 1,
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Icon(Icons.privacy_tip, size: 20),
                                     SizedBox(width: 8),
-                                    Text('Status Privacy'),
+                                    Text(S.of(context).statusPrivacy),
                                   ],
                                 ),
                               ),
@@ -120,17 +118,16 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ).then((value) {
                             if (value == 1) {
-                              // Ждём, чтобы меню успело закрыться
                               Future.delayed(Duration(milliseconds: 100), () {
                                 showDialog(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    title: const Text('Status Privacy'),
-                                    content: const Text('Настройки конфиденциальности статуса.'),
+                                    title: Text(S.of(context).statusPrivacy),
+                                    content: Text(S.of(context).statusPrivacySettings),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: const Text('Закрыть'),
+                                        child: Text(S.of(context).close),
                                       ),
                                     ],
                                   ),

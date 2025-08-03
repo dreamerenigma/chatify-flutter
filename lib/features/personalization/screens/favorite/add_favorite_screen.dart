@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../home/widgets/lists/user_list.dart';
@@ -82,7 +83,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
                 color: shadowColor,
@@ -96,25 +97,25 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
             title: isSearching
-                ? TextField(
-              key: textFieldKey,
-              focusNode: searchFocusNode,
-              cursorColor: Colors.blue,
-              controller: searchController,
-              keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-              decoration: InputDecoration(
-                hintText: 'Поиск...',
-                hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-              ),
-              onChanged: (value) {
-                _onSearchChanged();
-              },
-            )
-            : Text('Добавить в избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
+              ? TextField(
+                  key: textFieldKey,
+                  focusNode: searchFocusNode,
+                  cursorColor: ChatifyColors.blue,
+                  controller: searchController,
+                  keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                  decoration: InputDecoration(
+                    hintText: S.of(context).settingsSearch,
+                    hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    _onSearchChanged();
+                  },
+                )
+              : Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
             leading: isSearching
                 ? IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -125,10 +126,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                 : null,
             actions: [
               if (!isSearching)
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: _toggleSearch,
-                ),
+                IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
             ],
           ),
         ),
@@ -143,8 +141,8 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                   child: Wrap(
-                    spacing: 16.0,
-                    runSpacing: 16.0,
+                    spacing: 16,
+                    runSpacing: 16,
                     children: selectedUsers.map((user) {
                       return Stack(
                         alignment: Alignment.bottomRight,
@@ -183,21 +181,11 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                                 _removeSelectedUser(user);
                               },
                               child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 2.0,
-                                  ),
-                                ),
+                                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
                                 child: const CircleAvatar(
-                                  backgroundColor: Colors.grey,
+                                  backgroundColor: ChatifyColors.grey,
                                   radius: 12,
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 16,
-                                    color: Colors.black,
-                                  ),
+                                  child: Icon(Icons.close, size: 16, color: ChatifyColors.black),
                                 ),
                               ),
                             ),
@@ -229,7 +217,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
         heroTag: 'addFavorite',
         onPressed: () async {},
         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-        foregroundColor: Colors.white,
+        foregroundColor: ChatifyColors.white,
         child: const Icon(Icons.check),
       ),
     );

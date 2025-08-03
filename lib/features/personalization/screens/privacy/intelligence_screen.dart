@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -15,13 +16,6 @@ class IntelligenceScreen extends StatefulWidget {
 class IntelligenceScreenState extends State<IntelligenceScreen> {
   final _storage = GetStorage();
   String _selectedOption = '';
-
-  final List<Map<String, String>> _options = [
-    {'value': 'everyone', 'label': 'Все'},
-    {'value': 'contacts', 'label': 'Мои контакты'},
-    {'value': 'favorites', 'label': 'Контакты, кроме...'},
-    {'value': 'nobody', 'label': 'Никто'},
-  ];
 
   @override
   void initState() {
@@ -38,6 +32,13 @@ class IntelligenceScreenState extends State<IntelligenceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> options = [
+      {'value': 'everyone', 'label': S.of(context).all},
+      {'value': 'contacts', 'label': S.of(context).myContacts},
+      {'value': 'favorites', 'label': S.of(context).contactsExcept},
+      {'value': 'nobody', 'label': S.of(context).nobody},
+    ];
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -54,13 +55,13 @@ class IntelligenceScreenState extends State<IntelligenceScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? 'Мои контакты';
+                final result = options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? S.of(context).myContacts;
                 Navigator.pop(context, result);
               },
             ),
@@ -72,9 +73,9 @@ class IntelligenceScreenState extends State<IntelligenceScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('Кто видит мои сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
+            child: Text(S.of(context).whoSeesMyInformation, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
           ),
-          ..._options.map((option) {
+          ...options.map((option) {
             return RadioListTile(
               value: option['value'],
               groupValue: _selectedOption,

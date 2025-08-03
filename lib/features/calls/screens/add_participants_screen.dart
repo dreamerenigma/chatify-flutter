@@ -9,6 +9,7 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../api/apis.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
+import '../../personalization/widgets/dialogs/light_dialog.dart';
 import 'create_link_call_screen.dart';
 
 class AddParticipantsScreen extends StatefulWidget {
@@ -109,7 +110,7 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: const Offset(0, 1),
@@ -121,13 +122,13 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
               title: isSearching
                   ? TextSelectionTheme(
                 data: TextSelectionThemeData(
-                  cursorColor: Colors.blue,
-                  selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                  selectionHandleColor: Colors.blue,
+                  cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                  selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 ),
                 child: TextField(
                   focusNode: searchFocusNode,
-                  cursorColor: Colors.blue,
+                  cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   controller: searchController,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
                   decoration: InputDecoration(
@@ -144,25 +145,14 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
               : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Добавление участников',
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                  ),
-                  Text(
-                    '$totalItemsCount контактов',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
+                  Text(S.of(context).addingParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                  Text('$totalItemsCount ${S.of(context).totalCountContacts}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
                 ],
               ),
               centerTitle: false,
               actions: [
                 IconButton(
-                  icon: Icon(isSearching
-                    ? CupertinoIcons.clear_circled_solid
-                    : Icons.search),
+                  icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
                   onPressed: toggleSearch,
                 ),
               ],
@@ -175,11 +165,8 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
             if (index == 0) {
               return InkWell(
                 onTap: () {
-                  String invitationLink = _buildInvitationLink(
-                    callTypeController.selectedCallType.value,
-                    callTypeController.invitationId.value,
-                  );
-                  Share.share(invitationLink);
+                  String invitationLink = _buildInvitationLink(context, callTypeController.selectedCallType.value, callTypeController.invitationId.value);
+                  SharePlus.instance.share(ShareParams(text: invitationLink));
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 12),
@@ -187,28 +174,15 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(12),
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.share_outlined,
-                          color: Colors.white,
-                          size: 26,
-                        ),
+                        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                        child: const Icon(Icons.share_outlined, color: ChatifyColors.white, size: 26),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Поделиться ссылкой',
-                              style: TextStyle(
-                                fontSize: ChatifySizes.fontSizeMd,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 4),
                           ],
                         ),
@@ -220,13 +194,7 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
             } else if (index == 1) {
               return Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-                child: Text(
-                  'Другие контакты',
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeSm,
-                    color: ChatifyColors.darkGrey,
-                  ),
-                ),
+                child: Text(S.of(context).otherContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
               );
             } else {
               final adjustedIndex = index - 2;
@@ -249,7 +217,7 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
   }
 }
 
-String _buildInvitationLink(String callType, String invitationId) {
+String _buildInvitationLink(BuildContext context, String callType, String invitationId) {
   String callPath = callType == 'Видео' ? 'video' : 'voice';
-  return 'Присоединитесь к моему аудиозвонку в Chatify по ссылке: https://call.chatify.inputstudios.ru/$callPath/$invitationId';
+  return '${S.of(context).joinMyAppAudioCallLink}: https://call.chatify.inputstudios.ru/$callPath/$invitationId';
 }

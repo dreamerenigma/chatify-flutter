@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
 
@@ -30,12 +31,7 @@ Future<void> showAttachFileDialog(BuildContext context, Offset position, Future<
     builder: (context) {
       return Stack(
         children: [
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: closeOverlay,
-            ),
-          ),
+          Positioned.fill(child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: closeOverlay)),
           Positioned(
             left: position.dx + 2,
             bottom: position.dy + 9,
@@ -80,27 +76,27 @@ Future<void> showAttachFileDialog(BuildContext context, Offset position, Future<
                                 );
                                 closeOverlay();
                               }),
-                              _buildFilterChats(context: context, iconPath: '', text: 'Камера', iconSize: 20, icon: Icons.camera_alt_outlined, onTap: () async {
+                              _buildFilterChats(context: context, iconPath: '', text: S.of(context).camera, iconSize: 20, icon: Icons.camera_alt_outlined, onTap: () async {
                                 overlayEntry.remove();
                                 showTakePhotoDialog(context);
                                 closeOverlay();
                               }),
-                              _buildFilterChats(context: context, iconPath: '', text: 'Документ', iconSize: 20, icon: FluentIcons.document_16_regular, onTap: () {
+                              _buildFilterChats(context: context, iconPath: '', text: S.of(context).documents, iconSize: 20, icon: FluentIcons.document_16_regular, onTap: () {
                                 overlayEntry.remove();
                               }),
-                              _buildFilterChats(context: context, iconPath: ChatifyVectors.contact, text: 'Контакт', iconSize: 22, icon: null, onTap: () {
-                                overlayEntry.remove();
-                                closeOverlay();
-                              }),
-                              _buildFilterChats(context: context, iconPath: ChatifyVectors.survey, text: 'Опрос', iconSize: 22, icon: null, onTap: () {
+                              _buildFilterChats(context: context, iconPath: ChatifyVectors.contact, text: S.of(context).contact, iconSize: 22, icon: null, onTap: () {
                                 overlayEntry.remove();
                                 closeOverlay();
                               }),
-                              _buildFilterChats(context: context, iconPath: '', text: 'Мероприятие', iconSize: 20, icon: FluentIcons.calendar_16_regular, onTap: () {
+                              _buildFilterChats(context: context, iconPath: ChatifyVectors.survey, text: S.of(context).survey, iconSize: 22, icon: null, onTap: () {
                                 overlayEntry.remove();
                                 closeOverlay();
                               }),
-                              _buildFilterChats(context: context, iconPath: ChatifyVectors.feather, text: 'Рисунок', iconSize: 20, icon: null, onTap: () {
+                              _buildFilterChats(context: context, iconPath: '', text: S.of(context).event, iconSize: 20, icon: FluentIcons.calendar_16_regular, onTap: () {
+                                overlayEntry.remove();
+                                closeOverlay();
+                              }),
+                              _buildFilterChats(context: context, iconPath: ChatifyVectors.feather, text: S.of(context).drawing, iconSize: 20, icon: null, onTap: () {
                                 overlayEntry.remove();
                                 closeOverlay();
                               }),

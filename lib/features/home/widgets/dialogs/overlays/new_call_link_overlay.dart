@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import 'dart:async';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -105,7 +106,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
                                   child: Text(
-                                    'Создать ссылку на звонок',
+                                    S.of(context).createCallLink,
                                     style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                                   ),
                                 ),
@@ -124,11 +125,11 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text('Видеозвонок', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                                            Text(S.of(context).videoCall, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                                             const SizedBox(height: 6),
                                             callLink == null
                                               ? Text(
-                                                  'Создание ссылки на звонок...',
+                                                  S.of(context).creatingCallLink,
                                                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                                 )
                                               : MouseRegion(
@@ -168,14 +169,14 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
                                   child: Text(
-                                    'Любой пользователь Chatify может присоединиться к звонку по этой ссылке. Делитесь ей только с теми людьми, которым вы доверяете.',
+                                    S.of(context).anyAppUserJoinCallUsingLink,
                                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, height: 1.3),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text("Тип звонка", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                  child: Text(S.of(context).callType, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                 ),
                                 const SizedBox(height: 5),
                                 Padding(
@@ -210,10 +211,10 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                               color: isDisabled
                                                 ? ChatifyColors.darkerGrey
                                                 : (isTapped
-                                                    ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100))
-                                                    : isHovered
-                                                        ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha(204) : ChatifyColors.black.withAlpha(76))
-                                                        : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white)),
+                                                  ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100))
+                                                  : isHovered
+                                                    ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha(204) : ChatifyColors.black.withAlpha(76))
+                                                    : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white)),
                                               borderRadius: isTypeCallDropdown ? const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)) : BorderRadius.circular(6),
                                               border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha(77) : ChatifyColors.grey),
                                             ),
@@ -228,7 +229,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                                       const SizedBox(width: 10),
                                                       Padding(
                                                         padding: const EdgeInsets.only(bottom: 2),
-                                                        child: Text('Видео', style: TextStyle(color: isDisabled ? ChatifyColors.darkGrey : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                                        child: Text(S.of(context).video, style: TextStyle(color: isDisabled ? ChatifyColors.darkGrey : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                                       ),
                                                     ],
                                                   ),
@@ -262,7 +263,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                               onPressed: isDisabled ? null : () {},
                                               icon: Icon(FluentIcons.copy_24_regular, size: 20, color: isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black,),
                                               label: Text(
-                                                'Копировать ссылку',
+                                                S.of(context).copyLink,
                                                 style: TextStyle(color: isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black, fontWeight: FontWeight.w300),
                                               ),
                                               style: ElevatedButton.styleFrom(
@@ -282,7 +283,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                               onPressed: isDisabled ? null : () {},
                                               icon: SvgPicture.asset(ChatifyVectors.arrowRight, width: 21, height: 21, color: isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black,),
                                               label: Text(
-                                                'Отправить ссылку через Chatify',
+                                                S.of(context).sendLinkViaApp,
                                                 style: TextStyle(color: isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black, fontWeight: FontWeight.w300),
                                               ),
                                               style: ElevatedButton.styleFrom(

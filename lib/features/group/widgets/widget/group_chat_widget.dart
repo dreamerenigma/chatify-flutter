@@ -104,7 +104,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
 
       // APIs.updateTypingStatus(widget.group.groupId, false);
     } else {
-      Dialogs.showSnackbar(context, S.of(context).pleaseEnterText);
+      Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
     }
   }
 
@@ -205,7 +205,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
           Tooltip(
             verticalOffset: -50,
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            message: 'Смайлики, GIF-файлы, стикеры (Ctrl+Shift+E,G,S)',
+            message: S.of(context).emoticonsGifsStickers,
             textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
@@ -304,7 +304,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                     controller: textController,
                     focusNode: focusNode,
                     decoration: InputDecoration(
-                      hintText: 'Введите сообщение',
+                      hintText: S.of(context).enterYourMessage,
                       hintStyle: TextStyle(
                         color: focusNode.hasFocus ? ChatifyColors.steelGrey : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey),
                         fontWeight: FontWeight.w300,
@@ -333,7 +333,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
             showDuration: const Duration(seconds: 700),
             verticalOffset: -50,
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            message: 'Записать голосовое сообщение',
+            message: S.of(context).recordVoiceMessage,
             textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
@@ -353,10 +353,9 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
               child: InkWell(
                 onTap: () {
                   if (hasText) {
-                    log('Отправка сообщения: ${textController.text}');
                     textController.clear();
                   } else {
-                    log('Голосовое сообщение');
+                    log(S.of(context).voiceMessage);
                   }
                 },
                 hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt()),

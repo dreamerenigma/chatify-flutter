@@ -2,6 +2,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -26,9 +27,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
     try {
       await intent.launch();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to open contact add screen')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).failedOpenContactAddScreen)));
     }
   }
 
@@ -61,7 +60,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                 },
                               ),
                               Expanded(
-                                child: Center(child: Text('Новый контакт', style: TextStyle(fontSize: ChatifySizes.fontSizeBg))),
+                                child: Center(child: Text(S.of(context).newContact, style: TextStyle(fontSize: ChatifySizes.fontSizeBg))),
                               ),
                             ],
                           ),
@@ -87,7 +86,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                         border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                                        hintText: 'Имя',
+                                        hintText: S.of(context).name,
                                         hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                                         isDense: true,
                                       ),
@@ -114,7 +113,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                   border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                                  hintText: 'Фамилия',
+                                  hintText: S.of(context).surname,
                                   hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                                   isDense: true,
                                 ),
@@ -150,7 +149,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                         border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                                        labelText: 'Страна',
+                                        labelText: S.of(context).country,
                                         labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                                         floatingLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.darkGrey),
                                         floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -175,7 +174,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                         border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                                        hintText: 'Телефон',
+                                        hintText: S.of(context).phone,
                                         hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                                         contentPadding: EdgeInsets.zero,
                                       ),
@@ -212,7 +211,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                           border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                           focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                                          labelText: 'Сохранить:',
+                                          labelText: '${S.of(context).save}:',
                                           hintText: saveContactsController.selectedOptionText.value,
                                           labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                                           floatingLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.darkGrey),
@@ -236,7 +235,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                   padding: const EdgeInsets.only(left: 45),
                                   child: TextButton(
                                     onPressed: () => openContactAddScreen(context),
-                                    child: Text('Добавить информацию', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                                    child: Text(S.of(context).addInfo, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                                   ),
                                 ),
                               ],
@@ -254,7 +253,7 @@ void showAddNewContactBottomSheetDialog(BuildContext context, double maxHeight) 
                                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   side: BorderSide.none,
                                 ),
-                                child: Text('Сохранить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                               ),
                             ),
                           ),

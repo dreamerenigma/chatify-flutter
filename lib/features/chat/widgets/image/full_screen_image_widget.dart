@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../bars/full_screen_image_app_bar.dart';
@@ -190,7 +191,7 @@ class _FullScreenImageWidgetState extends State<FullScreenImageWidget> {
     if (widget.imageUrls.isEmpty) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 8),
-        child: Center(child: Text("No images available")),
+        child: Center(child: Text(S.of(context).noImagesAvailable)),
       );
     }
 

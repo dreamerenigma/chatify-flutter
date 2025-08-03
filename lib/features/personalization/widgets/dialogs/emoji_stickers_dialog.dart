@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../home/controllers/emoji_stickers_controller.dart';
 import '../widget/emoji_content_widget.dart';
@@ -94,11 +95,11 @@ Future<void> showEmojiStickersDialog(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                _buildTabButton('Смайлики', 0, controller, context),
+                                _buildTabButton(S.of(context).emoticons, 0, controller, context),
                                 SizedBox(width: 12),
-                                _buildTabButton('GIF', 1, controller, context),
+                                _buildTabButton(S.of(context).gif, 1, controller, context),
                                 SizedBox(width: 12),
-                                _buildTabButton('Стикеры', 2, controller, context),
+                                _buildTabButton(S.of(context).stickers, 2, controller, context),
                               ],
                             ),
                           ),

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jam_icons/jam_icons.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../../utils/devices/device_utility.dart';
@@ -100,11 +101,11 @@ Widget _buildFavoriteCalls(BuildContext context, String groupImage) {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+              Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
               Row(
                 children: [
                   CustomTooltip(
-                    message: 'Редактировать Избранное',
+                    message: S.of(context).editFavorites,
                     horizontalOffset: -70,
                     child: InkWell(
                       onTap: () {},
@@ -121,7 +122,7 @@ Widget _buildFavoriteCalls(BuildContext context, String groupImage) {
                     ),
                   ),
                   CustomTooltip(
-                    message: 'Добавить в Избранное',
+                    message: S.of(context).addToFavorites,
                     horizontalOffset: -70,
                     child: InkWell(
                       onTap: () {},

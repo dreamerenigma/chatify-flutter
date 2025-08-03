@@ -1,14 +1,15 @@
-import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../api/apis.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../../utils/popups/progress_overlay.dart';
+import '../../../../../utils/urls/url_utils.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../controllers/dialog_controller.dart';
 
@@ -64,12 +65,12 @@ class ContactingSupportOverlay {
                       const SizedBox(height: 50),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Text('Обращение за помощью в официальную Службу поддержки Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+                        child: Text(S.of(context).contactingOfficialAppSupport, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
                       ),
                       const SizedBox(height: 12),
-                      _buildInfoItem(ChatifyVectors.shieldCheck, 'Защитите чаты с Chatify', spacing: 12),
-                      _buildInfoItem(ChatifyVectors.questionAi, 'Ответы могут быть сгенерированные ИИ', spacing: 12),
-                      _buildInfoItem(ChatifyVectors.review, 'Оставьте отзыв, чтобы помочь нам стать лучше', spacing: 7),
+                      _buildInfoItem(ChatifyVectors.shieldCheck, S.of(context).protectChatsApp, spacing: 12),
+                      _buildInfoItem(ChatifyVectors.questionAi, S.of(context).answersGeneratedAi, spacing: 12),
+                      _buildInfoItem(ChatifyVectors.review, S.of(context).leaveReviewHelpImprove, spacing: 7),
                       const SizedBox(height: 16),
                       Divider(height: 1, thickness: 0, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
                       Padding(
@@ -81,12 +82,8 @@ class ContactingSupportOverlay {
                                 ),
                             children: [
                               TextSpan(
-                                text: 'Некоторые ответы сгенерированы ИИ с помощью защищённой технологии от Input Studios. Chatify использует вашу переписку со Службой поддержки Chatify, чтобы дать актуальные ответы на ваши вопросы. Ваши личные сообщения и звонки по-прежнему защищены сквозным шифрованием. ',
-                                style: TextStyle(
-                                  fontSize: ChatifySizes.fontSizeLm,
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.2,
-                                ),
+                                text: S.of(context).answersAiGeneratedSecureTechnology,
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300, height: 1.2),
                               ),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.baseline,
@@ -101,7 +98,7 @@ class ContactingSupportOverlay {
                                       child: GestureDetector(
                                         onTap: () {},
                                         child: Text(
-                                          'Подробнее',
+                                          S.of(context).readMore,
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w300,
@@ -155,7 +152,7 @@ class ContactingSupportOverlay {
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 6),
-                                      child: Text('Начать чат', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
+                                      child: Text(S.of(context).startChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
                                     ),
                                   ),
                                 ),
@@ -171,13 +168,7 @@ class ContactingSupportOverlay {
                                 Expanded(
                                   child: TextButton(
                                     onPressed: () async {
-                                      final uri = Uri.parse('https://faq.chatify.ru/?cms_platform=web&lang=en');
-                                      if (await canLaunchUrl(uri)) {
-                                        await launchUrl(uri);
-                                      } else {
-                                        log("Не удалось открыть ссылку");
-                                      }
-
+                                      UrlUtils.launchURL(AppLinks.helpCenter);
                                       _overlayEntry.remove();
                                       dialogController.closeWindowsDialog();
                                     },
@@ -193,14 +184,12 @@ class ContactingSupportOverlay {
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 6),
-                                      child: Text('Подробнее', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
+                                      child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                Expanded(
-                                  child: _buildCancelButton(dialogController),
-                                ),
+                                Expanded(child: _buildCancelButton(dialogController)),
                               ],
                             ),
                       ),
@@ -242,7 +231,7 @@ class ContactingSupportOverlay {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+        child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
       ),
     );
   }
@@ -255,9 +244,7 @@ Widget _buildInfoItem(String iconPath, String text, {double spacing = 12}) {
       children: [
         SvgPicture.asset(iconPath),
         SizedBox(width: spacing),
-        Expanded(
-          child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
-        ),
+        Expanded(child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm))),
       ],
     ),
   );

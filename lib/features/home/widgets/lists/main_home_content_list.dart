@@ -1,13 +1,15 @@
+import 'package:chatify/features/home/widgets/lists/infos_app_list.dart';
 import 'package:chatify/features/home/widgets/lists/support_list.dart';
 import 'package:chatify/features/home/widgets/lists/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../bot/models/info_app_model.dart';
 import '../../../bot/models/support_model.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
 import '../../../community/widgets/lists/community_list.dart';
 import '../../../group/models/group_model.dart';
-import '../../../newsletter/models/newsletter.dart';
+import '../../../newsletter/models/newsletter_model.dart';
 import '../../../personalization/controllers/user_controller.dart';
 import '../../../personalization/widgets/lists/group_list.dart';
 import 'newsletter_list.dart';
@@ -18,6 +20,7 @@ class MainHomeContentList extends StatelessWidget {
   final List<CommunityModel> communities;
   final List<UserModel> users;
   final List<SupportAppModel> supports;
+  final List<InfoAppModel> infosApp;
   final bool isSearching;
   final List<UserModel> searchList;
   final Function(UserModel) onUserSelected;
@@ -29,6 +32,7 @@ class MainHomeContentList extends StatelessWidget {
     required this.communities,
     required this.users,
     required this.supports,
+    required this.infosApp,
     required this.isSearching,
     required this.searchList,
     required this.onUserSelected,
@@ -59,6 +63,8 @@ class MainHomeContentList extends StatelessWidget {
           ),
         if (supports.isEmpty)
           SupportList(supports: supports, onSupportSelected: (support) {}),
+        if (infosApp.isEmpty)
+          InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {}),
         const SizedBox(height: 8),
       ],
     );

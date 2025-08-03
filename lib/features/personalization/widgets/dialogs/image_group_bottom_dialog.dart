@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -19,16 +20,13 @@ void showImageGroupBottomSheet(BuildContext context) {
           children: [
             Align(
               alignment: Alignment.center,
-              child: Text('Картинка группы', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+              child: Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+                child: IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
               ),
             ),
           ],
@@ -57,12 +55,12 @@ void showImageGroupBottomSheet(BuildContext context) {
                 backgroundColor: ChatifyColors.transparent,
                 borderColor: ChatifyColors.popupColor,
                 label: index == 0
-                  ? "Камера"
+                  ? S.of(context).camera
                   : index == 1
-                  ? "Галерея"
+                  ? S.of(context).gallery
                   : index == 2
-                  ? "Смайлики и стикеры"
-                  : "Поиск в Интернете",
+                  ? S.of(context).emoticonsStickers
+                  : S.of(context).searchInternet,
                 onTap: () => handleContainerTap(context, index),
                 context: context,
               );

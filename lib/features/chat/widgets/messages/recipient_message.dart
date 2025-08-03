@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:chatify/utils/platforms/platform_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
@@ -22,13 +23,20 @@ import '../../screens/forward_message_screen.dart';
 import '../buttons/emoji_hover_button.dart';
 import '../dialogs/edit_message_dialog.dart';
 import '../media/media_widget.dart';
+import '../painters/triangle_painter.dart';
 import 'emoji_message.dart';
 
 class RecipientMessage extends StatefulWidget {
   final MessageModel message;
   final List<MessageModel> messages;
+  final bool hasReaction;
 
-  const RecipientMessage({super.key, required this.message, required this.messages});
+  const RecipientMessage({
+    super.key,
+    required this.message,
+    required this.messages,
+    required this.hasReaction,
+  });
 
   @override
   RecipientMessageState createState() => RecipientMessageState();
@@ -129,6 +137,19 @@ class RecipientMessageState extends State<RecipientMessage> {
         }
       },
       child: GestureDetector(
+        onTap: () {
+          setState(() {
+            isPressed = true;
+          });
+
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (mounted) {
+              setState(() {
+                isPressed = false;
+              });
+            }
+          });
+        },
         onSecondaryTap: () {
           final RenderBox renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
@@ -139,12 +160,16 @@ class RecipientMessageState extends State<RecipientMessage> {
           children: [
             Container(
               key: _containerKey,
-              padding: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .012, vertical: DeviceUtils.getScreenWidth(context) * .005),
-              margin: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003),
+              padding: isWebOrWindows
+                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .012, vertical: DeviceUtils.getScreenWidth(context) * .005)
+                : EdgeInsets.only(left: 10, right: 10, top: 10),
+              margin: isWebOrWindows
+                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
+                : EdgeInsets.only(left: 16, right: 16, top: 5, bottom: widget.hasReaction ? 12 : 5),
               decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.greenMessageDark : ChatifyColors.greenMessageLight,
+                color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder,
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                 boxShadow: [
                   BoxShadow(
                     color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
@@ -154,46 +179,44 @@ class RecipientMessageState extends State<RecipientMessage> {
                   ),
                 ],
               ),
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 55),
-                    child: MouseRegion(
-                      cursor: Platform.isWindows ? SystemMouseCursors.text : MouseCursor.defer,
-                      child: Platform.isWindows
-                        ? Listener(
-                            behavior: HitTestBehavior.translucent,
-                            onPointerDown: (event) {
-                              if (event.kind == PointerDeviceKind.mouse && event.buttons == kSecondaryMouseButton) {
-                                final renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
-                                final position = renderBox.localToGlobal(Offset.zero);
-                                showEditMessageDialog(context, position, _containerKey);
-                              }
-                            },
-                            child: Theme(
-                              data: Theme.of(context).copyWith(
-                                textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: ChatifyColors.info),
-                              ),
-                              child: SelectableText.rich(
-                                TextSpan(
-                                  children: parseMessageText(widget.message.msg, context),
-                                  style: TextStyle(fontFamily: 'Roboto', fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                                ),
-                                contextMenuBuilder: (context, editableTextState) => const SizedBox.shrink(),
-                              ),
+                  MouseRegion(
+                    cursor: Platform.isWindows ? SystemMouseCursors.text : MouseCursor.defer,
+                    child: Platform.isWindows
+                      ? Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (event) {
+                            if (event.kind == PointerDeviceKind.mouse && event.buttons == kSecondaryMouseButton) {
+                              final renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
+                              final position = renderBox.localToGlobal(Offset.zero);
+                              showEditMessageDialog(context, position, _containerKey);
+                            }
+                          },
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: ChatifyColors.info),
                             ),
-                          )
-                        : RichText(text: TextSpan(children: parseMessageText(widget.message.msg, context))),
-                    ),
+                            child: SelectableText.rich(
+                              TextSpan(
+                                children: parseMessageText(widget.message.msg, context),
+                                style: TextStyle(fontFamily: 'Roboto', fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                              ),
+                              contextMenuBuilder: (context, editableTextState) => const SizedBox.shrink(),
+                            ),
+                          ),
+                        )
+                      : RichText(text: TextSpan(children: parseMessageText(widget.message.msg, context))),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
+                  Align(
+                    alignment: Alignment.centerRight,
                     child: Tooltip(
                       verticalOffset: -50,
-                      waitDuration: Duration(milliseconds: 800),
-                      exitDuration: Duration(milliseconds: 200),
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      waitDuration: const Duration(milliseconds: 800),
+                      exitDuration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                       message: '${DateUtil.getFormattedDateLabel(context: context, timestamp: widget.message.sent)}, ${DateUtil.getFormattedTime(context: context, time: widget.message.sent)}',
                       textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
                       decoration: BoxDecoration(
@@ -205,29 +228,49 @@ class RecipientMessageState extends State<RecipientMessage> {
                             color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
                             spreadRadius: 1,
                             blurRadius: 8,
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              text: DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                              style: TextStyle(fontSize: 10, color: context.isDarkMode ? ChatifyColors.buttonDisabled.withAlpha((0.7 * 255).toInt()) : ChatifyColors.darkGrey.withAlpha((0.7 * 255).toInt())),
+                          Text(
+                            DateUtil.getFormattedTime(context: context, time: widget.message.sent),
+                            style: TextStyle(
+                              fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
+                              color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Roboto',
                             ),
                           ),
                           const SizedBox(width: 4),
                           Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: SvgPicture.asset(ChatifyVectors.doubleCheck, width: 13, height: 13, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey),
+                            padding: isWebOrWindows ? const EdgeInsets.only(top: 2) : EdgeInsets.zero,
+                            child: SvgPicture.asset(
+                              ChatifyVectors.doubleCheck,
+                              width: isWebOrWindows ? 13 : 19,
+                              height: isWebOrWindows ? 13 : 19,
+                              color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ],
+              ),
+            ),
+            Positioned(
+              top: isWebOrWindows ? 2 : 5,
+              right: isWebOrWindows ? 13 : 7,
+              child: CustomPaint(
+                size: const Size(10, 10),
+                painter: TrianglePainter(
+                  fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight,
+                  borderColor: ChatifyColors.greenMessageBorderDark,
+                ),
               ),
             ),
             if (widget.message.type == Type.emoji)
@@ -328,11 +371,13 @@ class RecipientMessageState extends State<RecipientMessage> {
             Container(
               key: _containerKey,
               padding: EdgeInsets.all(DeviceUtils.getScreenWidth(context) * .008),
-              margin: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003),
+              margin: isWebOrWindows
+                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
+                : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
                 color: context.isDarkMode ? ChatifyColors.greenMessageDark : ChatifyColors.greenMessageLight,
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
               ),
               child: Stack(
                 children: [
@@ -358,14 +403,35 @@ class RecipientMessageState extends State<RecipientMessage> {
                       children: [
                         Text(
                           DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                          style: TextStyle(fontSize: 9, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontWeight: FontWeight.w300, fontFamily: 'Roboto', letterSpacing: 1),
+                          style: TextStyle(
+                            color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                            fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Roboto',
+                          ),
                         ),
                         const SizedBox(width: 4),
-                        SvgPicture.asset(ChatifyVectors.doubleCheck, width: 13, height: 13, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey),
+                        SvgPicture.asset(
+                          ChatifyVectors.doubleCheck,
+                          width: isWebOrWindows ? 13 : 19,
+                          height: isWebOrWindows ? 13 : 19,
+                          color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                        ),
                       ],
                     ),
                   ),
                 ],
+              ),
+            ),
+            Positioned(
+              top: 5,
+              right: 7,
+              child: CustomPaint(
+                size: const Size(10, 10),
+                painter: TrianglePainter(
+                  fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight,
+                  borderColor: ChatifyColors.greenMessageBorderDark,
+                ),
               ),
             ),
             if (isVideo)

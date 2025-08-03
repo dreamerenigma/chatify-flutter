@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../../generated/l10n/l10n.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_sizes.dart';
 import '../../../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -59,26 +60,26 @@ class SoundsOverlayEntry {
                         SizedBox(height: 3),
                         _buildOption(
                           context: context,
-                          label: 'Нет',
+                          label: S.of(context).no,
                           isSelected: selectedOption == 'no',
                           onTap: () {
-                            onSoundSelected('no', 'Нет');
+                            onSoundSelected('no', S.of(context).no);
                             onOptionTap();
                           },
                         ),
                         Divider(height: 6, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
                         _buildOption(
                           context: context,
-                          label: 'По умолчанию',
+                          label: S.of(context).system,
                           isSelected: selectedOption == 'default',
                           onTap: () {
-                            onSoundSelected('default', 'По умолчанию');
+                            onSoundSelected('default', S.of(context).system);
                             onOptionTap();
                           },
                         ),
                         SizedBox(height: 4),
                         ...List.generate(10, (index) {
-                          String label = 'Предупреждение ${index + 1}';
+                          String label = '${S.of(context).alert} ${index + 1}';
                           String value = soundOptions[index];
 
                           return _buildOption(

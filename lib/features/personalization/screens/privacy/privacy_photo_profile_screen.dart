@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -54,10 +55,7 @@ class PrivacyPhotoProfileScreenState extends State<PrivacyPhotoProfileScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              'Фото профиля',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-            ),
+            title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -76,7 +74,7 @@ class PrivacyPhotoProfileScreenState extends State<PrivacyPhotoProfileScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'Кто видит моё фото профиля',
+              S.of(context).seesMyProfilePicture,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
@@ -91,9 +89,7 @@ class PrivacyPhotoProfileScreenState extends State<PrivacyPhotoProfileScreen> {
                 _saveSelection(value as String);
               },
               visualDensity: const VisualDensity(vertical: -2),
-              title: Text(
-                option['label']!,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+              title: Text(option['label']!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
             );
           }),
         ],

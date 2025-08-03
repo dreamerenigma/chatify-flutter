@@ -4,6 +4,7 @@ import 'package:chatify/features/personalization/screens/privacy/privacy_screen.
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -67,7 +68,7 @@ class ControlDataPrivacyCheckScreenState extends State<ControlDataPrivacyCheckSc
             ],
           ),
           child: AppBar(
-            title: Text('Проверка конфиденциальности', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).privacyCheck, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -82,16 +83,7 @@ class ControlDataPrivacyCheckScreenState extends State<ControlDataPrivacyCheckSc
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              }
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -107,54 +99,37 @@ class ControlDataPrivacyCheckScreenState extends State<ControlDataPrivacyCheckSc
                       alignment: Alignment.centerRight,
                       clipBehavior: Clip.none,
                       children: [
-                        SvgPicture.asset(
-                          ChatifyVectors.document,
-                          height: 90,
-                          width: 90,
-                        ),
-                        Positioned(
-                          left: -35,
-                          top: 40,
-                          child: Center(
-                            child: SvgPicture.asset(
-                              getAsset(schemeIndex),
-                              height: 70,
-                              width: 70,
-                            ),
-                          ),
-                        ),
+                        SvgPicture.asset(ChatifyVectors.document, height: 90, width: 90),
+                        Positioned(left: -35, top: 40, child: Center(child: SvgPicture.asset(getAsset(schemeIndex), height: 70, width: 70))),
                       ],
                     ),
                     const SizedBox(height: 25),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Text('Контролируйте свои персональные данные', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                      child: Text(S.of(context).controlYourPersonalData, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-                      child: Text('Выберите, кто сможет видеть ваши действия и статус "в сети"', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+                      child: Text(S.of(context).chooseActivityOnlineStatus, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 10),
-                    _buildCheckPrivacy(icon: Icons.account_circle_outlined, text: 'Фото профиля', subtitle: 'Укажите, кто может видеть ваше фото профиля.', onTap: () {
+                    _buildCheckPrivacy(icon: Icons.account_circle_outlined, text: S.of(context).profilePhoto, subtitle: S.of(context).chooseYourProfilePhoto, onTap: () {
                       Navigator.push(
                         context,
                         createPageRoute(const PrivacyPhotoProfileScreen()),
                       );
                     }),
                     const SizedBox(height: 15),
-                    _buildCheckPrivacy(icon: Icons.remove_red_eye_outlined, text: 'Время последнего посещения и статус "в сети"', subtitle: 'Выберите, кто может видеть, когда вы в сети.', onTap: () {
+                    _buildCheckPrivacy(icon: Icons.remove_red_eye_outlined, text: S.of(context).lastSeenOnlineStatus, subtitle: S.of(context).chooseWhoOnline, onTap: () {
                       Navigator.push(
                         context,
                         createPageRoute(const LastVisitedTimeScreen()),
                       );
                     }),
                     const SizedBox(height: 15),
-                    _buildCheckPrivacy(icon: BootstrapIcons.check_all, text: 'Отчёты о прочтении', subtitle: 'Когда отчеты о прочтении включены, другие пользователи будут ыидеть, просмотрели ли вы сообщения.', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const PrivacyScreen()),
-                      );
+                    _buildCheckPrivacy(icon: BootstrapIcons.check_all, text: S.of(context).readingReports, subtitle: S.of(context).readReceiptsTurnedOnUsersMessages, onTap: () {
+                      Navigator.push(context, createPageRoute(const PrivacyScreen()));
                     }),
                   ],
                 ),

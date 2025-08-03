@@ -1,6 +1,7 @@
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -29,7 +30,7 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Двухшаговая проверка', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).twoStepVerification, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -44,7 +45,7 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
                   const SizedBox(height: 25),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('Придумайте 6-значный PIN, который вы сможете запомнить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal), textAlign: TextAlign.center,
+                    child: Text(S.of(context).createSixDigitRemember, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal), textAlign: TextAlign.center,
                     ),
                   ),
                 ],
@@ -55,10 +56,7 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  createPageRoute(const AddEmailScreen()),
-                );
+                Navigator.push(context, createPageRoute(const AddEmailScreen()));
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: ChatifyColors.white,
@@ -70,7 +68,7 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Далее', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/platforms/platform_utils.dart';
@@ -61,7 +62,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
               Padding(
                 padding: EdgeInsets.only(left: 5, right: 5),
                 child: CustomTooltip(
-                  message: 'Назад',
+                  message: S.of(context).back,
                   horizontalOffset: -35,
                   verticalOffset: 10,
                   child: MouseRegion(
@@ -121,7 +122,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
                 },
               ),
               CustomTooltip(
-                message: 'Помощь',
+                message: S.of(context).help,
                 horizontalOffset: -35,
                 verticalOffset: 0,
                 child: Material(
@@ -164,7 +165,6 @@ class _AuthAppBarState extends State<AuthAppBar> {
                           ),
                         );
                       }
-
                       if (widget.menuItem2Text != null) {
                         menuItems.add(
                           PopupMenuItem(
@@ -194,7 +194,6 @@ class _AuthAppBarState extends State<AuthAppBar> {
                           ),
                         );
                       }
-
                       await showMenu(
                         context: context,
                         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,

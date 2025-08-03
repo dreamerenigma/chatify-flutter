@@ -9,6 +9,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/badges/creation_date_badge.dart';
 import '../../../../common/widgets/cards/encryption_notice_card.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../chat/models/message_model.dart';
@@ -158,9 +159,9 @@ class _CommunityWidgetState extends State<CommunityWidget> {
             context: context,
             position: details.globalPosition,
             items: [
-              MenuItem(icon: Ionicons.checkbox_outline, text: 'Выбрать сообщения', onTap: () {}),
-              MenuItem(icon: FluentIcons.open_16_regular, text: 'Открыть чат в другом окне', onTap: () {}),
-              MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: 'Закрыть чат', onTap: () {}),
+              MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+              MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
+              MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
             ],
           );
         },
@@ -199,7 +200,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
                         ),
                         EncryptionNoticeCard(
                           icon: PhosphorIcons.lock_simple_thin,
-                          message: 'Сообщения и звонки защищены сквозным шифрованием. Прочитать, прослушать или переслать их могут только участники этого чата. Выберите, чтобы узнать подробнее.',
+                          message: S.of(context).messagesCallsProtectedEndToEndEncryption,
                           onTap: () => showChatsCallsPrivacyOverlay(context),
                         ),
                         _buildMessages(),

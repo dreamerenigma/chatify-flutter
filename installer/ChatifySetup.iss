@@ -1,6 +1,8 @@
+#pragma charset("utf-8")
+
 [Setup]
 AppName=Chatify
-AppVersion=1.1.10+245
+AppVersion=1.2.67+168
 DefaultDirName={autopf}\Chatify
 DefaultGroupName=Chatify
 OutputDir=.
@@ -14,7 +16,7 @@ SetupIconFile=..\windows\runner\resources\app_icon.ico
 Source: "..\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Chatify"; Filename: "{app}\chatify.exe"
+Name: "{group}\Chatify"; Filename: "{app}\Ñhatify.exe"
 Name: "{group}\Uninstall Chatify"; Filename: "{uninstallexe}"
 
 [Run]

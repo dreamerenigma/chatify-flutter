@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../api/apis.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/helper/date_util.dart';
+import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../screens/community_info_screen.dart';
 import '../screens/general_chat_screen.dart';
 import 'package:chatify/features/community/models/community_model.dart';
@@ -38,72 +41,70 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
   Widget build(BuildContext context) {
     return AbsorbPointer(
       absorbing: !widget.isInteractive,
-      child: Container(
-        color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Material(
-              color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context, createPageRoute(HomeScreen(user: APIs.me)));
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(color: ChatifyColors.community, borderRadius: BorderRadius.circular(14)),
-                        child: const Center(child: Icon(Ionicons.megaphone, color: ChatifyColors.white, size: 24)),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildAds(context),
-                    ],
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Material(
+            color: ChatifyColors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(context, createPageRoute(HomeScreen(user: APIs.me)));
+              },
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(14)),
+                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.megaphone, color: ChatifyColors.white, width: 24, height: 24))),
+                    ),
+                    const SizedBox(width: 16),
+                    _buildAds(context),
+                  ],
                 ),
               ),
             ),
-            if (widget.showGroupsSection) ...[
-              const Divider(height: 0, thickness: 1),
-              const Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-                child: Text('Группы, в которых вы состоите'),
-              ),
-            ],
-            Material(
-              color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context, createPageRoute(const GeneralChatScreen()));
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(color: ChatifyColors.darkGrey, borderRadius: BorderRadius.circular(25)),
-                        child: const Center(child: Icon(Icons.chat, color: ChatifyColors.white, size: 24)),
-                      ),
-                      const SizedBox(width: 16),
-                      _general(context),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if (widget.showAllButton) _buildAll(context),
+          ),
+          if (widget.showGroupsSection) ...[
+            const Divider(height: 0, thickness: 1),
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Text(S.of(context).groupsYouMember)),
           ],
-        ),
+          Material(
+            color: ChatifyColors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(context, createPageRoute(const GeneralChatScreen()));
+              },
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(color: ChatifyColors.lightGrey, borderRadius: BorderRadius.circular(30)),
+                      child: Center(child: SvgPicture.asset(ChatifyVectors.communityMessage, width: 24, height: 24)),
+                    ),
+                    const SizedBox(width: 16),
+                    _buildGeneral(context),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (widget.showAllButton) _buildAll(context),
+        ],
       ),
     );
   }
@@ -114,29 +115,27 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
+          Flexible(
+            fit: FlexFit.tight,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Объявления', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                Text(S.of(context).announcements, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text('Добро пожаловать в наше сообщество!', style: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(S.of(context).welcomeToCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeSm), maxLines: 1, overflow: TextOverflow.ellipsis, softWrap: false, textWidthBasis: TextWidthBasis.parent),
               ],
             ),
           ),
           Text(
             widget.createdAt != null ? (widget.isValidDate(widget.createdAt!) ? DateUtil.getCommunityCreationDate(context: context, creationDate: widget.createdAt!) : 'Invalid Date') : 'Нет даты',
-            style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+            style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontFamily: 'Roboto'),
           ),
         ],
       ),
     );
   }
 
-  Widget _general(BuildContext context) {
+  Widget _buildGeneral(BuildContext context) {
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,10 +145,10 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Общая', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                Text(S.of(context).generalCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(
-                  'Новые участники сообщества больше не будут добавляться автоматически.',
+                  S.of(context).newCommunityMembersAddedAuto,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -160,11 +159,8 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
           SizedBox(
             width: 100,
             child: Text(
-              widget.createdAt != null ? (widget.isValidDate(widget.createdAt!) ? DateUtil.getCommunityCreationDate(
-                context: context,
-                creationDate: widget.createdAt!,
-              ) : 'Invalid Date') : 'Нет даты',
-              style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              widget.createdAt != null ? (widget.isValidDate(widget.createdAt!) ? DateUtil.getCommunityCreationDate(context: context, creationDate: widget.createdAt!) : S.of(context).invalidDate) : S.of(context).noDate,
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontFamily: 'Roboto'),
               textAlign: TextAlign.end,
             ),
           ),
@@ -175,20 +171,22 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
 
   Widget _buildAll(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: ChatifyColors.transparent,
       child: InkWell(
         onTap: () {
           Navigator.push(context, createPageRoute(CommunityInfoScreen(community: widget.community, isValidDate: widget.isValidDate, fileToSend: '')));
         },
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         child: Container(
-          padding: const EdgeInsets.only(left: 25, top: 16, bottom: 16),
+          padding: const EdgeInsets.only(left: 28, top: 16, bottom: 16),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Center(child: Icon(Icons.arrow_forward_ios_rounded, size: 18)),
-              const SizedBox(width: 25),
-              Text('Все', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              Icon(Icons.arrow_forward_ios_rounded, size: 16, color: ChatifyColors.darkGrey),
+              const SizedBox(width: 30),
+              Text(S.of(context).all, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
             ],
           ),
         ),

@@ -217,8 +217,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
                         style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
                       ),
                       TextSpan(text: S.of(context).readMore, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
-                        recognizer: TapGestureRecognizer()..onTap = () {
-                        },
+                        recognizer: TapGestureRecognizer()..onTap = () {},
                       ),
                     ],
                   ),

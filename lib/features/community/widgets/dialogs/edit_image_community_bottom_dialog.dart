@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,15 +14,13 @@ void showEditImageCommunityBottomDialog(
   String communityId,
   String imageUrl,
   Function(String?) updateImagePath,
-  ) {
+) {
   final mq = MediaQuery.of(context).size;
 
   showModalBottomSheet(
     context: context,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-    ),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
     builder: (_) {
       return Padding(
         padding: EdgeInsets.only(bottom: mq.height * .05, left: mq.height * .03, right: 18.0),
@@ -33,10 +30,7 @@ void showEditImageCommunityBottomDialog(
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Картинка сообщества',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500),
-                ),
+                Text(S.of(context).communityPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.delete),
@@ -63,16 +57,15 @@ void showEditImageCommunityBottomDialog(
                           final ImagePicker picker = ImagePicker();
                           final XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
                           if (image != null) {
-                            log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
                             onImagePicked(image.path);
                             updateImagePath(image.path);
                             Navigator.pop(context);
                           }
                         },
-                        child: const Icon(Icons.camera_alt_outlined, color: Colors.blue),
+                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.blue),
                       ),
                       const SizedBox(height: 8),
-                      const Text('Camera', style: TextStyle(color: Colors.blue)),
+                      Text(S.of(context).camera, style: TextStyle(color: ChatifyColors.blue)),
                     ],
                   ),
                 ),
@@ -89,16 +82,15 @@ void showEditImageCommunityBottomDialog(
                           final ImagePicker picker = ImagePicker();
                           final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                           if (image != null) {
-                            log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
                             onImagePicked(image.path);
                             updateImagePath(image.path);
                             Navigator.pop(context);
                           }
                         },
-                        child: const Icon(Icons.image_sharp, color: Colors.blue),
+                        child: const Icon(Icons.image_sharp, color: ChatifyColors.blue),
                       ),
                       const SizedBox(height: 8),
-                      const Text('Gallery', style: TextStyle(color: Colors.blue)),
+                      Text(S.of(context).gallery, style: TextStyle(color: ChatifyColors.blue)),
                     ],
                   ),
                 ),
@@ -115,10 +107,10 @@ void showEditImageCommunityBottomDialog(
                           Navigator.pop(context);
                           Navigator.push(context, createPageRoute(EmojiStickerScreen(initialColor: Colors.red[200]!, initialEmoji: '')));
                         },
-                        child: const Icon(Icons.emoji_emotions_outlined, color: Colors.blue),
+                        child: const Icon(Icons.emoji_emotions_outlined, color: ChatifyColors.blue),
                       ),
                       const SizedBox(height: 8),
-                      const Text('Emoji', style: TextStyle(color: Colors.blue)),
+                      Text(S.of(context).emoji, style: TextStyle(color: ChatifyColors.blue)),
                     ],
                   ),
                 ),
@@ -156,7 +148,6 @@ void _showDeleteConfirmationDialog(
           ),
           TextButton(
             onPressed: () {
-              log('Profile photo deleted');
               onImagePicked(null);
               onDeletePressed();
               Navigator.pop(context);

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:typed_data';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -35,14 +34,11 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
 
   Future<void> _loadImages() async {
     final permissionStatus = await PhotoManager.requestPermissionExtend();
-    log('Permission Status: ${permissionStatus.isAuth}');
 
     if (permissionStatus.isAuth) {
       final List<AssetPathEntity> assetPaths = await PhotoManager.getAssetPathList(
         type: RequestType.image,
       );
-
-      log('Asset Paths Count: ${assetPaths.length}');
 
       if (assetPaths.isNotEmpty) {
         final List<AssetEntity> images = await assetPaths.first.getAssetListPaged(
@@ -116,7 +112,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
                 child: IconButton(
                   icon: Icon(
                     _areImagesVisible ? Icons.keyboard_arrow_down_sharp : Icons.keyboard_arrow_up_rounded,
-                    color: Colors.white,
+                    color: ChatifyColors.white,
                   ),
                   onPressed: _toggleImagesVisibility,
                 ),
@@ -162,7 +158,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
                               ),
                             ),
                             if (_selectedImages.length > index && _selectedImages[index])
-                              const Icon(Icons.check, color: ChatifyColors.white),
+                            const Icon(Icons.check, color: ChatifyColors.white),
                           ],
                         ),
                       );
@@ -262,7 +258,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
             child: GestureDetector(
               onTap: () {},
               child: Container(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10),
                 decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.green),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

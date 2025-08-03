@@ -35,7 +35,7 @@ class CustomSlider extends StatelessWidget {
 class CustomSliderThumbShape extends SliderComponentShape {
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return const Size(24.0, 24.0);
+    return const Size(24, 24);
   }
 
   @override
@@ -53,8 +53,8 @@ class CustomSliderThumbShape extends SliderComponentShape {
     }) {
     final Canvas canvas = context.canvas;
     final Paint thumbPaint = Paint()..color = sliderTheme.thumbColor!..style = PaintingStyle.fill;
-    const Radius thumbRadius = Radius.circular(12.0);
-    final Rect thumbRect = Rect.fromCenter(center: center, width: 24.0, height: 24.0);
+    const Radius thumbRadius = Radius.circular(12);
+    final Rect thumbRect = Rect.fromCenter(center: center, width: 24, height: 24);
     final RRect thumbRRect = RRect.fromRectAndRadius(thumbRect, thumbRadius);
 
     canvas.drawRRect(thumbRRect, thumbPaint);
@@ -78,7 +78,7 @@ class CustomSliderThumbShape extends SliderComponentShape {
 
     textPainter.layout();
 
-    const double thumbSize = 24.0;
+    const double thumbSize = 24;
     const double iconSize = thumbSize * 0.6;
     final Offset iconOffset = Offset(center.dx - iconSize / 1.2, center.dy - iconSize / 1.2);
 

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
 
 Future<Set<String>?> showAutoLoadedMediaDialog(BuildContext context, Set<String> selectedAutoLoadedMedia) {
-
   String getMediaTypeFromKey(String key) {
     switch (key) {
       case 'photo':
-        return 'Фото';
+        return S.of(context).phone;
       case 'audio':
-        return 'Аудио';
+        return S.of(context).audio;
       case 'video':
-        return 'Видео';
+        return S.of(context).video;
       case 'document':
-        return 'Документы';
+        return S.of(context).documents;
       default:
         return '';
     }
@@ -61,7 +61,7 @@ Future<Set<String>?> showAutoLoadedMediaDialog(BuildContext context, Set<String>
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text('Мобильная сеть', style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
+            title: Text(S.of(context).mobileNetwork, style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
             contentPadding: EdgeInsets.zero,
             titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             actionsPadding: const EdgeInsets.all(16),
@@ -69,23 +69,23 @@ Future<Set<String>?> showAutoLoadedMediaDialog(BuildContext context, Set<String>
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                buildCheckboxItem(context, setState, 'photo', 'Фото'),
-                buildCheckboxItem(context, setState, 'audio', 'Аудио'),
-                buildCheckboxItem(context, setState, 'video', 'Видео'),
-                buildCheckboxItem(context, setState, 'document', 'Документы'),
+                buildCheckboxItem(context, setState, 'photo', S.of(context).photo),
+                buildCheckboxItem(context, setState, 'audio', S.of(context).audio),
+                buildCheckboxItem(context, setState, 'video', S.of(context).video),
+                buildCheckboxItem(context, setState, 'document', S.of(context).documents),
               ],
             ),
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Cancel
+                  Navigator.of(context).pop();
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: const Text('Отмена'),
+                child: Text(S.of(context).cancel),
               ),
               TextButton(
                 onPressed: () {
@@ -96,7 +96,7 @@ Future<Set<String>?> showAutoLoadedMediaDialog(BuildContext context, Set<String>
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: const Text('ОК'),
+                child: Text(S.of(context).ok),
               ),
             ],
           );

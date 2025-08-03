@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
@@ -93,7 +94,7 @@ Future<void> showDeviceSelectDialog({
                               Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
                               Padding(
                                 padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 4),
-                                child: Text('Динамики', style: TextStyle(color: ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                                child: Text(S.of(context).speakers, style: TextStyle(color: ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                               ),
                               SizedBox(height: 5),
                               if (showDefaultDeviceText)
@@ -154,7 +155,7 @@ Widget _buildDefaultDeviceItem(BuildContext context, String selectedDevice, void
               SizedBox(width: 19),
             SizedBox(width: 10),
             Expanded(
-              child: Text('Устройство связи по умолчанию', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
+              child: Text(S.of(context).defaultCommunicationDevice, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
             ),
           ],
         ),

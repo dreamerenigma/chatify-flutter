@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:icon_forest/iconoir.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../dialogs/confirmation_dialog.dart';
@@ -231,12 +232,17 @@ class EditTextInputState extends State<EditTextInput> {
             child: GestureDetector(
               onTap: () {
                 String updatedName = _controller.text.trim();
+
                 if (updatedName.isEmpty) {
                   showConfirmationDialog(
                     context: context,
-                    title: 'Ошибка',
-                    description: 'Имя не может быть пустым',
-                    cancelText: 'ОК',
+                    width: 410,
+                    title: S.of(context).unableChangeYourName,
+                    description: S.of(context).yourNameCannotEmpty,
+                    cancelText: S.of(context).ok,
+                    cancelButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    cancelTextColor: ChatifyColors.black,
+                    cancelButtonWidth: 180,
                     confirmButton: true,
                     onConfirm: () {
                       setState(() {});
@@ -248,7 +254,7 @@ class EditTextInputState extends State<EditTextInput> {
                 }
               },
               child: Text(
-                _isHovered ? 'Готово' : '${_controller.text.length}/25',
+                _isHovered ? S.of(context).ready : '${_controller.text.length}/25',
                 style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
               ),
             ),

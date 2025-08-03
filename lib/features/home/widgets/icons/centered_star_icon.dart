@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:hugeicons/hugeicons.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
@@ -9,21 +9,20 @@ class CenteredStarIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ChatifyColors.black,
       body: Center(
         child: Stack(
           alignment: Alignment.center,
           children: [
             Container(
-              width: 75,
-              height: 75,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-              child: const Icon(Icons.star_border_rounded, color: ChatifyColors.white, size: 50),
+              child: const Icon(HugeIcons.strokeRoundedStar, color: ChatifyColors.black, size: 38),
             ),
             Container(
-              width: 65,
-              height: 65,
-              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.white, width: 2)),
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
             ),
           ],
         ),

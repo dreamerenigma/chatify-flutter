@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -32,11 +33,11 @@ void showBottomSheetDialogNewGroups(BuildContext context, String fileToSend) {
               ),
             ),
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 8),
           Center(
-            child: Text('Пригласить участников', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            child: Text(S.of(context).inviteParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           ),
-          const SizedBox(height: 18.0),
+          const SizedBox(height: 18),
           const Divider(height: 0, thickness: 1),
           InkWell(
             onTap: () {
@@ -46,8 +47,8 @@ void showBottomSheetDialogNewGroups(BuildContext context, String fileToSend) {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Row(
                 children: [
-                  const CircleAvatar(backgroundColor: Colors.green, child: Icon(Icons.link, color: ChatifyColors.white)),
-                  const SizedBox(width: 16.0),
+                  const CircleAvatar(backgroundColor: ChatifyColors.green, child: Icon(Icons.link, color: ChatifyColors.white)),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Text(invitationLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ),
@@ -65,9 +66,9 @@ void showBottomSheetDialogNewGroups(BuildContext context, String fileToSend) {
               child: Row(
                 children: [
                   const Icon(PhosphorIcons.arrow_bend_double_up_right_bold),
-                  const SizedBox(width: 16.0),
+                  const SizedBox(width: 16),
                   Expanded(
-                    child: Text('Отправить ссылку через Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                    child: Text(S.of(context).sendLinkViaApp, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ),
                 ],
               ),
@@ -82,9 +83,9 @@ void showBottomSheetDialogNewGroups(BuildContext context, String fileToSend) {
               child: Row(
                 children: [
                   const Icon(Icons.person_add_alt_outlined),
-                  const SizedBox(width: 16.0),
+                  const SizedBox(width: 16),
                   Expanded(
-                    child: Text('Добавить участников', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                    child: Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ),
                 ],
               ),

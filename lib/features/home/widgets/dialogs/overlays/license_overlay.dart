@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 
 class LicenseOverlay {
@@ -54,7 +55,7 @@ class LicenseOverlay {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Лицензии', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
+                              Text(S.of(context).licenses, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
                               SizedBox(height: 12),
                               Expanded(
                                 child: Container(
@@ -96,7 +97,7 @@ class LicenseOverlay {
                                   ).copyWith(
                                     mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
                                   ),
-                                  child: Text('OK', style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                  child: Text(S.of(context).ok, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                 ),
                               ),
                             ],

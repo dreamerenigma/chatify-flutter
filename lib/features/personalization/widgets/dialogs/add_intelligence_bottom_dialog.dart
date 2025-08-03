@@ -2,6 +2,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/devices/device_utility.dart';
@@ -53,7 +54,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    Text('Добавить сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                    Text(S.of(context).addDetails, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                     const SizedBox(height: 20),
                     Row(
                       children: [
@@ -121,14 +122,14 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                         const SizedBox(width: 8),
                         TextButton(
                           onPressed: () async {
                             Navigator.pop(context);
                             await Future.delayed(const Duration(milliseconds: 300));
-                            await Dialogs.showCustomDialog(context: context, message: 'Обновление...', duration: const Duration(seconds: 1));
+                            await Dialogs.showCustomDialog(context: context, message: S.of(context).update, duration: const Duration(seconds: 1));
                             onSave(textController.text);
                           },
                           style: TextButton.styleFrom(
@@ -136,7 +137,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text('Сохранить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ],
                     ),

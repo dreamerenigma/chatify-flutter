@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../screens/create_link_call_screen.dart';
@@ -17,7 +18,7 @@ void showSelectCallDialog(BuildContext context, String title, String initialCall
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Obx(() => RadioListTile<String>(
-          title: Text('Видео', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+          title: Text(S.of(context).video, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
           value: 'Видео',
           activeColor: ChatifyColors.blue,
           groupValue: callTypeController.selectedCallType.value,
@@ -30,7 +31,7 @@ void showSelectCallDialog(BuildContext context, String title, String initialCall
           },
         )),
         Obx(() => RadioListTile<String>(
-          title: Text('Аудио', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+          title: Text(S.of(context).audio, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
           value: 'Аудио',
           activeColor: ChatifyColors.blue,
           groupValue: callTypeController.selectedCallType.value,

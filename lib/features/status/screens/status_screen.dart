@@ -1,6 +1,5 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatify/features/status/widgets/images/camera_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,7 @@ import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../controllers/expanded_controller.dart';
 import '../widgets/buttons/status_fab.dart';
+import '../widgets/dialogs/add_status_bottom_dialog.dart';
 import 'confidentiality_status_screen.dart';
 
 class StatusScreen extends StatefulWidget {
@@ -43,6 +43,13 @@ class StatusScreenState extends State<StatusScreen> {
   final expandController = Get.put(ExpandController());
   final box = GetStorage();
   final isExpanded = false.obs;
+  final RxList<String> viewedUserIds = <String>[].obs;
+
+  void markStatusAsViewed(String userId) {
+    if (!viewedUserIds.contains(userId)) {
+      viewedUserIds.add(userId);
+    }
+  }
 
   String formatStatusDate(DateTime date) {
     final now = DateTime.now();
@@ -113,7 +120,7 @@ class StatusScreenState extends State<StatusScreen> {
             });
           },
           showHomeIcon: false,
-          hintText: 'Поиск...',
+          hintText: S.of(context).settingsSearch,
           title: Text(S.of(context).status),
           popupMenuButton: PopupMenuButton<int>(
             position: PopupMenuPosition.under,
@@ -134,7 +141,7 @@ class StatusScreenState extends State<StatusScreen> {
               ),
               PopupMenuItem(
                 value: 2,
-                padding: const EdgeInsets.only(left: 20, right: 16, top: 8, bottom: 8),
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
                 child: Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
             ],
@@ -149,7 +156,7 @@ class StatusScreenState extends State<StatusScreen> {
           children: [
             InkWell(
               onTap: () {
-                Navigator.push(context, createPageRoute(const CameraScreen()));
+                showAddStatusBottomDialog(context);
               },
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -199,7 +206,7 @@ class StatusScreenState extends State<StatusScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(S.of(context).status, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                          Text(S.of(context).addStatus, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
                           Text(
                             S.of(context).addNewStatus,
                             style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
@@ -213,7 +220,7 @@ class StatusScreenState extends State<StatusScreen> {
                 ),
               ),
             ),
-            _buildViewedStatus(),
+            Obx(() => viewedUserIds.isNotEmpty ? _buildViewedStatus() : const SizedBox.shrink()),
             if (!expandController.isExpanded.value) const SizedBox(height: 8),
             const Divider(height: 0, thickness: 1),
             const SizedBox(height: 16),
@@ -239,7 +246,7 @@ class StatusScreenState extends State<StatusScreen> {
             child: Row(
               children: [
                 Text(
-                  'Просмотренные',
+                  S.of(context).viewed,
                   style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                 ),
                 const Spacer(),
@@ -289,7 +296,7 @@ class StatusScreenState extends State<StatusScreen> {
                   Row(
                     children: [
                       Text(
-                        'Chatify',
+                        S.of(context).appName,
                         style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(width: 4),
@@ -358,8 +365,8 @@ class StatusScreenState extends State<StatusScreen> {
                       recognizer: TapGestureRecognizer()..onTap = () {
                         showChatsCallsPrivacyBottomSheet(
                           context,
-                          headerText: 'Ваш статус и чаты конфиденциальны',
-                          titleText: 'Обновление статуса и личные сообщения, которыми вы обмениваетесь с выбранными вами контактами, защищены сквозным шифрованием. Даже Chatify не может получить к ним доступ. К ним относятся:',
+                          headerText: S.of(context).yourStatusAndChatsPrivate,
+                          titleText: S.of(context).statusUpdatesAndPrivateMessages,
                         );
                       },
                     ),

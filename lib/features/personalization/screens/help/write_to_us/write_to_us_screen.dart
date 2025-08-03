@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../../../../../data/repositories/email/email_send_repository.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../widgets/buttons/support_button.dart';
 import '../../../widgets/forms/write_to_us_form.dart';
@@ -55,17 +56,14 @@ class WriteToUsScreenState extends State<WriteToUsScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Напишите нам', style: Theme.of(context).textTheme.headlineMedium),
+        title: Text(S.of(context).writeToUs, style: Theme.of(context).textTheme.headlineMedium),
       ),
       body: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: WriteToUsForm(
-                selectedImages: widget.selectedImages,
-                onFieldsFilledChanged: updateFieldsFilled,
-              ),
+              padding: const EdgeInsets.all(16),
+              child: WriteToUsForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
             ),
           ),
           Container(
@@ -73,21 +71,11 @@ class WriteToUsScreenState extends State<WriteToUsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Мы ответим вам в чате Chatify',
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeSm,
-                  ),
-                ),
+                Text(S.of(context).answerAppChat, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                 const Spacer(),
                 Align(
                   alignment: Alignment.center,
-                  child: SizedBox(
-                    child: SupportButton(
-                      allFieldsFilled: allFieldsFilled,
-                      handleSendFeedback: handleSendFeedback,
-                    ),
-                  ),
+                  child: SizedBox(child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
                 ),
               ],
             ),

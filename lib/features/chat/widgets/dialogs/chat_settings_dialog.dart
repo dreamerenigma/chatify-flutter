@@ -1,16 +1,20 @@
 import 'dart:ui';
 import 'package:chatify/features/personalization/widgets/dialogs/options/encryption_option_widget.dart';
+import 'package:chatify/features/personalization/widgets/dialogs/options/participants_option_widget.dart';
 import 'package:chatify/utils/popups/custom_tooltip.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../common/entities/base_chat_entity.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../bot/models/support_model.dart';
+import '../../../community/models/community_model.dart';
 import '../../../home/controllers/dialog_controller.dart';
+import '../../../personalization/controllers/user_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../personalization/widgets/dialogs/options/events_option_widget.dart';
 import '../../../personalization/widgets/dialogs/options/files_option_widget.dart';
@@ -31,6 +35,32 @@ void showChatSettingsDialog(BuildContext context, BaseChatEntity entity, Offset 
   bool isWindowsDialogOpen = dialogController.isWindowsDialogOpen.value;
   animationController = AnimationController(vsync: tickerProvider, duration: Duration(milliseconds: 300));
   animation = Tween<double>(begin: position.dy - 50, end: position.dy).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutQuad));
+
+  List<Map<String, dynamic>> getOptions(BuildContext context, dynamic entity) {
+    final isCommunity = entity is CommunityModel;
+
+    if (isCommunity) {
+      return [
+        {'icon': Icons.info_outline_rounded, 'text': S.of(context).review, 'iconSize': 19, 'iconWidth': 16},
+        {'icon': ChatifyVectors.newGroup, 'text': S.of(context).participants, 'iconSize': 24, 'iconWidth': 14, 'isSvg': true},
+        {'icon': ChatifyVectors.media, 'text': S.of(context).media, 'iconSize': 18, 'iconWidth': 17, 'isSvg': true},
+        {'icon': FluentIcons.document_16_regular, 'text': S.of(context).files, 'iconSize': 19, 'iconWidth': 17},
+        {'icon': Icons.link, 'text': S.of(context).links, 'iconSize': 21, 'iconWidth': 16},
+        {'icon': FluentIcons.calendar_16_regular, 'text': S.of(context).events, 'iconSize': 18, 'iconWidth': 18},
+        {'icon': Icons.lock_outline_rounded, 'text': S.of(context).encryption, 'iconSize': 19, 'iconWidth': 17},
+      ];
+    } else {
+      return [
+        {'icon': Icons.info_outline_rounded, 'text': S.of(context).review, 'iconSize': 19, 'iconWidth': 16},
+        {'icon': ChatifyVectors.media, 'text': S.of(context).media, 'iconSize': 18, 'iconWidth': 17, 'isSvg': true},
+        {'icon': FluentIcons.document_16_regular, 'text': S.of(context).files, 'iconSize': 19, 'iconWidth': 17},
+        {'icon': Icons.link, 'text': S.of(context).links, 'iconSize': 21, 'iconWidth': 16},
+        {'icon': FluentIcons.calendar_16_regular, 'text': S.of(context).events, 'iconSize': 18, 'iconWidth': 18},
+        {'icon': Icons.lock_outline_rounded, 'text': S.of(context).encryption, 'iconSize': 19, 'iconWidth': 17},
+        {'icon': ChatifyVectors.newGroup, 'text': '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', 'iconSize': 24, 'iconWidth': 14, 'isSvg': true},
+      ];
+    }
+  }
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -121,9 +151,11 @@ void showChatSettingsDialog(BuildContext context, BaseChatEntity entity, Offset 
                                           child: ValueListenableBuilder<int>(
                                             valueListenable: selectedIndexNotifier,
                                             builder: (context, selectedIndex, child) {
+                                              final options = getOptions(context, entity);
+
                                               return Column(
-                                                children: List.generate(7, (index) {
-                                                  return _buildOption(context, index, selectedIndexNotifier);
+                                                children: List.generate(options.length, (index) {
+                                                  return _buildOption(context, index, selectedIndexNotifier, options);
                                                 }),
                                               );
                                             },
@@ -146,34 +178,8 @@ void showChatSettingsDialog(BuildContext context, BaseChatEntity entity, Offset 
                                       child: ValueListenableBuilder<int>(
                                         valueListenable: selectedIndexNotifier,
                                         builder: (context, selectedIndex, child) {
-                                          if (selectedIndex == 0) {
-                                            if (entity is UserModel) {
-                                              return ReviewOptionWidget(user: entity);
-                                            } else if (entity is SupportAppModel) {
-                                              return ReviewOptionWidget(support: entity);
-                                            } else {
-                                              return SizedBox();
-                                            }
-                                          } else if (selectedIndex == 1) {
-                                            return MediaOptionWidget();
-                                          } else if (selectedIndex == 2) {
-                                            return FilesOptionWidget();
-                                          } else if (selectedIndex == 3) {
-                                            return LinksOptionWidget();
-                                          } else if (selectedIndex == 4) {
-                                            return EventsOptionWidget();
-                                          } else if (selectedIndex == 5) {
-                                            if (entity is UserModel) {
-                                              return EncryptionOptionWidget(user: entity);
-                                            } else if (entity is SupportAppModel) {
-                                              return EncryptionOptionWidget(support: entity);
-                                            } else {
-                                              return SizedBox();
-                                            }
-                                          } else if (selectedIndex == 6) {
-                                            return GroupsOptionWidget();
-                                          }
-                                          return SizedBox();
+                                          final currentUser = Get.find<UserController>().currentUser;
+                                          return _buildOptionsByIndex(selectedIndex, entity, currentUser);
                                         },
                                       ),
                                     ),
@@ -199,18 +205,62 @@ void showChatSettingsDialog(BuildContext context, BaseChatEntity entity, Offset 
   animationController.forward();
 }
 
-Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selectedIndexNotifier) {
-  bool isActive = selectedIndexNotifier.value == index;
+Widget _buildOptionsByIndex(int index, dynamic entity, UserModel currentUser) {
+  final isCommunity = entity is CommunityModel;
 
-  List<Map<String, dynamic>> options = [
-    {'icon': Icons.info_outline_rounded, 'text': 'Обзор', 'iconSize': 19, 'iconWidth': 16},
-    {'icon': ChatifyVectors.media, 'text': 'Медиа', 'iconSize': 18, 'iconWidth': 17, 'isSvg': true},
-    {'icon': FluentIcons.document_16_regular, 'text': 'Файлы', 'iconSize': 19, 'iconWidth': 17},
-    {'icon': Icons.link, 'text': 'Ссылки', 'iconSize': 21, 'iconWidth': 16},
-    {'icon': FluentIcons.calendar_16_regular, 'text': 'Мероприятия', 'iconSize': 18, 'iconWidth': 18},
-    {'icon': Icons.lock_outline_rounded, 'text': 'Шифрование', 'iconSize': 19, 'iconWidth': 17},
-    {'icon': ChatifyVectors.newGroup, 'text': 'Группы', 'iconSize': 24, 'iconWidth': 14, 'isSvg': true},
-  ];
+  if (isCommunity) {
+    switch (index) {
+      case 0:
+        return ReviewOptionWidget(community: entity);
+      case 1:
+        return ParticipantsOptionWidget(user: currentUser, community: entity);
+      case 2:
+        return MediaOptionWidget();
+      case 3:
+        return FilesOptionWidget();
+      case 4:
+        return LinksOptionWidget();
+      case 5:
+        return EventsOptionWidget();
+      case 6:
+        return EncryptionOptionWidget(community: entity);
+      default:
+        return SizedBox();
+    }
+  } else {
+    switch (index) {
+      case 0:
+        if (entity is UserModel) {
+          return ReviewOptionWidget(user: entity);
+        } else if (entity is SupportAppModel) {
+          return ReviewOptionWidget(support: entity);
+        }
+        return SizedBox();
+      case 1:
+        return MediaOptionWidget();
+      case 2:
+        return FilesOptionWidget();
+      case 3:
+        return LinksOptionWidget();
+      case 4:
+        return EventsOptionWidget();
+      case 5:
+        if (entity is UserModel) {
+          return EncryptionOptionWidget(user: entity);
+        } else if (entity is SupportAppModel) {
+          return EncryptionOptionWidget(support: entity);
+        }
+        return SizedBox();
+      case 6:
+        return GroupsOptionWidget();
+      default:
+        return SizedBox();
+    }
+  }
+}
+
+Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selectedIndexNotifier, List<Map<String, dynamic>> options) {
+  bool isActive = selectedIndexNotifier.value == index;
 
   return CustomTooltip(
     message: options[index]['text'],

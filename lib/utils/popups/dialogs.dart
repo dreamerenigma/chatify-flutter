@@ -135,11 +135,11 @@ class Dialogs {
           ),
         )
         : AlertDialog(
-          backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          content: _buildDialogContent(context, message),
-        );
+            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            content: _buildDialogContent(context, message),
+          );
       },
     );
   }

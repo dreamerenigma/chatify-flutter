@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import 'light_dialog.dart';
@@ -23,7 +23,7 @@ void showProfileBottomSheet(BuildContext context, void Function(String?) onImage
             children: [
               IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
               const Spacer(),
-              Text('Фото профиля', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
+              Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
               const Spacer(flex: 2),
             ],
           ),
@@ -59,7 +59,7 @@ void showProfileBottomSheet(BuildContext context, void Function(String?) onImage
                 icon: iconWidget,
                 backgroundColor: ChatifyColors.transparent,
                 borderColor: ChatifyColors.popupColor,
-                label: index == 0 ? "Камера" : index == 1 ? "Галерея" : "Аватар",
+                label: index == 0 ? S.of(context).camera : index == 1 ? S.of(context).gallery : S.of(context).avatar,
                 onTap: () => handleContainerTap(context, index, onImagePicked),
                 context: context,
               );
@@ -108,7 +108,6 @@ void handleContainerTap(BuildContext context, int index, void Function(String?) 
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
       if (image != null) {
-        log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
         onImagePicked(image.path);
         Navigator.pop(context);
       }
@@ -117,7 +116,6 @@ void handleContainerTap(BuildContext context, int index, void Function(String?) 
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
         onImagePicked(image.path);
         Navigator.pop(context);
       }

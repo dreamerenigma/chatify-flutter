@@ -51,8 +51,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Añadir icono de chat a la pantalla",
     ),
     "addContact": MessageLookupByLibrary.simpleMessage("Añadir contacto"),
+    "addDataAbout": MessageLookupByLibrary.simpleMessage("Agregar datos sobre"),
     "addNewStatus": MessageLookupByLibrary.simpleMessage(
-      "Haga clic para añadir un nuevo estado",
+      "Desaparece después de 24 horas",
     ),
     "addOtherParticipants": MessageLookupByLibrary.simpleMessage(
       "Añadir otros participantes",
@@ -62,9 +63,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Añadir una pregunta o al menos dos opciones de respuesta",
     ),
     "addScreenshots": MessageLookupByLibrary.simpleMessage(
-      "Añadir capturas de pantalla (opcional).",
+      "Añade hasta 3 capturas de pantalla o grabaciones",
     ),
     "addSignature": MessageLookupByLibrary.simpleMessage("Añadir firma..."),
+    "addStatus": MessageLookupByLibrary.simpleMessage("Agregar estado"),
     "addUser": MessageLookupByLibrary.simpleMessage("Añadir usuario"),
     "addingAccount": MessageLookupByLibrary.simpleMessage("Añadir una cuenta"),
     "addingGroups": MessageLookupByLibrary.simpleMessage("Añadiendo a grupos"),
@@ -295,11 +297,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "enabledAdminsJoinGroup": MessageLookupByLibrary.simpleMessage(
       "Si está habilitado, los administradores deberán confirmar todas las solicitudes para unirse al grupo.",
     ),
-    "encryption": MessageLookupByLibrary.simpleMessage(
-      "Cifrado de extremo a extremo",
-    ),
     "encryptionKeepsYourMessages": MessageLookupByLibrary.simpleMessage(
       "El cifrado de extremo a extremo mantiene la privacidad de tus mensajes y llamadas entre tú y las personas que elijas. Nadie fuera del chat, ni siquiera Chatify, puede leerlos, escucharlos ni compartirlos. Esto incluye:",
+    ),
+    "endToEndEncryption": MessageLookupByLibrary.simpleMessage(
+      "cifrado de extremo a extremo",
     ),
     "englishLanguage": MessageLookupByLibrary.simpleMessage("Inglés"),
     "enter": MessageLookupByLibrary.simpleMessage("Introducir"),
@@ -343,6 +345,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "favoriteMessages": MessageLookupByLibrary.simpleMessage(
       "Mensajes favoritos",
     ),
+    "favorites": MessageLookupByLibrary.simpleMessage("Favorites"),
     "feb": MessageLookupByLibrary.simpleMessage("Feb."),
     "feedback": MessageLookupByLibrary.simpleMessage("Comentarios"),
     "feedbackApplication": MessageLookupByLibrary.simpleMessage(
@@ -471,6 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "linkingDevice": MessageLookupByLibrary.simpleMessage(
       "Vincular dispositivo",
     ),
+    "links": MessageLookupByLibrary.simpleMessage("Campo de golf"),
     "listSuggestedCountries": MessageLookupByLibrary.simpleMessage(
       "Seleccione un país de la lista de países sugeridos. Esto completará automáticamente el código de país.",
     ),
@@ -708,6 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "replacingTextEmoticons": MessageLookupByLibrary.simpleMessage(
       "Reemplazar texto con emojis",
     ),
+    "reportBug": MessageLookupByLibrary.simpleMessage("Informar un error"),
     "requestAccountInfo": MessageLookupByLibrary.simpleMessage(
       "Solicitar información de la cuenta",
     ),
@@ -782,7 +787,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "sendFeedback": MessageLookupByLibrary.simpleMessage("Enviar comentarios"),
     "sendFeedbackMessage": MessageLookupByLibrary.simpleMessage("Enviar"),
-    "sendFile": MessageLookupByLibrary.simpleMessage("Enviar..."),
     "sendMessages": MessageLookupByLibrary.simpleMessage("Enviar mensajes"),
     "sendReceiveMessagesFourLinkDevice": MessageLookupByLibrary.simpleMessage(
       "Puedes enviar y recibir mensajes sin tener que dejar el teléfono conectado. Usa Chatify en hasta cuatro dispositivos vinculados y un teléfono a la vez.",
@@ -790,6 +794,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "sentAt": MessageLookupByLibrary.simpleMessage("Enviado a:"),
     "sep": MessageLookupByLibrary.simpleMessage("Sep."),
     "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
+    "settingsArchive": MessageLookupByLibrary.simpleMessage(
+      "Configuración de archivado",
+    ),
     "settingsSaved": MessageLookupByLibrary.simpleMessage(
       "Tu configuración se ha guardado",
     ),
@@ -803,6 +810,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "SMS enviado al número \n",
     ),
     "spanishLanguage": MessageLookupByLibrary.simpleMessage("Español"),
+    "specialFeatures": MessageLookupByLibrary.simpleMessage(
+      "Características especiales",
+    ),
     "status": MessageLookupByLibrary.simpleMessage("Estado"),
     "statusText": MessageLookupByLibrary.simpleMessage("¡Hola!"),
     "statusUpdate": MessageLookupByLibrary.simpleMessage(
@@ -856,8 +866,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "subtitlePrivacy": MessageLookupByLibrary.simpleMessage(
       "Bloqueo de contactos, mensajes que desaparecen",
     ),
+    "subtitleReportBug": MessageLookupByLibrary.simpleMessage(
+      "Problemas técnicos y errores",
+    ),
     "subtitleSendEnterKey": MessageLookupByLibrary.simpleMessage(
       "Al pulsar la tecla Intro se envía el mensaje",
+    ),
+    "subtitleSpecialFeatures": MessageLookupByLibrary.simpleMessage(
+      "Animación",
     ),
     "success": MessageLookupByLibrary.simpleMessage("Correcto"),
     "support": MessageLookupByLibrary.simpleMessage("Soporte."),
@@ -893,9 +909,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "transferChats": MessageLookupByLibrary.simpleMessage(
       "Transferencia de chats",
     ),
-    "two_step_verification": MessageLookupByLibrary.simpleMessage(
-      "Verificación en dos pasos",
-    ),
     "typeSomething": MessageLookupByLibrary.simpleMessage("Escribe algo..."),
     "unableDeleteUsersChats": MessageLookupByLibrary.simpleMessage(
       "No se pueden eliminar los chats de otros usuarios",
@@ -915,6 +928,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userNotExists": MessageLookupByLibrary.simpleMessage(
       "¡El usuario no existe!",
     ),
+    "username": MessageLookupByLibrary.simpleMessage("Nombre de usuario"),
     "verifyYourPhoneNum": MessageLookupByLibrary.simpleMessage(
       "Chatify Necesita verificar su número de teléfono. Se pueden aplicar tarifas del operador. ",
     ),

@@ -1,5 +1,4 @@
-import 'dart:developer';
-import 'package:chatify/features/newsletter/models/newsletter.dart';
+import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
@@ -53,7 +52,6 @@ class _NewsletterCardState extends State<NewsletterCard> {
     try {
       final timestamp = int.tryParse(widget.createdAt);
       if (timestamp == null) {
-        log('Invalid timestamp format');
         return S.of(context).invalidDate;
       }
       final date = DateTime.fromMillisecondsSinceEpoch(timestamp);

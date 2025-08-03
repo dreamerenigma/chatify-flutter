@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:icon_forest/iconoir.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/helper/file_util.dart';
@@ -120,7 +121,7 @@ class _MediaContentBottomPanelState extends State<MediaContentBottomPanel> {
                             focusNode: widget.captionFocusNode,
                             cursorWidth: 1,
                             decoration: InputDecoration(
-                              hintText: 'Подпись (необязательно)',
+                              hintText: S.of(context).signatureOptional,
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
@@ -209,7 +210,7 @@ class _MediaContentBottomPanelState extends State<MediaContentBottomPanel> {
 
                           widget.overlayEntry.remove();
                         } else {
-                          log("GIF-файл не выбран");
+                          log(S.of(context).gifFileNotSelected);
                         }
                       },
                       mouseCursor: SystemMouseCursors.basic,

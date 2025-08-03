@@ -13,7 +13,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../chat/models/user_model.dart';
-import '../../newsletter/models/newsletter.dart';
+import '../../newsletter/models/newsletter_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/no_glow_scroll_behavior.dart';
 import '../widgets/cards/contacts_send_card.dart';
@@ -210,16 +210,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
           ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
         )
         : ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -238,8 +229,8 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                             child: Wrap(
-                              spacing: 16.0,
-                              runSpacing: 16.0,
+                              spacing: 16,
+                              runSpacing: 16,
                               children: selectedUsers.map((user) {
                                 return Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -323,7 +314,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
           ),
         ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'newsletterList',
           onPressed: () async {
@@ -336,13 +327,11 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
             }
 
             final createdAt = DateTime.now().millisecondsSinceEpoch.toString();
-            log('Created at timestamp: $createdAt');
-
             final newsletter = NewsletterModel(
               id: '',
               newsletterImage: '',
               newsletterName: newsletterName,
-              creatorName: APIs.user.displayName ?? 'Unknown User',
+              creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
               newsletters: newsletters,
               createdAt: createdAt,
             );

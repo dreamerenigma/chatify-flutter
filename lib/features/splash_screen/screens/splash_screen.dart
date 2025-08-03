@@ -31,9 +31,9 @@ class SplashScreenState extends State<SplashScreen> {
       SystemUiOverlay.bottom,
     ]);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: ChatifyColors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarColor: ChatifyColors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
 
@@ -103,8 +103,8 @@ class SplashScreenState extends State<SplashScreen> {
             ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: ChatifySizes.defaultSpace),
+            child: SafeArea(
+              minimum: const EdgeInsets.only(bottom: ChatifySizes.defaultSpace),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

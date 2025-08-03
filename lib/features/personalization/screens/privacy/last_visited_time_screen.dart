@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -16,18 +17,6 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
   final _storage = GetStorage();
   String _selectedOption = '';
   String _selectedOnlineStatusOption = '';
-
-  final List<Map<String, String>> _options = [
-    {'value': 'everyone', 'label': 'Все'},
-    {'value': 'contacts', 'label': 'Мои контакты'},
-    {'value': 'favorites', 'label': 'Контакты, кроме...'},
-    {'value': 'nobody', 'label': 'Никто'},
-  ];
-
-  final List<Map<String, String>> _onlineStatusOptions = [
-    {'value': 'everyone', 'label': 'Все'},
-    {'value': 'contacts', 'label': 'Мои контакты'},
-  ];
 
   @override
   void initState() {
@@ -49,6 +38,17 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> options = [
+      {'value': 'everyone', 'label': S.of(context).all},
+      {'value': 'contacts', 'label': S.of(context).myContacts},
+      {'value': 'favorites', 'label': S.of(context).contactsOtherThan},
+      {'value': 'nobody', 'label': S.of(context).nobody},
+    ];
+    final List<Map<String, String>> onlineStatusOptions = [
+      {'value': 'everyone', 'label': S.of(context).all},
+      {'value': 'contacts', 'label': S.of(context).myContacts},
+    ];
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -65,17 +65,14 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              'Время последнего посещения',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-            ),
+            title: Text(S.of(context).lastVisitedTime, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                final result = '${_options.firstWhere((option) => option['value'] == _selectedOption)['label']}, '
-                  '${_onlineStatusOptions.firstWhere((option) => option['value'] == _selectedOnlineStatusOption)['label']}';
+                final result = '${options.firstWhere((option) => option['value'] == _selectedOption)['label']}, '
+                  '${onlineStatusOptions.firstWhere((option) => option['value'] == _selectedOnlineStatusOption)['label']}';
                 Navigator.pop(context, result);
               },
             ),
@@ -87,12 +84,9 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Text(
-              'Кто видит время моего последнего посещения',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
-            ),
+            child: Text(S.of(context).whoSeesMyLastVisitTime, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
           ),
-          ..._options.map((option) {
+          ...options.map((option) {
             return RadioListTile(
               value: option['value'],
               groupValue: _selectedOption,
@@ -115,11 +109,11 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'Кто видит, когда я в сети',
+              S.of(context).whoSeesOnline,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
-          ..._onlineStatusOptions.map((option) {
+          ...onlineStatusOptions.map((option) {
             return RadioListTile(
               value: option['value'],
               groupValue: _selectedOnlineStatusOption,
@@ -142,7 +136,7 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'Если вы не делитесь информацией о времени своего последнего посещения в статусе "в сети", вы не сможете видеть время последнего посещения и статус "в сети" других пользователей.',
+              S.of(context).shareYourLastSeenTimeOnlineStatus,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),

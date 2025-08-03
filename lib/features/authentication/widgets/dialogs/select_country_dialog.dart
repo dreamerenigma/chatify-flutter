@@ -122,7 +122,7 @@ Future<Country?> showSelectCountryDialog(BuildContext context) async {
                             const SizedBox(height: 20),
                             Expanded(
                               child: ScrollbarTheme(
-                                data: ScrollbarThemeData(thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => ChatifyColors.darkerGrey)),
+                                data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                                 child: Scrollbar(
                                   thickness: 4,
                                   thumbVisibility: false,

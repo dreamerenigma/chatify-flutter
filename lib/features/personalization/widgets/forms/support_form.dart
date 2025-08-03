@@ -1,19 +1,21 @@
-import 'dart:developer';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../../../../data/repositories/email/email_send_repository.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../dialogs/light_dialog.dart';
 import '../images/support_image_selector.dart';
 import '../input/support_input.dart';
 
 class SupportForm extends StatefulWidget {
-  const SupportForm({super.key, this.selectedImages, required this.onFieldsFilledChanged});
-
   final List<AssetEntity>? selectedImages;
   final void Function(bool) onFieldsFilledChanged;
+
+  const SupportForm({
+    super.key,
+    this.selectedImages,
+    required this.onFieldsFilledChanged,
+  });
 
   @override
   SupportFormState createState() => SupportFormState();
@@ -49,8 +51,6 @@ class SupportFormState extends State<SupportForm> {
   }
 
   Future<void> handleSendFeedback() async {
-    log('handleSendFeedback called');
-
     List<Uint8List> imageBytes = [];
 
     for (AssetEntity image in selectedImages) {
@@ -60,15 +60,11 @@ class SupportFormState extends State<SupportForm> {
       }
     }
 
-    log('Image bytes length: ${imageBytes.length}');
-
     bool success = await EmailSendRepository.instance.sendFeedback(
       context,
       suggestion: problemController.text.isEmpty ? null : problemController.text,
       images: imageBytes,
     );
-
-    log('Feedback sent status: $success');
 
     if (success) {
       setState(() {
@@ -87,7 +83,9 @@ class SupportFormState extends State<SupportForm> {
       children: [
         SupportInput(controller: problemController, hintText: S.of(context).describeProblem),
         const SizedBox(height: 30),
-        Text(S.of(context).addScreenshots, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+        Text(S.of(context).screenshotsOptional, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+        SizedBox(height: 6),
+        Text(S.of(context).addScreenshots, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
         const SizedBox(height: 20),
         SupportImageSelector(
           selectedImages: selectedImages,

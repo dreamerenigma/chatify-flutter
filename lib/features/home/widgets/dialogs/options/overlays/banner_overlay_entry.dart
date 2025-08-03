@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../../generated/l10n/l10n.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_sizes.dart';
 import '../../../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -37,7 +38,7 @@ class BannerOverlayEntry {
                         SizedBox(height: 4),
                         _buildOption(
                           context: context,
-                          label: 'Всегда',
+                          label: S.of(context).always,
                           isSelected: selectedOption == 'always',
                           onTap: () {
                             onNotifySelected('always');
@@ -46,7 +47,7 @@ class BannerOverlayEntry {
                         ),
                         _buildOption(
                           context: context,
-                          label: 'Никогда',
+                          label: S.of(context).never,
                           isSelected: selectedOption == 'never',
                           onTap: () {
                             onNotifySelected('never');
@@ -60,7 +61,7 @@ class BannerOverlayEntry {
                         ),
                         _buildOption(
                           context: context,
-                          label: 'Только при открытом приложении',
+                          label: S.of(context).onlyWhenAppOpen,
                           isSelected: selectedOption == 'only',
                           onTap: () {
                             onNotifySelected('only');

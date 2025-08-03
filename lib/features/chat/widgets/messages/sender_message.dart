@@ -11,18 +11,26 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/helper/text_parser_helper.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/message_model.dart';
 import '../buttons/emoji_hover_button.dart';
 import '../dialogs/edit_message_dialog.dart';
 import '../media/media_widget.dart';
+import '../painters/triangle_painter.dart';
 import 'emoji_message.dart';
 
 class SenderMessage extends StatefulWidget {
   final MessageModel message;
   final List<MessageModel> messages;
+  final bool hasReaction;
 
-  const SenderMessage({super.key, required this.message, required this.messages});
+  const SenderMessage({
+    super.key,
+    required this.message,
+    required this.messages,
+    required this.hasReaction,
+  });
 
   @override
   SenderMessageState createState() => SenderMessageState();
@@ -94,6 +102,19 @@ class SenderMessageState extends State<SenderMessage> {
         }
       },
       child: GestureDetector(
+        onTap: () {
+          setState(() {
+            isPressed = true;
+          });
+
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (mounted) {
+              setState(() {
+                isPressed = false;
+              });
+            }
+          });
+        },
         onSecondaryTap: () {
           final RenderBox renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
@@ -104,10 +125,16 @@ class SenderMessageState extends State<SenderMessage> {
           children: [
             Container(
               key: _containerKey,
-              padding: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .012, vertical: DeviceUtils.getScreenWidth(context) * .005),
-              margin: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .005),
+              padding: isWebOrWindows
+                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .012, vertical: DeviceUtils.getScreenWidth(context) * .005)
+                : EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 3),
+              margin: isWebOrWindows
+                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .005)
+                : EdgeInsets.only(left: 16, right: 16, top: 5, bottom: widget.hasReaction ? 12 : 5),
               decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight,
+                color: isPressed
+                  ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey)
+                  : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder),
                 borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                 boxShadow: [
@@ -119,7 +146,9 @@ class SenderMessageState extends State<SenderMessage> {
                   ),
                 ],
               ),
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 55),
@@ -142,7 +171,7 @@ class SenderMessageState extends State<SenderMessage> {
                               child: SelectableText.rich(
                                 TextSpan(
                                   children: parseMessageText(widget.message.msg, context),
-                                  style: TextStyle(fontFamily: 'Roboto', fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                  style: TextStyle(fontFamily: 'Roboto', fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                                 ),
                                 contextMenuBuilder: (context, editableTextState) => const SizedBox.shrink()
                               ),
@@ -151,9 +180,8 @@ class SenderMessageState extends State<SenderMessage> {
                         : RichText(text: TextSpan(children: parseMessageText(widget.message.msg, context))),
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
+                  Align(
+                    alignment: Alignment.centerRight,
                     child: Tooltip(
                       verticalOffset: -50,
                       waitDuration: Duration(milliseconds: 800),
@@ -164,10 +192,7 @@ class SenderMessageState extends State<SenderMessage> {
                       decoration: BoxDecoration(
                         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey,
-                          width: 1,
-                        ),
+                        border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
                         boxShadow: [
                           BoxShadow(
                             color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
@@ -179,11 +204,17 @@ class SenderMessageState extends State<SenderMessage> {
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           RichText(
                             text: TextSpan(
                               text: DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                              style: TextStyle(fontSize: 9, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkGrey),
+                              style: TextStyle(
+                                fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
+                                color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Roboto',
+                              ),
                             ),
                           ),
                         ],
@@ -193,15 +224,19 @@ class SenderMessageState extends State<SenderMessage> {
                 ],
               ),
             ),
-            if (widget.message.type == Type.emoji)
             Positioned(
-              left: 0,
-              top: 0,
-              child: EmojiMessage(
-                emoji: widget.message.msg,
-                isHovered: isHovered,
-                isPressed: isPressed,
-                borderColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              top: isWebOrWindows ? 3 : 5,
+              left: isWebOrWindows ? 13 : 7,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()..scale(-1.0, 1.0),
+                child: CustomPaint(
+                  size: const Size(10, 10),
+                  painter: TrianglePainter(
+                    fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
+                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder,
+                  ),
+                ),
               ),
             ),
             if (widget.message.type == Type.emoji)

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/community/controllers/photo_community_controller.dart';
@@ -65,7 +64,6 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
     setState(() {
       imagePath = path;
       communityController.image.value = path ?? '';
-      log('Updated imagePath: $imagePath');
     });
   }
 
@@ -88,7 +86,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -104,7 +102,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                 Navigator.pop(context);
               },
             ),
-            title: Text('Изменить сообщество', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+            title: Text(S.of(context).changeCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
             elevation: 1,
             iconTheme: IconThemeData(
               color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
@@ -145,19 +143,9 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                           decoration: BoxDecoration(
                             color: ChatifyColors.darkerGrey,
                             borderRadius: BorderRadius.circular(25),
-                            image: imagePath != null
-                                ? DecorationImage(
-                              image: FileImage(File(imagePath!)),
-                              fit: BoxFit.cover,
-                            )
-                                : null,
+                            image: imagePath != null ? DecorationImage(image: FileImage(File(imagePath!)), fit: BoxFit.cover) : null,
                           ),
-                          child: imagePath == null
-                              ? const Icon(
-                            MdiIcons.accountGroup,
-                            size: 70,
-                          )
-                              : null,
+                          child: imagePath == null ? const Icon(MdiIcons.accountGroup, size: 70) : null,
                         ),
                         Positioned(
                           bottom: -5,
@@ -165,20 +153,9 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                           child: Container(
                             width: 35,
                             height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 2.0,
-                              ),
-                            ),
+                            decoration: BoxDecoration(color: ChatifyColors.blue, shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
                             padding: const EdgeInsets.all(4),
-                            child: const Icon(
-                              Icons.camera_alt_outlined,
-                              size: 22,
-                              color: Colors.white,
-                            ),
+                            child: const Icon(Icons.camera_alt_outlined, size: 22, color: ChatifyColors.white),
                           ),
                         ),
                       ],
@@ -194,30 +171,24 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                 children: [
                   TextSelectionTheme(
                     data: TextSelectionThemeData(
-                      cursorColor: Colors.blue,
-                      selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                      selectionHandleColor: Colors.blue,
+                      cursorColor: ChatifyColors.blue,
+                      selectionColor: ChatifyColors.blue.withAlpha((0.3 * 255).toInt()),
+                      selectionHandleColor: ChatifyColors.blue,
                     ),
                     child: TextField(
                       controller: nameController,
                       maxLength: maxCharCount,
-                      cursorColor: Colors.blue,
+                      cursorColor: ChatifyColors.blue,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       decoration: InputDecoration(
                         labelText: S.of(context).communityName,
-                        labelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: Colors.black),
-                        floatingLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: Colors.grey),
+                        labelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.black),
+                        floatingLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.grey),
                         hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none),
+                        enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey)),
+                        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.blue)),
                         counterText: '',
                       ),
                       textCapitalization: TextCapitalization.sentences,
@@ -227,10 +198,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: Text(
-                        '${charCount.toString()}/${maxCharCount.toString()}',
-                        style: const TextStyle(color: Colors.grey),
-                      ),
+                      child: Text('${charCount.toString()}/${maxCharCount.toString()}', style: const TextStyle(color: ChatifyColors.grey)),
                     ),
                   ),
                 ],
@@ -242,14 +210,14 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                 children: [
                   TextSelectionTheme(
                     data: TextSelectionThemeData(
-                      cursorColor: Colors.blue,
-                      selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                      selectionHandleColor: Colors.blue,
+                      cursorColor: ChatifyColors.blue,
+                      selectionColor: ChatifyColors.blue.withAlpha((0.3 * 255).toInt()),
+                      selectionHandleColor: ChatifyColors.blue,
                     ),
                     child: TextField(
                       controller: descriptionController,
                       maxLines: 4,
-                      cursorColor: Colors.blue,
+                      cursorColor: ChatifyColors.blue,
                       textCapitalization: TextCapitalization.sentences,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       decoration: InputDecoration(
@@ -257,18 +225,10 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                         fillColor: ChatifyColors.darkerGrey,
                         contentPadding: const EdgeInsets.all(16.0),
                         hintText: S.of(context).welcomeCommunity,
-                        hintStyle: TextStyle(
-                            fontSize: ChatifySizes.fontSizeMd
-                        ),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
+                        hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none),
+                        enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey)),
+                        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.blue)),
                       ),
                     ),
                   ),
@@ -279,7 +239,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'newCommunity',
           onPressed: () async {
@@ -287,9 +247,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
             final description = descriptionController.text.isNotEmpty ? descriptionController.text : S.of(context).welcomeCommunity;
 
             if (imagePath == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please select an image for the community.')),
-              );
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).pleaseSelectImageCommunity)));
               return;
             }
 
@@ -299,7 +257,8 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
               image: '',
               description: description,
               createdAt: DateTime.now(),
-              creatorName: '',
+              creatorName: '${APIs.me.name}${APIs.me.surname.isNotEmpty ? ' ${APIs.me.surname}' : ''}',
+              creatorId: APIs.me.id,
             );
 
             final success = await APIs.createCommunity(context, community, File(imagePath!));
@@ -315,8 +274,8 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
               Navigator.pushReplacement(context, createPageRoute(CommunityScreen(user: APIs.me)));
             }
           },
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          backgroundColor: ChatifyColors.blue,
+          foregroundColor: ChatifyColors.white,
           child: const Icon(Icons.check),
         ),
       ),

@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:developer';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../generated/l10n/l10n.dart';
@@ -41,7 +40,6 @@ class PhotoNewsletterScreenState extends State<PhotoNewsletterScreen> {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      log('Error deleting group photo: $e');
       if (mounted) {
         Get.snackbar(S.of(context).error, S.of(context).failedDeleteGroupPhoto);
       }

@@ -1,11 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:chatify/features/newsletter/models/newsletter.dart';
+import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../chat/models/user_model.dart';
@@ -102,7 +103,7 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
   }
 
   Future<void> onImageSelected(File imageFile) async {
-    log('Файл готов к отправке: ${imageFile.path}');
+    log('${S.of(context).fileReadySend}: ${imageFile.path}');
   }
 
   @override
@@ -142,9 +143,9 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
           context: context,
           position: details.globalPosition,
           items: [
-            MenuItem(icon: Ionicons.checkbox_outline, text: 'Выбрать сообщения', onTap: () {}),
-            MenuItem(icon: FluentIcons.open_16_regular, text: 'Открыть чат в другом окне', onTap: () {}),
-            MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: 'Закрыть чат', onTap: () {}),
+            MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+            MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
+            MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
           ],
         );
       },
@@ -169,9 +170,7 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(color: gradient == null ? color : null, gradient: gradient),
                   child: Column(
-                    children: [
-
-                    ],
+                    children: [],
                   ),
                 );
               },

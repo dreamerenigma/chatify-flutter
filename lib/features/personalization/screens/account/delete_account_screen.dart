@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/features/personalization/screens/account/select_country_screen.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +43,11 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
     }
 
     final Country matchingCountry = countries.firstWhere((country) => country.code.replaceAll('+', '') == cleanedCountryCode,
-      orElse: () => Country('', '', 'Unknown Country', 'Unknown Country', ''),
+      orElse: () => Country('', '', S.of(context).unknownCountry, S.of(context).unknownCountry, ''),
     );
 
     setState(() {
-      if (matchingCountry.name != 'Unknown Country') {
+      if (matchingCountry.name != S.of(context).unknownCountry) {
         selectedCountryName = matchingCountry.name;
         isCountryCodeValid = true;
       } else {
@@ -68,7 +67,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
             color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -84,8 +83,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
               },
             ),
             titleSpacing: 0,
-            title: Text(S.of(context).deleteAccount,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).deleteAccount, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             elevation: 1,
           ),
         ),
@@ -94,16 +92,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
         behavior: NoGlowScrollBehavior(),
         child: SingleChildScrollView(
           child: ScrollbarTheme(
-            data: ScrollbarThemeData(
-              thumbColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.dragged)) {
-                    return ChatifyColors.darkerGrey;
-                  }
-                  return ChatifyColors.darkerGrey;
-                },
-              ),
-            ),
+            data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
             child: Scrollbar(
               thickness: 4,
               thumbVisibility: false,
@@ -152,11 +141,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                 const Icon(FluentIcons.phone_eraser_20_regular, color: ChatifyColors.darkGrey),
                                 const SizedBox(width: 20),
                                 Expanded(
-                                  child: Text('Изменить номер?',
-                                    style: TextStyle(
-                                        fontSize: ChatifySizes.fontSizeMd,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  child: Text(S.of(context).changeNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                                 ),
                               ],
                             ),
@@ -175,7 +160,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                   padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                                 ),
                                 child: Text(
-                                  'Изменить номер',
+                                  '${S.of(context).changeNumber}?',
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black),
                                 ),
                               ),
@@ -213,7 +198,6 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                   setState(() {
                                     selectedCountryName = selectedCountry.name;
                                     countryCodeController.text = selectedCountry.code.replaceAll('+', '');
-                                    log('Selected Country: ${selectedCountry.name}, Code: ${selectedCountry.code}');
                                     isCountryCodeValid = true;
                                   });
                                 }
@@ -223,28 +207,19 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                 hintText: selectedCountryName ?? S.of(context).selectCountry,
                                 hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                                 labelText: S.of(context).country,
-                                labelStyle: TextStyle(
-                                  color: isCountryCodeValid ? ChatifyColors.darkGrey : Colors.red,
-                                  fontSize: ChatifySizes.fontSizeLm,
-                                ),
-                                floatingLabelStyle: TextStyle(
-                                  fontSize: ChatifySizes.fontSizeSm,
-                                  color: isCountryCodeValid ? ChatifyColors.darkGrey : Colors.red,
-                                ),
+                                labelStyle: TextStyle(color: isCountryCodeValid ? ChatifyColors.darkGrey : Colors.red, fontSize: ChatifySizes.fontSizeLm),
+                                floatingLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: isCountryCodeValid ? ChatifyColors.darkGrey : ChatifyColors.red),
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                                suffixIcon: Icon(Icons.arrow_drop_down, color: isCountryCodeValid ? ChatifyColors.darkGrey : Colors.red),
+                                suffixIcon: Icon(Icons.arrow_drop_down, color: isCountryCodeValid ? ChatifyColors.darkGrey : ChatifyColors.red),
                                 border: InputBorder.none,
-                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: isCountryCodeValid ? ChatifyColors.darkGrey : Colors.red)),
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: isCountryCodeValid ? ChatifyColors.darkGrey : ChatifyColors.red)),
                                 focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
                               ),
                             ),
                             if (!isCountryCodeValid)
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  'Неверный код страны',
-                                  style: TextStyle(color: Colors.red, fontSize: ChatifySizes.fontSizeSm),
-                                ),
+                                child: Text(S.of(context).invalidCountryCode, style: TextStyle(color: ChatifyColors.red, fontSize: ChatifySizes.fontSizeSm)),
                               ),
                           ],
                         ),
@@ -268,7 +243,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                   controller: countryCodeController,
                                   focusNode: countryCodeFocusNode,
                                   prefixText: '+',
-                                  labelText: 'Телефон',
+                                  labelText: S.of(context).phone,
                                   onChanged: (value) {
                                     if (value.length <= 3) {
                                       updateCountryName(value);
@@ -295,14 +270,11 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                   focusNode: phoneNumberFocusNode,
                                   validator: (val) =>
                                   val != null && val.isNotEmpty ? null : S.of(context).requiredField,
-                                  inputFormatters: [
-                                    PhoneNumberInputFormatter(),
-                                    LengthLimitingTextInputFormatter(16),
-                                  ],
+                                  inputFormatters: [PhoneNumberInputFormatter(), LengthLimitingTextInputFormatter(16)],
                                   keyboardType: TextInputType.phone,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                                   decoration: InputDecoration(
-                                    hintText: 'Номер телефона',
+                                    hintText: S.of(context).phoneNumber,
                                     hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                                     border: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
                                     enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
@@ -357,13 +329,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
           const Icon(Icons.circle, size: 4, color: ChatifyColors.grey),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeSm,
-                color: ChatifyColors.darkGrey,
-              ),
-            ),
+            child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
           ),
         ],
       ),

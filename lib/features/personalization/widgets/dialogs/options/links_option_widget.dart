@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -22,7 +23,7 @@ class _LinksOptionWidgetState extends State<LinksOptionWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text('Ссылки', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+          child: Text(S.of(context).links, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
         ),
         Expanded(
           child: CustomScrollbar(
@@ -57,7 +58,7 @@ class _LinksOptionWidgetState extends State<LinksOptionWidget> {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.45,
       child: Center(
-        child: Text('Нет ссылок', style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300), textAlign: TextAlign.center),
+        child: Text(S.of(context).noLinks, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300), textAlign: TextAlign.center),
       ),
     );
   }

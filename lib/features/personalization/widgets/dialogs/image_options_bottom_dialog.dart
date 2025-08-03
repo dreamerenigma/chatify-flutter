@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -16,7 +17,6 @@ void showImageOptionsBottomSheet(BuildContext context, int index, List<AssetEnti
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Divider
             const Divider(thickness: 2, color: ChatifyColors.grey),
             const SizedBox(height: 10),
             GestureDetector(
@@ -32,25 +32,14 @@ void showImageOptionsBottomSheet(BuildContext context, int index, List<AssetEnti
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Image.asset(
-                        ChatifyImages.appLogoSplash,
-                        height: 40,
-                        alignment: Alignment.center,
-                      ),
+                      child: Image.asset(ChatifyImages.appLogoSplash, height: 40, alignment: Alignment.center),
                     ),
                     const SizedBox(height: 5),
-                    Text(
-                      'Chatify',
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-                      textAlign: TextAlign.center,
-                    ),
+                    Text(S.of(context).appName, style: TextStyle(fontSize: ChatifySizes.fontSizeSm), textAlign: TextAlign.center),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          'Удалить',
-                          style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm),
-                        ),
+                        Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm)),
                       ],
                     ),
                   ],

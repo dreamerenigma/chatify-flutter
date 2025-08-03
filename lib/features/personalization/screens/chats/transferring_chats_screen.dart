@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -34,7 +35,7 @@ class TransferringChatsScreenState extends State<TransferringChatsScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Изменить номер', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).changeNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -54,12 +55,12 @@ class TransferringChatsScreenState extends State<TransferringChatsScreen> {
                   const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                    child: Text('Перенос истории чатов на устройства Android', style: TextStyle(fontSize: ChatifySizes.fontSizeMg), textAlign: TextAlign.center),
+                    child: Text(S.of(context).transferChatHistoryAndroidDevices, style: TextStyle(fontSize: ChatifySizes.fontSizeMg), textAlign: TextAlign.center),
                   ),
                   const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 35),
-                    child: Text('Конфиденциадльно экспортируйте свою историю чатов и сохраните недавние сообщения без использования хранилища Input Studios. Для подключения к новому устройству необходимо предоставить соответствующие разрешения.',
+                    child: Text(S.of(context).privatelyExportHistorySaveRecentMessages,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.4), textAlign: TextAlign.center,
                     ),
                   ),
@@ -86,10 +87,7 @@ class TransferringChatsScreenState extends State<TransferringChatsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Начать',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black),
-                      ),
+                      Text(S.of(context).begin, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
                     ],
                   ),
                 ),
@@ -113,7 +111,7 @@ class TransferringChatsScreenState extends State<TransferringChatsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                      Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                     ],
                   ),
                 )

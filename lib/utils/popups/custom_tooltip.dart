@@ -47,8 +47,8 @@ class _CustomTooltipState extends State<CustomTooltip> with TickerProviderStateM
   @override
   void dispose() {
     _isDisposed = true;
-    _animationController.dispose();
     _overlayEntry?.remove();
+    _animationController.dispose();
     super.dispose();
   }
 

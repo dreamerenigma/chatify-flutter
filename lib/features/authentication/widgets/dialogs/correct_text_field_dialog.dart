@@ -11,10 +11,7 @@ void showCorrectTextFieldDialog(BuildContext context, String title) {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-        title: Text(
-          title,
-          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
-        ),
+        title: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black)),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -25,10 +22,7 @@ void showCorrectTextFieldDialog(BuildContext context, String title) {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text(
-              S.of(context).ok,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-            ),
+            child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
           ),
         ],
       );

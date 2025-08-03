@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:iconoir_icons/iconoir_icons.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -44,10 +45,10 @@ Future<void> showEditImageDialog(
                 showConfirmationDialog(
                   context: context,
                   width: 550,
-                  title: 'Сбросить неотправленное сообщение',
-                  description: 'Ваше сообщение и прикреплённые медиафайлы не будут отправлены, если вы закроете этот экран.',
-                  confirmText: 'Сбросить',
-                  cancelText: 'Назад',
+                  title: S.of(context).resetUnsentMessage,
+                  description: S.of(context).messageAttachedMediaScreen,
+                  confirmText: S.of(context).reset,
+                  cancelText: S.of(context).back,
                   onConfirm: () {
                     overlayEntry.remove();
                     captionFocusNode.dispose();
@@ -138,9 +139,7 @@ Future<void> showEditImageDialog(
                                                       children: [
                                                         SvgPicture.asset(
                                                           iconPath,
-                                                          color: iconPath == ChatifyVectors.highlighter
-                                                            ? null
-                                                            : (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                                          color: iconPath == ChatifyVectors.highlighter ? null : (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                                                           width: 20,
                                                           height: 20,
                                                         ),
@@ -174,13 +173,13 @@ Future<void> showEditImageDialog(
                                               String tooltipMessage = '';
                                               switch (iconId) {
                                                 case 'rotation':
-                                                  tooltipMessage = 'Повернуть';
+                                                  tooltipMessage = S.of(context).rotation;
                                                   break;
                                                 case 'crop':
-                                                  tooltipMessage = 'Обрезать';
+                                                  tooltipMessage = S.of(context).trim;
                                                   break;
                                                 case 'delete':
-                                                  tooltipMessage = 'Удалить';
+                                                  tooltipMessage = S.of(context).delete;
                                                   break;
                                                 default:
                                                   tooltipMessage = '';
@@ -295,7 +294,7 @@ Future<void> showEditImageDialog(
                                                                         child: Row(
                                                                           mainAxisSize: MainAxisSize.min,
                                                                           children: [
-                                                                            Text('Отправить как файл', style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300)),
+                                                                            Text(S.of(context).sendAsFile, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300)),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -316,7 +315,7 @@ Future<void> showEditImageDialog(
                                               animationController.forward();
                                             },
                                             child: const Padding(
-                                              padding: EdgeInsets.all(8.0),
+                                              padding: EdgeInsets.all(8),
                                               child: Iconoir(IconoirIcons.moreHoriz, size: 24),
                                             ),
                                           ),
@@ -332,8 +331,8 @@ Future<void> showEditImageDialog(
                                 captionFocusNode: captionFocusNode,
                                 animationController: animationController,
                                 overlayEntry: overlayEntry,
-                                onEmojiSelected: (String ) {},
-                                onGifSelected: (String ) {},
+                                onEmojiSelected: (String) {},
+                                onGifSelected: (String) {},
                                 user: APIs.me,
                               ),
                             ],

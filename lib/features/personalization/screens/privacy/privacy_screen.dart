@@ -45,11 +45,11 @@ class PrivacyScreenState extends State<PrivacyScreen> {
   void initState() {
     super.initState();
     _loadSwitchState();
-    privacySubtitleOption = storage.read('selected_last_visit_option_label') ?? 'Мои контакты, Все';
-    selectedPrivacyOption = storage.read('selected_photo_privacy_label') ?? 'Мои контакты';
-    selectedIntelligenceOption = storage.read('selected_intelligence_privacy_label') ?? 'Мои контакты';
-    selectedTimerOption = storage.read('selected_automatic_timer_label') ?? 'Выкл.';
-    selectedGroupsOption = storage.read('selected_groups_privacy_label') ?? 'Мои контакты';
+    privacySubtitleOption = storage.read('selected_last_visit_option_label') ?? S.of(context).myContactsAll;
+    selectedPrivacyOption = storage.read('selected_photo_privacy_label') ?? S.of(context).myContacts;
+    selectedIntelligenceOption = storage.read('selected_intelligence_privacy_label') ?? S.of(context).myContacts;
+    selectedTimerOption = storage.read('selected_automatic_timer_label') ?? S.of(context).off;
+    selectedGroupsOption = storage.read('selected_groups_privacy_label') ?? S.of(context).myContacts;
   }
 
   Future<void> _loadSwitchState() async {
@@ -118,14 +118,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-              if (states.contains(WidgetState.dragged)) {
-                return ChatifyColors.darkerGrey;
-              }
-              return ChatifyColors.darkerGrey;
-            }),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -136,14 +129,11 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('Видимость персональных даннных', padding: const EdgeInsets.only(left: 25, right: 20, top: 25)),
+                      _buildSectionHeader(S.of(context).visibilityPersonalData, padding: const EdgeInsets.only(left: 25, right: 20, top: 25)),
                       const SizedBox(height: 10),
-                      _buildPrivacyItem('Время последнего посещения и статус "в сети"', privacySubtitleOption,
+                      _buildPrivacyItem(S.of(context).lastSeenOnlineStatus, privacySubtitleOption,
                         onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            createPageRoute(const LastVisitedTimeScreen()),
-                          );
+                          final result = await Navigator.push(context, createPageRoute(const LastVisitedTimeScreen()));
                           if (result != null && mounted) {
                             setState(() {
                               privacySubtitleOption = result;
@@ -152,12 +142,9 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                           }
                         },
                       ),
-                      _buildPrivacyItem('Фото профиля', selectedPrivacyOption,
+                      _buildPrivacyItem(S.of(context).profilePhoto, selectedPrivacyOption,
                         onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            createPageRoute(const PrivacyPhotoProfileScreen()),
-                          );
+                          final result = await Navigator.push(context, createPageRoute(const PrivacyPhotoProfileScreen()));
                           if (result != null && result is String) {
                             setState(() {
                               selectedPrivacyOption = result;
@@ -166,12 +153,9 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                           }
                         },
                       ),
-                      _buildPrivacyItem('Сведения', selectedIntelligenceOption,
+                      _buildPrivacyItem(S.of(context).intelligence, selectedIntelligenceOption,
                         onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            createPageRoute(const IntelligenceScreen()),
-                          );
+                          final result = await Navigator.push(context, createPageRoute(const IntelligenceScreen()));
                           if (result != null && result is String) {
                             setState(() {
                               selectedIntelligenceOption = result;
@@ -189,7 +173,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                          child: Text('Статус', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).status, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ),
                       InkWell(
@@ -205,18 +189,8 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'Отчёты о прочтении',
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                                    ),
-                                    Text(
-                                      'Если вы отключите отчёты \n'
-                                      'о прочтении, то не сможете \n'
-                                      'отправлять и получать эти отчёты. \n'
-                                      'Данные уведомления нельзя \n'
-                                      'отключить для групповых чатов.',
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
-                                    ),
+                                    Text(S.of(context).readingReports, style: TextStyle(fontSize: ChatifySizes.fontSizeMd),),
+                                    Text(S.of(context).disableReadReceiptsSendReceiveNotify, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5)),
                                   ],
                                 ),
                               ),
@@ -244,7 +218,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                         ),
                       ),
                       const Divider(height: 0, thickness: 1),
-                      _buildSectionHeader('Исчезающие сообщения', padding: const EdgeInsets.only(left: 25, right: 25, top: 20)),
+                      _buildSectionHeader(S.of(context).disappearingMessages, padding: const EdgeInsets.only(left: 25, right: 25, top: 20)),
                       InkWell(
                         onTap: () async {
                           final result = await Navigator.push(
@@ -266,7 +240,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                               Row(
                                 children: [
                                   Expanded(
-                                    child: Text('Автоматический таймер сообщений',
+                                    child: Text(S.of(context).automaticMessageTimer,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -277,10 +251,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Начинайте новые чаты \n'
-                                      'с сообщениями, которые будут \n'
-                                      'исчезать в соответствии с заданным \n'
-                                      'таймером.',
+                                      S.of(context).newChatsMessagesDisappearAccording,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                                     ),
                                   ),
@@ -292,7 +263,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                         ),
                       ),
                       const Divider(height: 0, thickness: 1),
-                      _buildPrivacyItem('Группы', selectedGroupsOption,
+                      _buildPrivacyItem(S.of(context).groups[0].toUpperCase(), selectedGroupsOption,
                         onTap: () async {
                           final result = await Navigator.push(
                             context,
@@ -315,43 +286,28 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                          child: Text('Геоданные', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).geodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ),
-                      _buildPrivacyItem('Звонки', 'Отключить звук для неизвестных номеров',
+                      _buildPrivacyItem(S.of(context).calls, S.of(context).turnOffSoundUnknownNum,
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            createPageRoute(const PrivacyCallsScreen()),
-                          );
+                          Navigator.push(context, createPageRoute(const PrivacyCallsScreen()));
                         },
                       ),
-                      _buildPrivacyItem('Заблокированные', '2', onTap: () {
-                        Navigator.push(
-                          context,
-                          createPageRoute(BlockedUsersScreen(user: APIs.me, blockedUser: const [])),
-                        );
+                      _buildPrivacyItem(S.of(context).blocked, '2', onTap: () {
+                        Navigator.push(context, createPageRoute(BlockedUsersScreen(user: APIs.me, blockedUser: const [])));
                       }),
-                      _buildPrivacyItem('Блокировка приложения', 'Отключено', onTap: () {
-                        Navigator.push(
-                          context,
-                          createPageRoute(const PrivacyBlockedAppScreen()),
-                        );
+                      _buildPrivacyItem(S.of(context).blockingApp, S.of(context).disabled, onTap: () {
+                        Navigator.push(context, createPageRoute(const PrivacyBlockedAppScreen()));
                       }),
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            createPageRoute(const ClosingChatScreen()),
-                          );
+                          Navigator.push(context, createPageRoute(const ClosingChatScreen()));
                         },
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                          child: Text(
-                            'Закрытие чата',
-                            style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                          ),
+                          child: Text(S.of(context).closingChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ),
                       InkWell(
@@ -367,16 +323,14 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Разрешить эффекты камеры', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                                    Text(S.of(context).allowCameraEffects, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                                     RichText(
                                       text: TextSpan(
-                                        text:
-                                          'Используйте эффекты во время \n'
-                                          'съемки и видеозвонков. ',
+                                        text: S.of(context).useEffectsDuringVideoCalls,
                                         style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                                         children: [
                                           TextSpan(
-                                            text: 'Подробнее',
+                                            text: S.of(context).readMore,
                                             style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                             recognizer: TapGestureRecognizer()..onTap = () {},
                                           ),
@@ -401,23 +355,17 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                           ),
                         ),
                       ),
-                      _buildPrivacyItem('Расширенные', 'Защитить IP-адрес во время звонков, отключить предпросмотр ссылок',
+                      _buildPrivacyItem(S.of(context).extended, S.of(context).protectIpAddressCallsLinkPreviews,
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            createPageRoute(const PrivacyExtendedScreen()),
-                          );
+                          Navigator.push(context, createPageRoute(const PrivacyExtendedScreen()));
                         },
                       ),
                       const SizedBox(height: 5),
                       Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
                       const SizedBox(height: 5),
-                      _buildPrivacyItem('Проверка конфиденциальности', 'Управляйте конфиденциальностью и выбирайте необходимые для себя настройки.',
+                      _buildPrivacyItem(S.of(context).privacyCheck, S.of(context).manageYourPrivacyChooseSettings,
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            createPageRoute(const PrivacyCheckScreen()),
-                          );
+                          Navigator.push(context, createPageRoute(const PrivacyCheckScreen()));
                         },
                       ),
                       const SizedBox(height: 15),
@@ -435,10 +383,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
   Widget _buildSectionHeader(String title, {EdgeInsetsGeometry padding = EdgeInsets.zero}) {
     return Padding(
       padding: padding,
-      child: Text(
-        title,
-        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-      ),
+      child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
     );
   }
 
@@ -453,15 +398,9 @@ class PrivacyScreenState extends State<PrivacyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-            ),
+            Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
             const SizedBox(height: 4.0),
-            Text(
-              subtitle,
-              style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal),
-            ),
+            Text(subtitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
           ],
         ),
       ),

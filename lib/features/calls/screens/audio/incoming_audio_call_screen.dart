@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -39,11 +40,9 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
 
   Future<void> playClickButton(AudioPlayer audioPlayer) async {
     try {
-      log('Playing sound...');
       await audioPlayer.play(AssetSource(ChatifySounds.endCallButton));
-      log('Sound played successfully.');
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}: $e');
     }
   }
 
@@ -126,7 +125,7 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
                               child: const Icon(Icons.call_end_rounded, color: ChatifyColors.white, size: 30),
                             ),
                           ),
-                          Text('Отклонить', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                          Text(S.of(context).reject, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                         ],
                       ),
                       Column(
@@ -146,7 +145,7 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
                               child: const Icon(Icons.call_rounded, color: ChatifyColors.white, size: 30),
                             ),
                           ),
-                          Text('Проведите вверх,\nчтобы принять', textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                          Text(S.of(context).swipeUpToAccept, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                         ],
                       ),
                       Column(
@@ -173,7 +172,7 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
                               child: const Icon(Icons.message_outlined, color: ChatifyColors.white, size: 30),
                             ),
                           ),
-                          Text('Сообщение', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                          Text(S.of(context).message, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                         ],
                       ),
                     ],

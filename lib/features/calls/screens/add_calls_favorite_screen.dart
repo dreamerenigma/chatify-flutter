@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../chat/models/user_model.dart';
@@ -166,7 +167,7 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
             keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
             style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
             decoration: InputDecoration(
-              hintText: 'Поиск контактов',
+              hintText: S.of(context).searchContacts,
               hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -177,13 +178,7 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Добавить в Избранное',
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeBg,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold)),
           ],
         ),
         actions: isSearching
@@ -207,16 +202,7 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
       : ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -231,10 +217,10 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           child: Wrap(
-                            spacing: 16.0,
-                            runSpacing: 16.0,
+                            spacing: 16,
+                            runSpacing: 16,
                             children: selectedUsers.map((user) {
                               return Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -296,9 +282,9 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
                 }
 
                 if (adjustedIndex == 0) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('Контакты в Chatify', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  return Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                   );
                 } else if (adjustedIndex <= _chatUsers.length) {
                   final chatUser = _chatUsers[adjustedIndex - 1];
@@ -313,7 +299,7 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
                 if (index == _chatUsers.length + 2) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                    child: Text('Пригласить в Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                    child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                   );
                 }
                 final filteredIndex = index - _chatUsers.length - 3;
@@ -333,12 +319,12 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'group',
           onPressed: () async {
             if (selectedUsers.isEmpty) {
-              Dialogs.showSnackbar(context, 'Должен быть выбран минимум 1 контакт');
+              Dialogs.showSnackbar(context, S.of(context).atLeastOneContactSelected);
             } else {
               Navigator.push(
                 context,
@@ -347,7 +333,7 @@ class AddCallsFavoriteScreenState extends State<AddCallsFavoriteScreen> {
             }
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          foregroundColor: Colors.white,
+          foregroundColor: ChatifyColors.white,
           child: const Icon(Icons.check),
         ),
       ),

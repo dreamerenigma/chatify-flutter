@@ -9,16 +9,18 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/popups/custom_tooltip.dart';
+import '../../../bot/models/info_app_model.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
 import '../../../community/widgets/lists/community_list.dart';
 import '../../../group/models/group_model.dart';
 import '../../../personalization/controllers/user_controller.dart';
 import '../../../personalization/widgets/lists/group_list.dart';
-import '../../../newsletter/models/newsletter.dart';
+import '../../../newsletter/models/newsletter_model.dart';
 import '../dialogs/filter_chats_dialog.dart';
 import '../dialogs/new_chat_dialog.dart';
 import '../input/search_text_input.dart';
+import '../lists/infos_app_list.dart';
 import '../lists/newsletter_list.dart';
 import '../lists/support_list.dart';
 import '../lists/user_list.dart';
@@ -32,11 +34,13 @@ class ChatsWidget extends StatefulWidget {
   final bool isSearching;
   final List<UserModel> searchList;
   final List<SupportAppModel> supports;
+  final List<InfoAppModel> infosApp;
   final Function(GroupModel) onGroupSelected;
   final ValueChanged<NewsletterModel> onNewsletterSelected;
   final ValueChanged<CommunityModel> onCommunitySelected;
   final Function(UserModel) onUserSelected;
   final Function(SupportAppModel) onSupportSelected;
+  final Function(InfoAppModel) onInfoAppSelected;
   final UserModel? selectedUser;
   final CommunityModel? selectedCommunity;
 
@@ -50,11 +54,13 @@ class ChatsWidget extends StatefulWidget {
     required this.isSearching,
     required this.searchList,
     required this.supports,
+    required this.infosApp,
     required this.onGroupSelected,
     required this.onNewsletterSelected,
     required this.onCommunitySelected,
     required this.onUserSelected,
     required this.onSupportSelected,
+    required this.onInfoAppSelected,
     required this.selectedUser,
     this.selectedCommunity,
   });
@@ -74,6 +80,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
   CommunityModel? selectedCommunity;
   UserModel? selectedUser;
   SupportAppModel? selectedSupport;
+  InfoAppModel? selectedInfoApp;
   bool _isNewChatDialogOpen = false;
   bool _isFilterDialogOpen = false;
 
@@ -141,7 +148,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                         ),
                       ),
                       child: CustomTooltip(
-                        message: 'Новый чат (Ctrl+N) \nНовая группа (Ctrl+Shift+N)',
+                        message: S.of(context).newChatNewGroup,
                         verticalOffset: -90,
                         horizontalOffset: -70,
                         child: Material(
@@ -173,7 +180,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                     ),
                     SizedBox(width: 6),
                     CustomTooltip(
-                      message: 'Фильтр чатов',
+                      message: S.of(context).chatFilter,
                       horizontalOffset: -35,
                       child: Material(
                         color: ChatifyColors.transparent,
@@ -218,7 +225,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
           ),
           Expanded(
             child: ScrollbarTheme(
-              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey)),
+              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
               child: Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Scrollbar(
@@ -325,6 +332,23 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                                 selectedUser = null;
                               });
                               widget.onSupportSelected(support);
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.infosApp.isNotEmpty,
+                          child: InfosAppList(
+                            infosApp: widget.infosApp,
+                            selectedInfoApp: selectedInfoApp,
+                            onInfoAppSelected: (infoApp) {
+                              setState(() {
+                                selectedInfoApp = infoApp;
+                                selectedGroup = null;
+                                selectedCommunity = null;
+                                selectedNewsletter = null;
+                                selectedUser = null;
+                              });
+                              widget.onInfoAppSelected(infoApp);
                             },
                           ),
                         ),

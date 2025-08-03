@@ -31,44 +31,29 @@ class _AddEditPhoneScreenState extends State<AddEditPhoneScreen> {
 
     final countryName = getCountryNameByCode(cleanedCountryCode);
     setState(() {
-      selectedCountryName = countryName ?? 'Выберите страну';
+      selectedCountryName = countryName ?? S.of(context).selectCountry;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: Text(
-          'Изменить номер',
-          style: TextStyle(
-            fontSize: ChatifySizes.fontSizeMg,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ),
+      appBar: AppBar(titleSpacing: 0, title: Text(S.of(context).changeNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Введите старый номер телефона с кодом страны:',
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeMd,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            Text(S.of(context).enterPhoneNumberCountryCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 TextSelectionTheme(
                   data: TextSelectionThemeData(
-                    cursorColor: Colors.blue,
-                    selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                    selectionHandleColor: Colors.blue,
+                    cursorColor: ChatifyColors.blue,
+                    selectionColor: ChatifyColors.blue.withAlpha((0.3 * 255).toInt()),
+                    selectionHandleColor: ChatifyColors.blue,
                   ),
                   child: SizedBox(
                     width: 70,
@@ -100,27 +85,16 @@ class _AddEditPhoneScreenState extends State<AddEditPhoneScreen> {
                     child: TextFormField(
                       controller: phoneOldNumberController,
                       focusNode: phoneOldNumberFocusNode,
-                      validator: (val) => val != null && val.isNotEmpty ? null : 'Это поле обязательно',
-                      inputFormatters: [
-                        PhoneNumberInputFormatter(),
-                        LengthLimitingTextInputFormatter(16),
-                      ],
+                      validator: (val) => val != null && val.isNotEmpty ? null : S.of(context).thisFieldRequired,
+                      inputFormatters: [PhoneNumberInputFormatter(), LengthLimitingTextInputFormatter(16)],
                       keyboardType: TextInputType.phone,
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeMd,
-                      ),
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       decoration: InputDecoration(
-                        hintText: 'Номер телефона',
+                        hintText: S.of(context).phoneNumber,
                         hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
+                        border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 0),
                       ),
@@ -129,22 +103,16 @@ class _AddEditPhoneScreenState extends State<AddEditPhoneScreen> {
                 ),
               ],
             ),
-            Text(
-              'Введите новый номер телефона с кодом страны:',
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeMd,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            Text(S.of(context).enterNewPhoneNumCountryCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 TextSelectionTheme(
                   data: TextSelectionThemeData(
-                    cursorColor: Colors.blue,
-                    selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                    selectionHandleColor: Colors.blue,
+                    cursorColor: ChatifyColors.blue,
+                    selectionColor: ChatifyColors.blue.withAlpha((0.3 * 255).toInt()),
+                    selectionHandleColor: ChatifyColors.blue,
                   ),
                   child: SizedBox(
                     width: 70,
@@ -177,26 +145,15 @@ class _AddEditPhoneScreenState extends State<AddEditPhoneScreen> {
                       controller: phoneNewNumberController,
                       focusNode: phoneNewNumberFocusNode,
                       validator: (val) => val != null && val.isNotEmpty ? null : S.of(context).requiredField,
-                      inputFormatters: [
-                        PhoneNumberInputFormatter(),
-                        LengthLimitingTextInputFormatter(16),
-                      ],
+                      inputFormatters: [PhoneNumberInputFormatter(), LengthLimitingTextInputFormatter(16)],
                       keyboardType: TextInputType.phone,
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeMd,
-                      ),
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       decoration: InputDecoration(
-                        hintText: 'Номер телефона',
+                        hintText: S.of(context).phoneNumber,
                         hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
+                        border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 0),
                       ),

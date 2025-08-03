@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:radix_icons/radix_icons.dart';
 import 'package:chatify/features/personalization/screens/account/request_account_information_screen.dart';
@@ -83,52 +82,34 @@ class _AccountScreenState extends State<AccountScreen> {
                 _buildSettingsMenuTile(
                   icon: PhosphorIcons.shield_checkered_fill,
                   title: S.of(context).securityNotices,
-                  onTap: () => Navigator.push(
-                    context,
-                    createPageRoute(const NotificationsSecurityScreen()),
-                  ),
+                  onTap: () => Navigator.push(context, createPageRoute(const NotificationsSecurityScreen())),
                 ),
                 _buildSettingsMenuTile(
                   icon: Icons.key_outlined,
                   title: S.of(context).accessKeys,
-                  onTap: () => Navigator.push(
-                    context,
-                    createPageRoute(const AccessKeysScreen()),
-                  ),
+                  onTap: () => Navigator.push(context, createPageRoute(const AccessKeysScreen())),
                 ),
                 _buildSettingsMenuTile(
                   icon: Icons.email_outlined,
                   title: S.of(context).emailAddress,
-                  onTap: () => Navigator.push(
-                    context,
-                    createPageRoute(const EmailAddressScreen()),
-                  ),
+                  onTap: () => Navigator.push(context, createPageRoute(const EmailAddressScreen())),
                 ),
                 _buildSettingsMenuTile(
                   svgIconPath: ChatifyVectors.pinCode,
-                  title: 'Two-step verification',
+                  title: S.of(context).twoStepVerification,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      createPageRoute(const TwoStepVerificationScreen()),
-                    );
+                    Navigator.push(context, createPageRoute(const TwoStepVerificationScreen()));
                   },
                 ),
                 _buildSettingsMenuTile(
                   icon: FluentIcons.phone_eraser_20_regular,
                   title: S.of(context).changeNumber,
-                  onTap: () => Navigator.push(
-                    context,
-                    createPageRoute(const EditPhoneScreen()),
-                  ),
+                  onTap: () => Navigator.push(context, createPageRoute(const EditPhoneScreen())),
                 ),
                 _buildSettingsMenuTile(
                   icon: MonoIcons.document,
                   title: S.of(context).requestAccountInfo,
-                  onTap: () => Navigator.push(
-                    context,
-                    createPageRoute(const RequestAccountInformationScreen()),
-                  ),
+                  onTap: () => Navigator.push(context, createPageRoute(const RequestAccountInformationScreen())),
                 ),
                 _buildSettingsMenuTile(
                   icon: Icons.person_add_alt,
@@ -147,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 _buildSettingsMenuTile(
                   icon: RadixIcons.Exit,
-                  title: 'Выйти',
+                  title: S.of(context).logout,
                   onTap: () async {
                     await LogoutDialog.showLogoutDialog(
                       context,
@@ -166,10 +147,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
                           Navigator.pushReplacement(context, createPageRoute(const LoginScreen()));
                         } catch (e) {
-                          log('Error during logout: $e');
                           Dialogs.hideProgressBar(context);
-                          CustomIconSnackBar.showAnimatedSnackBar(context, 'Ошибка при выходе из системы. Попробуйте еще раз.', icon: const HeroIcon(HeroIcons.exclamationTriangle), iconColor: ChatifyColors.error);
-                          Dialogs.showSnackbar(context, 'Error during logout. Please try again.');
+                          CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).errorLogout, icon: const HeroIcon(HeroIcons.exclamationTriangle), iconColor: ChatifyColors.error);
+                          Dialogs.showSnackbar(context, S.of(context).errorDuringLogout);
                         }
                       },
                       onCancel: () {
@@ -205,6 +185,8 @@ class _AccountScreenState extends State<AccountScreen> {
       title: title,
       subTitle: subTitle,
       titleFontSize: ChatifySizes.fontSizeSm,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
       onTap: onTap,
     );

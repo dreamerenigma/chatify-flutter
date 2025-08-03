@@ -1,23 +1,38 @@
 import 'dart:typed_data';
+import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../../../data/repositories/email/email_send_repository.dart';
 import '../../../../../../generated/l10n/l10n.dart';
+import '../../../../../../routes/custom_page_route.dart';
 import '../../../../../../utils/constants/app_colors.dart';
+import '../../../../../../utils/constants/app_links.dart';
 import '../../../../../../utils/platforms/platform_utils.dart';
 import '../../../../../../utils/popups/custom_tooltip.dart';
+import '../../../../../../utils/urls/url_utils.dart';
 import '../../../../widgets/buttons/support_button.dart';
 import '../../../../widgets/dialogs/light_dialog.dart';
 import '../../../../widgets/forms/support_form.dart';
+import '../../help_screen.dart';
 
 class SupportScreen extends StatefulWidget {
-  const SupportScreen({super.key, this.selectedImages});
-
+  final String title;
   final List<AssetEntity>? selectedImages;
+  final bool showText;
+  final bool showReadMoreText;
+  final bool showCompactButtonOnly;
+
+  const SupportScreen({
+    super.key,
+    this.selectedImages,
+    required this.title,
+    this.showText = true,
+    this.showReadMoreText = false,
+    this.showCompactButtonOnly = false,
+  });
 
   @override
   SupportScreenState createState() => SupportScreenState();
@@ -59,19 +74,10 @@ class SupportScreenState extends State<SupportScreen> {
     }
   }
 
-  Future<void> _launchURL(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
+      backgroundColor: isWebOrWindows ? (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt())) : null,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -95,7 +101,7 @@ class SupportScreenState extends State<SupportScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTooltip(
-                    message: 'Назад',
+                    message: S.of(context).back,
                     horizontalOffset: -35,
                     verticalOffset: 10,
                     child: MouseRegion(
@@ -135,10 +141,10 @@ class SupportScreenState extends State<SupportScreen> {
                     ? Expanded(
                         child: Align(
                           alignment: Alignment.topCenter,
-                          child: Text(S.of(context).support, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
+                          child: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
                         ),
                       )
-                    : Text(S.of(context).support, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
+                    : Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),
@@ -146,66 +152,69 @@ class SupportScreenState extends State<SupportScreen> {
           Expanded(
             child: isWebOrWindows
               ? Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 592),
-                        child: Text(
-                          'Расскажите, что произошло, и при необходимости приложите изображения или дополнительные детали. Это поможет нашей команде быстрее разобраться в ситуации и предложить решение.',
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                          textAlign: isWebOrWindows ? TextAlign.center : TextAlign.start,
+              child: ScrollConfiguration(
+                behavior: NoGlowScrollBehavior(),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 592),
+                          child: Text(
+                            S.of(context).pleaseDescribeHappenedAttachImages,
+                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                            textAlign: isWebOrWindows ? TextAlign.center : TextAlign.start,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    isWebOrWindows
-                      ? Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 592),
-                            child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                          ),
-                        )
-                      : SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                    const SizedBox(height: 20),
-                    if (isWindows) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        constraints: const BoxConstraints(maxWidth: 592),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              onEnter: (_) => setState(() => isHoveredHelp = true),
-                              onExit: (_) => setState(() => isHoveredHelp = false),
-                              child: GestureDetector(
-                                onTap: () => _launchURL('https://faq.chatify.inputstudios.ru'),
-                                child: Text(
-                                  S.of(context).visitHelpCenter,
-                                  style: TextStyle(
-                                    fontSize: ChatifySizes.fontSizeSm,
-                                    color: isHoveredHelp
-                                        ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
-                                        : colorsController.getColor(colorsController.selectedColorScheme.value),
-                                    decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
-                                    decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                    decorationThickness: 1.5,
+                      const SizedBox(height: 20),
+                      isWebOrWindows
+                        ? Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 592),
+                              child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
+                            ),
+                          )
+                        : SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
+                      const SizedBox(height: 20),
+                      if (isWindows) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          constraints: const BoxConstraints(maxWidth: 592),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                onEnter: (_) => setState(() => isHoveredHelp = true),
+                                onExit: (_) => setState(() => isHoveredHelp = false),
+                                child: GestureDetector(
+                                  onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
+                                  child: Text(
+                                    S.of(context).visitHelpCenter,
+                                    style: TextStyle(
+                                      fontSize: ChatifySizes.fontSizeSm,
+                                      color: isHoveredHelp
+                                          ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
+                                          : colorsController.getColor(colorsController.selectedColorScheme.value),
+                                      decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
+                                      decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                      decorationThickness: 1.5,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                            Align(alignment: Alignment.center, child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
-                          ],
+                              const Spacer(),
+                              Align(alignment: Alignment.center, child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ) : SingleChildScrollView(
@@ -217,22 +226,53 @@ class SupportScreenState extends State<SupportScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 592),
-                      child: Text(
-                        'Расскажите, что произошло, и при необходимости приложите изображения или дополнительные детали. Это поможет нашей команде быстрее разобраться в ситуации и предложить решение.',
+                      child: widget.showText ? Text(
+                        S.of(context).pleaseDescribeHappenedAttachImages,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                         textAlign: isWebOrWindows ? TextAlign.center : TextAlign.start,
-                      ),
+                      ) : SizedBox.shrink(),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: widget.showText ? 20 : 0),
                   isWebOrWindows
-                      ? Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 592),
-                      child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                    ),
-                  )
-                      : SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
+                    ? Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 592),
+                        child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
+                      ),
+                    ) : SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
+                  SizedBox(height: widget.showReadMoreText ? 12 : 0),
+                  if (widget.showReadMoreText)
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text:
+                              S.of(context).continuingAgreeAppTechInfo,
+                              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.2),
+                            ),
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.baseline,
+                              baseline: TextBaseline.alphabetic,
+                              child: Material(
+                                color: ChatifyColors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(context, createPageRoute(const HelpScreen()));
+                                  },
+                                  splashColor: ChatifyColors.blueAccent.withAlpha((0.2 * 255).toInt()),
+                                  highlightColor: ChatifyColors.blueAccent.withAlpha((0.1 * 255).toInt()),
+                                  child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500, color: ChatifyColors.blueAccent)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 20),
                   if (isWindows) ...[
                     Container(
@@ -246,7 +286,7 @@ class SupportScreenState extends State<SupportScreen> {
                             onEnter: (_) => setState(() => isHoveredHelp = true),
                             onExit: (_) => setState(() => isHoveredHelp = false),
                             child: GestureDetector(
-                              onTap: () => _launchURL('https://faq.chatify.inputstudios.ru'),
+                              onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
                               child: Text(
                                 S.of(context).visitHelpCenter,
                                 style: TextStyle(
@@ -271,28 +311,35 @@ class SupportScreenState extends State<SupportScreen> {
               ),
             ),
           ),
-          if (isMobile) ...[
-            Container(
+          if (isMobile)
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
+              child: widget.showCompactButtonOnly
+                  ? SizedBox(
+                width: double.infinity,
+                child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback, buttonText: S.of(context).save),
+              )
+                  : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () => _launchURL('https://faq.chatify.inputstudios.ru'),
+                    onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
                     child: Text(
                       S.of(context).visitHelpCenter,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
+                      style: TextStyle(
+                        fontSize: ChatifySizes.fontSizeSm,
+                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ),
                   const Spacer(),
-                  Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
+                  SizedBox(
+                    child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback),
                   ),
                 ],
               ),
             ),
-          ],
         ],
       ),
     );

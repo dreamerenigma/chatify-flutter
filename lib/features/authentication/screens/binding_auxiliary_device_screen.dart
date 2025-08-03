@@ -19,7 +19,6 @@ class BindingAuxiliaryDeviceScreen extends StatefulWidget {
 }
 
 class _BindingAuxiliaryDeviceScreenState extends State<BindingAuxiliaryDeviceScreen> {
-  final GlobalKey _newMenuKey = GlobalKey();
   bool _isQrCodeExpired = false;
   bool _isLoading = true;
   bool isHovered = false;
@@ -137,8 +136,8 @@ class _BindingAuxiliaryDeviceScreenState extends State<BindingAuxiliaryDeviceScr
                 },
               ));
             },
-            menuItem1Text: 'Помощь',
-            menuItem2Text: 'Зарегистрировать новый аккаунт',
+            menuItem1Text: S.of(context).help,
+            menuItem2Text: S.of(context).registerNewAccount,
           ),
           Expanded(
             child: Padding(

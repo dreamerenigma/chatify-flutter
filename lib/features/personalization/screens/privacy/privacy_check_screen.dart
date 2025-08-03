@@ -3,6 +3,7 @@ import 'package:chatify/features/personalization/screens/privacy/select_contact_
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -38,7 +39,7 @@ class PrivacyCheckScreenState extends State<PrivacyCheckScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Проверка конфиденциальности', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).privacyCheck, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -53,16 +54,7 @@ class PrivacyCheckScreenState extends State<PrivacyCheckScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              }
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -73,42 +65,26 @@ class PrivacyCheckScreenState extends State<PrivacyCheckScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(
-                      ChatifyVectors.checkPrivacy,
-                      height: 120,
-                      width: 120,
-                    ),
+                    SvgPicture.asset(ChatifyVectors.checkPrivacy, height: 120, width: 120),
                     const SizedBox(height: 16),
-                    Text('Мы заботимся о вашей конфиденциальности', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                    Text(S.of(context).weCareAboutYourPrivacy, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-                      child: Text('Управляйте параметрами конфиденциальности Chatify и настраивайте их по своему усмотрению.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+                      child: Text(S.of(context).manageCustomizeAppPrivacySettings, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 10),
-                    _buildCheckPrivacy(icon: Icons.wifi_calling_sharp, text: 'Выберите, кто может связаться с вами', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const SelectContactPrivacyCheckScreen()),
-                      );
+                    _buildCheckPrivacy(icon: Icons.wifi_calling_sharp, text: S.of(context).chooseWhoContactYou, onTap: () {
+                      Navigator.push(context, createPageRoute(const SelectContactPrivacyCheckScreen()));
                     }),
-                    _buildCheckPrivacy(icon: Icons.person_outline, text: 'Контролируйте свои персональнеы данные', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const ControlDataPrivacyCheckScreen()),
-                      );
+                    _buildCheckPrivacy(icon: Icons.person_outline, text: S.of(context).controlYourPersonalData, onTap: () {
+                      Navigator.push(context, createPageRoute(const ControlDataPrivacyCheckScreen()));
                     }),
-                    _buildCheckPrivacy(icon: Icons.message_outlined, text: 'Дополнительная конфиденциальность для ваших сведений', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const ExtraPrivacyChatsCheckScreen()),
-                      );
+                    _buildCheckPrivacy(icon: Icons.message_outlined, text: S.of(context).additionalPrivacyInformation, onTap: () {
+                      Navigator.push(context, createPageRoute(const ExtraPrivacyChatsCheckScreen()));
                     }),
-                    _buildCheckPrivacy(icon: Icons.lock_person_outlined, text: 'Дополнительная защита вашего аккаунта', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const ProtectionAccountsPrivacyCheckScreen()),
-                      );
+                    _buildCheckPrivacy(icon: Icons.lock_person_outlined, text: S.of(context).additionalProtectionYourAccount, onTap: () {
+                      Navigator.push(context, createPageRoute(const ProtectionAccountsPrivacyCheckScreen()));
                     }),
                     const SizedBox(height: 10),
                     Padding(
@@ -117,26 +93,12 @@ class PrivacyCheckScreenState extends State<PrivacyCheckScreen> {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-                          children: const [
-                            TextSpan(
-                              text: 'Перейдите в ',
-                              style: TextStyle(fontWeight: FontWeight.normal),
-                            ),
-                            TextSpan(
-                              text: 'Настройки',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: ' > ',
-                            ),
-                            TextSpan(
-                              text: 'Конфиденциальность',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: ', чтобы просмотреть дополнительные настройки конфиденциальности.',
-                              style: TextStyle(fontWeight: FontWeight.normal),
-                            ),
+                          children: [
+                            TextSpan(text: S.of(context).goTo, style: TextStyle(fontWeight: FontWeight.normal)),
+                            TextSpan(text: S.of(context).settings, style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: ' > '),
+                            TextSpan(text: S.of(context).privacy, style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: S.of(context).viewAdditionalPrivacySettings, style: TextStyle(fontWeight: FontWeight.normal)),
                           ],
                         ),
                       ),

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
@@ -114,12 +113,8 @@ class _UserListState extends State<UserList> {
           final contact = widget.contacts[index];
           return InviteUserCard(
             contact: contact,
-            onContactSelected: (Contact selectedContact) {
-              log('Selected contact: ${selectedContact.displayName}');
-            },
-            onInvite: () {
-              log('Invite action');
-            },
+            onContactSelected: (Contact selectedContact) {},
+            onInvite: () {},
           );
         },
       ),
@@ -146,12 +141,8 @@ class _UserListState extends State<UserList> {
           if (widget.isInviting && !widget.useApp) {
             userCard = InviteUserCard(
               contact: Contact(),
-              onContactSelected: (Contact selectedContact) {
-                log('Selected contact: ${selectedContact.displayName}');
-              },
-              onInvite: () {
-                log('Invite action');
-              },
+              onContactSelected: (Contact selectedContact) {},
+              onInvite: () {},
             );
           } else if (widget.isSharing && !widget.useApp) {
             userCard = ShareUserCard(user: user, onUserSelected: widget.onUserSelected);

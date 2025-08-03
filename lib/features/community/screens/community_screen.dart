@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:chatify/features/community/widgets/community_widget.dart';
@@ -36,6 +35,7 @@ class CommunityScreenState extends State<CommunityScreen> {
   List<CommunityModel> list = [];
   int selectedIndex = 2;
   DateTime? createdAt;
+  bool _isLoading = true;
 
   void onItemTapped(int index) {
     setState(() {
@@ -64,22 +64,18 @@ class CommunityScreenState extends State<CommunityScreen> {
       List<CommunityModel> communities = await APIs.getCommunity();
       setState(() {
         list = communities;
-
-        if (list.isNotEmpty) {
-          createdAt = list[0].createdAt;
-        } else {
-          createdAt = null;
-        }
+        createdAt = list.isNotEmpty ? list[0].createdAt : null;
+        _isLoading = false;
       });
     } catch (e) {
       setState(() {
         createdAt = null;
+        _isLoading = false;
       });
     }
   }
 
   bool isValidDate(DateTime date) {
-    log('Validating Date: $date');
     return date.isAfter(DateTime(2000)) && date.isBefore(DateTime.now());
   }
 
@@ -103,8 +99,10 @@ class CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context);
-    if (APIs.community == null) {
-      return Center(child: CircularProgressIndicator(color: colorsController.getColor(colorsController.selectedColorScheme.value)));
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+      );
     }
 
     return Scaffold(
@@ -138,11 +136,7 @@ class CommunityScreenState extends State<CommunityScreen> {
         child: Column(
           children: [
             SizedBox(height: mq.size.height * 0.05),
-            Image.asset(
-              ChatifyImages.community,
-              width: 150,
-              height: 150,
-            ),
+            Image.asset(ChatifyImages.community, width: 150, height: 150),
             const SizedBox(height: 20),
             Text(S.of(context).connectedCommunity, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
             const SizedBox(height: 10),
@@ -191,14 +185,16 @@ class CommunityScreenState extends State<CommunityScreen> {
               Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
             },
           ),
+          Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightGrey),
+          const SizedBox(height: 2),
           Expanded(
             child: Column(
               children: [
                 Flexible(child: CommunityList(communities: list, onCommunitySelected: (community) {})),
-                const SizedBox(height: 12),
-                const Divider(height: 0, thickness: 1),
-                const SizedBox(height: 8),
+                Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
+                const SizedBox(height: 6),
                 CommunityWidgets(createdAt: createdAt, isValidDate: isValidDate, showAllButton: true, community: APIs.community!),
+                Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightGrey),
               ],
             ),
           ),

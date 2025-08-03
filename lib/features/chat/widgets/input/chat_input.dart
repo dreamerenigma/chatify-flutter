@@ -104,9 +104,8 @@ class ChatInputState extends State<ChatInput> {
   Future<void> playSendSound() async {
     try {
       await audioPlayer.play(AssetSource(ChatifySounds.sendMessage));
-      log('Playing sound: ${ChatifySounds.sendMessage}');
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}: $e');
     }
   }
 
@@ -124,7 +123,7 @@ class ChatInputState extends State<ChatInput> {
       setState(() {});
       APIs.updateTypingStatus(user.id, false);
     } else {
-      Dialogs.showSnackbar(context, S.of(context).pleaseEnterText);
+      Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
     }
   }
 

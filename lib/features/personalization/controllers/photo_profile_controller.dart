@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../api/apis.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/user_model.dart';
 
 class PhotoProfileController extends GetxController {
@@ -51,7 +52,6 @@ class PhotoProfileController extends GetxController {
       try {
         File imageFile = File(imagePath);
         await APIs.updateProfilePicture(imageFile);
-        log('User image updated successfully in database');
       } catch (e) {
         log('Failed to update user image in database: $e');
       }
@@ -61,7 +61,6 @@ class PhotoProfileController extends GetxController {
       try {
         File emptyFile = File('');
         await APIs.updateProfilePicture(emptyFile);
-        log('User image cleared successfully in database');
       } catch (e) {
         log('Failed to clear user image in database: $e');
       }
@@ -83,18 +82,27 @@ class PhotoProfileController extends GetxController {
     file.writeAsBytesSync(response.bodyBytes);
 
     final box = context.findRenderObject() as RenderBox?;
-    final xFile = XFile(file.path);
-    Share.shareXFiles([xFile], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+    final params = ShareParams(
+      text: S.of(context).herePicture,
+      files: [XFile(file.path)],
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+    );
+
+    final result = await SharePlus.instance.share(params);
+
+    if (result.status == ShareResultStatus.success) {
+      log(S.of(context).imageSentSuccess);
+    } else if (result.status == ShareResultStatus.dismissed) {
+      log(S.of(context).userCancelSubmission);
+    }
   }
 
   void _saveImageToStorage(String image) {
-    log('Saving image to GetStorage: $image');
     storage.write('image', image);
   }
 
   void _loadImageFromStorage() {
     String? savedImage = storage.read('image');
-    log('Loaded image from GetStorage: $savedImage');
     if (savedImage != null && savedImage.isNotEmpty) {
       image.value = savedImage;
     }

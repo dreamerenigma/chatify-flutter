@@ -2,6 +2,7 @@ import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -36,7 +37,7 @@ void showAddGeolocationDialog(BuildContext context) {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Text(
-                'Чтобы отправить ближайшее место или своё местоположение, разрешите "Chatify" доступ к местоположению.',
+                S.of(context).sendNearbyPlaceLocation,
                 style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
               ),
             ),
@@ -55,7 +56,7 @@ void showAddGeolocationDialog(BuildContext context) {
                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     ),
-                    child: Text('Не сейчас',
+                    child: Text(S.of(context).notNow,
                       style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                     ),
                   ),
@@ -75,7 +76,7 @@ void showAddGeolocationDialog(BuildContext context) {
                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     ),
-                    child: Text('Продолжить',
+                    child: Text(S.of(context).continueButton,
                       style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                     ),
                   ),

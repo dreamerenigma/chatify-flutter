@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -189,14 +190,14 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
   bool isActive = selectedIndexNotifier.value == index;
 
   List<Map<String, dynamic>> options = [
-    {'icon': Icons.info_outline_rounded, 'text': 'Обзор', 'iconSize': 18, 'iconWidth': 20},
-    {'icon': ChatifyVectors.newGroup, 'text': 'Участники', 'iconSize': 23, 'iconWidth': 15, 'isSvg': true},
-    {'icon': ChatifyVectors.media, 'text': 'Медиа', 'iconSize': 20, 'iconWidth': 17, 'isSvg': true},
-    {'icon': FluentIcons.document_16_regular, 'text': 'Файлы', 'iconSize': 18, 'iconWidth': 18},
-    {'icon': Icons.link, 'text': 'Ссылки', 'iconSize': 21, 'iconWidth': 16},
-    {'icon': FluentIcons.calendar_16_regular, 'text': 'Мероприятия', 'iconSize': 18, 'iconWidth': 20},
-    {'icon': Icons.lock_outline_rounded, 'text': 'Шифрование', 'iconSize': 19, 'iconWidth': 17},
-    {'icon': Ionicons.settings_outline, 'text': 'Разрешения', 'iconSize': 18, 'iconWidth': 18},
+    {'icon': Icons.info_outline_rounded, 'text': S.of(context).review, 'iconSize': 18, 'iconWidth': 20},
+    {'icon': ChatifyVectors.newGroup, 'text': S.of(context).participants, 'iconSize': 23, 'iconWidth': 15, 'isSvg': true},
+    {'icon': ChatifyVectors.media, 'text': S.of(context).media, 'iconSize': 20, 'iconWidth': 17, 'isSvg': true},
+    {'icon': FluentIcons.document_16_regular, 'text': S.of(context).files, 'iconSize': 18, 'iconWidth': 18},
+    {'icon': Icons.link, 'text': S.of(context).links, 'iconSize': 21, 'iconWidth': 16},
+    {'icon': FluentIcons.calendar_16_regular, 'text': S.of(context).events, 'iconSize': 18, 'iconWidth': 20},
+    {'icon': Icons.lock_outline_rounded, 'text': S.of(context).encryption, 'iconSize': 19, 'iconWidth': 17},
+    {'icon': Ionicons.settings_outline, 'text': S.of(context).permissions, 'iconSize': 18, 'iconWidth': 18},
   ];
 
   return Padding(

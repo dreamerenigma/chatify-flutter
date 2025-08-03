@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -42,12 +43,11 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
     try {
       bool canCheckBiometrics = await auth.canCheckBiometrics;
       if (!canCheckBiometrics) {
-        log('Биометрия не поддерживается на этом устройстве');
         return false;
       }
 
       bool authenticated = await auth.authenticate(
-        localizedReason: 'Пожалуйста, подтвердите свою личность',
+        localizedReason: S.of(context).pleaseConfirmYourIdentity,
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,
@@ -57,7 +57,7 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
 
       return authenticated;
     } catch (e) {
-      log('Ошибка биометрической аутентификации: $e');
+      log('${S.of(context).biometricAuthError}: $e');
       return false;
     }
   }
@@ -80,10 +80,7 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              'Блокировка приложения',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-            ),
+            title: Text(S.of(context).blockingApp, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -116,25 +113,11 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Биометрическая',
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                            ),
+                            Text(S.of(context).biometric, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                             RichText(
                               text: TextSpan(
-                                text:
-                                  'Если этот параметр включён, \n'
-                                  'Chatify нужно будет \n'
-                                  'разблокировать с помощью лица \n'
-                                  'отпечатка пальца или другого \n'
-                                  'уникального идентификатора. Вы \n'
-                                  'можете принимать звонки, даже \n'
-                                  'если Chatify заблокирован. \n',
-                                style: TextStyle(
-                                  fontSize: ChatifySizes.fontSizeSm,
-                                  color: ChatifyColors.darkGrey,
-                                  height: 1.5,
-                                ),
+                                text: S.of(context).enabledAppUnlockedFingerprint,
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                               ),
                             ),
                           ],

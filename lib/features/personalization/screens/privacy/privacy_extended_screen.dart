@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -70,7 +71,7 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Расширенные', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).extended, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -85,15 +86,7 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              }),
-            ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
             child: Scrollbar(
               thickness: 4,
               thumbVisibility: false,
@@ -108,8 +101,8 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
                       children: [
                         buildSwitchItem(
                           context: context,
-                          title: 'Блокировать сообщения от неизвестных аккаунтов',
-                          description: 'Для защиты вашего аккаунта \nи улучшения работы устройства \nChatify будет блокировать \nсообщения от неизвестных \nаккаунтов, если их количество \nпревысит определыннй порог. \n',
+                          title: S.of(context).blockMessagesUnknownAccounts,
+                          description: S.of(context).protectYourAccountAppMessages,
                           switchValue: isBlockUnknownAccounts,
                           onChanged: (value) => toggleBlockUnknownAccounts(value),
                           onDetailsTap: () {},
@@ -118,8 +111,8 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
                         const SizedBox(height: 35),
                         buildSwitchItem(
                           context: context,
-                          title: 'Защитить IP-адрес во время звонков',
-                          description: 'Чтобы затруднить определение \nвашего местоположения, звонки \nс этого устройства будут \nпередаваться в защищенном \nрежиме через серверы Chatify. \nЭто снизит качество звонков. \n',
+                          title: S.of(context).protectYourIpAddressCalls,
+                          description: S.of(context).difficultDetermineLocationSecurely,
                           switchValue: isProtectIPDuringCalls,
                           onChanged: (value) => toggleProtectIPDuringCalls(value),
                           onDetailsTap: () {},
@@ -128,8 +121,8 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
                         const SizedBox(height: 35),
                         buildSwitchItem(
                           context: context,
-                          title: 'Отключить предпросмотр \nссылок',
-                          description: 'Чтобы ваш IP-адрес не смогли \nвычислить сторонние веб-сайты, \nпредпросмотр ссылок, которыми \nвы делитесь в чатах, будет \nотключен. ',
+                          title: S.of(context).disableLinkPreview,
+                          description: S.of(context).preventIpAddressWebsites,
                           switchValue: isDisableLinkPreview,
                           onChanged: (value) => toggleDisableLinkPreview(value),
                           onDetailsTap: () {},
@@ -161,12 +154,7 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
       children: [
         Row(
           children: [
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              ),
-            ),
+            Expanded(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
             Switch(
               value: switchValue,
               onChanged: onChanged,
@@ -178,14 +166,10 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
         RichText(
           text: TextSpan(
             text: description,
-            style: TextStyle(
-              fontSize: ChatifySizes.fontSizeSm,
-              color: ChatifyColors.darkGrey,
-              height: 1.5,
-            ),
+            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
             children: [
               TextSpan(
-                text: 'Подробнее',
+                text: S.of(context).readMore,
                 style: TextStyle(height: 1.5, color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.bold),
                 recognizer: TapGestureRecognizer()..onTap = onDetailsTap,
               ),

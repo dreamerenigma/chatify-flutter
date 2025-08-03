@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../chat/models/user_model.dart';
@@ -172,10 +173,9 @@ class AddUserScreenState extends State<AddUserScreen> {
             controller: _searchController,
             keyboardType:
             isNumericMode ? TextInputType.number : TextInputType.text,
-            style: TextStyle(
-                fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+            style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
             decoration: InputDecoration(
-              hintText: 'Поиск контактов',
+              hintText: S.of(context).searchContacts,
               hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -186,7 +186,7 @@ class AddUserScreenState extends State<AddUserScreen> {
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Добавить участников', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           ],
         ),
         actions: isSearching
@@ -209,11 +209,10 @@ class AddUserScreenState extends State<AddUserScreen> {
               children: [
             if (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Wrap(
-                  spacing: 16.0,
-                  runSpacing: 16.0,
+                  spacing: 16,
+                  runSpacing: 16,
                   children: [
                     ...selectedUsers.map((user) {
                       return _buildSelectedUserTile(user);
@@ -226,11 +225,10 @@ class AddUserScreenState extends State<AddUserScreen> {
               ),
             if (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty)
               const Divider(),
-
             if (_chatUsers.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Контакты в Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
+                child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
               ),
             ..._chatUsers.map((chatUser) => UseAppUserCard(
               user: chatUser,
@@ -238,12 +236,11 @@ class AddUserScreenState extends State<AddUserScreen> {
                 _toggleUserSelection(selectedUser);
               },
             )),
-
             if (_filteredContacts.isNotEmpty)
               Padding(
                 padding:
-                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: Text('Пригласить в Chatify', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
+                const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
               ),
             ..._filteredContacts.map((contact) => InviteUserCard(
               contact: contact,
@@ -252,26 +249,25 @@ class AddUserScreenState extends State<AddUserScreen> {
                 _toggleContactSelection(selectedContact);
               },
             )),
-
             ListTile(contentPadding: const EdgeInsets.only(left: 30, right: 30, top: 8, bottom: 8),
               leading: const CircleAvatar(
                 radius: 23,
                 backgroundColor: ChatifyColors.darkSlate,
                 child: Icon(Icons.share_outlined, color: ChatifyColors.white),
               ),
-              title: Text('Пригласить по ссылке', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              title: Text(S.of(context).inviteViaLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               onTap: () {},
             ),
           ],
         ),
       ),
       floatingActionButton: (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty) ? Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'group',
           onPressed: () async {
             if (selectedUsers.isEmpty && selectedContacts.isEmpty) {
-              Dialogs.showCustomDialog(context: context, message: 'Должен быть выбран минимум 1 контакт', duration: const Duration(seconds: 1));
+              Dialogs.showCustomDialog(context: context, message: S.of(context).atLeastOneContactSelected, duration: const Duration(seconds: 1));
             } else {
               Navigator.push(context, createPageRoute(
                 AddNewGroupScreen(selectedUsers: selectedUsers.toList(), selectedContacts: selectedContacts.toList())),
@@ -303,9 +299,7 @@ class AddUserScreenState extends State<AddUserScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  user.name.length > 7
-                      ? '${user.name.substring(0, 7)}...'
-                      : user.name,
+                  user.name.length > 7 ? '${user.name.substring(0, 7)}...' : user.name,
                   style: const TextStyle(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -320,22 +314,8 @@ class AddUserScreenState extends State<AddUserScreen> {
                   _toggleUserSelection(user);
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 2.0,
-                    ),
-                  ),
-                  child: const CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    radius: 12,
-                    child: Icon(
-                      Icons.close,
-                      size: 16,
-                      color: Colors.black,
-                    ),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
                 ),
               ),
             ),
@@ -356,10 +336,7 @@ class AddUserScreenState extends State<AddUserScreen> {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  child: Text(
-                    _getContactInitials(contact),
-                    style: const TextStyle(fontSize: 20),
-                  ),
+                  child: Text(_getContactInitials(contact), style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -378,22 +355,8 @@ class AddUserScreenState extends State<AddUserScreen> {
                   _toggleContactSelection(contact);
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: ChatifyColors.black,
-                      width: 2.0,
-                    ),
-                  ),
-                  child: const CircleAvatar(
-                    backgroundColor: ChatifyColors.grey,
-                    radius: 12,
-                    child: Icon(
-                      Icons.close,
-                      size: 16,
-                      color: ChatifyColors.black,
-                    ),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
                 ),
               ),
             ),

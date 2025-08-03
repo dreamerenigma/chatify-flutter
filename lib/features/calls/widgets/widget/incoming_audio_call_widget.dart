@@ -3,6 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -73,7 +74,7 @@ class _IncomingAudioCallWidgetState extends State<IncomingAudioCallWidget> {
                               Text(widget.user.name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                               const SizedBox(height: 8),
                               Text(
-                                'Аудиозвонок',
+                                S.of(context).audioCall,
                                 style: TextStyle(fontSize: ChatifySizes.fontSizeBg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300),
                               ),
                             ],
@@ -108,7 +109,7 @@ class _IncomingAudioCallWidgetState extends State<IncomingAudioCallWidget> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),
-                      child: Text('Принять', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                      child: Text(S.of(context).accept, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ElevatedButton(
                       onPressed: () {},

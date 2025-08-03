@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../chat/models/user_model.dart';
@@ -61,7 +62,7 @@ void showAddUserCallDialog(BuildContext context, Offset position) {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Добавить...', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
+                              Text(S.of(context).addUserDialog, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
                               Row(
                                 children: [
                                   Text('${chatsController.text.length}/30', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
@@ -92,7 +93,7 @@ void showAddUserCallDialog(BuildContext context, Offset position) {
                         Padding(
                           padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                           child: SearchTextInput(
-                            hintText: 'Поиск',
+                            hintText: S.of(context).search,
                             controller: chatsController,
                             enabledBorderColor: context.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.black,
                             padding: EdgeInsets.zero,
@@ -108,16 +109,7 @@ void showAddUserCallDialog(BuildContext context, Offset position) {
                           child: ScrollConfiguration(
                             behavior: NoGlowScrollBehavior(),
                             child: ScrollbarTheme(
-                              data: ScrollbarThemeData(
-                                thumbColor: WidgetStateProperty.resolveWith<Color>(
-                                  (Set<WidgetState> states) {
-                                    if (states.contains(WidgetState.dragged)) {
-                                      return ChatifyColors.darkerGrey;
-                                    }
-                                    return ChatifyColors.darkerGrey;
-                                  },
-                                ),
-                              ),
+                              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                               child: Scrollbar(
                                 thickness: 3,
                                 thumbVisibility: false,
@@ -132,13 +124,13 @@ void showAddUserCallDialog(BuildContext context, Offset position) {
                                         if (hasOftenContacts) ...[
                                           Padding(
                                             padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
-                                            child: Text('Часто общаетесь', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                            child: Text(S.of(context).doYouCommunicateOften, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                           ),
                                           _buildCommunicateOften(context, userController),
                                         ],
                                         Padding(
                                           padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
-                                          child: Text('Все контакты', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                          child: Text(S.of(context).allContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                         ),
                                       ],
                                     ),

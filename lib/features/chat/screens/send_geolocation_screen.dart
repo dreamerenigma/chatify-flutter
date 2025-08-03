@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../personalization/controllers/colors_controller.dart';
@@ -38,7 +39,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Отправить местоположение', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).sendLocation, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         actions: [
           if (_isPermissionGranted)
             IconButton(
@@ -85,7 +86,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                   child: const Icon(Icons.location_on, color: Colors.white),
                 ),
                 const SizedBox(width: 16),
-                Text('Делиться геоданными', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                Text(S.of(context).shareGeodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 const Divider(height: 0, thickness: 1),
               ],
             ),
@@ -99,7 +100,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Ближайшие места', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                  child: Text(S.of(context).nearestPlaces, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -127,20 +128,14 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                             Container(
                               width: 15,
                               height: 15,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: ChatifyColors.green,
-                              ),
+                              decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.green),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Text('Отправить текущее местоположение', style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: Text(S.of(context).sendCurrentLocation, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),
@@ -171,14 +166,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
             ),
           ),
           const SizedBox(height: 45),
-          Text(
-            'Чтобы отправить ближайшее место или ваше местоположение, разрешите приложению "Chatify" доступ к местоположению. Перейдите в Настройки > Разрешения и включите Местоположение.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: ChatifySizes.fontSizeSm,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          Text(S.of(context).settingsSendCurrentLocation, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           const SizedBox(height: 25),
           ElevatedButton(
             onPressed: () async {
@@ -201,7 +189,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            child: const Text('Настройки', style: TextStyle(color: ChatifyColors.white)),
+            child: Text(S.of(context).settings, style: TextStyle(color: ChatifyColors.white)),
           ),
         ],
       ),
@@ -219,7 +207,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
     try {
       await intent.launch();
     } catch (e) {
-      log('Error opening app settings: $e');
+      log('${S.of(context).errorOpeningAppSettings}: $e');
     }
   }
 

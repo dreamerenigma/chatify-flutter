@@ -1,6 +1,7 @@
 import 'package:chatify/features/personalization/screens/chats/view_wallpaper_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -31,10 +32,7 @@ class LightWallpaperScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: Text('Яркие', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-      ),
+      appBar: AppBar(titleSpacing: 0, title: Text(S.of(context).brightWallpaper, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400))),
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: GridView.builder(
@@ -49,22 +47,12 @@ class LightWallpaperScreen extends StatelessWidget {
             return GestureDetector(
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  createPageRoute(
-                    ViewWallpaperScreen(imagePath: imagePaths[index], isDefaultWallpaper: false),
-                  ),
-                );
+                Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: imagePaths[index], isDefaultWallpaper: false)));
               },
               child: Container(
                 width: double.infinity,
                 height: 150,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(imagePaths[index]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(imagePaths[index]), fit: BoxFit.cover)),
               ),
             );
           },

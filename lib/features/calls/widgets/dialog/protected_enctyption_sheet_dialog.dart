@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
@@ -20,7 +21,7 @@ void showProtectedEncryptionBottomSheet(BuildContext context) {
                 children: [
                   const Icon(Icons.lock_outline, size: 16),
                   const SizedBox(width: 8),
-                  Text('Защищено сквозным шифрованием', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  Text(S.of(context).protectedEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 ],
               ),
             ),
@@ -38,7 +39,7 @@ void showProtectedEncryptionBottomSheet(BuildContext context) {
                     onTap: () {},
                     child: Row(
                       children: [
-                        Text('Демонстрировать экран', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                        Text(S.of(context).shareScreen, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         const Spacer(),
                         const Icon(Icons.mobile_screen_share_outlined),
                       ],
@@ -49,7 +50,7 @@ void showProtectedEncryptionBottomSheet(BuildContext context) {
                     onTap: () {},
                     child: Row(
                       children: [
-                        Text('Отправить сообщение', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                        Text(S.of(context).sendMessage, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         const Spacer(),
                         const Icon(Icons.message_outlined),
                       ],
@@ -64,7 +65,7 @@ void showProtectedEncryptionBottomSheet(BuildContext context) {
               children: [
                 const Icon(Icons.signal_cellular_alt_rounded, color: ChatifyColors.green),
                 const SizedBox(width: 8),
-                Text('Хорошее подключение', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey)),
+                Text(S.of(context).goodConnection, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey)),
               ],
             ),
           ],

@@ -37,7 +37,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     isReactionsMessagesEnabled = storage.read('isReactionsMessagesEnabled') ?? false;
     isReactionsGroupEnabled = storage.read('isReactionsGroupEnabled') ?? false;
     isReactionsEnabled = storage.read('isReactions') ?? false;
-    vibrationOption = storage.read('vibrationOption') ?? 'По умолчанию';
+    vibrationOption = storage.read('vibrationOption') ?? S.of(context).system;
   }
 
   void _saveState(String key, bool value) {
@@ -51,10 +51,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -86,16 +86,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     value: 1,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      'Сбросить настройки уведомлений',
+                      S.of(context).resetNotifySettings,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
             ],
           ),
@@ -104,14 +102,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-              if (states.contains(WidgetState.dragged)) {
-                return ChatifyColors.darkerGrey;
-              }
-              return ChatifyColors.darkerGrey;
-            }),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -123,9 +114,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSwitchWithLabel(
-                        'Звуки в чате',
-                        'Воспроизводить звуки для \nвходящих и исходящих \n'
-                        'сообщений',
+                        S.of(context).soundsInChat,
+                        S.of(context).playSoundsIncomingOutgoing,
                         isSoundEnabled,
                             (value) {
                           setState(() {
@@ -135,8 +125,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         },
                       ),
                       _buildSwitchWithLabel(
-                        'Напоминания',
-                        'Получайте периодические \nнапоминания об обновлениях \nстатуса, которых вы не видели',
+                        S.of(context).reminders,
+                        S.of(context).periodicRemindersStatusUpdates,
                         isRemindersEnabled,
                             (value) {
                           setState(() {
@@ -149,12 +139,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Divider(),
-                  _buildSectionHeader('Сообщения', padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
+                  _buildSectionHeader(S.of(context).messages, padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
                   const SizedBox(height: 8),
-                  _buildSettingsItem('Звук уведомления', 'По умолчанию (Bongo)', onTap: () {
-
-                  }),
-                  _buildSettingsItem('Вибрация', vibrationOption,
+                  _buildSettingsItem(S.of(context).notificationSound, S.of(context).defaultBongo, onTap: () {}),
+                  _buildSettingsItem(S.of(context).vibration, vibrationOption,
                     onTap: () {
                       showVibrationDialog(context, (selectedText) {
                         setState(() {
@@ -164,15 +152,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       });
                     },
                   ),
-                  _buildSettingsItem('Всплывающее уведомление', 'Недоступно', onTap: () {
-
-                  }),
-                  _buildSettingsItem('Свет', 'Белый', onTap: () {
+                  _buildSettingsItem(S.of(context).popPopNotify, S.of(context).notAvailable, onTap: () {}),
+                  _buildSettingsItem(S.of(context).lightNotify, S.of(context).whiteNotify, onTap: () {
                     showLightDialog(context);
                   }),
                   _buildNotificationItem(
-                    title: 'Приоритетные уведомления',
-                    description: 'Показывать всплывающие \nуведомления в верхней части \nэкрана',
+                    title: S.of(context).priorityNotifications,
+                    description: S.of(context).showPopUpNotify,
                     value: isPriorityMessageEnabled,
                     onChanged: (value) {
                       setState(() {
@@ -182,11 +168,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     },
                   ),
                   _buildNotificationItem(
-                    title: 'Уведомления о реакциях',
-                    description:
-                      'Показывать уведомления \n'
-                      'о реакциях на отправленные вами \n'
-                      'сообщения',
+                    title: S.of(context).reactionNotify,
+                    description: S.of(context).showNotifyReactionsMessagesSend,
                     value: isReactionsMessagesEnabled,
                     onChanged: (value) {
                       setState(() {
@@ -197,16 +180,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Divider(height: 0, thickness: 1),
-                  _buildSectionHeader('Группы', padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
+                  _buildSectionHeader('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
                   const SizedBox(height: 8),
-                  _buildSettingsItem('Звук уведомления', 'По умолчанию (Bongo)'),
-                  _buildSettingsItem('Вибрация', 'По умолчанию', onTap: () {
+                  _buildSettingsItem(S.of(context).notificationSound, S.of(context).defaultBongo),
+                  _buildSettingsItem(S.of(context).vibration, S.of(context).system, onTap: () {
 
                   }),
-                  _buildSettingsItem('Свет', 'Белый'),
+                  _buildSettingsItem(S.of(context).lightNotify, S.of(context).whiteNotify),
                   _buildNotificationItem(
-                    title: 'Приоритетные уведомления',
-                    description: 'Показывать всплывающие \nуведомления в верхней части \nэкрана',
+                    title: S.of(context).priorityNotifications,
+                    description: S.of(context).showPopUpNotificationsScreen,
                     value: isPriorityGroupEnabled,
                     onChanged: (value) {
                       setState(() {
@@ -216,11 +199,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     },
                   ),
                   _buildNotificationItem(
-                    title: 'Уведомления о реакциях',
-                    description:
-                      'Показывать уведомления \n'
-                      'о реакциях на отправленные вами \n'
-                      'сообщения',
+                    title: S.of(context).reactionNotify,
+                    description: S.of(context).showNotifyAboutReactionsSend,
                     value: isReactionsGroupEnabled,
                     onChanged: (value) {
                       setState(() {
@@ -231,25 +211,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Divider(height: 0, thickness: 1),
-                  _buildSectionHeader('Звонки', padding: const EdgeInsets.only(left: 20, right: 10, top: 20)),
+                  _buildSectionHeader(S.of(context).calls, padding: const EdgeInsets.only(left: 20, right: 10, top: 20)),
                   const SizedBox(height: 8),
-                  _buildSettingsItem(
-                    'Мелодия',
-                    'По умолчанию (Huawei Tune Living)',
-                  ),
+                  _buildSettingsItem(S.of(context).melody, S.of(context).defaultNotify),
                   const SizedBox(height: 8),
-                  _buildSettingsItem(
-                    'Вибрация',
-                    'По умолчанию',
-                  ),
+                  _buildSettingsItem(S.of(context).vibration, S.of(context).system),
                   const SizedBox(height: 8),
                   const Divider(height: 0, thickness: 1),
-                  _buildSectionHeader('Статус', padding: const EdgeInsets.only(left: 20, right: 10, top: 20, bottom: 10)),
+                  _buildSectionHeader(S.of(context).status, padding: const EdgeInsets.only(left: 20, right: 10, top: 20, bottom: 10)),
                   _buildNotificationItem(
-                    title: 'Реакции',
-                    description:
-                      'Показывать уведомления при\n'
-                      'отметках "нравиться" к статусу',
+                    title: S.of(context).reactions,
+                    description: S.of(context).showNotifyStatusLiked,
                     value: isReactionsEnabled,
                     onChanged: (value) {
                       setState(() {
@@ -286,14 +258,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    label,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    description,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
+                  Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                  Text(description, style: const TextStyle(fontSize: 14, color: Colors.grey)),
                 ],
               ),
             ),
@@ -322,15 +288,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              ),
+              Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               const SizedBox(height: 4.0),
-              Text(
-                subtitle,
-                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm),
-              ),
+              Text(subtitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
             ],
           ),
         ),
@@ -368,8 +328,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    Text(description, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                    Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                    Text(description, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
                   ],
                 ),
               ),

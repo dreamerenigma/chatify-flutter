@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
@@ -26,7 +27,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
   @override
   void initState() {
     super.initState();
-    intelligenceTexts = List<String>.from(storage.read<List<dynamic>>('intelligenceTexts') ?? ['Привет']);
+    intelligenceTexts = List<String>.from(storage.read<List<dynamic>>('intelligenceTexts') ?? [S.of(context).helloProfile]);
     status = storage.read<String>('status') ?? (intelligenceTexts.isNotEmpty ? intelligenceTexts.first : '');
   }
 
@@ -39,7 +40,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
 
   void selectText(String text) async {
     try {
-      await Dialogs.showCustomDialog(context: context, message: 'Обновление...', duration: const Duration(seconds: 1));
+      await Dialogs.showCustomDialog(context: context, message: S.of(context).update, duration: const Duration(seconds: 1));
 
       setState(() {
         status = text;
@@ -49,7 +50,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
 
       await APIs.updateUserInfo();
     } catch (e) {
-      log('Ошибка обновления информации о пользователе: $e');
+      log('${S.of(context).errorUpdatingUserInfo}: $e');
     }
   }
 
@@ -79,7 +80,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
             actions: [
               IconButton(
@@ -93,7 +94,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
                       PopupMenuItem(
                         value: 1,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: Text('Удалить все', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
+                        child: Text(S.of(context).deleteAll, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                         onTap: () {
                           showDeleteAllIntelligenceDialog(context, clearIntelligenceTexts);
                         },
@@ -115,7 +116,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 12),
-                child: Text('Текущие сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
+                child: Text(S.of(context).currentInfo, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
               ),
               InkWell(
                 onTap: () => showAddIntelligenceBottomSheet(context, status, addIntelligenceText),
@@ -139,7 +140,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Выбрать сведения', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
+            child: Text(S.of(context).selectDetails, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
           ),
           const SizedBox(height: 10),
           Expanded(

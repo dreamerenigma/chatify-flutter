@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 
@@ -58,7 +59,7 @@ class EmojiStickerScreenState extends State<EmojiStickerScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Emoji Picker', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).emojiPicker, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         actions: [
           if (_selectedEmoji.isNotEmpty)
             IconButton(icon: const Icon(Icons.check), onPressed: _confirmSelection),
@@ -70,23 +71,15 @@ class EmojiStickerScreenState extends State<EmojiStickerScreen> {
             alignment: Alignment.topCenter,
             child: Container(
               margin: EdgeInsets.only(top: AppBar().preferredSize.height),
-              width: 160.0,
-              height: 160.0,
-              decoration: BoxDecoration(
-                color: _selectedColor,
-                borderRadius: BorderRadius.circular(35),
-              ),
-              child: Center(
-                child: Text(
-                  _selectedEmoji,
-                  style: TextStyle(fontSize: 100, color: ChatifyColors.black),
-                ),
-              ),
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(color: _selectedColor, borderRadius: BorderRadius.circular(35)),
+              child: Center(child: Text(_selectedEmoji, style: TextStyle(fontSize: 100, color: ChatifyColors.black))),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * .1),
           Container(
-            margin: const EdgeInsets.all(16.0),
+            margin: const EdgeInsets.all(16),
             height: 50.0,
             child: ListView(
               scrollDirection: Axis.horizontal,
@@ -99,19 +92,10 @@ class EmojiStickerScreenState extends State<EmojiStickerScreen> {
                     });
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                    width: 40.0,
-                    height: 40.0,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: isSelected
-                          ? Border.all(
-                        color: Colors.black,
-                        width: 2.0,
-                      )
-                          : null,
-                    ),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(color: color, shape: BoxShape.circle, border: isSelected ? Border.all(color: ChatifyColors.black, width: 2.0) : null),
                   ),
                 );
               }).toList(),
@@ -119,7 +103,7 @@ class EmojiStickerScreenState extends State<EmojiStickerScreen> {
           ),
           Expanded(
             child: Container(
-              color: Colors.white,
+              color: ChatifyColors.white,
               child: EmojiPicker(
                 config: Config(
                   height: MediaQuery.of(context).size.height * 0.35,

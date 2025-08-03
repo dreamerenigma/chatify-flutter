@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:chatify/features/personalization/screens/chats/wallpaper_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -31,29 +30,23 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
   }
 
   void saveImagePath(String imagePath) {
-    log("Saving imagePath: $imagePath");
     box.write('backgroundImagePath', imagePath);
   }
 
   @override
   Widget build(BuildContext context) {
     final backgroundImage = widget.imagePath.isNotEmpty ? widget.imagePath : (context.isDarkMode ? ChatifyImages.chatBackgroundDark : ChatifyImages.chatBackgroundLight);
-    final displayText = widget.isDefaultWallpaper ? 'Это обои Chatify по умолчанию' : 'Проведите влево, чтобы просмотреть больше обоев';
+    final displayText = widget.isDefaultWallpaper ? S.of(context).defaultAppWallpaper : S.of(context).swipeLeftViewMoreWallpapers;
 
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Просмотр', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).view, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       ),
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(widget.imagePath.isNotEmpty ? widget.imagePath : backgroundImage),
-                fit: BoxFit.cover,
-              ),
-            ),
+            decoration: BoxDecoration(image: DecorationImage(image: AssetImage(widget.imagePath.isNotEmpty ? widget.imagePath : backgroundImage), fit: BoxFit.cover)),
           ),
           Positioned(
             top: 5,
@@ -75,7 +68,7 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
                     ),
                   ],
                 ),
-                child: Text('Сегодня', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary)),
+                child: Text(S.of(context).today, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary)),
               ),
             ),
           ),
@@ -132,7 +125,7 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                       blurRadius: 3,
                       spreadRadius: 1,
                     ),
@@ -143,7 +136,7 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Flexible(
-                      child: Text(context.isDarkMode ? 'Установите обои для тёмной темы' : 'Установите обои для светлой темы',
+                      child: Text(context.isDarkMode ? S.of(context).setWallpaperDarkTheme : S.of(context).setWallpaperLightTheme,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -184,12 +177,12 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
                     if (result == true) {
                       if (widget.imagePath.isNotEmpty) {
                         saveImagePath(widget.imagePath);
-                        Dialogs.showSnackbar(context, 'Обои установлены');
+                        Dialogs.showSnackbar(context, S.of(context).wallpaperInstalled);
                       } else {
-                        Dialogs.showSnackbar(context, 'Обои не установлены, изображение не выбрано');
+                        Dialogs.showSnackbar(context, S.of(context).wallpaperImageSelected);
                       }
                     } else {
-                      Dialogs.showSnackbar(context, 'Обои не установлены');
+                      Dialogs.showSnackbar(context, S.of(context).wallpaperNotInstalled);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -198,9 +191,9 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     elevation: 0,
-                    shadowColor: Colors.transparent,
+                    shadowColor: ChatifyColors.transparent,
                   ),
-                  child: Text('Установить обои', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                  child: Text(S.of(context).setWallpaper, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ),
               ),
             ),

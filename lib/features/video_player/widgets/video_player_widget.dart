@@ -1,8 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/features/video_player/screens/fullscreen_video_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
-import 'package:logger/logger.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -24,7 +24,6 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  final logger = Logger();
   Player? _player;
   VideoController? _controller;
   bool isOffline = false;
@@ -42,7 +41,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (connectivityResult == ConnectivityResult.none) {
       setState(() => isOffline = true);
     } else {
-      logger.d('Device is online.');
+      log(S.of(context).deviceIsOnline);
     }
 
     try {
@@ -55,18 +54,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       final controller = VideoController(player);
       final duration = await player.stream.duration.first;
 
-      logger.d('Video loaded, duration: $duration');
-
       setState(() {
         _player = player;
         _controller = controller;
         videoDuration = duration;
         isInitialized = true;
       });
-
-      logger.d('Video initialized successfully.');
     } catch (e) {
-      logger.e('Error initializing media_kit video: $e');
+      log('${S.of(context).errorInitializingMediaKitVideo}: $e');
     }
   }
 
@@ -139,7 +134,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       children: [
         mediaWidget,
         if (isOffline)
-          Text(S.of(context).offlineCachedVideos, style: const TextStyle(color: ChatifyColors.red)),
+        Text(S.of(context).offlineCachedVideos, style: const TextStyle(color: ChatifyColors.red)),
       ],
     );
   }

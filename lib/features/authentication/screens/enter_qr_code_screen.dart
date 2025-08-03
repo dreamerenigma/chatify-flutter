@@ -127,7 +127,7 @@ class _EnterQrCodeScreenState extends State<EnterQrCodeScreen> {
                 },
               ));
             },
-            menuItem1Text: 'Помощь',
+            menuItem1Text: S.of(context).help,
           ),
           _buildLoginForm(),
         ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -40,7 +41,7 @@ class CallPhoneNumberState extends State<CallPhoneNumber> {
       await intent.launch();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Не удалось открыть SMS-приложение.')),
+        SnackBar(content: Text(S.of(context).failedToOpenSMSApp)),
       );
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
@@ -14,7 +15,7 @@ void showDeleteAllIntelligenceDialog(BuildContext context, VoidCallback onDelete
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 20),
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-            content: const Column(
+            content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
@@ -22,7 +23,7 @@ void showDeleteAllIntelligenceDialog(BuildContext context, VoidCallback onDelete
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text('Вы действительно хотите удалить все Сведения?', style: TextStyle(color: ChatifyColors.darkGrey)),
+                        child: Text(S.of(context).youSureDeleteAllInformation, style: TextStyle(color: ChatifyColors.darkGrey)),
                       ),
                     ],
                   ),
@@ -39,7 +40,7 @@ void showDeleteAllIntelligenceDialog(BuildContext context, VoidCallback onDelete
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
               TextButton(
                 onPressed: () {
@@ -51,7 +52,7 @@ void showDeleteAllIntelligenceDialog(BuildContext context, VoidCallback onDelete
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: Text('Удалить все', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).deleteAll, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
             ],
           );

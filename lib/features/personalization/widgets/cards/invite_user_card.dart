@@ -3,6 +3,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
 
 class InviteUserCard extends StatefulWidget {
@@ -51,13 +52,9 @@ class InviteUserCardState extends State<InviteUserCard> {
               });
             },
             child: ListTile(
-              leading: SvgPicture.asset(
-                ChatifyVectors.profile,
-                width: 45,
-                height: 45,
-              ),
+              leading: SvgPicture.asset(ChatifyVectors.profile, width: 45, height: 45),
               title: Text(contact.displayName),
-              subtitle: contact.phones.isNotEmpty ? Text(contact.phones.first.number) : const Text('No phone'),
+              subtitle: contact.phones.isNotEmpty ? Text(contact.phones.first.number) : Text(S.of(context).noPhone),
             ),
           ),
         ),

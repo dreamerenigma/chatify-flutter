@@ -19,7 +19,7 @@ class ClearCallsDialog extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.softGrey,
-          title: Text('Вы действительно хотите очистить весь журнал звонков?', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+          title: Text(S.of(context).areYouSureClearAllCallLogs, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           actions: <Widget>[
             TextButton(
               onPressed: () {

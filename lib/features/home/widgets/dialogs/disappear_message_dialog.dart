@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
@@ -14,22 +15,22 @@ class DisappearMessageDialog {
         return AlertDialog(
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          title: Text('Исчезающие сообщения', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+          title: Text(S.of(context).disappearingMessages, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           contentPadding: EdgeInsets.zero,
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
                     child: Text(
-                      'Все новые сообщения в этом чате будут исчезать через выбранный промежуток времени.',
+                      S.of(context).allNewMessagesDisappearSelected,
                       style: TextStyle(color: ChatifyColors.darkGrey),
                     ),
                   ),
                   RadioListTile<int>(
-                    title: const Text('24 часа'),
+                    title: Text(S.of(context).duration24h),
                     value: 1,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -43,7 +44,7 @@ class DisappearMessageDialog {
                     contentPadding: const EdgeInsets.only(left: 12),
                   ),
                   RadioListTile<int>(
-                    title: const Text('7 дней'),
+                    title: Text(S.of(context).duration7d),
                     value: 5,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -57,7 +58,7 @@ class DisappearMessageDialog {
                     contentPadding: const EdgeInsets.only(left: 12),
                   ),
                   RadioListTile<int>(
-                    title: const Text('90 дней'),
+                    title: Text(S.of(context).duration90d),
                     value: 60,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -71,7 +72,7 @@ class DisappearMessageDialog {
                     contentPadding: const EdgeInsets.only(left: 12),
                   ),
                   RadioListTile<int>(
-                    title: const Text('Выкл.'),
+                    title: Text(S.of(context).off),
                     value: 1440,
                     groupValue: selectedDuration,
                     activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),

@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../chat/models/user_model.dart';
@@ -82,7 +83,7 @@ class NewGroupScreenState extends State<NewGroupScreen> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       _filteredContacts = _contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase() ?? '';
+        final contactName = contact.displayName.toLowerCase();
         return contactName.contains(query);
       }).toList();
     });
@@ -152,7 +153,7 @@ class NewGroupScreenState extends State<NewGroupScreen> {
             controller: _searchController,
             style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
             decoration: InputDecoration(
-              hintText: 'Поиск по имени или номеру телефона',
+              hintText: S.of(context).searchByNameOrPhoneNumber,
               hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -163,40 +164,23 @@ class NewGroupScreenState extends State<NewGroupScreen> {
         : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Новая группа',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
-            ),
-            Text(
-              'Добавить участников',
-              style: TextStyle(
-                fontSize: ChatifySizes.fontSizeSm,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
+            Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+            Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
           ],
         ),
         actions: isSearching
           ? [
-          IconButton(
-            icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad),
-            onPressed: _toggleInputMode,
-          ),
-        ]
-        : [
-          IconButton(
-            icon: Icon(isSearching
-                ? CupertinoIcons.clear_circled_solid
-                : Icons.search),
-            onPressed: _toggleSearch,
-          ),
-        ],
+              IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode),
+            ]
+          : [
+              IconButton(icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search), onPressed: _toggleSearch),
+            ],
       ),
       body: isLoading
-          ? Center(
-        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-      )
-          : ListView.builder(
+        ? Center(
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+          )
+        : ListView.builder(
         itemCount: _chatUsers.length + _filteredContacts.length + 2 + (selectedUsers.isEmpty ? 0 : 2),
         itemBuilder: (context, index) {
           int adjustedIndex = index;
@@ -207,10 +191,10 @@ class NewGroupScreenState extends State<NewGroupScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Wrap(
-                      spacing: 16.0,
-                      runSpacing: 16.0,
+                      spacing: 16,
+                      runSpacing: 16,
                       children: selectedUsers.map((user) {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
@@ -225,30 +209,18 @@ class NewGroupScreenState extends State<NewGroupScreen> {
                                     ? CachedNetworkImage(
                                       imageUrl: user.image,
                                         placeholder: (context, url) => const CircleAvatar(
-                                          backgroundColor: Colors.grey,
+                                          backgroundColor: ChatifyColors.grey,
                                           radius: 30,
-                                          child: Icon(
-                                            Icons.person,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
+                                          child: Icon(Icons.person, color: ChatifyColors.white, size: 24),
                                         ),
                                         errorWidget: (context, url, error) => const CircleAvatar(
                                           backgroundColor: ChatifyColors.blackGrey,
                                           radius: 30,
-                                          child: Icon(
-                                            Icons.error,
-                                            color: Colors.red,
-                                            size: 24,
-                                          ),
+                                          child: Icon(Icons.error, color: ChatifyColors.red, size: 24),
                                         ),
                                         imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider, radius: 30),
                                       )
-                                    : const CircleAvatar(
-                                      backgroundColor: ChatifyColors.blackGrey,
-                                      radius: 30,
-                                      child: Icon(Icons.person, color: ChatifyColors.white, size: 24),
-                                    ),
+                                    : const CircleAvatar(backgroundColor: ChatifyColors.blackGrey, radius: 30, child: Icon(Icons.person, color: ChatifyColors.white, size: 24)),
                                   ],
                                 ),
                                 Positioned(
@@ -259,15 +231,8 @@ class NewGroupScreenState extends State<NewGroupScreen> {
                                       _toggleUserSelection(user);
                                     },
                                     child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: ChatifyColors.black, width: 2.0),
-                                      ),
-                                      child: const CircleAvatar(
-                                        backgroundColor: ChatifyColors.grey,
-                                        radius: 12,
-                                        child: Icon(Icons.close, size: 16, color: ChatifyColors.black),
-                                      ),
+                                      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                                      child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
                                     ),
                                   ),
                                 ),
@@ -288,10 +253,8 @@ class NewGroupScreenState extends State<NewGroupScreen> {
 
           if (adjustedIndex == 0) {
             return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text('Контакты в Chatify',
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey),
-              ),
+              padding: const EdgeInsets.all(16),
+              child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
             );
           } else if (adjustedIndex <= _chatUsers.length) {
             final chatUser = _chatUsers[adjustedIndex - 1];
@@ -303,10 +266,8 @@ class NewGroupScreenState extends State<NewGroupScreen> {
             );
           } else if (adjustedIndex == _chatUsers.length + 1) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: Text('Пригласить в Chatify',
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
             );
           } else {
             final filteredIndex = adjustedIndex - _chatUsers.length - 2;
@@ -324,18 +285,18 @@ class NewGroupScreenState extends State<NewGroupScreen> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'group',
           onPressed: () async {
             if (selectedUsers.isEmpty) {
-              Dialogs.showSnackbar(context, 'Пожалуйста, выберите хотя бы одного участника.');
+              Dialogs.showSnackbar(context, S.of(context).pleaseSelectLeastOneParticipant);
             } else {
               Navigator.push(context, createPageRoute(AddNewGroupScreen(selectedUsers: selectedUsers.toList(), selectedContacts: selectedContacts.toList())));
             }
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          foregroundColor: Colors.white,
+          foregroundColor: ChatifyColors.white,
           child: const Icon(Icons.arrow_forward_rounded),
         ),
       ),

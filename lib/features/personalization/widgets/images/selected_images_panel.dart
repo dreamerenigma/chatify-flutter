@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../buttons/custom_image_button.dart';
 import '../dialogs/light_dialog.dart';
@@ -35,7 +36,6 @@ class _SelectedImagesPanelState extends State<SelectedImagesPanel> {
 
     if (result != null) {
       File selectedFile = File(result.files.single.path!);
-      log('Selected file for Windows: ${selectedFile.path}');
       widget.selectedFiles.add(selectedFile);
 
       setState(() {});
@@ -51,12 +51,11 @@ class _SelectedImagesPanelState extends State<SelectedImagesPanel> {
         .then((value) => value.isNotEmpty ? value.first : null);
 
       if (asset != null) {
-        log('Selected asset for mobile: ${asset.id}');
         widget.selectedImages.add(asset);
         setState(() {});
       }
     } else {
-      log("Permission not granted");
+      log(S.of(context).permissionNotGranted);
     }
   }
 

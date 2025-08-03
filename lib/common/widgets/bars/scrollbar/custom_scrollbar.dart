@@ -153,9 +153,7 @@ class _CustomScrollbarState extends State<CustomScrollbar> {
               Padding(
                 padding: EdgeInsets.only(top: 16, bottom: widget.bottomPadding ? 16 : 0, right: 2),
                 child: ScrollbarTheme(
-                  data: ScrollbarThemeData(
-                    thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => ChatifyColors.darkGrey),
-                  ),
+                  data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                   child: Scrollbar(
                     controller: widget.scrollController,
                     thickness: _isHovered ? 6 : 4,

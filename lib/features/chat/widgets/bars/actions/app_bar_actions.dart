@@ -5,9 +5,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../common/widgets/buttons/custom_search_button.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
+import '../../../../../utils/devices/device_utility.dart';
+import '../../../../utils/dialogs/no_internet_connection_dialog.dart';
 
 class AppBarActions extends StatefulWidget {
   final VoidCallback? onVideoCall;
@@ -61,9 +64,15 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
               children: [
                 _buildIcon(
                   context,
-                  message: 'Видеозвонок',
+                  message: S.of(context).videoCall,
                   icon: HeroIcon(HeroIcons.videoCamera, size: 22),
-                  onTap: widget.onVideoCall,
+                  onTap: () async {
+                    if (await DeviceUtils.hasInternetConnection()) {
+                      widget.onVideoCall?.call();
+                    } else {
+                      showNoInternetConnectionDialog(context);
+                    }
+                  },
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
                 ),
                 if (!isMobile) ...[
@@ -78,9 +87,15 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
                 ],
                 _buildIcon(
                   context,
-                  message: 'Аудиозвонок',
+                  message: S.of(context).audioCall,
                   icon: SvgPicture.asset(ChatifyVectors.calls, width: 22, height: 22, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                  onTap: widget.onAudioCall,
+                  onTap: () async {
+                    if (await DeviceUtils.hasInternetConnection()) {
+                      widget.onAudioCall?.call();
+                    } else {
+                      showNoInternetConnectionDialog(context);
+                    }
+                  },
                   borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
                 ),
               ],
@@ -125,21 +140,21 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
         if (Platform.isWindows) const SizedBox(width: 5),
         if (!Platform.isWindows)
           PopupMenuButton<int>(
-            tooltip: 'Ещё',
+            tooltip: S.of(context).more,
             padding: EdgeInsets.zero,
             position: PopupMenuPosition.under,
             color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             icon: const Icon(Icons.more_vert, size: 26),
             onSelected: widget.onPopupItemSelected,
             itemBuilder: (context) => [
-              _popupItem(context, 1, 'Данные группы'),
-              _popupItem(context, 2, 'Медиа группы'),
-              _popupItem(context, 3, 'Поиск'),
-              _popupItem(context, 4, 'Без звука'),
-              _popupItem(context, 5, 'Исчезающие сообщения'),
-              _popupItem(context, 6, 'Обои'),
-              _popupItem(context, 7, 'Добавить в список'),
-              _popupItem(context, 8, 'Ещё'),
+              _popupItem(context, 1, S.of(context).groupData),
+              _popupItem(context, 2, S.of(context).mediaGroups),
+              _popupItem(context, 3, S.of(context).search),
+              _popupItem(context, 4, S.of(context).noSound),
+              _popupItem(context, 5, S.of(context).disappearingMessages),
+              _popupItem(context, 6, S.of(context).wallpaper),
+              _popupItem(context, 7, S.of(context).addToList),
+              _popupItem(context, 8, S.of(context).more),
             ],
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),

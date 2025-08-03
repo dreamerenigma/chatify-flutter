@@ -90,8 +90,8 @@ class EnterEmailScreenState extends State<EnterEmailScreen> {
                 },
               ));
             },
-            menuItem1Text: 'Привязать как вспомогательное устройство',
-            menuItem2Text: 'Помощь',
+            menuItem1Text: S.of(context).bindAuxiliaryDevice,
+            menuItem2Text: S.of(context).help,
           ),
           _buildEmailLoginForm(),
         ],
@@ -211,9 +211,7 @@ class EnterEmailScreenState extends State<EnterEmailScreen> {
                   ),
                 ) : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-
-                      ],
+                      children: [],
                 );
             },
           ),

@@ -53,12 +53,7 @@ class MainScreenWidget extends StatelessWidget {
                               width: containerWidth,
                               child: Text(
                                 S.of(context).sendReceiveMessagesFourLinkDevice,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.3,
-                                  fontSize: ChatifySizes.fontSizeSm,
-                                  color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.deepNight,
-                                ),
+                                style: TextStyle(fontWeight: FontWeight.w300, height: 1.3, fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.deepNight),
                                 textAlign: TextAlign.center,
                                 softWrap: true,
                               ),
@@ -84,16 +79,9 @@ class MainScreenWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          HeroIcon(
-            HeroIcons.lockClosed,
-            color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkGrey,
-            size: 14,
-          ),
+          HeroIcon(HeroIcons.lockClosed, color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkGrey, size: 12),
           SizedBox(width: 8),
-          Text(
-            S.of(context).protectedEncryption,
-            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
-          ),
+          Text(S.of(context).protectedEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
         ],
       ),
     );

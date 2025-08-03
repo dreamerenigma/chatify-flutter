@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../common/widgets/panels/emoji_panel.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import 'delete_message_dialog.dart';
@@ -111,21 +112,21 @@ Future<void> showEditMessageDialog(
                                 },
                               ),
                               Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                              _buildEditMessage(context: context, iconPath: ChatifyVectors.arrowLeft, text: 'Ответить', iconSize: 18, icon: null, onTap: () {}),
-                              _buildEditMessage(context: context, iconPath: '', text: 'Копировать', iconSize: 20, icon: FluentIcons.copy_24_regular, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: ChatifyVectors.arrowLeft, text: S.of(context).answer, iconSize: 18, icon: null, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).copy, iconSize: 20, icon: FluentIcons.copy_24_regular, onTap: () {}),
                               Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                              _buildEditMessage(context: context, iconPath: ChatifyVectors.arrowRight, text: 'Переслать', iconSize: 20, icon: null, onTap: () {}),
-                              _buildEditMessage(context: context, iconPath: '', text: 'В Избранные', iconSize: 22, icon: BootstrapIcons.star, onTap: () {}),
-                              _buildEditMessage(context: context, iconPath: '', text: 'Закрепить', iconSize: 22, icon: BootstrapIcons.pin_angle, onTap: () {}),
-                              _buildEditMessage(context: context, iconPath: '', text: 'Удалить', iconSize: 20, icon: FluentIcons.delete_24_regular, onTap: () {
+                              _buildEditMessage(context: context, iconPath: ChatifyVectors.arrowRight, text: S.of(context).forward.replaceAll('...', ''), iconSize: 20, icon: null, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).addToFavoritesDialog, iconSize: 22, icon: BootstrapIcons.star, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).pinIt, iconSize: 22, icon: BootstrapIcons.pin_angle, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).delete, iconSize: 20, icon: FluentIcons.delete_24_regular, onTap: () {
                                 overlayEntry.remove();
-                                showDeleteMessageDialog(context, title: 'Удалить сообщение?', description: 'Вы можете удалить сообщение у всех или только у себя.');
+                                showDeleteMessageDialog(context, title: '${S.of(context).deleteMessage}?', description: S.of(context).youCanDeleteMessageYourself);
                               }),
                               Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                              _buildEditMessage(context: context, iconPath: '', text: 'Выбрать', iconSize: 20, icon: Ionicons.checkbox_outline, onTap: () {}),
-                              _buildEditMessage(context: context, iconPath: '', text: 'Поделиться', iconSize: 20, icon: FluentIcons.share_24_regular, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).choose, iconSize: 20, icon: Ionicons.checkbox_outline, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).share, iconSize: 20, icon: FluentIcons.share_24_regular, onTap: () {}),
                               Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                              _buildEditMessage(context: context, iconPath: '', text: 'Данные', iconSize: 20, icon: Icons.info_outline_rounded, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).data, iconSize: 20, icon: Icons.info_outline_rounded, onTap: () {}),
                               SizedBox(height: 8),
                             ],
                           ),

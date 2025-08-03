@@ -1,6 +1,7 @@
 import 'package:chatify/features/personalization/screens/chats/view_wallpaper_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -33,28 +34,18 @@ class SelectWallpaperScreen extends StatefulWidget {
 }
 
 class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
-  final List<WallpaperItem> wallpaperItems = [
-    WallpaperItem(
-      imagePath: ChatifyImages.wallpaperLightV1,
-      title: 'Яркие',
-      destinationScreen: const LightWallpaperScreen(),
-    ),
-    WallpaperItem(
-      imagePath: ChatifyImages.wallpaperDarkV1,
-      title: 'Тёмные',
-      destinationScreen: const DarkWallpaperScreen(),
-    ),
-    WallpaperItem(
-      imagePath: ChatifyImages.wallpaperSolidV1,
-      title: 'Сплошные цвета',
-      destinationScreen: const SolidColorsWallpaperScreen(),
-    ),
-    WallpaperItem(
-      imagePath: ChatifyImages.photo,
-      title: 'Мои фото',
-      destinationScreen: const GalleryScreen(),
-    ),
-  ];
+  late List<WallpaperItem> wallpaperItems;
+
+  @override
+  void initState() {
+    super.initState();
+    wallpaperItems = [
+      WallpaperItem(imagePath: ChatifyImages.wallpaperLightV1, title: S.of(context).bright, destinationScreen: const LightWallpaperScreen()),
+      WallpaperItem(imagePath: ChatifyImages.wallpaperDarkV1, title: S.of(context).darkWallpaper, destinationScreen: const DarkWallpaperScreen()),
+      WallpaperItem(imagePath: ChatifyImages.wallpaperSolidV1, title: S.of(context).solidColors, destinationScreen: const SolidColorsWallpaperScreen()),
+      WallpaperItem(imagePath: ChatifyImages.photo, title: S.of(context).myPhotos, destinationScreen: const GalleryScreen()),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +53,7 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
       appBar: AppBar(
         titleSpacing: 0,
         title: Text(
-          context.isDarkMode ? 'Обои для тёмной темы' : 'Обои для светлой темы',
+          context.isDarkMode ? S.of(context).wallpaperDarkTheme : S.of(context).wallpaperLightTheme,
           style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
         ),
         actions: [
@@ -79,16 +70,14 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
               PopupMenuItem(
                 value: 1,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text('Сброс настроек обоев',
+                child: Text(S.of(context).resetWallpaperSettings,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ],
       ),
@@ -96,10 +85,7 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
         behavior: NoGlowScrollBehavior(),
         child: Column(
           children: [
-            Expanded(
-              flex: 2,
-              child: _buildPicture(),
-            ),
+            Expanded(flex: 2, child: _buildPicture()),
             _buildDefault(context),
             const Spacer(),
           ],
@@ -124,32 +110,19 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
 
           return GestureDetector(
             onTap: () {
-              Navigator.pushReplacement(
-                context,
-                createPageRoute(item.destinationScreen),
-              );
+              Navigator.pushReplacement(context, createPageRoute(item.destinationScreen));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 160,
-                    color: ChatifyColors.grey,
-                    child: Image.asset(
-                      item.imagePath,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(width: double.infinity, height: 160, color: ChatifyColors.grey, child: Image.asset(item.imagePath, fit: BoxFit.cover)),
                 ),
                 const SizedBox(height: 15),
                 Container(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: Text(item.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Text(item.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), overflow: TextOverflow.ellipsis),
                 ),
               ],
             ),
@@ -162,10 +135,7 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
   Widget _buildDefault(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          createPageRoute(ViewWallpaperScreen(imagePath: widget.imagePath, isDefaultWallpaper: true)),
-        );
+        Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: widget.imagePath, isDefaultWallpaper: true)));
       },
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -173,9 +143,9 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.wallpaper, size: 24.0, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+              Icon(Icons.wallpaper, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
               const SizedBox(width: 16),
-              Text('Обои по умолчанию', style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+              Text(S.of(context).defaultWallpaper, style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
               ),
             ],
           ),

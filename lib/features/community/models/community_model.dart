@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../common/entities/base_chat_entity.dart';
 import '../../../utils/helper/date_util.dart';
 
-class CommunityModel {
+class CommunityModel implements BaseChatEntity {
+  @override
   late String id;
+  @override
   late String name;
   late String image;
   late String description;
+  @override
   late DateTime createdAt;
   late String creatorName;
+  late String creatorId;
 
   CommunityModel({
     required this.id,
@@ -16,6 +21,7 @@ class CommunityModel {
     required this.description,
     required this.createdAt,
     required this.creatorName,
+    required this.creatorId,
   });
 
   bool get isCreated => name.isNotEmpty;
@@ -28,6 +34,7 @@ class CommunityModel {
       'description': description,
       'createdAt': Timestamp.fromDate(createdAt),
       'creatorName': creatorName,
+      'creatorId': creatorId,
     };
   }
 
@@ -38,6 +45,7 @@ class CommunityModel {
     name = json['name'] ?? '';
     createdAt = DateUtil.parseDateTime(json['createdAt']);
     creatorName = json['creatorName'] ?? '';
+    creatorId = json['creatorId'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +56,13 @@ class CommunityModel {
     data['name'] = name;
     data['created_at'] = Timestamp.fromDate(createdAt);
     data['creatorName'] = creatorName;
+    data['creatorId'] = creatorId;
     return data;
   }
+
+  @override
+  String get phoneNumber => '';
+
+  @override
+  String get surname => '';
 }

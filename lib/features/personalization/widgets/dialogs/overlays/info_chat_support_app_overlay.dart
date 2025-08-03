@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../common/widgets/buttons/custom_bottom_buttons.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/urls/url_utils.dart';
 import '../../../../home/controllers/dialog_controller.dart';
@@ -63,7 +65,7 @@ class InfoChatSupportAppOverlay {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 32, right: 32, top: 24),
-                              child: Text('Информация о чате Службы поддержки Chatify с использованием ИИ', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
+                              child: Text(S.of(context).appAiSupportChatInfo, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 26, right: 38, top: 16, bottom: 16),
@@ -71,21 +73,25 @@ class InfoChatSupportAppOverlay {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildInfoRow(
+                                    context,
                                     ChatifyVectors.handFavorite,
-                                    'Получите помощь быстрее',
-                                    'Служба поддрержки Chatify может использовать ИИ, чтобы быстро отвечать на ваши вопросы в круглосуточном режиме.',
+                                    S.of(context).getHelpFaster,
+                                    S.of(context).appSupportTeamAiQuestions,
                                   ),
                                   SizedBox(height: 12),
                                   _buildInfoRow(
+                                    context,
                                     ChatifyVectors.questionAi,
-                                    'Узнайте в каких чатах используется ИИ',
+                                    S.of(context).findOutChatsUseAi,
                                     '',
                                     insertAiIcon: true,
                                   ),
                                   SizedBox(height: 12),
-                                  _buildInfoRow(ChatifyVectors.question,
-                                    'Подробную информацию можно получить в Справочном центре',
-                                    'Посетите Справочный центр, чтобы найти ответы на свои вопросы и ознакомиться со статьями, которые используются для генерирования сообщеий с помощью ИИ.'
+                                  _buildInfoRow(
+                                    context,
+                                    ChatifyVectors.question,
+                                    S.of(context).moreInfoVisitHelpCenter,
+                                    S.of(context).visitHelpCenterFindAnswers
                                   ),
                                 ],
                               ),
@@ -94,9 +100,9 @@ class InfoChatSupportAppOverlay {
                         ),
                       ),
                       CustomBottomButtons(
-                        confirmText: 'Подробнее',
-                        cancelText: 'Отмена',
-                        onConfirm: () => UrlUtils.launchURL('https://faq.chatify.ru/1083092416402722?lang=ru'),
+                        confirmText: S.of(context).readMore,
+                        cancelText: S.of(context).cancel,
+                        onConfirm: () => UrlUtils.launchURL(AppLinks.supportAI),
                         overlayEntry: overlayEntry,
                         dialogController: dialogController,
                         primaryColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -120,7 +126,7 @@ class InfoChatSupportAppOverlay {
   }
 }
 
-Widget _buildInfoRow(String icon, String title, String subtitle, {bool insertAiIcon = false}) {
+Widget _buildInfoRow(BuildContext context, String icon, String title, String subtitle, {bool insertAiIcon = false}) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -141,13 +147,9 @@ Widget _buildInfoRow(String icon, String title, String subtitle, {bool insertAiI
                   text: TextSpan(
                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: Get.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.darkGrey),
                     children: [
-                      const TextSpan(
-                        text: 'Сообщения, генерируемые ИИ от Input Studios, отмечены символом ',
-                      ),
+                      TextSpan(text: S.of(context).aiGeneratedMessagesMarkedSymbol),
                       WidgetSpan(alignment: PlaceholderAlignment.middle, child: SvgPicture.asset(ChatifyVectors.ai, width: 16, height: 16, color: Get.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                      const TextSpan(
-                        text: '. Вы можете оставить отзыв о сообщениях, генерируемых ИИ, чтобы помочь Chatify повысить их качество.',
-                      ),
+                      TextSpan(text: S.of(context).feedbackAiGeneratedMessagesAppQuality),
                     ],
                   ),
                 )

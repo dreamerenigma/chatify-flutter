@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../common/widgets/switches/custom_switch.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_images.dart';
 import '../../../../../utils/constants/app_sizes.dart';
@@ -305,7 +306,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
       await audioPlayer.stop();
       await audioPlayer.play(AssetSource(ChatifySounds.messageIncoming));
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}: $e');
     }
 
     if (!mounted) return;
@@ -350,7 +351,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text("Уведомления", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+                child: Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(height: 25),
               Padding(
@@ -381,7 +382,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Показывать баннерные уведомления", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                        Text(S.of(context).showBannerNotify, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: CompositedTransformTarget(
@@ -434,7 +435,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                                               selectedBannerOption == 'only'
                                                 ? IntrinsicWidth(
                                                     child: Text(
-                                                      optionTexts[selectedBannerOption] ?? 'Только при открытом приложении',
+                                                      optionTexts[selectedBannerOption] ?? S.of(context).onlyWhenAppOpen,
                                                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                                     ),
                                                   )
@@ -442,7 +443,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                                                 SizedBox(
                                                   width: 125,
                                                   child: Text(
-                                                    optionTexts[selectedBannerOption] ?? 'Всегда',
+                                                    optionTexts[selectedBannerOption] ?? S.of(context).only,
                                                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                                   ),
                                                 ),
@@ -488,7 +489,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Показывать значок уведомлений на панели задач", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                        Text(S.of(context).showNotifyIconTaskbar, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: CompositedTransformTarget(
@@ -541,14 +542,14 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                                               selectedIconOption == 'only'
                                                 ? IntrinsicWidth(
                                                     child: Text(
-                                                      optionTexts[selectedIconOption] ?? 'Только при открытом приложении',
+                                                      optionTexts[selectedIconOption] ?? S.of(context).onlyWhenAppOpen,
                                                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                                     ),
                                                   )
                                                 : SizedBox(
                                                     width: 125,
                                                     child: Text(
-                                                      optionTexts[selectedIconOption] ?? 'Всегда',
+                                                      optionTexts[selectedIconOption] ?? S.of(context).only,
                                                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                                                     ),
                                                   ),
@@ -581,9 +582,9 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
               ),
               const SizedBox(height: 15),
               _buildSwitchOption(
-                labelText: 'Сообщения',
-                stateTextOn: 'Вкл.',
-                stateTextOff: 'Выкл.',
+                labelText: S.of(context).messages,
+                stateTextOn: S.of(context).on,
+                stateTextOff: S.of(context).off,
                 initialValue: _isMessages,
                 onChanged: (bool value) {
                   setState(() {
@@ -592,9 +593,9 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                 },
               ),
               _buildSwitchOption(
-                labelText: 'Звонки',
-                stateTextOn: 'Вкл.',
-                stateTextOff: 'Выкл.',
+                labelText: S.of(context).calls,
+                stateTextOn: S.of(context).on,
+                stateTextOff: S.of(context).off,
                 initialValue: _isCalls,
                 onChanged: (bool value) {
                   setState(() {
@@ -603,10 +604,10 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                 },
               ),
               _buildSwitchOption(
-                labelText: 'Реакции',
-                additionalText: 'Показывать уведомления о реакциях на отправленные вами сообщения',
-                stateTextOn: 'Вкл.',
-                stateTextOff: 'Выкл.',
+                labelText: S.of(context).reactions,
+                additionalText: S.of(context).showNotifyAboutReactions,
+                stateTextOn: S.of(context).on,
+                stateTextOff: S.of(context).off,
                 initialValue: _isReactions,
                 onChanged: (bool value) {
                   setState(() {
@@ -615,10 +616,10 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                 },
               ),
               _buildSwitchOption(
-                labelText: 'Реакции на статус',
-                additionalText: 'Показывать уведомления об отметках "Нравится" к статусу',
-                stateTextOn: 'Вкл.',
-                stateTextOff: 'Выкл.',
+                labelText: S.of(context).statusReactions,
+                additionalText: S.of(context).showNotificationsStatusLikes,
+                stateTextOn: S.of(context).on,
+                stateTextOff: S.of(context).off,
                 initialValue: _isStatusReactions,
                 onChanged: (bool value) {
                   setState(() {
@@ -633,10 +634,10 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
               ),
               const SizedBox(height: 5),
               _buildSwitchOption(
-                labelText: 'Предпросмотр текста',
-                additionalText: 'Показывать текст сообщений в окне уведомлений',
-                stateTextOn: 'Вкл.',
-                stateTextOff: 'Выкл.',
+                labelText: S.of(context).previewText,
+                additionalText: S.of(context).showMessageTextNotifyWindow,
+                stateTextOn: S.of(context).on,
+                stateTextOff: S.of(context).off,
                 initialValue: _isTextPreview,
                 onChanged: (bool value) {
                   setState(() {
@@ -645,10 +646,10 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                 },
               ),
               _buildSwitchOption(
-                labelText: 'Предпросмотр медиа',
-                additionalText: 'Показывать изображения медиа в окне уведомлений о новых сообщениях',
-                stateTextOn: 'Вкл.',
-                stateTextOff: 'Выкл.',
+                labelText: S.of(context).mediaPreview,
+                additionalText: S.of(context).showMediaImagesNewMessageNotifyWindow,
+                stateTextOn: S.of(context).on,
+                stateTextOff: S.of(context).off,
                 initialValue: _isMediaPreview,
                 onChanged: (bool value) {
                   setState(() {
@@ -664,12 +665,12 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text('Звуки уведомлений', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+                child: Text(S.of(context).notifySounds, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
               ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text("Сообщения", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                child: Text(S.of(context).messages, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
               ),
               _buildSoundNotify(
                 context,
@@ -693,7 +694,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text("Группы", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                child: Text('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
               ),
               _buildSoundNotify(
                 context,
@@ -1001,10 +1002,10 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                         children: [
                           selectedSoundOption.startsWith('ChatifySounds.notify')
                             ? IntrinsicWidth(
-                            child: Text('Предупреждение ${selectedSoundOption.replaceAll(RegExp(r'\D'), '')}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)))
+                            child: Text('${S.of(context).alert} ${selectedSoundOption.replaceAll(RegExp(r'\D'), '')}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)))
                               : selectedSoundOption == 'default'
                               ? SizedBox(width: 95, child: Text('По умолчанию', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)))
-                              : SizedBox(width: 95, child: Text(optionSoundTexts[selectedSoundOption] ?? 'По умолчанию', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                              : SizedBox(width: 95, child: Text(optionSoundTexts[selectedSoundOption] ?? S.of(context).system, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                           ),
                         ],
                       ),

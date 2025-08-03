@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -84,7 +85,7 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Запрос информации аккаунта', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).requestAccountInfo, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -92,16 +93,7 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -114,13 +106,7 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 40),
-                        Center(
-                          child: SvgPicture.asset(
-                            getAsset(schemeIndex),
-                            width: 70,
-                            height: 70,
-                          ),
-                        ),
+                        Center(child: SvgPicture.asset(getAsset(schemeIndex), width: 70, height: 70)),
                         const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -128,11 +114,9 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                             text: TextSpan(
                               style: TextStyle(fontSize: ChatifySizes.fontSizeMd, height: 1.5, color: ChatifyColors.darkGrey),
                               children: [
-                                const TextSpan(
-                                  text: 'Создайте отчет с информацией и \n настройками вашего аккаунта \n Chatify, который вы можете \n контакта в чате со сквозным \n просмотреть или экспортировать в \n другое приложение. Этот отчет не \n содержит ваших сообщений. ',
-                                ),
+                                TextSpan(text: S.of(context).generateReportAppAccountInfo),
                                 TextSpan(
-                                  text: 'Подробнее',
+                                  text: S.of(context).readMore,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
                                   recognizer: TapGestureRecognizer()..onTap = () {},
                                 ),
@@ -142,9 +126,9 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                         ),
                         const SizedBox(height: 20),
                         const Divider(height: 0, thickness: 1),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                          child: Text('Информация аккаунта', style: TextStyle(color: ChatifyColors.darkGrey)),
+                          child: Text(S.of(context).accountInfo, style: TextStyle(color: ChatifyColors.darkGrey)),
                         ),
                         const Divider(height: 0, thickness: 1),
                         InkWell(
@@ -155,7 +139,7 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                               children: [
                                 Icon(FluentIcons.document_text_20_regular, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                 const SizedBox(width: 20),
-                                Text('Запросить отчет', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                                Text(S.of(context).requestReport, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                               ],
                             ),
                           ),
@@ -167,16 +151,9 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                             text: TextSpan(
                               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                               children: [
-                                const TextSpan(
-                                  text:
-                                    'Создайте отчет с информацией и настройками \n'
-                                    'вашего аккаунта Chatify, который вы можете \n'
-                                    'просмотреть или экспортировать в другое \n'
-                                    'приложение. Этот отчет не содержит ваших \n'
-                                    'сообщений. ',
-                                ),
+                                TextSpan(text: S.of(context).generateReportInfoSettings),
                                 TextSpan(
-                                  text: 'Подробнее',
+                                  text: S.of(context).readMore,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
                                   recognizer: TapGestureRecognizer()..onTap = () {},
                                 ),
@@ -198,11 +175,7 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                                   children: [
                                     Icon(Icons.access_time_outlined, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                     const SizedBox(width: 20),
-                                    Text(
-                                      'Создавать отчёты \n'
-                                      'автоматически',
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                                    ),
+                                    Text(S.of(context).generateReportsAuto, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                                   ],
                                 ),
                                 Switch(
@@ -222,11 +195,9 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
                             text: TextSpan(
                               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, height: 1.5, color: ChatifyColors.darkGrey),
                               children: [
-                                const TextSpan(
-                                  text: 'Новый отчет будет создаваться ежемесячно. ',
-                                ),
+                                TextSpan(text: S.of(context).newReportGeneratedMonthly),
                                 TextSpan(
-                                  text: 'Подробнее',
+                                  text: S.of(context).readMore,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
                                   recognizer: TapGestureRecognizer()..onTap = () {},
                                 ),

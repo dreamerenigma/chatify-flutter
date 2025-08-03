@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../home/widgets/dialogs/confirmation_dialog.dart';
@@ -41,10 +42,10 @@ Future<void> showSelectGifOverlay(
               onTap: () async {
                 showConfirmationDialog(
                   context: context,
-                  title: 'Сбросить неотправленное сообщение?',
-                  description: 'Ваше сообщение и прикреплённые медиафайлы не будут отправлены, если вы закроете этот экран.',
-                  confirmText: 'Сбросить',
-                  cancelText: 'Назад',
+                  title: S.of(context).resetUnsentMessage,
+                  description: S.of(context).messageAttachedMediaScreen,
+                  confirmText: S.of(context).reset,
+                  cancelText: S.of(context).back,
                   width: 530,
                   onConfirm: () async {
                     Get.back();

@@ -34,7 +34,7 @@ class LogoutDialog {
               ),
             ],
           ),
-          content: Text(logoutMessage, style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+          content: Text(logoutMessage, style: TextStyle(color: isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
           actions: <Widget>[
             TextButton(
               onPressed: onCancel,

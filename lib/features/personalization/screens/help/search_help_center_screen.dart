@@ -74,7 +74,7 @@ class SearchHelpCenterScreenState extends State<SearchHelpCenterScreen> {
                   PopupMenuItem(
                     value: 1,
                     padding: const EdgeInsets.all(16),
-                    child: Text('Открыть в браузере', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                    child: Text(S.of(context).openInBrowser, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   ),
                 ],
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -132,13 +132,10 @@ class SearchHelpCenterScreenState extends State<SearchHelpCenterScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Ничего не найдено',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold),
-                      ),
+                      Text(S.of(context).nothingFound, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       Text(
-                        'Проверьте правильность написания или используйте другие ключевые слова.',
+                        S.of(context).pleaseCheckSpellingDifferentKeywords,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey), textAlign: TextAlign.center,
                       ),
                     ],

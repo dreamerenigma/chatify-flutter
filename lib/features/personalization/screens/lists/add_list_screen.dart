@@ -149,13 +149,10 @@ class AddListScreenState extends State<AddListScreen> {
               Navigator.pop(context);
             },
           ),
-          title: Text('Добавьте в список', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+          title: Text(S.of(context).addToList, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           elevation: 1,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: _toggleSearch,
-            ),
+            IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
           ],
         ),
       ),
@@ -175,7 +172,7 @@ class AddListScreenState extends State<AddListScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Text('Только вы видите, кто находится в ваших списках', textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                  child: Text(S.of(context).onlyYouSeeWhoLists, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                 ),
               ],
             ),
@@ -184,13 +181,7 @@ class AddListScreenState extends State<AddListScreen> {
             child: ScrollConfiguration(
               behavior: NoGlowScrollBehavior(),
               child: ScrollbarTheme(
-                data: ScrollbarThemeData(
-                  thumbColor: WidgetStateProperty.resolveWith<Color>(
-                        (Set<WidgetState> states) {
-                      return ChatifyColors.darkerGrey;
-                    },
-                  ),
-                ),
+                data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                 child: Scrollbar(
                   thickness: 4,
                   thumbVisibility: false,
@@ -248,7 +239,7 @@ class AddListScreenState extends State<AddListScreen> {
                   hintText: S.of(context).settingsSearch,
                   hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
@@ -268,7 +259,7 @@ class AddListScreenState extends State<AddListScreen> {
 
   Widget _buildSelectedUsers() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           Expanded(
@@ -277,7 +268,7 @@ class AddListScreenState extends State<AddListScreen> {
               child: Row(
                 children: selectedUsers.map((user) {
                   return Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
+                    padding: const EdgeInsets.only(right: 16),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -316,15 +307,8 @@ class AddListScreenState extends State<AddListScreen> {
                                   _toggleUserSelection(user);
                                 },
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.black, width: 2.0),
-                                  ),
-                                  child: const CircleAvatar(
-                                    backgroundColor: Colors.grey,
-                                    radius: 12,
-                                    child: Icon(Icons.close, size: 16, color: Colors.black),
-                                  ),
+                                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
                                 ),
                               ),
                             ),

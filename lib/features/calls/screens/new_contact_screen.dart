@@ -2,9 +2,12 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:chatify/features/personalization/screens/account/select_country_screen.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -41,7 +44,7 @@ class _NewContactScreenState extends State<NewContactScreen> {
       await intent.launch();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to open contact add screen')),
+        SnackBar(content: Text(S.of(context).failedToOpenContactAddScreen)),
       );
     }
   }
@@ -70,13 +73,13 @@ class _NewContactScreenState extends State<NewContactScreen> {
     final saveContactsController = Get.put(SaveContactController());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      saveContactsController.updateSelectedOptionText(widget.selectedOption);
+      saveContactsController.updateSelectedOptionText(context, widget.selectedOption);
     });
 
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Новый контакт', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
+        title: Text(S.of(context).newContact, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
       ),
       body: Stack(
         children: [
@@ -104,24 +107,12 @@ class _NewContactScreenState extends State<NewContactScreen> {
                           child: TextField(
                             style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                             decoration: InputDecoration(
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              ),
-                              labelText: 'Имя',
-                              labelStyle: TextStyle(
-                                color: ChatifyColors.darkGrey,
-                                fontSize: ChatifySizes.fontSizeMd,
-                              ),
-                              floatingLabelStyle: TextStyle(
-                                color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                fontSize: ChatifySizes.fontSizeMd,
-                              ),
+                              border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              labelText: S.of(context).name,
+                              labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
+                              floatingLabelStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                               isDense: true,
                             ),
                             textCapitalization: TextCapitalization.sentences,
@@ -142,21 +133,12 @@ class _NewContactScreenState extends State<NewContactScreen> {
                     child: TextField(
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       decoration: InputDecoration(
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        ),
-                        labelText: 'Фамилия',
+                        border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                        labelText: S.of(context).surname,
                         labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
-                        floatingLabelStyle: TextStyle(
-                          color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          fontSize: ChatifySizes.fontSizeMd,
-                        ),
+                        floatingLabelStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                         isDense: true,
                       ),
                       textCapitalization: TextCapitalization.sentences,
@@ -196,16 +178,10 @@ class _NewContactScreenState extends State<NewContactScreen> {
                               fontSize: ChatifySizes.fontSizeMd,
                             ),
                             decoration: InputDecoration(
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              ),
-                              labelText: 'Страна',
+                              border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              labelText: S.of(context).country,
                               hintText: '${_selectedCountry?.alphaCode ?? ''} ${_selectedCountry?.code ?? ''}',
                               hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal),
                               labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
@@ -232,7 +208,7 @@ class _NewContactScreenState extends State<NewContactScreen> {
                               border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                               focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                              labelText: 'Телефон',
+                              labelText: S.of(context).phone,
                               labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                               floatingLabelStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                               contentPadding: EdgeInsets.zero,
@@ -269,7 +245,7 @@ class _NewContactScreenState extends State<NewContactScreen> {
                               border: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                               focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                              labelText: 'Сохранить:',
+                              labelText: '${S.of(context).save}:',
                               hintText: saveContactsController.selectedOptionText.value,
                               labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
                               floatingLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.darkGrey),
@@ -284,12 +260,24 @@ class _NewContactScreenState extends State<NewContactScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(left: 8, right: 16),
+                        child: SvgPicture.asset(ChatifyVectors.arrowReload, color: ChatifyColors.darkGrey, width: 24, height: 24),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 35, top: 20),
+                        padding: const EdgeInsets.only(left: 32, top: 20),
                         child: TextButton(
                           onPressed: () => _openContactAddScreen(context),
                           style: ButtonStyle(
@@ -300,45 +288,41 @@ class _NewContactScreenState extends State<NewContactScreen> {
                               }
                               return ChatifyColors.transparent;
                             }),
-                            foregroundColor: WidgetStateProperty.all(
-                              colorsController.getColor(colorsController.selectedColorScheme.value),
-                            ),
+                            foregroundColor: WidgetStateProperty.all(colorsController.getColor(colorsController.selectedColorScheme.value)),
                             shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                             padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 6)),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text('Добавить информацию',
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                            ),
+                            child: Text(S.of(context).addInfo, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          side: BorderSide.none,
-                        ),
-                        child: Text('Сохранить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                      ),
-                    ),
-                  ),
-                ),
               ],
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    side: BorderSide.none,
+                  ),
+                  child: Text(S.of(context).save, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                ),
+              ),
             ),
           ),
         ],

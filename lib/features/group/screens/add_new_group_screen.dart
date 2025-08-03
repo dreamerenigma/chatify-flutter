@@ -13,6 +13,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../chat/models/user_model.dart';
@@ -87,7 +88,6 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
     setState(() {
       imagePath = path;
       groupController.image.value = path ?? '';
-      log('Updated imagePath: $imagePath');
     });
   }
 
@@ -97,12 +97,11 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
       setState(() {
         groups = querySnapshot.docs.map((doc) {
           final data = doc.data();
-          log('Fetched group data: $data');
           return GroupModel.fromJson(data);
         }).toList();
       });
     } catch (e) {
-      log('Error fetching groups: $e');
+      log('${S.of(context).errorFetchingGroups}: $e');
     }
   }
 
@@ -112,24 +111,24 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
 
     switch (selectedDuration) {
       case 1:
-        durationText = '24 часа';
+        durationText = S.of(context).duration24h;
         break;
       case 5:
-        durationText = '7 дней';
+        durationText = S.of(context).duration7d;
         break;
       case 60:
-        durationText = '90 дней';
+        durationText = S.of(context).duration90d;
         break;
       case 1440:
-        durationText = 'Выкл.';
+        durationText = S.of(context).durationOff;
         break;
       default:
-        durationText = 'Выкл.';
+        durationText = S.of(context).durationOff;
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Новая группа', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         titleSpacing: 0,
       ),
       body: ScrollConfiguration(
@@ -149,20 +148,14 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                             icon: CircleAvatar(
                               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                               radius: 27,
-                              backgroundImage: controller.image.value.isNotEmpty
-                                ? FileImage(File(controller.image.value)) as ImageProvider
-                                : null,
-                              child: controller.image.value.isEmpty
-                                ? const Icon(Icons.camera_alt, color: ChatifyColors.white, size: 24,
-                              )
-                              : null,
+                              backgroundImage: controller.image.value.isNotEmpty ? FileImage(File(controller.image.value)) as ImageProvider : null,
+                              child: controller.image.value.isEmpty ? const Icon(Icons.camera_alt, color: ChatifyColors.white, size: 24) : null,
                             ),
                             onPressed: () {
                               final imageUrl = controller.image.value;
 
                               showEditImageGroupBottomDialog(
-                                context,
-                                    (newImagePath) {
+                                context, (newImagePath) {
                                   if (newImagePath != null) {
                                     controller.image.value = newImagePath;
                                   } else {
@@ -194,7 +187,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                             maxLength: maxCharacters,
                             textCapitalization: TextCapitalization.sentences,
                             decoration: InputDecoration(
-                              hintText: 'Название группы (необходимо)',
+                              hintText: S.of(context).groupNameRequired,
                               hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                               border: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey)),
                               enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey, width: 2)),
@@ -202,14 +195,11 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                               isDense: true,
                               counterText: '',
                               suffix: textController.text.isNotEmpty
-                                  ? Padding(
-                                padding: const EdgeInsets.only(left: 8, right: 4),
-                                child: Text(
-                                  '${maxCharacters - textController.text.length}',
-                                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: ChatifyColors.grey),
-                                ),
-                              )
-                                  : null,
+                                ? Padding(
+                                    padding: const EdgeInsets.only(left: 8, right: 4),
+                                    child: Text('${maxCharacters - textController.text.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: ChatifyColors.grey)),
+                                  )
+                                : null,
                             ),
                             style: TextStyle(overflow: TextOverflow.ellipsis, fontSize: ChatifySizes.fontSizeMd),
                             onChanged: (text) {
@@ -245,7 +235,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Исчезающие сообщения', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                              Text(S.of(context).disappearingMessages, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                               const SizedBox(height: 4),
                               Text(durationText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                             ],
@@ -257,10 +247,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const GroupPermissionsScreen()),
-                      );
+                      Navigator.push(context, createPageRoute(const GroupPermissionsScreen()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -270,7 +257,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Разрешения группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                              Text(S.of(context).groupPermissions, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                             ],
                           ),
                           const Icon(Icons.settings_outlined, color: ChatifyColors.darkGrey),
@@ -280,7 +267,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Text('Участники (${widget.selectedUsers.length})', style: const TextStyle(color: ChatifyColors.darkGrey)),
+                    child: Text('${S.of(context).participants} (${widget.selectedUsers.length})', style: const TextStyle(color: ChatifyColors.darkGrey)),
                   ),
                   GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -298,37 +285,18 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                           user.image.isNotEmpty
                           ? CachedNetworkImage(
                             imageUrl: user.image,
-                            placeholder: (context, url) => const CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              radius: 30,
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                            ),
+                            placeholder: (context, url) => const CircleAvatar(backgroundColor: Colors.grey, radius: 30, child: Icon(Icons.person, color: ChatifyColors.white, size: 24)),
                             errorWidget: (context, url, error) => const CircleAvatar(
                               backgroundColor: ChatifyColors.blackGrey,
                               radius: 30,
-                              child: Icon(
-                                Icons.error,
-                                color: ChatifyColors.red,
-                                size: 24,
-                              ),
+                              child: Icon(Icons.error, color: ChatifyColors.red, size: 24),
                             ),
-                            imageBuilder: (context, imageProvider) => CircleAvatar(
-                              backgroundImage: imageProvider,
-                              radius: 30,
-                            ),
+                            imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider, radius: 30),
                           )
                           : const CircleAvatar(
                             backgroundColor: ChatifyColors.blackGrey,
                             radius: 30,
-                            child: Icon(
-                              Icons.person,
-                              color: ChatifyColors.white,
-                              size: 24,
-                            ),
+                            child: Icon(Icons.person, color: ChatifyColors.white, size: 24),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -360,7 +328,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'addNewGroup',
           onPressed: () async {
@@ -369,17 +337,17 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
             final createdAt = DateTime.now();
 
             if (groupName.isEmpty) {
-              CustomIconSnackBar.showAnimatedSnackBar(context, 'Пожалуйста, введите название группы', icon: const Icon(Icons.warning_amber_rounded), iconColor: ChatifyColors.yellow);
+              CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).pleaseEnterGroupName, icon: const Icon(Icons.warning_amber_rounded), iconColor: ChatifyColors.yellow);
               return;
             }
 
             if (members.isEmpty) {
-              CustomIconSnackBar.showAnimatedSnackBar(context, 'Добавьте хотя бы одного участника', icon: const Icon(Icons.warning_amber_rounded), iconColor: ChatifyColors.yellow);
+              CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).addLeastOneParticipant, icon: const Icon(Icons.warning_amber_rounded), iconColor: ChatifyColors.yellow);
               return;
             }
 
             if (imagePath == null) {
-              CustomIconSnackBar.showAnimatedSnackBar(context, 'Пожалуйста, выберите изображение для группы', icon: const Icon(Icons.warning_amber_rounded), iconColor: ChatifyColors.yellow);
+              CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).pleaseSelectImageGroup, icon: const Icon(Icons.warning_amber_rounded), iconColor: ChatifyColors.yellow);
               return;
             }
 
@@ -389,7 +357,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
               groupName: groupName,
               groupImage: '',
               members: members,
-              creatorName: APIs.user.displayName ?? 'Unknown User',
+              creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
               createdAt: createdAt,
               pushToken: '',
               lastMessageTimestamp: 0,
@@ -401,7 +369,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
               Navigator.pop(context);
               Navigator.pushReplacement(context, createPageRoute(HomeScreen(user: APIs.me)));
             } else {
-              CustomIconSnackBar.showAnimatedSnackBar(context, 'Ошибка при создании группы', icon: const Icon(Icons.error_outline_outlined), iconColor: ChatifyColors.error);
+              CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).errorCreatingGroup, icon: const Icon(Icons.error_outline_outlined), iconColor: ChatifyColors.error);
             }
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -19,12 +20,10 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
   final ScrollController scrollController = ScrollController();
   bool isInside = false;
   List<Widget> rows = [];
-
-  List<String> actions = [
-    "Новый чат", "Закрыть чат", "Закрыть чат", "Закрыть приложение", "Новая группа", "Поиск", "Поиск в чате", "Профиль",
-    "Отключение звука в чате", "Пометить как прочитанное/непрочитанное", "Панель смайликов", "Панель GIF", "Панель стикеров",
-    "Предыдущий чат", "Следующий чат", "Предыдущий чат", "Следующий чат", "Открыть чат", "Редактирование последнего сообщения",
-    "Уменьшить размер шрифта", "Увеличить размер шрифта", "Сбросить размер ширфта"
+  List<String> actions = [S.current.newChat, S.current.closeChat, S.current.closeChat, S.current.closeApp, S.current.newGroup, S.current.search, S.current.searchInChat,
+    S.current.profile, S.current.muteChat, S.current.markAsReadUnread, S.current.emojiPanel, S.current.gifPanel, S.current.stickerPanel,
+    S.current.previousChat, S.current.nextChat, S.current.previousChat, S.current.nextChat, S.current.openChat, S.current.editLastMessage,
+    S.current.decreaseFontSize, S.current.increaseFontSize, S.current.resetFontSize,
   ];
 
   List<List<String>> hotkeys = [
@@ -108,23 +107,20 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Горячие клавиши", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+              Text(S.of(context).hotKeys, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
               const SizedBox(height: 25),
-              Text("Сочетания клавиш", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+              Text(S.of(context).keyboardShortcuts, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
               const SizedBox(height: 15),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows),
               const SizedBox(height: 25),
-              Text("Быстрые смайлики", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+              Text(S.of(context).quickEmoticons, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
               const SizedBox(height: 25),
-              Text(
-                "Во время набора сообщения используйте знак двоеточие дял быстрого поиска  выбора смайликов.",
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
-              ),
+              Text(S.of(context).typingMessageUseColonSymbol, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Кошка', style: TextStyle(fontSize: 13)),
+                  Text(S.of(context).cat, style: TextStyle(fontSize: 13)),
                   SizedBox(width: 10),
                   Spacer(),
                   Container(
@@ -150,7 +146,7 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
                       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey.withAlpha((0.5 * 255).toInt()), width: 1),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text(":кошка", style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                    child: Text(':${S.of(context).cat.toLowerCase()}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                   ),
                   SizedBox(width: 10),
                   SvgPicture.asset(ChatifyVectors.twoLineHorizontal, width: 21, height: 21, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
@@ -172,7 +168,7 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Шляпа', style: TextStyle(fontSize: 13)),
+                  Text(S.of(context).hat, style: TextStyle(fontSize: 13)),
                   SizedBox(width: 10),
                   Spacer(),
                   Container(
@@ -192,7 +188,7 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey.withAlpha((0.5 * 255).toInt()), width: 1), borderRadius: BorderRadius.circular(4)),
-                    child: Text(":шляпа", style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                    child: Text(':${S.of(context).hat.toLowerCase()}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                   ),
                   SizedBox(width: 10),
                   SvgPicture.asset(ChatifyVectors.twoLineHorizontal, width: 21, height: 21, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),

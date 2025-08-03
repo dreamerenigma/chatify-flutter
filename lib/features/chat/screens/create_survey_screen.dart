@@ -65,9 +65,7 @@ class _CreateSurveyScreenState extends State<CreateSurveyScreen> {
                 child: TextFormField(
                   controller: askQuestionController,
                   focusNode: askQuestionFocusNode,
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeMd,
-                  ),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     hintText: S.of(context).askQuestion,
@@ -95,9 +93,7 @@ class _CreateSurveyScreenState extends State<CreateSurveyScreen> {
                 child: TextFormField(
                   controller: addQuestionOneController,
                   focusNode: addQuestionOneFocusNode,
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeMd,
-                  ),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     hintText: S.of(context).addPlus,
@@ -123,9 +119,7 @@ class _CreateSurveyScreenState extends State<CreateSurveyScreen> {
                 child: TextFormField(
                   controller: addQuestionTwoController,
                   focusNode: addQuestionTwoFocusNode,
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeMd,
-                  ),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     hintText: S.of(context).addPlus,
@@ -168,7 +162,7 @@ class _CreateSurveyScreenState extends State<CreateSurveyScreen> {
       ),
 
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'survey',
           onPressed: () {

@@ -33,20 +33,15 @@ class CreatedCommunityScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: DeviceUtils.getScreenHeight(context) * .15),
-                Center(
-                  child: Image.asset(
-                    ChatifyImages.createdCommunity,
-                    height: 150,
-                  ),
-                ),
+                Center(child: Image.asset(ChatifyImages.createdCommunity, height: 150)),
                 const SizedBox(height: 20),
-                const Text('Создайте новое сообщество', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,), textAlign: TextAlign.center),
+                Text(S.of(context).createNewCommunity, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,), textAlign: TextAlign.center),
                 const SizedBox(height: 10),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
-                    'Организуйте общение для своего района, учебного заведения или других коллективов. Создавайте тематические группы и пользуйтесь удобной функцией рассылки объявлений от админа.',
-                    style: TextStyle(fontSize: 16, color: ChatifyColors.darkGrey),
+                    S.of(context).organizeCommunicationEducational,
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -64,7 +59,7 @@ class CreatedCommunityScreen extends StatelessWidget {
                 ),
                 const Spacer(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -72,12 +67,12 @@ class CreatedCommunityScreen extends StatelessWidget {
                         Navigator.push(context, createPageRoute(NewCommunityScreen(onCommunitySelected: onCommunitySelected)));
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: ChatifyColors.blue,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         side: BorderSide.none,
                       ),
-                      child: Text('Начать', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      child: Text(S.of(context).begin, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                     ),
                   ),
                 ),

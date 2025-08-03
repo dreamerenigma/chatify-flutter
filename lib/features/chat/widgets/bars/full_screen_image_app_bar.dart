@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconoir_icons/iconoir_icons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../controllers/zoom_controller.dart';
@@ -98,7 +99,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
             leading: CustomTooltip(
-              message: 'Назад',
+              message: S.of(context).back,
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).pop();
@@ -122,7 +123,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                 ),
               ),
               CustomTooltip(
-                message: isRatioOneToOne ? 'Увеличить до нужного размера' : 'Увеличить до оригинального размера',
+                message: isRatioOneToOne ?  S.of(context).enlargeToDesiredSize : S.of(context).enlargeToOriginalSize,
                 child: InkWell(
                   onTap: () {
                     setState(() {
@@ -142,7 +143,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                     : Padding(padding: const EdgeInsets.all(10), child: Icon(FluentIcons.ratio_one_to_one_20_regular, size: 22))),
               ),
               CustomTooltip(
-                message: 'Увеличить (Ctrl +)',
+                message: S.of(context).zoomIn,
                 child: InkWell(
                   onTap: () {},
                   mouseCursor: SystemMouseCursors.basic,
@@ -154,7 +155,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                 ),
               ),
               CustomTooltip(
-                message: 'Уменьшить (Ctrl -)',
+                message: S.of(context).zoomOut,
                 child: InkWell(
                   onTap: () {},
                   mouseCursor: SystemMouseCursors.basic,
@@ -167,7 +168,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
               ),
               VerticalDivider(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white, thickness: 1, indent: 16, endIndent: 16),
               CustomTooltip(
-                message: 'В Избранное',
+                message: S.of(context).addToFavorites,
                 child: InkWell(
                   onTap: () {
                     setState(() {
@@ -183,7 +184,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                 ),
               ),
               CustomTooltip(
-                message: 'Отреагировать на сообщение',
+                message: S.of(context).reactToMessage,
                 child: InkWell(
                   onTap: () {
                     final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -200,7 +201,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                 ),
               ),
               CustomTooltip(
-                message: 'Другие опции скрыты',
+                message: S.of(context).otherOptionsHidden,
                 child: InkWell(
                   onTap: () {
                     final RenderBox renderBox = context.findRenderObject() as RenderBox;

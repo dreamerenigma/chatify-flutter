@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 
@@ -10,7 +11,7 @@ void showDeleteChatDialog(BuildContext context, List<UserModel> users, List<int>
     barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Удалить чаты?'),
+        title: Text(S.of(context).deleteChats),
         backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
         actions: [
           TextButton(
@@ -18,11 +19,11 @@ void showDeleteChatDialog(BuildContext context, List<UserModel> users, List<int>
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.blue.withAlpha((0.1 * 255).toInt()),
+              foregroundColor: ChatifyColors.blue,
+              backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: const Text('Отмена'),
+            child: Text(S.of(context).cancel),
           ),
           TextButton(
             onPressed: () {
@@ -30,7 +31,7 @@ void showDeleteChatDialog(BuildContext context, List<UserModel> users, List<int>
                 final user = users[index];
                 APIs.deleteChat(user.id).then((value) {
                 }).catchError((error) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Не удалось удалить чат')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).failedDeleteChat)));
                 });
               }
               Navigator.pop(context);
@@ -40,7 +41,7 @@ void showDeleteChatDialog(BuildContext context, List<UserModel> users, List<int>
               backgroundColor: Colors.blue.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: const Text('Удалить чаты'),
+            child: Text('${S.of(context).deleteChats}?'),
           ),
         ],
       );

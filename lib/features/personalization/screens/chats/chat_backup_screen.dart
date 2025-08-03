@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -17,7 +18,7 @@ class ChatBackupScreenState extends State<ChatBackupScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Резервная копия чатов', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).chatsBackup, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +26,7 @@ class ChatBackupScreenState extends State<ChatBackupScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Text(
-              'Настройки резервного копирования. Создавайте резервные копии ваших чатов и медиафайлов в хранилище вашего аккаунта Input Studios. Вы сможете восстановить их на новом телефоне после скачивания Chatify.',
+              S.of(context).backupSettingsAccountStorage,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
@@ -54,7 +55,7 @@ class ChatBackupScreenState extends State<ChatBackupScreen> {
                   textStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: const Text('Создать резервную копию', style: TextStyle(color: ChatifyColors.black)),
+                child: Text(S.of(context).createBackupCopy, style: TextStyle(color: ChatifyColors.black)),
               ),
             ),
           ),

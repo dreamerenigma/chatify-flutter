@@ -92,8 +92,8 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                 },
               ));
             },
-            menuItem1Text: 'Привязать как вспомогательное устройство',
-            menuItem2Text: 'Помощь',
+            menuItem1Text: S.of(context).bindAuxiliaryDevice,
+            menuItem2Text: S.of(context).help,
           ),
           _buildPhoneLoginForm(),
         ],

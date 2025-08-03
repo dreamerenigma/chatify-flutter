@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../home/widgets/input/search_text_input.dart';
 
@@ -20,7 +21,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text('Общие группы (0)', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+          child: Text('${S.of(context).generalGroups[0].toUpperCase()}${S.of(context).generalGroups.substring(1)}', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
         ),
         Padding(
           padding: EdgeInsets.only(left: 16, right: 16, top: 8),

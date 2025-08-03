@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../data/file_extensions_data.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/formatters/formatter.dart';
@@ -81,13 +82,13 @@ class AudioWidgetState extends State<AudioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final fileName = widget.documentName.isNotEmpty ? widget.documentName : 'Unknown';
+    final fileName = widget.documentName.isNotEmpty ? widget.documentName : S.of(context).unknown;
     final fileExtension = fileName.split('.').last.toLowerCase();
     final fileTypeDescription = FileExtensionsData.fileTypeDescriptions[fileExtension] ?? fileExtension.toUpperCase();
     final fileSizeValue = widget.fileSize;
     final cleanedFileSize = Formatter.cleanFileSizeString(fileSizeValue);
     double fileSizeBytes = double.tryParse(cleanedFileSize) ?? 0;
-    final fileSize = fileSizeBytes > 0 ? Formatter.formatFileSize(fileSizeBytes) : 'Unknown size';
+    final fileSize = fileSizeBytes > 0 ? Formatter.formatFileSize(fileSizeBytes) : S.of(context).unknownSize;
     final backgroundColor = widget.isSender ? (context.isDarkMode ? ChatifyColors.greenMessageBorderLight : ChatifyColors.greenMessageLight) : (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.white);
     final borderColor = widget.isSender ? (context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.lightGrey);
     final dividerColor = widget.isSender ? (context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.lightGrey);
@@ -129,7 +130,7 @@ class AudioWidgetState extends State<AudioWidget> {
                           style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w300, fontFamily: 'Roboto', height: 1.2),
                         ),
                         const SizedBox(height: 2),
-                        Text('$fileSize, Файл \'${fileTypeDescription.toUpperCase()}\'', style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontFamily: 'Roboto', fontWeight: FontWeight.w300, height: 1.2)),
+                        Text('$fileSize, ${S.of(context).file} \'${fileTypeDescription.toUpperCase()}\'', style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontFamily: 'Roboto', fontWeight: FontWeight.w300, height: 1.2)),
                       ],
                     ),
                   ),
@@ -145,7 +146,7 @@ class AudioWidgetState extends State<AudioWidget> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {},
-                      label: const Text('Скачать'),
+                      label: Text(S.of(context).download),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: buttonColor,
                         foregroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.white,
@@ -161,7 +162,7 @@ class AudioWidgetState extends State<AudioWidget> {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {},
-                        label: const Text('Открыть'),
+                        label: Text(S.of(context).open),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonColor,
                           foregroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.white,
@@ -176,7 +177,7 @@ class AudioWidgetState extends State<AudioWidget> {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {},
-                        label: Text('Сохранить как', overflow: TextOverflow.ellipsis),
+                        label: Text(S.of(context).saveAs, overflow: TextOverflow.ellipsis),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonColor,
                           foregroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.white,

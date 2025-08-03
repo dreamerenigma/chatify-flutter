@@ -7,11 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
 void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingController textController) async {
-  log('showEditTextDialog called at: $localPosition');
   final overlay = Overlay.of(context);
   OverlayEntry? overlayEntry;
   OverlayState overlayState = overlay;
@@ -21,7 +21,6 @@ void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingC
   final Animation<Offset> slideAnimation = Tween<Offset>(begin: Offset(0, -0.1), end: Offset(0, 0)).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic));
   final ValueNotifier<bool> showBottomBarNotifier = ValueNotifier(true);
 
-  log('Inserting overlay at position: $position');
   overlayEntry = OverlayEntry(
     builder: (context) => Stack(
       children: [
@@ -162,7 +161,7 @@ void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingC
                                                 const SizedBox(width: 8),
                                                 SvgPicture.asset(ChatifyVectors.clipboard, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                                                 const SizedBox(width: 10),
-                                                Text('Вставить', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                                Text(S.of(context).insert, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                               ],
                                             ),
                                           ),

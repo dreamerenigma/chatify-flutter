@@ -156,7 +156,7 @@ void showDeleteMessageDialog(BuildContext context, {String? title, String? descr
 }
 
 Widget _buildDeleteOptions(BuildContext context, ValueNotifier<int?> selectedOptionIndex) {
-  List<String> options = ['Удалить у меня', 'Удалить у всех'];
+  List<String> options = [S.of(context).deleteFromMe, S.of(context).deleteFromAll];
   List<ValueNotifier<bool>> hoverStateList = List.generate(options.length, (index) => ValueNotifier<bool>(false));
 
   return Column(

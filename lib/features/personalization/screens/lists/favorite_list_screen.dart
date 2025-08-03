@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -23,10 +24,10 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -34,7 +35,7 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -60,17 +61,17 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 30),
                   child: Text(
-                    'Используйте карандаш, чтобы изменить порядок списков на вкладке "Чаты".',
+                    S.of(context).usePencilChangeOrderLists,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text('Включены в список', style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                  child: Text(S.of(context).includedInList, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                 ),
                 const SizedBox(height: 4),
                 InkWell(
@@ -89,17 +90,17 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
                           child: Icon(Icons.add_rounded, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                         ),
                         const SizedBox(width: 16),
-                        Text('Добавить людей или группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                        Text(S.of(context).addPeopleOrGroupsFavorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                         const Divider(height: 0, thickness: 1),
                       ],
                     ),
                   ),
                 ),
                 const Divider(),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 14),
                   child: Text(
-                    'Вы можете отредактировать "Избранное" здесь или изменить порядок отображения "Избранного" на вкладке "Звонки"',
+                    S.of(context).editYourFavoritesChange,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
                   ),

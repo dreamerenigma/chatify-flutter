@@ -1,6 +1,7 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/add_new_contact_bottom_dialog.dart';
@@ -20,7 +21,7 @@ class CreateNewContactDialog extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.softGrey,
-          title: Text('Создать новый контакт или добавить к существующему?',
+          title: Text(S.of(context).createNewContactOrAddExistingOne,
             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey),
           ),
           actions: <Widget>[
@@ -39,7 +40,7 @@ class CreateNewContactDialog extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
               child: Text(
-                'Существующий',
+                S.of(context).existing,
                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
               ),
             ),
@@ -54,7 +55,7 @@ class CreateNewContactDialog extends StatelessWidget {
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: Text('Новый',
+              child: Text(S.of(context).createNewContact,
                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
               ),
             ),

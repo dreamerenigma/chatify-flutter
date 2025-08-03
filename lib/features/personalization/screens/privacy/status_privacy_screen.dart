@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -15,12 +16,6 @@ class StatusPrivacyScreen extends StatefulWidget {
 class StatusPrivacyScreenState extends State<StatusPrivacyScreen> {
   final _storage = GetStorage();
   String _selectedOption = '';
-
-  final List<Map<String, String>> _options = [
-    {'value': 'contacts', 'label': 'Мои контакты'},
-    {'value': 'favorites', 'label': 'Контакты, кроме...'},
-    {'value': 'nobody', 'label': 'Только...'},
-  ];
 
   @override
   void initState() {
@@ -37,6 +32,12 @@ class StatusPrivacyScreenState extends State<StatusPrivacyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> options = [
+      {'value': 'contacts', 'label': S.of(context).myContacts},
+      {'value': 'favorites', 'label': S.of(context).contactsOtherThan},
+      {'value': 'nobody', 'label': S.of(context).only},
+    ];
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -53,10 +54,7 @@ class StatusPrivacyScreenState extends State<StatusPrivacyScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              'Конфиденциальность статуса',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal),
-            ),
+            title: Text(S.of(context).confidentialityStatus, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -74,11 +72,11 @@ class StatusPrivacyScreenState extends State<StatusPrivacyScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'Кто жет видеть обновления моего статуса',
+              S.of(context).seeMyStatusUpdates,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
-          ..._options.map((option) {
+          ...options.map((option) {
             return RadioListTile(
               value: option['value'],
               groupValue: _selectedOption,
@@ -98,7 +96,7 @@ class StatusPrivacyScreenState extends State<StatusPrivacyScreen> {
                   ),
                   if (option['value'] == 'favorites' || option['value'] == 'nobody')
                     Text(
-                      option['value'] == 'favorites' ? 'Искл. 0' : 'Вкл. 0',
+                      option['value'] == 'favorites' ? S.of(context).exceptions : S.of(context).onZero,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                     ),
                 ],
@@ -108,7 +106,7 @@ class StatusPrivacyScreenState extends State<StatusPrivacyScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'Изменения в настройках конфиденциальности не затронут уже отправленные ваши обновления статуса',
+              S.of(context).changingYourPrivacySettings,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),

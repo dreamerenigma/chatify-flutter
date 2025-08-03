@@ -71,15 +71,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -100,10 +92,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                       child: Row(
                         children: [
                           Obx(() {
-                            return Icon(
-                              Icons.brightness_6,
-                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            );
+                            return Icon(Icons.brightness_6, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
                           Column(
@@ -111,10 +100,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                             children: [
                               Text(S.of(context).themes, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                               Obx(() {
-                                return Text(
-                                  themesController.getThemeDescription(),
-                                  style: const TextStyle(color: ChatifyColors.darkGrey),
-                                );
+                                return Text(themesController.getThemeDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
                               }),
                             ],
                           ),
@@ -137,12 +123,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Сезоны', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                              Text(S.of(context).seasons, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                               Obx(() {
-                                return Text(
-                                  seasonsController.getSeasonDescription(),
-                                  style: const TextStyle(color: ChatifyColors.darkGrey),
-                                );
+                                return Text(seasonsController.getSeasonDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
                               }),
                             ],
                           ),
@@ -159,21 +142,15 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                       child: Row(
                         children: [
                           Obx(() {
-                            return Icon(
-                              Icons.color_lens,
-                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            );
+                            return Icon(Icons.color_lens, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Цвет приложения', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                              Text(S.of(context).appColor, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                               Obx(() {
-                                return Text(
-                                  colorsController.getColorName(),
-                                  style: const TextStyle(color: ChatifyColors.darkGrey),
-                                );
+                                return Text(colorsController.getColorName(), style: const TextStyle(color: ChatifyColors.darkGrey));
                               }),
                             ],
                           ),
@@ -183,10 +160,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   ),
                   InkWell(
                     onTap: () async {
-                      final selectedWallpaper = await Navigator.push(
-                        context,
-                        createPageRoute(const WallpaperScreen(imagePath: '')),
-                      );
+                      final selectedWallpaper = await Navigator.push(context, createPageRoute(const WallpaperScreen(imagePath: '')));
 
                       if (selectedWallpaper != null) {
                         setState(() {});
@@ -197,10 +171,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                       child: Row(
                         children: [
                           Obx(() {
-                            return Icon(
-                              Icons.wallpaper,
-                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            );
+                            return Icon(Icons.wallpaper, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
                           Text(S.of(context).wallpapers, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
@@ -214,7 +185,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 8, right: 12),
+                        padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8, right: 12),
                         child: Text(S.of(context).chatSettings, style: const TextStyle(fontSize: 14)),
                       ),
                       Obx(() {
@@ -298,13 +269,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      S.of(context).fontSize,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
-                                    ),
+                                    Text(S.of(context).fontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                                     Obx(() {
                                       return Text(
-                                        fontsController.getFontDescription(FontsController.instance.selectedFont.value),
+                                        fontsController.getFontDescription(context, FontsController.instance.selectedFont.value),
                                         style: const TextStyle(color: ChatifyColors.darkGrey),
                                       );
                                     }),
@@ -331,18 +299,12 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Расшифровка гол. сообщений',
-                                      style: TextStyle(
-                                        fontSize: ChatifySizes.fontSizeMd,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      S.of(context).decodingVoiceMessages,
+                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const Text(
-                                      'Читайте новые голосовые сообщения',
-                                      style: TextStyle(color: ChatifyColors.darkGrey),
-                                    ),
+                                    Text(S.of(context).readNewVoiceMessages, style: TextStyle(color: ChatifyColors.darkGrey)),
                                   ],
                                 ),
                               ),
@@ -371,7 +333,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 8, right: 12),
+                        padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8, right: 12),
                         child: Text(S.of(context).archivedChats, style: const TextStyle(fontSize: 14)),
                       ),
                       InkWell(
@@ -413,10 +375,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   const Divider(height: 0, thickness: 1),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const ChatBackupScreen()),
-                      );
+                      Navigator.push(context, createPageRoute(const ChatBackupScreen()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
@@ -433,20 +392,14 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const TransferringChatsScreen()),
-                      );
+                      Navigator.push(context, createPageRoute(const TransferringChatsScreen()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
                       child: Row(
                         children: [
                           Obx(() {
-                            return Icon(
-                              FluentIcons.phone_arrow_right_24_regular,
-                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            );
+                            return Icon(FluentIcons.phone_arrow_right_24_regular, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
                           Text(S.of(context).transferChats, style: const TextStyle(fontSize: 16)),
@@ -456,20 +409,14 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const ChatsHistoryScreen()),
-                      );
+                      Navigator.push(context, createPageRoute(const ChatsHistoryScreen()));
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(18.0),
+                      padding: const EdgeInsets.all(18),
                       child: Row(
                         children: [
                           Obx(() {
-                            return Icon(
-                              Icons.home,
-                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            );
+                            return Icon(Icons.home, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
                           Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),

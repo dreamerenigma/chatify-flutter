@@ -3,16 +3,17 @@ import 'package:chatify/features/authentication/screens/login_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
+import '../../../utils/constants/app_links.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../../utils/platforms/platform_utils.dart';
 import '../../../utils/popups/custom_tooltip.dart';
 import '../../../utils/popups/dialogs.dart';
+import '../../../utils/urls/url_utils.dart';
 import '../../../version.dart';
 import '../../personalization/controllers/language_controller.dart';
 import '../../personalization/screens/help/support/screens/support_screen.dart';
@@ -103,7 +104,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
             top: isWebOrWindows ? 0 : (isMobile ? 30 : 10),
             right: !kIsWeb && Platform.isWindows ? 5 : 0,
             child: CustomTooltip(
-              message: 'Войти',
+              message: S.of(context).login,
               horizontalOffset: -35,
               verticalOffset: 0,
               child: Material(
@@ -171,7 +172,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                       if (value == 1) {
                         await _showDialogsSequentially(context);
                         Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => const SupportScreen(),
+                          pageBuilder: (context, animation, secondaryAnimation) => const SupportScreen(title: 'Поддержка'),
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return FadeTransition(opacity: animation, child: child);
                           },
@@ -262,12 +263,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                                 onExit: (_) => setState(() => isHoveredPrivacy = false),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    final Uri url = Uri.parse('https://inputstudios.ru/legal/privacy-policy');
-                                    if (await canLaunchUrl(url)) {
-                                      await launchUrl(url);
-                                    } else {
-                                      throw 'Не удалось открыть $url';
-                                    }
+                                    await UrlUtils.launchURL(AppLinks.privacyPolicy);
                                   },
                                   child: Text(
                                     S.of(context).privacyPolicy,
@@ -293,12 +289,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                                 onExit: (_) => setState(() => isHoveredTermsOfUse = false),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    final Uri url = Uri.parse('https://inputstudios.ru/legal/terms-of-service');
-                                    if (await canLaunchUrl(url)) {
-                                      await launchUrl(url);
-                                    } else {
-                                      throw 'Не удалось открыть $url';
-                                    }
+                                    await UrlUtils.launchURL(AppLinks.termsOfUse);
                                   },
                                   child: Text(
                                     S.of(context).termsOfService,

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -28,26 +27,21 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
   String get formattedDate {
 
     if (widget.createdAt.isEmpty) {
-      return 'Дата не указана';
+      return S.of(context).dateNotSpecified;
     }
     try {
       final timestamp = int.tryParse(widget.createdAt);
-      log('Parsed timestamp: $timestamp');
 
       if (timestamp == null) {
-        log('Invalid timestamp format: ${widget.createdAt}');
-        return 'Invalid date';
+        return S.of(context).invalidDate;
       }
 
       final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      log('Parsed date: $date');
 
       final formatted = DateFormat('dd.MM.yyyy').format(date);
-      log('Formatted date: $formatted');
       return formatted;
     } catch (e) {
-      log('Error parsing date: $e');
-      return 'Invalid date';
+      return S.of(context).invalidDate;
     }
   }
 
@@ -70,21 +64,13 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
               ),
             ],
           ),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            flexibleSpace: NewsletterAppbar(newsletters: widget.newsletters),
-          ),
+          child: AppBar(automaticallyImplyLeading: false, flexibleSpace: NewsletterAppbar(newsletters: widget.newsletters)),
         ),
       ),
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(backgroundImage),
-                fit: BoxFit.cover,
-              ),
-            ),
+            decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)),
           ),
           Positioned(
             top: 0,
@@ -100,14 +86,14 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                   borderRadius: BorderRadius.circular(9),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                       blurRadius: 3,
                       spreadRadius: 1,
                     ),
                   ],
                 ),
                 child: Text(
-                  formattedDate.isNotEmpty ? formattedDate : 'Invalid date',
+                  formattedDate.isNotEmpty ? formattedDate : S.of(context).invalidDate,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                 ),
               ),
@@ -128,7 +114,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                     },
                     child: Container(
                       margin: const EdgeInsets.only(left: 40, right: 40, top: 14),
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                         borderRadius: BorderRadius.circular(8),

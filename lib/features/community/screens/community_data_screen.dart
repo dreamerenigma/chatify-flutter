@@ -3,6 +3,7 @@ import 'package:chatify/features/community/screens/edit_community_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/devices/device_utility.dart';
@@ -82,7 +83,7 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
     return Positioned(
       left: 0,
       right: 0,
-      top: 40.0,
+      top: 40,
       child: Row(
         children: [
           IconButton(
@@ -114,7 +115,7 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
                   Icon(Icons.link, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 22),
                   const SizedBox(height: 4),
                   Text(
-                    'Пригласить',
+                    S.of(context).invite,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
                   ),
@@ -135,7 +136,7 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
                   Icon(Icons.person_add_alt_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 22),
                   const SizedBox(height: 4),
                   Text(
-                    'Добавить участников',
+                    S.of(context).addParticipants,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
                     overflow: TextOverflow.visible,
@@ -157,7 +158,7 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
                   Icon(Icons.group_add_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 22),
                   const SizedBox(height: 4),
                   Text(
-                    'Добавить группы',
+                    S.of(context).addGroups,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
                     overflow: TextOverflow.visible,

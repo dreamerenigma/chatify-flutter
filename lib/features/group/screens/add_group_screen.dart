@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../api/apis.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../community/widgets/community_widget.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 
@@ -23,7 +24,7 @@ class AddGroupScreen extends StatelessWidget {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
                 color: shadowColor,
@@ -44,7 +45,7 @@ class AddGroupScreen extends StatelessWidget {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Управление группами', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                Text(S.of(context).managingGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                 Text('2 из 101', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
               ],
             ),
@@ -62,18 +63,12 @@ class AddGroupScreen extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.group,
-                      color: Colors.white,
-                    ),
+                    decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                    child: const Icon(Icons.group, color: ChatifyColors.white),
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    'Новая группа',
+                    S.of(context).newGroup,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -88,38 +83,23 @@ class AddGroupScreen extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
+                    decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                    child: const Icon(Icons.add, color: ChatifyColors.white),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    'Добавить сущ. группы',
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
-                  ),
+                  Text(S.of(context).addNounGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              'Участники могут предлагать существующие группы на рассмотрение админам и добавлять новые группы самостоятельно. Открыть настройки сообщества',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-            ),
+            child: Text(S.of(context).membersCanProposeExistingGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
           ),
           const Divider(),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
-            child: Text(
-              'Группы в этом сообществе',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-            ),
+            child: Text(S.of(context).groupsInCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
           ),
           Expanded(
             child: CommunityWidgets(

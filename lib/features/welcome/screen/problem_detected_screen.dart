@@ -55,7 +55,7 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 5, right: 5),
                     child: CustomTooltip(
-                      message: 'Назад',
+                      message: S.of(context).back,
                       horizontalOffset: -35,
                       verticalOffset: 10,
                       child: MouseRegion(
@@ -96,7 +96,7 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Align(
-                          alignment: Alignment.center,
+                          alignment: isMobile ? Alignment.centerLeft : Alignment.center,
                           child: Text(S.of(context).problemDetected, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                         ),
                       ],
@@ -128,7 +128,7 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
               onTap: () async {
                 await Dialogs.showCustomDialog(context: context, message: S.of(context).connected, duration: const Duration(seconds: 4));
                 Navigator.of(context).push(PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const SupportScreen(),
+                  pageBuilder: (context, animation, secondaryAnimation) => const SupportScreen(title: 'Поддержка'),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                     return FadeTransition(opacity: animation, child: child);
                   },
@@ -244,7 +244,7 @@ class _ProblemDetectedScreenState extends State<ProblemDetectedScreen> {
                   onPressed: () async {
                     await Dialogs.showCustomDialog(context: context, message: S.of(context).connected, duration: const Duration(seconds: 4));
                     Navigator.of(context).push(PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) => const SupportScreen(),
+                      pageBuilder: (context, animation, secondaryAnimation) => const SupportScreen(title: 'Поддержка'),
                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
                         return FadeTransition(opacity: animation, child: child);
                       },

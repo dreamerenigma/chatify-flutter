@@ -38,7 +38,7 @@ class AboutAppScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Image.asset(ChatifyImages.appLogoLight, height: 100),
                   const SizedBox(height: 16),
-                  Text('© 2024 Input Studios Inc.', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
+                  Text('© ${DateTime.now().year} Input Studios Inc.', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                   const SizedBox(height: 32),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -13,11 +12,8 @@ class EditImageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('fileToSend in EditImageScreen: ${fileToSend.path}');
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).editImage),
-      ),
+      appBar: AppBar(title: Text(S.of(context).editImage)),
       body: Column(
         children: [
           Expanded(
@@ -30,7 +26,7 @@ class EditImageScreen extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: ShareInput(user: user, fileToSend: fileToSend),
           ),
         ],

@@ -24,12 +24,12 @@ void showExitGroupDialog(BuildContext context, GroupModel group) {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 26),
-                    child: Center(child: Text('Выйти из группы "${group.groupName}"?', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal))),
+                    child: Center(child: Text('${S.of(context).leaveGroup} "${group.groupName}"?', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal))),
                   ),
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 26),
-                    child: Text('Только админы группы получат уведомления о том, что вы покинули группу', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                    child: Text(S.of(context).groupAdminsReceiveNotify, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                   ),
                   const SizedBox(height: 20),
                   Padding(
@@ -46,11 +46,9 @@ void showExitGroupDialog(BuildContext context, GroupModel group) {
                             style: TextButton.styleFrom(
                               foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                             ),
-                            child: Text('Выйти', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
+                            child: Text(S.of(context).logout, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -82,7 +80,7 @@ void showExitGroupDialog(BuildContext context, GroupModel group) {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                             ),
-                            child: Text('Беззвучный режим?', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
+                            child: Text(S.of(context).silentMode, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
                           ),
                         ),
                       ],

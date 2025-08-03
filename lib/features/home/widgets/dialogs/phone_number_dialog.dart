@@ -44,9 +44,7 @@ void showPhoneNumberDialog(BuildContext context, Offset position) {
                         decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey, borderRadius: BorderRadius.circular(16)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-
-                          ],
+                          children: [],
                         ),
                       ),
                     ),

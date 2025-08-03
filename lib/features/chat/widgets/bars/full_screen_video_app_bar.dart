@@ -4,6 +4,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/popups/custom_tooltip.dart';
 
 class FullScreenVideoAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -33,7 +34,7 @@ class FullScreenVideoAppBarState extends State<FullScreenVideoAppBar> {
               icon: Icons.arrow_back,
               onTap: () => Navigator.pop(context),
               size: Platform.isWindows ? 18 : 24,
-              message: 'Назад',
+              message: S.of(context).back,
             ),
             actions: [
               _buildIconButton(
@@ -41,21 +42,21 @@ class FullScreenVideoAppBarState extends State<FullScreenVideoAppBar> {
                 icon: isFavorited ? PhosphorIcons.star_fill : PhosphorIcons.star,
                 onTap: () => setState(() => isFavorited = !isFavorited),
                 size: Platform.isWindows ? 19 : 24,
-                message: 'В Избранное',
+                message: S.of(context).imageAddToFavorites,
               ),
               _buildIconButton(
                 context: context,
                 icon: Platform.isWindows ? FluentIcons.emoji_20_regular : FluentIcons.arrow_forward_16_filled,
                 onTap: () {},
                 size: Platform.isWindows ? 20 : 24,
-                message: 'Отреагировать на сообщение',
+                message: S.of(context).reactToMessage,
               ),
               _buildIconButton(
                 context: context,
                 icon: Platform.isWindows ? FluentIcons.more_horizontal_20_filled : Icons.more_vert,
                 onTap: () {},
                 size: Platform.isWindows ? 18 : 24,
-                message: 'Другие опции скрыты',
+                message: S.of(context).otherOptionsHidden,
               ),
             ],
           ),

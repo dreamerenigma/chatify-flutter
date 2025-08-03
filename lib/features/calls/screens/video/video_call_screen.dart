@@ -143,10 +143,7 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
               double bottomOffset = MediaQuery.of(context).viewInsets.bottom + 16 + (moveAnimation.value * 200);
               return Transform.rotate(
                 angle: isRotated ? pi : 0,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: bottomOffset),
-                  child: child,
-                ),
+                child: Container(margin: EdgeInsets.only(bottom: bottomOffset), child: child),
               );
             },
             child: RawMaterialButton(
@@ -158,10 +155,10 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
               },
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(20),
-              fillColor: Colors.transparent,
+              fillColor: ChatifyColors.transparent,
               elevation: 0,
               highlightElevation: 0,
-              child: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white),
+              child: const Icon(Icons.keyboard_arrow_down_rounded, color: ChatifyColors.white),
             ),
           ),
         ),

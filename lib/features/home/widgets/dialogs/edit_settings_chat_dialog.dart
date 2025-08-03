@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../common/widgets/watchers/window_focus_watcher.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 
@@ -66,20 +67,20 @@ Future<void> showEditSettingsChatDialog(BuildContext context, Offset position) a
                         SizedBox(height: 5),
                         Column(
                           children: [
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.messageNotification, text: 'Пометить как непрочитанное', iconSize: 16, icon: null, onTap: () {
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.messageNotification, text: S.of(context).markAsUnread, iconSize: 16, icon: null, onTap: () {
                               overlayEntry.remove();
                             }),
                             Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Закрепить вверху', iconSize: 18, icon: BootstrapIcons.pin_angle, onTap: () {
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).pinToTop, iconSize: 18, icon: BootstrapIcons.pin_angle, onTap: () {
                               overlayEntry.remove();
                             }),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Добавить в избранное', iconSize: 20, icon: Icons.favorite_border_rounded, onTap: () {
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).addToFavorites, iconSize: 20, icon: Icons.favorite_border_rounded, onTap: () {
                               overlayEntry.remove();
                             }),
                             _buildFilterChats(
                               context: context,
                               iconPath: ChatifyVectors.notification,
-                              text: 'Без звука',
+                              text: S.of(context).noSound,
                               iconSize: 20,
                               icon: null,
                               trailingIcon: Transform.rotate(angle: -90 * 3.1416 / 180, child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 15, height: 15, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)), onTap: () {
@@ -87,17 +88,17 @@ Future<void> showEditSettingsChatDialog(BuildContext context, Offset position) a
                               },
                             ),
                             Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Архивировать', iconSize: 18, icon: BootstrapIcons.archive, onTap: () {
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).archive, iconSize: 18, icon: BootstrapIcons.archive, onTap: () {
                               overlayEntry.remove();
                             }),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.clear, text: 'Удалить сообщения', iconSize: 20, icon: null, onTap: () {
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.clear, text: S.of(context).deleteMessages.replaceAll('?', ''), iconSize: 20, icon: null, onTap: () {
                               overlayEntry.remove();
                             }),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Удалить', iconSize: 20, icon: FluentIcons.delete_20_regular, onTap: () {
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).delete, iconSize: 20, icon: FluentIcons.delete_20_regular, onTap: () {
                               overlayEntry.remove();
                             }),
                             Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                            _buildFilterChats(context: context, iconPath: '', text: 'Открыть чат в другом окне', iconSize: 20, icon: FluentIcons.open_28_regular, onTap: () {
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).openChatInAnotherWindow, iconSize: 20, icon: FluentIcons.open_28_regular, onTap: () {
                               overlayEntry.remove();
                             }),
                             SizedBox(height: 5),

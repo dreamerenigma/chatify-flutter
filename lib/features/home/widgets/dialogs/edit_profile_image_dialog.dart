@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
 
@@ -64,7 +65,7 @@ void showEditProfileImageDialog(BuildContext context, TickerProvider vsync, Futu
                             borderRadius: BorderRadius.circular(8),
                             child: SizedBox(
                               width: double.infinity,
-                              child: Padding(padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8), child: Text("Удалить изображение")),
+                              child: Padding(padding: EdgeInsets.only(left: 12, top: 8, bottom: 8), child: Text(S.of(context).deleteImage)),
                             ),
                           ),
                         ),
@@ -81,7 +82,7 @@ void showEditProfileImageDialog(BuildContext context, TickerProvider vsync, Futu
                             borderRadius: BorderRadius.circular(8),
                             child: SizedBox(
                               width: double.infinity,
-                              child: Padding(padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8), child: Text("Просмотр изображения")),
+                              child: Padding(padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8), child: Text(S.of(context).viewImage)),
                             ),
                           ),
                         ),
@@ -106,7 +107,7 @@ void showEditProfileImageDialog(BuildContext context, TickerProvider vsync, Futu
                               width: double.infinity,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
-                                child: Text("Изменить изображение"),
+                                child: Text(S.of(context).changeImage),
                               ),
                             ),
                           ),

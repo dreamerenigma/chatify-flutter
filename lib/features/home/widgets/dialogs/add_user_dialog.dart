@@ -41,7 +41,7 @@ class ShowAddUserDialog {
             onChanged: (value) => email = value,
             decoration: InputDecoration(
               hintText: S.of(context).emailOrId,
-              prefixIcon: const Icon(Icons.email, color: Colors.blue),
+              prefixIcon: const Icon(Icons.email, color: ChatifyColors.blue),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: const BorderSide(color: Colors.blue, width: 2.0)),
               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: const BorderSide(color: Colors.grey, width: 1.0)),
@@ -54,10 +54,10 @@ class ShowAddUserDialog {
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue, backgroundColor: Colors.blue.withAlpha((0.1 * 255).toInt()),
+              foregroundColor: ChatifyColors.blue, backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(S.of(context).cancel, style: TextStyle(color: Colors.blue, fontSize: ChatifySizes.fontSizeMd)),
+            child: Text(S.of(context).cancel, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
           ),
           TextButton(
             onPressed: () async {
@@ -71,10 +71,10 @@ class ShowAddUserDialog {
               }
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue, backgroundColor: Colors.blue.withAlpha((0.1 * 255).toInt()),
+              foregroundColor: ChatifyColors.blue, backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(S.of(context).add, style: TextStyle(color: Colors.blue, fontSize: ChatifySizes.fontSizeMd)),
+            child: Text(S.of(context).add, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
           ),
         ],
       ),

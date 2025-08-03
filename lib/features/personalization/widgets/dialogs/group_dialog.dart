@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../group/models/group_model.dart';
@@ -59,11 +60,7 @@ class GroupDialog extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                             ),
-                            child: const Icon(
-                              Icons.group,
-                              color: Colors.white,
-                              size: 80,
-                            ),
+                            child: const Icon(Icons.group, color: ChatifyColors.white, size: 80),
                           );
                         },
                       ),
@@ -75,17 +72,13 @@ class GroupDialog extends StatelessWidget {
                     right: 0,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withAlpha((0.7 * 255).toInt()),
+                        color: ChatifyColors.black.withAlpha((0.7 * 255).toInt()),
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       padding: EdgeInsets.symmetric(vertical: mq.size.width * .01, horizontal: mq.size.width * .05),
                       child: Text(
                         groupName,
-                        style: TextStyle(
-                          fontSize: ChatifySizes.fontSizeLg,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w500, color: ChatifyColors.white),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -107,7 +100,7 @@ class GroupDialog extends StatelessWidget {
                       groupImage: groupImage,
                       groupDescription: '',
                       createdAt: createdAt,
-                      creatorName: APIs.user.displayName ?? 'Unknown User',
+                      creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
                       members: members,
                       pushToken: '',
                       lastMessageTimestamp: 0,
@@ -145,9 +138,7 @@ class GroupDialog extends StatelessWidget {
                 ),
                 const SizedBox(width: 17),
                 IconButton(
-                  onPressed: () {
-                    // Implement action if needed
-                  },
+                  onPressed: () {},
                   icon: Icon(Icons.info_outline, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 30),
                 ),
                 const SizedBox(width: 17),

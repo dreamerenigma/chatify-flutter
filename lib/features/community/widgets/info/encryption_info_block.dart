@@ -20,42 +20,36 @@ class EncryptionInfoBlock extends StatelessWidget {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          S.of(context).chatsCallsConfidential,
-          style: TextStyle(
-            fontSize: ChatifySizes.fontSizeLg,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text(S.of(context).chatsCallsConfidential, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(
-          'Благодаря сквозному шифрованию содержимое ваших личных сообщений и звонков остается только между вами и людьми, с которыми вы общаетесь. Никто не может прочитать, прослушать или переслать их, даже сотрудники Chatify. Под защитой находятся:',
+          S.of(context).endToEndEncryptionMessagesCalls,
           style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
         ),
         const SizedBox(height: 12),
         _buildInfoRow(
           SvgPicture.asset(ChatifyVectors.text, width: 16, height: 16, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-          'Текстовые и голосовые сообщения',
+          S.of(context).textVoiceMessages,
           width: 13,
         ),
         _buildInfoRow(
           SvgPicture.asset(ChatifyVectors.calls, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-          'Аудио- и видеозвонки',
+          S.of(context).audioVideoCalls,
           width: 10,
         ),
         _buildInfoRow(
           const Icon(FluentIcons.attach_20_regular, size: 19),
-          'Фото, видео и документы',
+          S.of(context).photosVideosDocuments,
           width: 12,
         ),
         _buildInfoRow(
           SvgPicture.asset(ChatifyVectors.locationPin, width: 19, height: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-          'Ваше местоположение',
+          S.of(context).yourLocation,
           width: 12,
         ),
         _buildInfoRow(
           SvgPicture.asset(ChatifyVectors.status, width: 19, height: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-          'Обновления статуса',
+          S.of(context).statusUpdates,
           width: 12,
         ),
       ],

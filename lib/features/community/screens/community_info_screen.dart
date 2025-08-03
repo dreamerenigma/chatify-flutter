@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../models/community_model.dart';
@@ -41,7 +42,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
+                padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,28 +56,14 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
                         placeholder: (context, url) => Container(
                           width: 60,
                           height: 60,
-                          decoration: BoxDecoration(
-                            color: ChatifyColors.darkerGrey,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.groups, color: Colors.white, size: 30),
-                          ),
+                          decoration: BoxDecoration(color: ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(12)),
+                          child: const Center(child: Icon(Icons.groups, color: ChatifyColors.white, size: 30)),
                         ),
                         errorWidget: (context, url, error) => Container(
                           width: 60,
                           height: 60,
-                          decoration: BoxDecoration(
-                            color: ChatifyColors.darkerGrey,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.groups,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
+                          decoration: BoxDecoration(color: ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(12)),
+                          child: const Center(child: Icon(Icons.groups, color: ChatifyColors.white, size: 30)),
                         ),
                       ),
                     ),
@@ -85,20 +72,9 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(widget.community.name,
-                            style: TextStyle(
-                              fontSize: ChatifySizes.fontSizeMd,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text(widget.community.name, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
-                          Text(
-                            'Сообщество · 2 группы',
-                            style: TextStyle(
-                              fontSize: ChatifySizes.fontSizeSm,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          Text('Сообщество · 2 группы', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
                         ],
                       ),
                     ),
@@ -109,7 +85,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
           ),
           _popupMenu(context),
           Positioned.fill(
-            top: 180.0,
+            top: 180,
             child: Column(
               children: [
                 Expanded(
@@ -129,7 +105,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
     return Positioned(
       left: 0,
       right: 0,
-      top: 40.0,
+      top: 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -156,25 +132,20 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
               PopupMenuItem(
                 value: 1,
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Данные о сообществе',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).communityData, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
               PopupMenuItem(
                 value: 2,
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Пригласить участников',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).inviteParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
               PopupMenuItem(
                 value: 3,
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Настройки ообщества',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                child: Text(S.of(context).communitySettings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
               ),
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ],
       ),
@@ -189,7 +160,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          'Здесь будут отображаться другие группы, добавленные в сообщество. Участники сообщества могут вступить в эти группы',
+          S.of(context).groupsAddedCommunityDisplayed,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: Colors.grey),
         ),
@@ -211,7 +182,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
               Navigator.push(context, createPageRoute(const AddGroupScreen()));
             },
             icon: const Icon(Icons.add, size: 18, color: ChatifyColors.white),
-            label: Text('Добавить группу', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+            label: Text(S.of(context).addGroup, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             style: ElevatedButton.styleFrom(
               elevation: 1,
               side: BorderSide.none,

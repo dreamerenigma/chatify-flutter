@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/community/controllers/photo_community_controller.dart';
@@ -68,7 +67,6 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
     setState(() {
       imagePath = path;
       communityController.image.value = path ?? '';
-      log('Updated imagePath: $imagePath');
     });
   }
 
@@ -88,10 +86,10 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.1 * 255).toInt()),
+                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 1),
@@ -199,7 +197,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
             ),
             const SizedBox(height: 24),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   TextSelectionTheme(
@@ -226,7 +224,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text('${charCount.toString()}/${maxCharCount.toString()}', style: const TextStyle(color: ChatifyColors.grey)),
@@ -236,7 +234,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   TextSelectionTheme(
@@ -254,7 +252,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: ChatifyColors.darkerGrey,
-                        contentPadding: const EdgeInsets.all(16.0),
+                        contentPadding: const EdgeInsets.all(16),
                         hintText: S.of(context).welcomeCommunity,
                         hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                         border: const OutlineInputBorder(borderSide: BorderSide.none),
@@ -270,7 +268,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
           heroTag: 'newCommunity',
           onPressed: () async {
@@ -278,9 +276,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
             final description = descriptionController.text.isNotEmpty ? descriptionController.text : S.of(context).welcomeCommunity;
 
             if (imagePath == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please select an image for the community.')),
-              );
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).pleaseSelectImageCommunity)));
               return;
             }
 
@@ -290,7 +286,8 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
               image: '',
               description: description,
               createdAt: DateTime.now(),
-              creatorName: '',
+              creatorName: '${APIs.me.name}${APIs.me.surname.isNotEmpty ? ' ${APIs.me.surname}' : ''}',
+              creatorId: APIs.me.id,
             );
 
             final success = await APIs.createCommunity(context, community, File(imagePath!));

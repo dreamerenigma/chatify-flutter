@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/buttons/custom_search_button.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -30,7 +30,7 @@ class CommunityAppBar extends StatefulWidget implements PreferredSizeWidget {
 class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProviderStateMixin {
   late AnimationController _searchController;
   late Animation<double> _searchScaleAnimation;
-  List<CommunityModel> _communities = [];
+  List<CommunityModel> communities = [];
   bool _isLoading = true;
 
   @override
@@ -51,14 +51,13 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
     try {
       final data = await APIs.getCommunity();
       setState(() {
-        _communities = data;
+        communities = data;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      log('Error loading communities: $e');
     }
   }
 
@@ -68,11 +67,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
       return AppBar(backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey);
     }
 
-    CommunityModel community = _communities.isNotEmpty
-      ? _communities[0]
-      : CommunityModel(id: '', name: 'No Community', image: '', description: '', createdAt: widget.community.createdAt, creatorName: '');
-
-    return _buildAppBar(context, community);
+    return _buildAppBar(context, widget.community);
   }
 
   Widget _buildAppBar(BuildContext context, CommunityModel community) {
@@ -119,7 +114,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
       onTap: () {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
         final position = renderBox.localToGlobal(Offset.zero);
-        showChatSettingsDialog(context, widget.user, position, initialIndex: 0);
+        showChatSettingsDialog(context, widget.community, position, initialIndex: 0);
       },
       mouseCursor: SystemMouseCursors.basic,
       borderRadius: BorderRadius.circular(8),
@@ -173,7 +168,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Объявления',
+                  S.of(context).announcements,
                   style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, color: ChatifyColors.grey, fontWeight: FontWeight.w400),
                 ),
               ],

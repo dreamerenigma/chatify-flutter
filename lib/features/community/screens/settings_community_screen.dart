@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_links.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/urls/url_utils.dart';
 
 class SettingsCommunityScreen extends StatefulWidget {
   const SettingsCommunityScreen({super.key});
@@ -13,13 +15,18 @@ class SettingsCommunityScreen extends StatefulWidget {
 }
 
 class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
-  String _selectedNewUserOption = 'Только админы';
-  String _selectedNewGroupOption = 'Все';
+  late String _selectedNewUserOption;
+  late String _selectedNewGroupOption;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _selectedNewUserOption = S.of(context).onlyAdmins;
+    _selectedNewGroupOption = S.of(context).all;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final shadowColor = context.isDarkMode ? ChatifyColors.white.withAlpha((0.1 * 255).toInt()) : ChatifyColors.black.withAlpha((0.1 * 255).toInt());
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -28,7 +35,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
             color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
-                color: shadowColor,
+                color: context.isDarkMode ? ChatifyColors.white.withAlpha((0.1 * 255).toInt()) : ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
                 spreadRadius: 0,
                 blurRadius: 0.5,
                 offset: const Offset(0, 0.5),
@@ -44,8 +51,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               },
             ),
             titleSpacing: 0,
-            title: Text('Настройки сообщества',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+            title: Text(S.of(context).communitySettings, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
             elevation: 1,
           ),
         ),
@@ -60,11 +66,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-          child: Text(
-            'Разрешения сообщества',
-            style: TextStyle(
-                fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-          ),
+          child: Text(S.of(context).communityPermissions, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
         ),
         const SizedBox(height: 10),
         InkWell(
@@ -78,18 +80,9 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Кто может добавлять новых участников',
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                  ),
+                  Text(S.of(context).whoCanAddNewMembers, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   const SizedBox(height: 4),
-                  Text(
-                    _selectedNewUserOption,
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      color: Colors.grey,
-                    ),
-                  ),
+                  Text(_selectedNewUserOption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
                 ],
               ),
             ),
@@ -107,18 +100,9 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Кто может добавлять в новые группы',
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                  ),
+                  Text(S.of(context).whoCanAddToNewGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   const SizedBox(height: 4),
-                  Text(
-                    _selectedNewGroupOption,
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      color: Colors.grey,
-                    ),
-                  ),
+                  Text(_selectedNewGroupOption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
                 ],
               ),
             ),
@@ -141,21 +125,13 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16.0),
-                  child: Text(
-                    'Кто может добавлять новых участников',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeLg,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text(S.of(context).whoCanAddNewMembers, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 ),
               ),
               _buildRadioOption(
                 context,
-                title: 'Все',
-                description:
-                'Добавлять других участников могут все участники сообщества.',
+                title: S.of(context).all,
+                description: S.of(context).allCommunityMembersAddOtherMembers,
                 groupValue: _selectedNewUserOption,
                 onChanged: (value) {
                   setState(() {
@@ -167,9 +143,8 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               const SizedBox(height: 12),
               _buildRadioOption(
                 context,
-                title: 'Только админы',
-                description:
-                'Добавлять других участников могут только админы групп и сообществ.',
+                title: S.of(context).onlyAdmins,
+                description: S.of(context).onlyAdminsGroupAndCommunitiesOtherMembers,
                 groupValue: _selectedNewUserOption,
                 onChanged: (value) {
                   setState(() {
@@ -199,11 +174,8 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Text(
-                    'Кто может добавлять новые группы',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeLg,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    S.of(context).addNewGroups,
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -214,19 +186,14 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeMd,
-                      ),
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                       children: [
-                        const TextSpan(
-                          text:
-                          'Участники всегда могут предлагать группы на подтверждение админом. Админы сообщества могут удалять любые группы. ',
-                        ),
+                        TextSpan(text: S.of(context).membersCanAlwaysProposeGroups),
                         TextSpan(
-                          text: 'Подробнее',
+                          text: S.of(context).more,
                           style: const TextStyle(color: ChatifyColors.blue, decoration: TextDecoration.none),
                           recognizer: TapGestureRecognizer()..onTap = () {
-                            _launchURL(Uri.parse('https://faq.chatify.ru'));
+                            UrlUtils.launchURL(AppLinks.helpCenter);
                           },
                         ),
                       ],
@@ -236,8 +203,8 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               ),
               _buildRadioOption(
                 context,
-                title: 'Все',
-                description: 'Все участники сообщества могут добавлять группы',
+                title: S.of(context).all,
+                description: S.of(context).allCommunityMembersAddGroups,
                 groupValue: _selectedNewGroupOption,
                 onChanged: (value) {
                   setState(() {
@@ -249,9 +216,8 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               const SizedBox(height: 12),
               _buildRadioOption(
                 context,
-                title: 'Только админы сообщества',
-                description:
-                'Только админы сообщества могут добавлять группы. Участники могут предлагать группы на рассмотрение админам.',
+                title: S.of(context).communityAdminsOnly,
+                description: S.of(context).onlyCommunityAdminsAddGroups,
                 groupValue: _selectedNewGroupOption,
                 onChanged: (value) {
                   setState(() {
@@ -268,12 +234,12 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
   }
 
   Widget _buildRadioOption(
-      BuildContext context, {
-        required String title,
-        required String description,
-        required String groupValue,
-        required ValueChanged<String?> onChanged,
-      }) {
+    BuildContext context, {
+      required String title,
+      required String description,
+      required String groupValue,
+      required ValueChanged<String?> onChanged,
+    }) {
     return InkWell(
       onTap: () {
         onChanged(title);
@@ -284,40 +250,20 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
           Radio<String>(
             value: title,
             groupValue: groupValue,
-            activeColor: Colors.blue,
+            activeColor: ChatifyColors.blue,
             onChanged: onChanged,
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeMd,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeSm,
-                    color: Colors.grey,
-                  ),
-                ),
+                Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                Text(description, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
               ],
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _launchURL(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

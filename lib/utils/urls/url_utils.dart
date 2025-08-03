@@ -7,7 +7,7 @@ class UrlUtils {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw 'Could not launch $url';
+      throw 'Не удалось открыть $url';
     }
   }
 }

@@ -93,7 +93,7 @@ class _ConfidentialityStatusBottomSheetState extends State<ConfidentialityStatus
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(S.of(context).contactsExcept, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  Text(S.of(context).contactsOtherThan, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   InkWell(
                     onTap: () => Navigator.push(context, createPageRoute(const ExceptionsScreen())),
                     child: Text(
@@ -176,7 +176,7 @@ class _ConfidentialityStatusBottomSheetState extends State<ConfidentialityStatus
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     elevation: 0
                   ),
-                  child: Text("Готово", style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
+                  child: Text(S.of(context).ready, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
               ),
             ),

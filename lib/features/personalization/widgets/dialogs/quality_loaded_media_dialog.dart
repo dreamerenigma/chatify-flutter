@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
@@ -11,10 +12,7 @@ Future<String?> showQualityLoadedMediaDialog(BuildContext context, String curren
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text(
-          'Качество загрузки медиафайлов',
-          style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-        ),
+        title: Text(S.of(context).mediaDownloadQuality, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         contentPadding: EdgeInsets.zero,
         titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         actionsPadding: const EdgeInsets.all(16),
@@ -29,14 +27,14 @@ Future<String?> showQualityLoadedMediaDialog(BuildContext context, String curren
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 25, bottom: 16),
                   child: Text(
-                    'Выберите качество, фото и видео для отправки в чатах.',
+                    S.of(context).mediaDownloadQuality,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                   ),
                 ),
                 const SizedBox(height: 16),
                 RadioListTile<String>(
-                  title: const Text('Стандартное качество'),
-                  subtitle: const Text('Более быстрая отправка, меньший размер файла'),
+                  title: Text(S.of(context).standardQuality),
+                  subtitle: Text(S.of(context).fasterSendingSmallerFile),
                   value: 'standard',
                   groupValue: selectedQuality,
                   activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -48,8 +46,8 @@ Future<String?> showQualityLoadedMediaDialog(BuildContext context, String curren
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
                 RadioListTile<String>(
-                  title: const Text('HD-качество'),
-                  subtitle: const Text('Более медленная отправка, размер может быть в 6 раз больше'),
+                  title: Text(S.of(context).hdQuality),
+                  subtitle: Text(S.of(context).slowerShippingSixTimesBigger),
                   value: 'hd',
                   groupValue: selectedQuality,
                   activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -77,7 +75,7 @@ Future<String?> showQualityLoadedMediaDialog(BuildContext context, String curren
               ),
             ),
             child: Text(
-              'Отмена',
+              S.of(context).cancel,
               style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm),
             ),
           ),
@@ -93,7 +91,7 @@ Future<String?> showQualityLoadedMediaDialog(BuildContext context, String curren
               ),
             ),
             child: Text(
-              'Сохранить',
+              S.of(context).save,
               style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm),
             ),
           ),

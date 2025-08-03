@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../common/enums/date_format_type.dart';
 import '../../generated/l10n/l10n.dart';
+import '../platforms/platform_utils.dart';
 
 class DateUtil {
   /// -- Getting formatted time from milliSecondsSinceEpochs string.
@@ -62,13 +63,17 @@ class DateUtil {
       return DateFormat('dd.MM.yyyy').format(creationDate);
     }
 
-    if (now.day == creationDate.day &&
-        now.month == creationDate.month &&
-        now.year == creationDate.year) {
+    if (now.day == creationDate.day && now.month == creationDate.month && now.year == creationDate.year) {
       return TimeOfDay.fromDateTime(creationDate).format(context);
     }
 
-    return now.year == creationDate.year ? '${creationDate.day} ${getMonth(creationDate, context)}' : '${creationDate.day} ${getMonth(creationDate, context)} ${creationDate.year} г.';
+    if (isMobile) {
+      return DateFormat('dd.MM.yyyy').format(creationDate);
+    }
+
+    return now.year == creationDate.year
+      ? '${creationDate.day} ${getMonth(creationDate, context)}'
+      : '${creationDate.day} ${getMonth(creationDate, context)} ${creationDate.year} г.';
   }
 
   /// -- Converts a DateTime to a timestamp string.

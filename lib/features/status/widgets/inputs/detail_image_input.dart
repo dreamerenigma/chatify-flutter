@@ -77,7 +77,7 @@ class DetailImageInputState extends State<DetailImageInput> {
         isTyping = false;
       });
     } else {
-      Dialogs.showSnackbar(context, S.of(context).pleaseEnterText);
+      Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
     }
   }
 

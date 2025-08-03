@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../chat/models/user_model.dart';
@@ -85,7 +86,7 @@ Future<void> showNewCallDialog(BuildContext context, Offset position) async {
                               padding: EdgeInsets.only(left: 16, right: 16, top: 16),
                               child: Row(
                                 children: [
-                                  Text('Новый звонок', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
+                                  Text(S.of(context).newCallDialog, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
                                   SizedBox(width: 8),
                                   Text('${selectedContacts.length}/31', style: TextStyle(color: ChatifyColors.buttonDisabled, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                 ],
@@ -95,7 +96,7 @@ Future<void> showNewCallDialog(BuildContext context, Offset position) async {
                             Padding(
                               padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                               child: SearchTextInput(
-                                hintText: 'Поиск',
+                                hintText: S.of(context).settingsSearch,
                                 controller: chatsController,
                                 focusNode: searchFocusNode,
                                 enabledBorderColor: context.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.black,
@@ -114,8 +115,8 @@ Future<void> showNewCallDialog(BuildContext context, Offset position) async {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  _buildOptionIconBox(context, icon: FluentIcons.video_20_regular, message: 'Видеозвонок', onTap: () {}),
-                                  _buildOptionIconBox(context, svgPath: ChatifyVectors.calls, message: 'Аудиозвонок', onTap: () {}),
+                                  _buildOptionIconBox(context, icon: FluentIcons.video_20_regular, message: S.of(context).videoCall, onTap: () {}),
+                                  _buildOptionIconBox(context, svgPath: ChatifyVectors.calls, message: S.of(context).audioCall, onTap: () {}),
                                   _buildCancelBox(context, () {
                                     setState(() {
                                       isContactSelected = false;
@@ -130,16 +131,7 @@ Future<void> showNewCallDialog(BuildContext context, Offset position) async {
                               child: ScrollConfiguration(
                                 behavior: NoGlowScrollBehavior(),
                                 child: ScrollbarTheme(
-                                  data: ScrollbarThemeData(
-                                    thumbColor: WidgetStateProperty.resolveWith<Color>(
-                                      (Set<WidgetState> states) {
-                                        if (states.contains(WidgetState.dragged)) {
-                                          return ChatifyColors.darkerGrey;
-                                        }
-                                        return ChatifyColors.darkerGrey;
-                                      },
-                                    ),
-                                  ),
+                                  data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                                   child: Scrollbar(
                                     thickness: 3,
                                     thumbVisibility: false,
@@ -154,13 +146,13 @@ Future<void> showNewCallDialog(BuildContext context, Offset position) async {
                                             if (hasOftenContacts) ...[
                                               Padding(
                                                 padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
-                                                child: Text('Часто общаетесь', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                                child: Text(S.of(context).doYouCommunicateOften, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                               ),
                                               _buildCommunicateOften(context, userController),
                                             ],
                                             Padding(
                                               padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
-                                              child: Text('Все контакты', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                              child: Text(S.of(context).allContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                             ),
                                             _buildAllContacts(context, userController, isContactSelected, selectedContacts, (selected) {
                                               setState(() {
@@ -302,7 +294,7 @@ Widget _buildAllContacts(BuildContext context, UserController userController, bo
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${userController.user.value.phoneNumber} (вы)', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                    Text('${userController.user.value.phoneNumber} ${S.of(context).youCall}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                     Text(userController.user.value.about, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   ],
                 ),
@@ -376,7 +368,7 @@ Widget _buildOptionIconBox(BuildContext context, {String? svgPath, IconData? ico
 
 Widget _buildCancelBox(BuildContext context, VoidCallback onTap) {
   return Tooltip(
-    message: 'Отмена',
+    message: S.of(context).cancel,
     verticalOffset: -60,
     waitDuration: Duration(milliseconds: 800),
     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -412,7 +404,7 @@ Widget _buildCancelBox(BuildContext context, VoidCallback onTap) {
             ),
           ],
         ),
-        child: Center(child: Text("Отмена", style: TextStyle(fontWeight: FontWeight.w500))),
+        child: Center(child: Text(S.of(context).cancel, style: TextStyle(fontWeight: FontWeight.w500))),
       ),
     ),
   );

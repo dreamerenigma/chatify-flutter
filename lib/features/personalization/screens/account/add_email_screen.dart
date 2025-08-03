@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -39,7 +40,7 @@ class _AddEmailScreenState extends State<AddEmailScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text('Добавьте адрес эл. почты', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(S.of(context).addEmailAddress, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -51,12 +52,8 @@ class _AddEmailScreenState extends State<AddEmailScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'Мы отправим код подтверждения на этот электронный адрес.',
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeSm,
-                        fontWeight: FontWeight.w400,
-                        color: ChatifyColors.darkGrey,
-                      ),
+                      S.of(context).sendConfirmCodeEmailAddress,
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
@@ -71,27 +68,15 @@ class _AddEmailScreenState extends State<AddEmailScreen> {
                           controller: emailController,
                           focusNode: emailFocusNode,
                           keyboardType: TextInputType.multiline,
-                          style: TextStyle(
-                            fontSize: ChatifySizes.fontSizeMd,
-                          ),
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                           decoration: InputDecoration(
-                            hintText: 'Адрес эл. почты',
-                            hintStyle: TextStyle(
-                              color: ChatifyColors.darkGrey,
-                              fontSize: ChatifySizes.fontSizeLg,
-                            ),
-                            border: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: ChatifyColors.white),
-                            ),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: ChatifyColors.white),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                            ),
+                            hintText: S.of(context).emailAddress,
+                            hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg),
+                            border: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.white)),
+                            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.white)),
+                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                             isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 2),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
                           ),
                         ),
                       ),
@@ -114,7 +99,7 @@ class _AddEmailScreenState extends State<AddEmailScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Далее', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                    Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                   ],
                 ),
               ),

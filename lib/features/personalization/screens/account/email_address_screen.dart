@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -63,7 +64,7 @@ class EmailAddressScreen extends StatelessWidget {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Электронный адрес', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).emailAddress, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -76,29 +77,23 @@ class EmailAddressScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  Center(
-                    child: SvgPicture.asset(
-                      getAsset(schemeIndex),
-                      width: 70,
-                      height: 70,
-                    ),
-                  ),
+                  Center(child: SvgPicture.asset(getAsset(schemeIndex), width: 70, height: 70)),
                   const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Добавьте элекстронный адрес, чтобы защитить аккаунт',
+                      S.of(context).addEmailAddressSecureAccount,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal),
                     ),
                   ),
                   const SizedBox(height: 14),
-                  _buildItemInfo(icon: BootstrapIcons.shield_check, text: 'Подтверждайте свой аккаунт даже без SMS.', iconColor: dynamicIconColor),
-                  _buildItemInfo(icon: MdiIcons.messageQuestionOutline, text: 'Электронный адрес поможет нам связаться с вами для решения проблем безопасности или для предоставления поддержки.', iconColor: dynamicIconColor),
-                  _buildItemInfo(icon: Icons.lock_outline_rounded, text: 'Ваш электронный адрес не отобразиться у других пользователей.', iconColor: dynamicIconColor),
+                  _buildItemInfo(icon: BootstrapIcons.shield_check, text: S.of(context).confirmAccountEven, iconColor: dynamicIconColor),
+                  _buildItemInfo(icon: MdiIcons.messageQuestionOutline, text: S.of(context).emailAddressContactProvideSupport, iconColor: dynamicIconColor),
+                  _buildItemInfo(icon: Icons.lock_outline_rounded, text: S.of(context).emailAddressDisplayedUsers, iconColor: dynamicIconColor),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Text('Подробнее', textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                    child: Text(S.of(context).readMore, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                   ),
                 ],
               ),
@@ -108,10 +103,7 @@ class EmailAddressScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  createPageRoute(const AddEmailScreen()),
-                );
+                Navigator.push(context, createPageRoute(const AddEmailScreen()));
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: ChatifyColors.white,
@@ -123,7 +115,7 @@ class EmailAddressScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Добавьте электронный адрес', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).addEmailAddress, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
                 ],
               ),
             ),
@@ -139,24 +131,9 @@ class EmailAddressScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            alignment: Alignment.center,
-            height: 24,
-            child: Icon(
-              icon,
-              size: 24,
-              color: iconColor,
-            ),
-          ),
+          Container(alignment: Alignment.center, height: 24, child: Icon(icon, size: 24, color: iconColor)),
           const SizedBox(width: 20),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 15, height: 1.3),
-              softWrap: true,
-              overflow: TextOverflow.visible,
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 15, height: 1.3), softWrap: true, overflow: TextOverflow.visible)),
         ],
       ),
     );

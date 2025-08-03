@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../version.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -40,41 +41,41 @@ class _HelpOptionWidgetState extends State<HelpOptionWidget> {
           controller: scrollController,
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
           children: [
-            Text("Помощь", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+            Text(S.of(context).help, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
             const SizedBox(height: 25),
-            Text("Chatify для Windows", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+            Text(S.of(context).appForWindows, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
             const SizedBox(height: 10),
             Text('${S.of(context).version} $appVersion $appBuildNumber', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
             const SizedBox(height: 15),
             Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
             const SizedBox(height: 10),
-            const Text("Напишите нам", style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300)),
+            Text(S.of(context).writeToUs, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300)),
             const SizedBox(height: 10),
-            Text("Мы хотим узнать, что вы думаете об этом приложении.", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+            Text(S.of(context).weThinkAboutThisApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
             const SizedBox(height: 5),
-            _buildHelpInfo('Напишите нам', () {
+            _buildHelpInfo(S.of(context).writeToUs, () {
               widget.overlayEntry.remove();
               ContactingSupportOverlay(context).show();
             }),
-            _buildHelpInfo('Оцените приложение', () {
-              UrlUtils.launchURL('https://inputstudios.vercel.app/ru-ru/chatify');
+            _buildHelpInfo(S.of(context).rateApp, () {
+              UrlUtils.launchURL(AppLinks.app);
             }),
             const SizedBox(height: 10),
             Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
             const SizedBox(height: 5),
-            _buildHelpInfo('Справочный центр', () {
-              UrlUtils.launchURL('https://faq.inputstudios.vercel.app/chatify/');
+            _buildHelpInfo(S.of(context).helpCenter, () {
+              UrlUtils.launchURL(AppLinks.helpCenter);
             }),
-            _buildHelpInfo('Лицензии', () {
+            _buildHelpInfo(S.of(context).licenses, () {
               LicenseOverlay(context).show();
             }),
-            _buildHelpInfo('Условия и Политика конфиденциальности', () {
-              UrlUtils.launchURL('https://inputstudios.vercel.app/chatify/legal/');
+            _buildHelpInfo(S.of(context).termsPrivacyPolicy, () {
+              UrlUtils.launchURL(AppLinks.legal);
             }),
             const SizedBox(height: 10),
             Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
             const SizedBox(height: 15),
-            Text('2025 © Input Studios Inc.', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400)),
+            Text('© ${DateTime.now().year} Input Studios Inc.', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400)),
           ],
         ),
       ),

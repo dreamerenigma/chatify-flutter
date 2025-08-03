@@ -11,25 +11,22 @@ class CircleSplitPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.fill;
 
-    // Slight overlap to prevent the white line
     const double overlapAngle = 0.01;
 
-    // Draw the first half
     paint.color = color1;
     canvas.drawArc(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      3.14 - overlapAngle, // Start slightly before 180 degrees
-      3.14 + overlapAngle * 2, // Draw slightly more than half a circle
+      3.14 - overlapAngle,
+      3.14 + overlapAngle * 2,
       true,
       paint,
     );
 
-    // Draw the second half
     paint.color = color2;
     canvas.drawArc(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      -overlapAngle, // Start slightly before 0 degrees
-      3.14 + overlapAngle * 2, // Draw slightly more than half a circle
+      -overlapAngle,
+      3.14 + overlapAngle * 2,
       true,
       paint,
     );

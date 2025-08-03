@@ -45,12 +45,4 @@ class LinkText extends StatelessWidget {
       ),
     );
   }
-
-  void launchUrls(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 }

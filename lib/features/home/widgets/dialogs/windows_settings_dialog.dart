@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/urls/url_utils.dart';
 import '../../controllers/dialog_controller.dart';
 
 void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
@@ -57,7 +57,7 @@ void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
                       decoration: BoxDecoration(color: ChatifyColors.transparent, borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Вы хотели переключить приложения?",
+                        S.of(context).switchApps,
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.white),
                       ),
@@ -71,11 +71,11 @@ void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Вы хотели переключить приложения?",
+                            S.of(context).switchApps,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w300, color: ChatifyColors.white),
                           ),
                           SizedBox(height: 8),
-                          Text('"Chatify" пытается открыть "Параметры".', style: TextStyle(fontSize: 15)),
+                          Text(S.of(context).appTryingOpenSettings, style: TextStyle(fontSize: 15)),
                         ],
                       ),
                     ),
@@ -94,12 +94,7 @@ void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
                               onPressed: () async {
                                 overlayEntry.remove();
                                 dialogController.closeWindowsDialog();
-                                final Uri uri = Uri.parse(settingsUri);
-                                if (await canLaunchUrl(uri)) {
-                                  await launchUrl(uri);
-                                } else {
-                                  log("Не удалось открыть настройки Windows.");
-                                }
+                                UrlUtils.launchURL(settingsUri);
                               },
                               style: TextButton.styleFrom(
                                 backgroundColor: ChatifyColors.mildNight,
@@ -108,7 +103,7 @@ void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 6),
-                                child: Text("Да", style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                                child: Text(S.of(context).yes, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                               ),
                             ),
                           ),
@@ -128,7 +123,7 @@ void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 6),
-                                child: Text("Нет", style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.black)),
+                                child: Text(S.of(context).no, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.black)),
                               ),
                             ),
                           ),

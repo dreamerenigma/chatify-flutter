@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../../utils/urls/url_utils.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
@@ -36,15 +38,6 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
     storage.write('notifySecurity', value);
   }
 
-  Future<void> _launchURL(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +58,7 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Уведомления безопасности', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).securityNotices, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -73,16 +66,7 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -92,32 +76,28 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                 children: [
                   const SizedBox(height: 40),
                   Center(
-                    child: SvgPicture.asset(
-                      colorsController.getImagePath(),
-                      width: 70,
-                      height: 70,
-                    ),
+                    child: SvgPicture.asset(colorsController.getImagePath(), width: 70, height: 70),
                   ),
                   const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    child: Text('Ваши чаты и звонки конфиденциальны',
+                    child: Text(S.of(context).chatsCallsConfidential,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Благодаря сквозному шифрованию ваши личные сообщения остаются только между вами и людьми, с которыми вы общаетесь. Даже Chatify не может получить к ним доступ. К ним относятся:',
+                      S.of(context).endToEndEncryptionPrivateMessages,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(Icon(Icons.message, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), 'Текстовые и голосовые сообщения'),
-                  _buildInfoRow(Icon(Icons.call, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), 'Аудио- и видеозвонки'),
-                  _buildInfoRow(Icon(Icons.attach_file, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), 'Фото, видео и документы'),
-                  _buildInfoRow(Icon(Icons.location_on, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), 'Ваше местоположение'),
-                  _buildInfoRow(SvgPicture.asset(ChatifyVectors.status), 'Обновление статуса'),
+                  _buildInfoRow(Icon(Icons.message, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).textVoiceMessages),
+                  _buildInfoRow(Icon(Icons.call, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).openInBrowser),
+                  _buildInfoRow(Icon(Icons.attach_file, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).photosVideosDocuments),
+                  _buildInfoRow(Icon(Icons.location_on, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).yourLocation),
+                  _buildInfoRow(SvgPicture.asset(ChatifyVectors.status), S.of(context).statusUpdate),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -125,16 +105,16 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                       children: [
                         SvgPicture.asset(ChatifyVectors.status, width: 22, height: 22, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         const SizedBox(width: 16),
-                        Text('Обновления статуса', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                        Text(S.of(context).statusUpdates, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                   GestureDetector(
-                    onTap: () => _launchURL('https://chatify.inputstudios.ru/security'),
+                    onTap: () => UrlUtils.launchURL(AppLinks.security),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('Подробнее',
+                      child: Text(S.of(context).readMore,
                         style: TextStyle(fontSize: 14, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
                       ),
                     ),
@@ -155,7 +135,7 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Показывать уведомления \n безопасности на этом \n устройстве', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                              Text(S.of(context).securityNotificationsDevice, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                               Switch(
                                 value: isNotifySecurityEnabled,
                                 onChanged: toggleSwitch,
@@ -169,11 +149,9 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                             text: TextSpan(
                               style: const TextStyle(fontSize: 15, color: ChatifyColors.darkGrey, height: 1.5),
                               children: [
-                                const TextSpan(
-                                  text: 'Получайте уведомления в случае \n изменений кода безопасности \n на вашем телефоне и телефоне \n контакта в чате со сквозным \n шифрованием. Если у вас несколько \n устройств, этот параметр необходимо \n включить отдельно на каждом \n устройстве, на котором вы хотите \n получать уведомления. ',
-                                ),
+                                TextSpan(text: S.of(context).notifySecurityCodeEndToEndEncrypted),
                                 TextSpan(
-                                  text: 'Подробнее',
+                                  text: S.of(context).readMore,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
                                   recognizer: TapGestureRecognizer()..onTap = () {
                                     Navigator.push(context, createPageRoute(const HelpCenterScreen()));

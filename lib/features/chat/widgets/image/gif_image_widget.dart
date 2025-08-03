@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
 
+import '../../../../generated/l10n/l10n.dart';
+
 class GifImageWidget extends StatefulWidget {
   final String imageUrl;
 
@@ -32,7 +34,7 @@ class GifImageWidgetState extends State<GifImageWidget> with SingleTickerProvide
         }),
       );
     } catch (e) {
-      log("Error loading GIF: $e");
+      log('${S.of(context).errorLoadingGif}: $e');
     }
   }
 

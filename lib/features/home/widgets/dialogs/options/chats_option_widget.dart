@@ -2,6 +2,7 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../confirmation_dialog.dart';
 
@@ -20,15 +21,15 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Чаты", style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+          Text(S.of(context).chats, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
           const SizedBox(height: 25),
-          Text("История чатов", style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+          Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
           const SizedBox(height: 10),
           Row(
             children: [
               Icon(PhosphorIcons.devices(), size: 20),
               const SizedBox(width: 10),
-              Text("Синхронизированно с телефоном", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+              Text(S.of(context).syncedWithPhone, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
             ],
           ),
           const SizedBox(height: 12),
@@ -44,7 +45,7 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    showConfirmationDialog(context: context, description: 'Вы действительно хотите архивировать все чаты?', onConfirm: () {});
+                    showConfirmationDialog(context: context, description: S.of(context).archiveAllChats, onConfirm: () {});
                   },
                   mouseCursor: SystemMouseCursors.basic,
                   borderRadius: BorderRadius.circular(8),
@@ -53,13 +54,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                   hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                    child: Text("Архивировать все чаты", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).archiveAllChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                   ),
                 ),
               ),
             ),
           ),
-          Text("Вы попрежнему будете получать новые сообщения в архивированных чатах.", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+          Text(S.of(context).receiveNewMessagesInArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
           const SizedBox(height: 14),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -80,13 +81,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                   hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text("Удалить все сообщения", style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).deleteAllMessages, style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                   ),
                 ),
               ),
             ),
           ),
-          Text("Удалить все сообщения из чатов и групп", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+          Text(S.of(context).deleteAllMessagesChatsAndGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -107,13 +108,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                   hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text("Удалить все чаты", style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).deleteAllChats, style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                   ),
                 ),
               ),
             ),
           ),
-          Text("Удалить все сообщения и очистить историю чатов", style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+          Text(S.of(context).deleteAllMessagesAndClearChatHistory, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
         ],
       ),
     );

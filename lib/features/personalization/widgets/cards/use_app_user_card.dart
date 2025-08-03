@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
@@ -60,9 +61,11 @@ class UseAppUserCardState extends State<UseAppUserCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: widget.isSelected ? Colors.blue.withAlpha((0.1 * 255).toInt()) : null,
       child: InkWell(
-        borderRadius: BorderRadius.circular(15),
         onTap: _handleTap,
         onLongPress: _handleLongPress,
+        borderRadius: BorderRadius.circular(15),
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -82,6 +85,9 @@ class UseAppUserCardState extends State<UseAppUserCard> {
                       builder: (_) => ProfileDialog(user: widget.user),
                     );
                   },
+                  borderRadius: BorderRadius.circular(30),
+                  splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03),
                     child: CachedNetworkImage(
@@ -108,18 +114,15 @@ class UseAppUserCardState extends State<UseAppUserCard> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      border: Border.all(
-                        color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
-                        width: 1.5,
-                      ),
+                      border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                     ),
-                    child: const Icon(Icons.check, color: Colors.white, size: 16),
+                    child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                   ),
                 ),
               ],
             ),
             title: Text(widget.user.name),
-            subtitle: const Text('Привет! Я использую Chatify.'),
+            subtitle: Text(S.of(context).aboutText),
           ),
         ),
       ),

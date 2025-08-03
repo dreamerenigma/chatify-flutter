@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:win32/win32.dart' as win32;
 import 'package:window_manager/window_manager.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_vectors.dart';
@@ -150,7 +151,7 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
                       children: [
                         const Icon(Icons.lock_outline, size: 16),
                         const SizedBox(width: 8),
-                        Text('Защищено сквозным шифрованием', style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                        Text(S.of(context).protectedEncryption, style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                       ],
                     ),
                   )
@@ -203,10 +204,7 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
                                     color: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(
-                                    "Chatify",
-                                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w300),
-                                  ),
+                                  Text(S.of(context).appName, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w300)),
                                 ],
                               ],
                             ),

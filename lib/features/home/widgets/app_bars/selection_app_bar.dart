@@ -58,18 +58,16 @@ class SelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 1,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Text(S.of(context).addChatIconScreen, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
               ),
               PopupMenuItem(
                 value: 2,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Text(S.of(context).addContact, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
               ),
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ],
       ),

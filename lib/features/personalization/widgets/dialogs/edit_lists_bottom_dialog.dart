@@ -2,14 +2,15 @@ import 'package:akar_icons_flutter/akar_icons_flutter.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 
 void showEditListsBottomSheet(BuildContext context) {
   List<Map<String, String>> presets = [
-    {'title': 'Непрочитанное', 'subtitle': 'Предустановка'},
+    {'title': 'Непрочитанное', 'subtitle': S.of(context).preset},
     {'title': 'Избранное', 'subtitle': ''},
-    {'title': 'Группы', 'subtitle': 'Предустановка'},
+    {'title': 'Группы', 'subtitle': S.of(context).preset},
   ];
 
   showModalBottomSheet(
@@ -27,11 +28,8 @@ void showEditListsBottomSheet(BuildContext context) {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.close, size: 26),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Text('Изменить списки', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.normal)),
+                IconButton(icon: const Icon(Icons.close, size: 26), onPressed: () => Navigator.pop(context)),
+                Text(S.of(context).editLists, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.normal)),
                 IconButton(
                   icon: const Icon(Icons.check, size: 26),
                   onPressed: () => {
@@ -44,7 +42,7 @@ void showEditListsBottomSheet(BuildContext context) {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Вы можете редактировать списки и фильтры здесь, либо, изменять их отображение на вкладке "Чаты".',
+                S.of(context).editListsFiltersChangeDisplay,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
               ),
@@ -55,7 +53,7 @@ void showEditListsBottomSheet(BuildContext context) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Ваши списки', style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
+                  Text(S.of(context).yourLists, style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,10 +61,10 @@ void showEditListsBottomSheet(BuildContext context) {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Непрочитанное', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                          Text(S.of(context).unread, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                           const SizedBox(height: 8),
                           Text(
-                            'Предустановка',
+                            S.of(context).preset,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
                           ),
                         ],
@@ -84,7 +82,7 @@ void showEditListsBottomSheet(BuildContext context) {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                      Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                       const Icon(AkarIcons.two_line_horizontal, size: 24, color: ChatifyColors.buttonSecondary),
                     ],
                   ),
@@ -95,10 +93,10 @@ void showEditListsBottomSheet(BuildContext context) {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Группы', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                          Text('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                           const SizedBox(height: 8),
                           Text(
-                            'Предустановка',
+                            S.of(context).preset,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
                           ),
                         ],
@@ -117,14 +115,14 @@ void showEditListsBottomSheet(BuildContext context) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Доступные предустановки',
+                        S.of(context).availablePresets,
                         style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
                       ),
                       const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          'Если вы удалите один из преустановленных списков, например "Непрочитанное" или "Группы", он будет доступен здесь.',
+                          S.of(context).deleteOnePresetListsUnreadGroups,
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
                         ),

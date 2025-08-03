@@ -6,6 +6,7 @@ class ChatifyColors {
   static const Color primaryDark = Color(0xFF2DA27E);
   static const Color primaryCyan = Color(0xFFA8E5EC);
   static const Color blue = Color(0xFF2196F3);
+  static const Color lightBlueLink = Color(0xFF53BDEB);
   static const Color blueAccent = Color(0xFF90CAF9);
   static const Color accent = Color(0xFFB0C7FF);
   static const Color secondary = Color(0xFFFFE24B);
@@ -101,6 +102,7 @@ class ChatifyColors {
   // Message colors
   static const Color greenMessageLight = Color(0xFFDAFFB0);
   static const Color greenMessageDark = Color(0xFF005C4B);
+  static const Color greenMessageTriangleDark = Color(0xFF015646);
   static const Color greenMessageBorder = Color(0xFFD1FF98);
   static const Color greenMessageBorderDark = Color(0xFF005643);
   static const Color greenMessageBorderLight = Color(0xFF1A6A5C);

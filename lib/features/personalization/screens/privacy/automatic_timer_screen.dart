@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -54,13 +55,13 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Автоматический таймер', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).automaticTimer, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? 'Выкл.';
+                final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? S.of(context).off;
                 Navigator.pop(context, result);
               },
             ),
@@ -73,7 +74,7 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Таймер исчезающих сообщение в новых чатах:',
+              S.of(context).timerDisappearingMessagesNewChats,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
@@ -98,44 +99,28 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
             child: RichText(
               text: TextSpan(
                 style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
-                children: _selectedOption == 'off'
-                    ? [
-                  const TextSpan(
-                    text:
-                    'Если этот режим включён, сообщения во всех новых индивидуальных чатах будут исчезать по истечении выбранного периода времени. Это никак не повлияет на уже имеющиеся чаты. ',
-                  ),
-                  TextSpan(
-                    text: 'Подробнее',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      fontWeight: FontWeight.bold,
-                      color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                children: _selectedOption == 'off' ?
+                  [
+                    TextSpan(text: S.of(context).modeEnabledMessagesNewIndividualChats),
+                    TextSpan(
+                      text: S.of(context).readMore,
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
-                  ),
-                ]
-                    : [
-                  const TextSpan(
-                    text:
-                    'Это никак не повлияет на уже имеющиеся чаты. Чтобы применить этот таймер сообщений к имеющимся чатам, ',
-                  ),
+                  ]
+                  : [
+                      TextSpan(text: S.of(context).notAffectApplyMessageTimerExistingChats),
                   TextSpan(
-                    text: 'выберите их.',
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      fontWeight: FontWeight.bold,
-                      color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    ),
+                    text: S.of(context).selectThem,
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                     recognizer: TapGestureRecognizer()..onTap = () {},
                   ),
                   TextSpan(
-                    text: '\nПодробнее',
+                    text: S.of(context).readMore,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: ChatifyColors.blue),
                     recognizer: TapGestureRecognizer()..onTap = () {},
                   ),
-                  const WidgetSpan(
-                    child: SizedBox(height: 30),
-                  ),
+                  const WidgetSpan(child: SizedBox(height: 30)),
                 ],
               ),
             ),

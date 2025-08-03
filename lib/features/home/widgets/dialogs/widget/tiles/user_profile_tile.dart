@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../../../../generated/l10n/l10n.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_sizes.dart';
 import '../../../../../../utils/constants/app_vectors.dart';
@@ -31,11 +32,6 @@ class UserProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double resolvedTitleFontSize = titleFontSize ?? ChatifySizes.fontSizeSm;
-    final FontWeight resolvedTitleFontWeight = titleFontWeight ?? FontWeight.w500;
-    final double resolvedSubtitleFontSize = subtitleFontSize ?? 13;
-    final FontWeight resolvedSubtitleFontWeight = subtitleFontWeight ?? FontWeight.w300;
-
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
@@ -59,7 +55,7 @@ class UserProfileTile extends StatelessWidget {
                 ),
                 child: ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl: userController.currentUser.image,
+                    imageUrl: user.image,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
                     errorWidget: (context, url, error) => Center(
@@ -77,8 +73,8 @@ class UserProfileTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${user.phoneNumber} (вы)', style: TextStyle(fontSize: resolvedTitleFontSize, fontWeight: resolvedTitleFontWeight)),
-                  Text('Сообщение для себя', style: TextStyle(fontSize: resolvedSubtitleFontSize, fontWeight: resolvedSubtitleFontWeight, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.mildNight)),
+                  Text('${user.phoneNumber} ${S.of(context).youCall}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto')),
+                  Text(S.of(context).messageMyself, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.mildNight, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto')),
                 ],
               ),
             ],

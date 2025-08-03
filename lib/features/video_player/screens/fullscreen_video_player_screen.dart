@@ -134,7 +134,7 @@ class FullScreenVideoPlayerScreenState extends State<FullScreenVideoPlayerScreen
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Text(Formatter.formatDuration(_controller.value.position), style: const TextStyle(color: ChatifyColors.white)),
                             ),
                             Expanded(

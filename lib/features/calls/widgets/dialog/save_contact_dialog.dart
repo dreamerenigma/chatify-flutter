@@ -2,6 +2,7 @@ import 'package:chatify/api/apis.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -9,16 +10,16 @@ import '../../../personalization/widgets/dialogs/light_dialog.dart';
 class SaveContactController extends GetxController {
   RxString selectedOptionText = ''.obs;
 
-  void updateSelectedOptionText(int option) {
+  void updateSelectedOptionText(BuildContext context, int option) {
     switch (option) {
       case 1:
         selectedOptionText.value = APIs.me.email;
         break;
       case 2:
-        selectedOptionText.value = 'Телефон';
+        selectedOptionText.value = S.of(context).phone;
         break;
       default:
-        selectedOptionText.value = 'Сохранить';
+        selectedOptionText.value = S.of(context).save;
     }
   }
 
@@ -34,10 +35,10 @@ class SaveContactController extends GetxController {
     selectedOption.value = box.read<int>('selectedOption') ?? 1;
   }
 
-  void setOption(int option) {
+  void setOption(BuildContext context, int option) {
     selectedOption.value = option;
     box.write('selectedOption', option);
-    updateSelectedOptionText(option);
+    updateSelectedOptionText(context, option);
   }
 
   int getOption() {
@@ -50,7 +51,7 @@ class SaveContactController extends GetxController {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          title: Text('Сохранить:', style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
+          title: Text('${S.of(context).save}:', style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
           contentPadding: EdgeInsets.zero,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -62,19 +63,19 @@ class SaveContactController extends GetxController {
                 activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 onChanged: (value) {
                   if (value != null) {
-                    setOption(value);
+                    setOption(context, value);
                   }
                 },
                 contentPadding: const EdgeInsets.only(left: 12),
               )),
               Obx(() => RadioListTile<int>(
-                title: const Text('Телефон'),
+                title: Text(S.of(context).phone),
                 value: 2,
                 groupValue: selectedOption.value,
                 activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 onChanged: (value) {
                   if (value != null) {
-                    setOption(value);
+                    setOption(context, value);
                   }
                 },
                 contentPadding: const EdgeInsets.only(left: 12),
@@ -91,7 +92,7 @@ class SaveContactController extends GetxController {
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: Text('Отмена', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
             ),
             TextButton(
               onPressed: () {
@@ -102,7 +103,7 @@ class SaveContactController extends GetxController {
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: Text('Сохранить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
             ),
           ],
         );

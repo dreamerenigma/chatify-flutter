@@ -65,7 +65,7 @@ class AccessKeysScreen extends StatelessWidget {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text('Ключи доступа', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).accessKeys, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
           ),
         ),
@@ -78,26 +78,20 @@ class AccessKeysScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  Center(
-                    child: SvgPicture.asset(
-                      getAsset(schemeIndex),
-                      width: 70,
-                      height: 70,
-                    ),
-                  ),
+                  Center(child: SvgPicture.asset(getAsset(schemeIndex), width: 70, height: 70)),
                   const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 28),
                     child: Text(
-                      'Обеспечте безопасный вход и защитите свой аккаунт',
+                      S.of(context).ensureSecureLoginProtectAcc,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal),
                     ),
                   ),
                   const SizedBox(height: 14),
-                  _buildItemInfo(icon: BootstrapIcons.shield_check, text: 'Создайте ключ достпа, чтобы у вас был надежный и простой способ войти в свой аккаунт.', iconColor: dynamicIconColor, iconSize: 22, iconWidth: 28),
-                  _buildItemInfo(icon: Icons.fingerprint_rounded, text: 'Войдите в Chatify с помощью функции распознавания лица или отпечатка либо при помощи функции блокировки экрана.', iconColor: dynamicIconColor, iconSize: 24, iconWidth: 28),
-                  _buildItemInfo(icon: Icons.devices_rounded, text: 'Ваш ключ доступа надежно сохранен в менеджере паролей.', iconColor: dynamicIconColor, iconSize: 22, iconWidth: 30),
+                  _buildItemInfo(icon: BootstrapIcons.shield_check, text: S.of(context).createAccessKeySecureSignInAcc, iconColor: dynamicIconColor, iconSize: 22, iconWidth: 28),
+                  _buildItemInfo(icon: Icons.fingerprint_rounded, text: S.of(context).logInAppFaceFingerprintRecognition, iconColor: dynamicIconColor, iconSize: 24, iconWidth: 28),
+                  _buildItemInfo(icon: Icons.devices_rounded, text: S.of(context).accessKeySecurelyStoredPassManager, iconColor: dynamicIconColor, iconSize: 22, iconWidth: 30),
                 ],
               ),
             ),
@@ -110,7 +104,7 @@ class AccessKeysScreen extends StatelessWidget {
                 await Future.delayed(const Duration(seconds: 4));
                 final responseJson = await PasskeyService.createPasskey();
                 if (responseJson != null) {
-                  log('Passkey created: $responseJson');
+                  log('${S.of(context).passkeyCreated}: $responseJson');
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -123,7 +117,7 @@ class AccessKeysScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Создать ключ доступа', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).createAccessKey, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
                 ],
               ),
             ),

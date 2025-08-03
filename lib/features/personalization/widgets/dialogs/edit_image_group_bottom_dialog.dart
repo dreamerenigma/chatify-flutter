@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,13 +9,13 @@ import '../../../community/screens/emoji_sticker_screen.dart';
 import 'light_dialog.dart';
 
 void showEditImageGroupBottomDialog(
-    BuildContext context,
-    Function(String?) onImagePicked,
-    VoidCallback onDeletePressed,
-    String communityId,
-    String imageUrl,
-    bool showDeleteIcon,
-    ) {
+  BuildContext context,
+  Function(String?) onImagePicked,
+  VoidCallback onDeletePressed,
+  String communityId,
+  String imageUrl,
+  bool showDeleteIcon,
+) {
   final mq = MediaQuery.of(context).size;
 
   showModalBottomSheet(
@@ -33,16 +32,16 @@ void showEditImageGroupBottomDialog(
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Картинка группы', style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
+                  Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
                   const Spacer(),
                   showDeleteIcon
-                      ? IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      _showDeleteConfirmationDialog(context, onImagePicked, onDeletePressed);
-                    },
-                  )
-                      : Container(),
+                    ? IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          _showDeleteConfirmationDialog(context, onImagePicked, onDeletePressed);
+                        },
+                      )
+                    : Container(),
                 ],
               ),
               SizedBox(height: mq.height * .03),
@@ -68,7 +67,7 @@ Widget _buildImageGroup(BuildContext context, Function(String?) onImagePicked) {
         icon: Icons.camera_alt_outlined,
         backgroundColor: ChatifyColors.transparent,
         borderColor: ChatifyColors.popupColor,
-        label: 'Камера',
+        label: S.of(context).camera,
         onTap: () async {
           final ImagePicker picker = ImagePicker();
           final XFile? image = await picker.pickImage(
@@ -76,7 +75,6 @@ Widget _buildImageGroup(BuildContext context, Function(String?) onImagePicked) {
             imageQuality: 80,
           );
           if (image != null) {
-            log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
             onImagePicked(image.path);
             Navigator.pop(context);
           }
@@ -87,14 +85,13 @@ Widget _buildImageGroup(BuildContext context, Function(String?) onImagePicked) {
         icon: Icons.image_sharp,
         backgroundColor: ChatifyColors.transparent,
         borderColor: ChatifyColors.popupColor,
-        label: 'Галерея',
+        label: S.of(context).gallery,
         onTap: () async {
           final ImagePicker picker = ImagePicker();
           final XFile? image = await picker.pickImage(
             source: ImageSource.gallery,
           );
           if (image != null) {
-            log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
             onImagePicked(image.path);
             Navigator.pop(context);
           }
@@ -105,13 +102,10 @@ Widget _buildImageGroup(BuildContext context, Function(String?) onImagePicked) {
         icon: Icons.emoji_emotions_outlined,
         backgroundColor: ChatifyColors.transparent,
         borderColor: ChatifyColors.popupColor,
-        label: 'Смайлики и стикеры',
+        label: S.of(context).emoticonsStickers,
         onTap: () {
           Navigator.pop(context);
-          Navigator.push(
-            context,
-            createPageRoute(EmojiStickerScreen(initialColor: Colors.red[200]!, initialEmoji: '')),
-          );
+          Navigator.push(context, createPageRoute(EmojiStickerScreen(initialColor: Colors.red[200]!, initialEmoji: '')));
         },
       ),
     ],
@@ -137,11 +131,7 @@ Widget _buildImageButton({
         child: Container(
           width: 60,
           height: 60,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            shape: BoxShape.circle,
-            border: Border.all(color: borderColor, width: 2),
-          ),
+          decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle, border: Border.all(color: borderColor, width: 2)),
           child: Icon(icon, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 24),
         ),
       ),
@@ -174,9 +164,7 @@ void _showDeleteConfirmationDialog(BuildContext context, Function(String?) onIma
             style: TextButton.styleFrom(
               foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
             child: Text(
               S.of(context).cancel,
@@ -193,9 +181,7 @@ void _showDeleteConfirmationDialog(BuildContext context, Function(String?) onIma
             style: TextButton.styleFrom(
               foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
             child: Text(
               S.of(context).delete,

@@ -10,9 +10,11 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../common/widgets/tiles/list_tile/settings_menu_tile.dart';
 import '../../../../routes/custom_page_route.dart';
+import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../../utils/urls/url_utils.dart';
 import '../../../authentication/widgets/bars/auth_app_bar.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -69,8 +71,8 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
         children: [
           AuthAppBar(
             title: S.of(context).helpCenter,
-            onMenuItemIndex1: () => DeviceUtils.launchUrl('https://faq.chatify.com'),
-            menuItem1Text: 'Открыть в браузере',
+            onMenuItemIndex1: () => UrlUtils.launchURL(AppLinks.helpCenter),
+            menuItem1Text: '',
           ),
           Expanded(
             child: ScrollConfiguration(
@@ -290,7 +292,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 40),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: ChatifyColors.transparent),
-            child: Text('Ещё', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+            child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
           ),
         ),
       ],
@@ -346,7 +348,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 40),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: ChatifyColors.transparent),
-            child: Text('Ещё', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+            child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
           ),
         ),
       ],

@@ -2,6 +2,7 @@ import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -43,156 +44,102 @@ class BlockedUsersScreenState extends State<BlockedUsersScreen> {
             ],
           ),
           child: AppBar(
-            title: Text('Заблокированные', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).blocked, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             actions: [
               IconButton(
                 icon: const Icon(Icons.person_add_alt),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    createPageRoute(SelectContactScreen(user: widget.user)),
-                  );
+                  Navigator.push(context, createPageRoute(SelectContactScreen(user: widget.user)));
                 },
               ),
             ],
           ),
         ),
       ),
-      body: isBlockedListEmpty ? Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 50),
-          child: Column(
-            children: [
-              SizedBox(
-                width: 105,
-                height: 105,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 75,
-                      height: 75,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          ChatifyVectors.user,
-                          width: 65,
-                          height: 65,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 5,
-                      bottom: 12,
-                      child: SvgPicture.asset(
-                        ChatifyVectors.blocked,
-                        width: 34,
-                        height: 34,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Нет заблокированных контактов',
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal),
-              ),
-              const SizedBox(height: 14),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Нажмите на значок ',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                      ),
-                      const WidgetSpan(
-                        child: Icon(Icons.person_add_alt, size: 18),
-                        alignment: PlaceholderAlignment.middle,
-                      ),
-                      TextSpan(
-                        text: ', чтобы выбрать контакт, который вы хотите заблокировать',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Divider(
-                thickness: 1,
-                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                child: Text(
-                  'Заблокированные контакты больше не смогут вам звонить или отправлять сообщения.',
-                  style: TextStyle(
-                    fontSize: ChatifySizes.fontSizeSm,
-                    color: ChatifyColors.darkGrey,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
-          : ScrollConfiguration(
-        behavior: NoGlowScrollBehavior(),
-        child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              },
-            ),
-          ),
-          child: Scrollbar(
-            thickness: 4,
-            thumbVisibility: false,
-            child: SingleChildScrollView(
+      body: isBlockedListEmpty
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-                    child: Text(
-                      'Контакты',
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: ChatifyColors.darkGrey),
+                  SizedBox(
+                    width: 105,
+                    height: 105,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 75,
+                          height: 75,
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                          child: Center(child: SvgPicture.asset(ChatifyVectors.user, width: 65, height: 65)),
+                        ),
+                        Positioned(
+                          left: 5,
+                          bottom: 12,
+                          child: SvgPicture.asset(ChatifyVectors.blocked, width: 34, height: 34),
+                        ),
+                      ],
                     ),
                   ),
-                  BlockedUserList(
-                    blockedUser: widget.blockedUser,
-                    user: widget.user,
-                  ),
-                  Divider(
-                    thickness: 1,
-                    color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey,
-                  ),
+                  const SizedBox(height: 20),
+                  Text(S.of(context).noBlockedContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                  const SizedBox(height: 14),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: S.of(context).clickOnIcon, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          const WidgetSpan(child: Icon(Icons.person_add_alt, size: 18), alignment: PlaceholderAlignment.middle),
+                          TextSpan(text: S.of(context).selectContactYouBlock, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: Text(
-                      'Заблокированные контакты больше не смогут вам звонить или отправлять сообщения.',
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey,),
+                      S.of(context).blockedContactsLongerCallMessage,
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                     ),
                   ),
                 ],
               ),
             ),
+          )
+        : ScrollConfiguration(
+            behavior: NoGlowScrollBehavior(),
+            child: ScrollbarTheme(
+              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+              child: Scrollbar(
+                thickness: 4,
+                thumbVisibility: false,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        child: Text(S.of(context).contacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: ChatifyColors.darkGrey)),
+                      ),
+                      BlockedUserList(blockedUser: widget.blockedUser, user: widget.user),
+                      Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                        child: Text(S.of(context).blockedContactsLongerCallMessage, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 }

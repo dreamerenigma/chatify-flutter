@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../api/apis.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../home/widgets/dialogs/widget/tiles/user_profile_tile.dart';
@@ -150,7 +151,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ChatifyColors.white,
             boxShadow: [
               BoxShadow(
                 color: shadowColor,
@@ -178,7 +179,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                 keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
                 style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
                 decoration: InputDecoration(
-                  hintText: 'Поиск по имени или номеру телефона',
+                  hintText: S.of(context).searchByNameOrPhoneNumber,
                   hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
@@ -189,7 +190,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                 },
               ),
             )
-            : Text('Переслать...',
+            : Text(S.of(context).forward,
             style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -232,10 +233,10 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
               _buildStatus(),
               if (selectedUsers.isNotEmpty) ...[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Wrap(
-                    spacing: 16.0,
-                    runSpacing: 16.0,
+                    spacing: 16,
+                    runSpacing: 16,
                     children: selectedUsers.map((user) {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
@@ -290,7 +291,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Text('Часто общаетесь', style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightSoftNight)),
+                    child: Text(S.of(context).doYouCommunicateOften, style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightSoftNight)),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -309,7 +310,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: Text('Другие контакты', style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightSoftNight)),
+                child: Text(S.of(context).otherContacts, style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightSoftNight)),
               ),
               ...List.generate(chatUsers.length, (index) {
                 final chatUser = chatUsers[index];
@@ -350,8 +351,8 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Статус", style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                    Text("Мои контакты", style: TextStyle(fontSize: 15, color: ChatifyColors.softBlack, fontWeight: FontWeight.w300)),
+                    Text(S.of(context).status, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                    Text(S.of(context).myContacts, style: TextStyle(fontSize: 15, color: ChatifyColors.softBlack, fontWeight: FontWeight.w300)),
                   ],
                 ),
               ),

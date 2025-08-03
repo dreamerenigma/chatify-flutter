@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -38,7 +39,7 @@ class SelectContactPrivacyCheckScreenState extends State<SelectContactPrivacyChe
             ],
           ),
           child: AppBar(
-            title: Text('Проверка конфиденциальности', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text(S.of(context).privacyCheck, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -53,16 +54,7 @@ class SelectContactPrivacyCheckScreenState extends State<SelectContactPrivacyChe
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
         child: ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                if (states.contains(WidgetState.dragged)) {
-                  return ChatifyColors.darkerGrey;
-                }
-                return ChatifyColors.darkerGrey;
-              }
-            ),
-          ),
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(
             thickness: 4,
             thumbVisibility: false,
@@ -77,11 +69,7 @@ class SelectContactPrivacyCheckScreenState extends State<SelectContactPrivacyChe
                       alignment: Alignment.centerRight,
                       clipBehavior: Clip.none,
                       children: [
-                        SvgPicture.asset(
-                          ChatifyVectors.message,
-                          height: 100,
-                          width: 100,
-                        ),
+                        SvgPicture.asset(ChatifyVectors.message, height: 100, width: 100),
                         Positioned(
                           right: -35,
                           top: 30,
@@ -89,13 +77,7 @@ class SelectContactPrivacyCheckScreenState extends State<SelectContactPrivacyChe
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                ChatifyVectors.user,
-                                height: 50,
-                                width: 50,
-                              ),
-                            ),
+                            child: Center(child: SvgPicture.asset(ChatifyVectors.user, height: 50, width: 50)),
                           ),
                         ),
                       ],
@@ -103,31 +85,22 @@ class SelectContactPrivacyCheckScreenState extends State<SelectContactPrivacyChe
                     const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Text('Выбери те, кто может связаться с вами', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                      child: Text(S.of(context).chooseWhoContactYou, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-                      child: Text('Управляйте своей конфиденциальностью. Выберите, кто может связаться с вами, заблокировав звонки или сообщения от нежелательных контактов.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+                      child: Text(S.of(context).manageYourPrivacyBlockingCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
                     ),
                     const SizedBox(height: 10),
-                    _buildCheckPrivacy(icon: Icons.group_add_outlined, text: 'Группы', subtitle: 'Укажите, кто может добавлять вас в группы: все пользователи или только ваши контакты', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const PrivacyGroupsScreen()),
-                      );
+                    _buildCheckPrivacy(icon: Icons.group_add_outlined, text: S.of(context).groups[0].toUpperCase(), subtitle: S.of(context).whoGroupsUsersOrOnlyContacts, onTap: () {
+                      Navigator.push(context, createPageRoute(const PrivacyGroupsScreen()));
                     }),
-                    _buildCheckPrivacy(icon: Icons.notifications_off_outlined, text: 'Отключение звука для неизвестных номеров', subtitle: 'Заблокируйте звонки с неизвестных номеров.', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(const PrivacyCallsScreen()),
-                      );
+                    _buildCheckPrivacy(icon: Icons.notifications_off_outlined, text: S.of(context).muteUnknownNumbers, subtitle: S.of(context).blockCallsUnknownNumbers, onTap: () {
+                      Navigator.push(context, createPageRoute(const PrivacyCallsScreen()));
                     }),
-                    _buildCheckPrivacy(icon: Icons.person_off_outlined, text: 'Заблокированные контакты', subtitle: 'Заблокируйте звонки, сообщения и обновления статуса от отпределённых контактов.', onTap: () {
-                      Navigator.push(
-                        context,
-                        createPageRoute(BlockedUsersScreen(blockedUser: const [], user: APIs.me)),
-                      );
+                    _buildCheckPrivacy(icon: Icons.person_off_outlined, text: S.of(context).blockedContacts, subtitle: S.of(context).blockCallsMessagesStatusUpdates, onTap: () {
+                      Navigator.push(context, createPageRoute(BlockedUsersScreen(blockedUser: const [], user: APIs.me)));
                     }),
                   ],
                 ),

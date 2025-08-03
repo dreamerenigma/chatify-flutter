@@ -128,7 +128,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Text('Текущий', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+                      child: Text(S.of(context).currentCall, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
                     ),
                     _buildCurrentCall(),
                   ],
@@ -140,7 +140,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Text('Избранное', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+                      child: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
                     ),
                     _buildFavoriteCalls(),
                     _buildMoreFavorite(),
@@ -150,7 +150,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                 if (hasRecentCalls) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    child: Text('Недавние', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).recent, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                   ),
                 ],
               ],
@@ -204,15 +204,14 @@ class _CallsWidgetState extends State<CallsWidget> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Text(widget.groupName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-                      Text('Семейная', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                      Text(widget.groupName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
                     ],
                   ),
                   if (isHovered) ...[
                     Expanded(child: Container()),
                     SizedBox(width: 11),
                     CustomTooltip(
-                      message: 'Аудиозвонок',
+                      message: S.of(context).audioCall,
                       child: Material(
                         color: ChatifyColors.transparent,
                         child: InkWell(
@@ -231,7 +230,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                     ),
                     SizedBox(width: 15),
                     CustomTooltip(
-                      message: 'Видеозвонок',
+                      message: S.of(context).videoCall,
                       child: Material(
                         color: ChatifyColors.transparent,
                         child: InkWell(
@@ -260,7 +259,7 @@ class _CallsWidgetState extends State<CallsWidget> {
 
   Widget _buildMoreFavorite() {
     return CustomTooltip(
-      message: 'Смотреть ещё "Избранное"',
+      message: S.of(context).seeMoreFavorites,
       horizontalOffset: -65,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
@@ -288,7 +287,7 @@ class _CallsWidgetState extends State<CallsWidget> {
               padding: const EdgeInsets.only(left: 70),
               alignment: Alignment.centerLeft,
               child: Text(
-                'Ещё',
+                S.of(context).more,
                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 15, fontWeight: FontWeight.w500,
                 ),
               ),
@@ -349,10 +348,10 @@ class _CallsWidgetState extends State<CallsWidget> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Ожидание других участников', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                              Text(S.of(context).waitingOtherParticipants, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
                               SizedBox(height: 4),
                               Text(
-                                'Текущий видеозвонок',
+                                S.of(context).currentVideoCall,
                                 style: TextStyle(
                                   color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.lightGrey,
                                   fontSize: ChatifySizes.fontSizeSm,
@@ -377,7 +376,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                             ).copyWith(
                               mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
                             ),
-                            child: Text('Открыть', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                            child: Text(S.of(context).open, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                           ),
                         ),
                       ],

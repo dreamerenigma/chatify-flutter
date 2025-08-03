@@ -122,7 +122,7 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                   ),
                 ),
                 CustomTooltip(
-                  message: 'Чтобы включить эту опцию, перейдите в Настройки своего компьютера > Приложения > Автозагрузка и включите запуск WhatsApp при входе',
+                  message: S.of(context).enableThisOption,
                   verticalOffset: -115,
                   child: Row(
                     children: [
@@ -137,10 +137,10 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                           bool success = false;
 
                           if (value) {
-                            await enableAutoLaunch(appName: 'Chatify');
+                            await enableAutoLaunch(appName: S.of(context).appName);
                             success = isAutoLaunchEnabled;
                           } else {
-                            await disableAutoLaunch(appName: 'Chatify');
+                            await disableAutoLaunch(appName: S.of(context).appName);
                             success = !isAutoLaunchEnabled;
                           }
 
@@ -363,7 +363,7 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                           style: TextStyle(
                             color: colorsController.getColor(colorsController.selectedColorScheme.value),
                             fontWeight: FontWeight.w400,
-                            decoration: isViewProfile  ? TextDecoration.none : TextDecoration.underline,
+                            decoration: isViewProfile ? TextDecoration.none : TextDecoration.underline,
                             decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                           ),
                         ),
@@ -394,7 +394,7 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
         child: SingleChildScrollView(
           controller: scrollController,
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -406,7 +406,7 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                           isTextEmojiListVisible = false;
                         });
                       },
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8),
                       splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                       highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                       child: Icon(Icons.arrow_back, size: 16),

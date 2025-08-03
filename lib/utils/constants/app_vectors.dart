@@ -36,7 +36,6 @@ class ChatifyVectors {
   static const String snowFlake = "assets/vectors/snowflake.svg";
   static const String autumnLeaf1 = "assets/vectors/autumn_leaf_1.svg";
   static const String autumnLeaf2 = "assets/vectors/autumn_leaf_2.svg";
-  static const String christmas = "assets/vectors/christmas.svg";
   static const String geolocation = "assets/vectors/geolocation.svg";
   static const String message = "assets/vectors/message.svg";
   static const String lock = "assets/vectors/lock.svg";
@@ -87,7 +86,10 @@ class ChatifyVectors {
   static const String chatsRegular = "assets/vectors/chats_regular.svg";
   static const String avatar = "assets/vectors/avatar.svg";
   static const String communityUsers = "assets/vectors/community_users.svg";
-  static const String grass = "assets/vectors/grass.svg";
+  static const String winter = "assets/vectors/winter.svg";
+  static const String spring = "assets/vectors/spring.svg";
+  static const String summer = "assets/vectors/summer.svg";
+  static const String autumn = "assets/vectors/autumn.svg";
   static const String statusAdd = "assets/vectors/status_add.svg";
   static const String cameraAdd = "assets/vectors/camera_add.svg";
   static const String chatsAdd = "assets/vectors/chats_add.svg";
@@ -129,6 +131,14 @@ class ChatifyVectors {
   static const String ai = "assets/vectors/ai.svg";
   static const String question = "assets/vectors/question.svg";
   static const String questionSupport = "assets/vectors/question_support.svg";
+  static const String addFavorite = "assets/vectors/add_favorite.svg";
+  static const String specialFeatures = "assets/vectors/special_features.svg";
+  static const String vk = "assets/vectors/vk.svg";
+  static const String ok = "assets/vectors/ok.svg";
+  static const String megaphone = "assets/vectors/megaphone.svg";
+  static const String communityMessage = "assets/vectors/community_message.svg";
+  static const String userAdd = "assets/vectors/user_add.svg";
+  static const String arrowReload = "assets/vectors/arrow_reload.svg";
 
   /// -- Flags country
   static const String abw = '${pathFlags}abw$format';

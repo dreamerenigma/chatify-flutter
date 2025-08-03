@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import '../../../../../../generated/l10n/l10n.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_sizes.dart';
 import '../../../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -20,10 +21,10 @@ OverlayEntry createThemeOverlayEntry({
 
     showConfirmationDialog(
       context: context,
-      title: isDark ? 'Применить новую тему?' : 'Сменить тему?',
-      description: isDark ? 'Chatify потребуется перезапустить, чтобы применить новую тему.' : 'Это действие перезапустит приложение. Продолжить?',
-      confirmText: 'ОК',
-      cancelText: 'Отмена',
+      title: isDark ? S.of(context).applyNewTheme : S.of(context).changeTopic,
+      description: isDark ? S.of(context).appWillNeedToBeRestartedApplyNewTheme : S.of(context).actionWillRestartApp,
+      confirmText: S.of(context).ok,
+      cancelText: S.of(context).cancel,
       onConfirm: () async {
         onThemeSelected(theme);
         hideOverlay();
@@ -73,21 +74,21 @@ OverlayEntry createThemeOverlayEntry({
                       _buildOption(
                         context: context,
                         icon: Ionicons.settings_outline,
-                        label: 'Системная',
+                        label: S.of(context).systemTheme,
                         isSelected: selectedOption == 'system',
                         onTap: () => handleThemeChange('system'),
                       ),
                       _buildOption(
                         context: context,
                         icon: Icons.wb_sunny_outlined,
-                        label: 'Светлая',
+                        label: S.of(context).light,
                         isSelected: selectedOption == 'light',
                         onTap: () => handleThemeChange('light'),
                       ),
                       _buildOption(
                         context: context,
                         icon: Icons.brightness_2_outlined,
-                        label: 'Темная',
+                        label: S.of(context).dark,
                         isSelected: selectedOption == 'dark',
                         onTap: () => handleThemeChange('dark'),
                       ),

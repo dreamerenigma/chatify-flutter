@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:ionicons/ionicons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -145,19 +146,17 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
 
   Future<List<String>> getAvailableSpeakers() async {
     final devices = await webrtc.navigator.mediaDevices.enumerateDevices();
-    final speakerDevices = devices.where((d) => d.kind == 'audiooutput').map((d) => d.label.isNotEmpty ? d.label : 'Динамик (${d.deviceId})').toList();
+    final speakerDevices = devices.where((d) => d.kind == 'audiooutput').map((d) => d.label.isNotEmpty ? d.label : '${S.of(context).speaker} (${d.deviceId})').toList();
 
     return speakerDevices;
   }
 
   Future<void> _startRingingTone() async {
     try {
-      log('Starting ringing tone...');
       await audioPlayer.setReleaseMode(ReleaseMode.loop);
       await audioPlayer.play(AssetSource(ChatifySounds.cellPhoneRing));
-      log('Ringing tone started successfully.');
     } catch (e) {
-      log('Error starting ringing tone: $e');
+      log('${S.of(context).errorStartingRingingTone}: $e');
     }
   }
 
@@ -165,7 +164,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
     try {
       await audioPlayer.stop();
     } catch (e) {
-      log('Error stopping ringing tone: $e');
+      log('${S.of(context).errorStopingRingingTone}: $e');
     }
   }
 
@@ -217,7 +216,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                           Text(widget.user.name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                           const SizedBox(height: 8),
                           Text(
-                            isCallEnded ? 'Звонок завершен' : isCalling ? 'Звонок...' : 'Соединение...',
+                            isCallEnded ? S.of(context).callEnded: isCalling ? '${S.of(context).call}...' : S.of(context).connected,
                             style: TextStyle(fontSize: ChatifySizes.fontSizeBg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300),
                           ),
                         ],
@@ -274,7 +273,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                   await showDeviceSelectDialog(
                     context: context,
                     position: position,
-                    title: 'Камера',
+                    title: S.of(context).camera,
                     devices: cameras.map((c) => c.name).toList(),
                     nameFormatter: FileUtil.cleanDeviceName,
                     selectedDevice: selectedCamera,
@@ -287,7 +286,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                     showDefaultDeviceText: false,
                   );
                 },
-                message: 'Включить камеру',
+                message: S.of(context).turnOnCamera,
                 isArrowEnabled: isArrowVideo,
               ),
               const SizedBox(width: 10),
@@ -313,12 +312,12 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                   final position = renderBox.localToGlobal(Offset.zero);
                   final microphones = await getAvailableMicrophones();
                   final microphoneLabels = microphones.map((device) {
-                    return device.label.isNotEmpty ? device.label : 'Микрофон (${device.deviceId})';
+                    return device.label.isNotEmpty ? device.label : '${S.of(context).microphone} (${device.deviceId})';
                   }).toList();
                   final List<String> speakers = await getAvailableSpeakers();
                   final speakerLabels = speakers.map((name) {
                     final trimmed = name.trim();
-                    return trimmed.isNotEmpty ? trimmed : 'Динамик';
+                    return trimmed.isNotEmpty ? trimmed : S.of(context).speaker;
                   }).toList();
 
                   if (microphoneLabels.isEmpty) return;
@@ -333,7 +332,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                   await showDeviceSelectDialog(
                     context: context,
                     position: position,
-                    title: 'Микрофон',
+                    title: S.of(context).microphone,
                     devices: microphoneLabels,
                     speakerDevices: speakerLabels,
                     nameFormatter: FileUtil.cleanDeviceName,
@@ -341,18 +340,16 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                     selectedSpeakerDevice: selectedSpeaker,
                     dialogWidth: 290,
                     onDeviceSelected: (device) {
-                      log('🎤 Выбран микрофон: "$device"');
                       if (device.trim().isEmpty) {
-                        log('⚠️ ВНИМАНИЕ: выбран пустой микрофон!');
+                        log(S.of(context).warningEmptyMicrophoneSelected);
                       }
                       setState(() {
                         selectedMicrophone = device;
                       });
                     },
                     onSpeakerSelected: (device) {
-                      log('🔊 Выбран динамик: "$device"');
                       if (device.trim().isEmpty) {
-                        log('⚠️ ВНИМАНИЕ: выбран пустой динамик!');
+                        log(S.of(context).warningEmptySpeakerSelected);
                       }
                       setState(() {
                         selectedSpeaker = device;
@@ -361,7 +358,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                   );
                 },
                 isArrowEnabled: isArrowMicrophone,
-                message: isMicOn ? 'Выключить микрофон' : 'Включить микрофон',
+                message: isMicOn ? S.of(context).turnOffMicrophone : S.of(context).turnOnMicrophone,
               ),
             ],
           ),
@@ -370,14 +367,14 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
             children: [
               _buildIconButton(
                 icon: SvgPicture.asset(ChatifyVectors.demonstrationScreen, width: 23, height: 23, color: ChatifyColors.white),
-                message: 'Демонстрировать экран',
+                message: S.of(context).shareScreen,
                 onTap: () {},
                 isEnabled: isCallAccepted,
               ),
               const SizedBox(width: 4),
               _buildIconButton(
                 icon: SvgPicture.asset(ChatifyVectors.addCallUser, width: 26, height: 26, color: ChatifyColors.white),
-                message: 'Добавить участников',
+                message: S.of(context).addParticipants,
                 tooltipOffsetX: -65,
                 onTap: () {
                   final Size screenSize = MediaQuery.of(context).size;
@@ -391,7 +388,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
               const SizedBox(width: 4),
               _buildIconButton(
                 icon: SvgPicture.asset(ChatifyVectors.text, width: 15, height: 15, color: ChatifyColors.white),
-                message: 'Открыть чат',
+                message: S.of(context).openChat,
                 tooltipOffsetX: -40,
                 padding: 17,
                 onTap: () {},
@@ -441,16 +438,16 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildEndCallButton(ChatifyVectors.text, 'Сообщение', () {
+        _buildEndCallButton(ChatifyVectors.text, S.of(context).message, () {
           Navigator.pop(context);
         }),
         const SizedBox(width: 100),
-        _buildEndCallButton(ChatifyVectors.calls, 'Перезвонить', () {
+        _buildEndCallButton(ChatifyVectors.calls, S.of(context).callBack, () {
           _restartCall();
         },
         backgroundColor: ChatifyColors.green),
         const SizedBox(width: 110),
-        _buildEndCallButton(Ionicons.close_outline, 'Закрыть', () {
+        _buildEndCallButton(Ionicons.close_outline, S.of(context).close, () {
           Navigator.pop(context);
         }),
       ],
@@ -584,7 +581,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
 
   Widget _buildCircleEndCallButton() {
     return CustomTooltip(
-      message: 'Завершить',
+      message: S.of(context).finish,
       verticalOffset: -70,
       horizontalOffset: -45,
       child: InkWell(

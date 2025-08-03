@@ -18,10 +18,10 @@ void showDeleteListDialog(BuildContext context) {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Flexible(
+            Flexible(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: Text('Удалить список "Непрочитанное"?', softWrap: true, maxLines: null),
+                child: Text(S.of(context).deleteUnreadList, softWrap: true, maxLines: null),
               ),
             ),
             IconButton(
@@ -32,7 +32,7 @@ void showDeleteListDialog(BuildContext context) {
             ),
           ],
         ),
-        content: const Text('Если вы удалите предустановленный список, он будет скрыт. Ваши групповые и индивидуальнеы чаты не будут удалены. Чтобы вернуть этот список, перейдите в раздел "Списки" в настройках'),
+        content: Text(S.of(context).deleteResetListHidden),
         actions: [
           TextButton(
             onPressed: () {

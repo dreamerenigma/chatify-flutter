@@ -1,5 +1,5 @@
 import 'package:chatify/features/bot/models/support_model.dart';
-import 'package:chatify/features/newsletter/models/newsletter.dart';
+import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:chatify/features/status/widgets/images/camera_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
-import '../../../utils/popups/dialogs.dart';
+import '../../bot/models/info_app_model.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/models/community_model.dart';
 import '../../group/models/group_model.dart';
@@ -39,13 +39,12 @@ class HomeScreenState extends State<HomeScreen> {
   bool isSearching = false;
   int selectedIndex = 0;
   int selectedChatsCount = 0;
-  DateTime? _lastBackPressTime;
-  final int _exitTimeout = 2;
   List<GroupModel> groups = [];
   List<CommunityModel> communities = [];
   List<NewsletterModel> newsletters = [];
   List<UserModel> users = [];
   List<SupportAppModel> supports = [];
+  List<InfoAppModel> infosApp = [];
   Set<int> selectedChats = <int>{};
   bool isSelecting = false;
   bool isToolbarVisible = true;
@@ -155,19 +154,6 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<bool> _onWillPop() async {
-    final now = DateTime.now();
-    final backButtonHasNotBeenPressedOrSnackBarHasBeenDismissed = _lastBackPressTime == null || now.difference(_lastBackPressTime!) > Duration(seconds: _exitTimeout);
-
-    if (backButtonHasNotBeenPressedOrSnackBarHasBeenDismissed) {
-      _lastBackPressTime = now;
-
-      Dialogs.showSnackbar(context, S.of(context).pressAgainExit);
-      return Future.value(false);
-    }
-    return Future.value(true);
-  }
-
   void _clearSelection() {
     setState(() {
       selectedChats.clear();
@@ -192,82 +178,80 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     isHomeScreen = selectedIndex == 0;
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: GestureDetector(
-        onTap: () {
-          if (isSearching) {
-            setState(() {
-              isSearching = false;
-            });
-          }
-        },
-        child: Scaffold(
-          backgroundColor: isWebOrWindows ? context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : null,
-          appBar: defaultTargetPlatform == TargetPlatform.windows
-            ? null
-            : isSelecting
-              ? SelectionAppBar(selectedChatsCount: selectedChatsCount, onClearSelection: _clearSelection, onHandleDeleteSelectedChats: _handleDeleteSelectedChats)
-              : selectedIndex == 0
-                ? HomeAppBarWidget(
-                  isSearching: isSearching,
-                  users: users,
-                  searchList: searchList,
-                  onSearch: (val) {
-                    searchList.clear();
-                    for (var i in users) {
-                      if (i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())) {
-                        searchList.add(i);
-                      }
+    return GestureDetector(
+      onTap: () {
+        if (isSearching) {
+          setState(() {
+            isSearching = false;
+          });
+        }
+      },
+      child: Scaffold(
+        backgroundColor: isWebOrWindows ? context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : null,
+        appBar: defaultTargetPlatform == TargetPlatform.windows
+          ? null
+          : isSelecting
+            ? SelectionAppBar(selectedChatsCount: selectedChatsCount, onClearSelection: _clearSelection, onHandleDeleteSelectedChats: _handleDeleteSelectedChats)
+            : selectedIndex == 0
+              ? HomeAppBarWidget(
+                isSearching: isSearching,
+                users: users,
+                searchList: searchList,
+                onSearch: (val) {
+                  searchList.clear();
+                  for (var i in users) {
+                    if (i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())) {
+                      searchList.add(i);
                     }
-                    setState(() {
-                      searchList;
-                    });
-                  },
-                  onToggleSearch: () {
-                    setState(() {
-                      isSearching = !isSearching;
-                    });
-                  },
-                  onCameraPressed: () {
-                    Navigator.push(context, createPageRoute(const CameraScreen()));
-                  },
-                  hintText: S.of(context).nameEmail,
-                )
-              : null,
-          floatingActionButton: defaultTargetPlatform == TargetPlatform.windows ? null : selectedIndex == 0
-              ? Padding(padding: const EdgeInsets.only(bottom: 10),
-            child: FloatingActionButton(
-              heroTag: 'home',
-              onPressed: () async {
-                Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
-              },
-              elevation: 2,
-              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              foregroundColor: ChatifyColors.white,
-              child: SvgPicture.asset(ChatifyVectors.chatsAdd, color: ChatifyColors.white, width: 28, height: 28),
-            ),
-          )
-          : null,
-          body: HomeScreenWidget(
-            selectedIndex: selectedIndex,
-            pageController: _pageController,
-            isHomeScreen: isHomeScreen,
-            isSearching: isSearching,
-            groups: groups,
-            users: users,
-            newsletters: newsletters,
-            communities: communities,
-            searchList: searchList,
-            supports: supports,
-            onPageChanged: _onPageChanged,
-            onItemTapped: onItemTapped,
-            onGroupSelected: (group) {},
-            onUserSelected: (chatUser) {},
-            user: widget.user,
+                  }
+                  setState(() {
+                    searchList;
+                  });
+                },
+                onToggleSearch: () {
+                  setState(() {
+                    isSearching = !isSearching;
+                  });
+                },
+                onCameraPressed: () {
+                  Navigator.push(context, createPageRoute(const CameraScreen()));
+                },
+                hintText: S.of(context).nameEmail,
+              )
+            : null,
+        floatingActionButton: defaultTargetPlatform == TargetPlatform.windows ? null : selectedIndex == 0
+            ? Padding(padding: const EdgeInsets.only(bottom: 5),
+          child: FloatingActionButton(
+            heroTag: 'home',
+            onPressed: () async {
+              Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
+            },
+            elevation: 2,
+            backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+            foregroundColor: ChatifyColors.white,
+            child: SvgPicture.asset(ChatifyVectors.chatsAdd, color: ChatifyColors.black, width: 26, height: 26),
           ),
-          bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped) : null,
+        )
+        : null,
+        body: HomeScreenWidget(
+          selectedIndex: selectedIndex,
+          pageController: _pageController,
+          isHomeScreen: isHomeScreen,
+          isSearching: isSearching,
+          groups: groups,
+          users: users,
+          newsletters: newsletters,
+          communities: communities,
+          searchList: searchList,
+          supports: supports,
+          infosApp: infosApp,
+          onPageChanged: _onPageChanged,
+          onItemTapped: onItemTapped,
+          onGroupSelected: (group) {},
+          onUserSelected: (chatUser) {},
+          user: widget.user
         ),
+        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped) : null,
       ),
     );
   }

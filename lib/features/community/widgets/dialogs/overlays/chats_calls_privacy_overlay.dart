@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/urls/url_utils.dart';
 import '../../../../home/controllers/dialog_controller.dart';
@@ -76,7 +78,7 @@ void showChatsCallsPrivacyOverlay(BuildContext context) {
                                       onPressed: () async {
                                         overlayEntry.remove();
                                         dialogController.closeWindowsDialog();
-                                        UrlUtils.launchURL('https://chatify.ru/security?lg=ru&lc=RU&eea=0');
+                                        UrlUtils.launchURL(AppLinks.security);
                                       },
                                       style: TextButton.styleFrom(
                                         backgroundColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white,
@@ -91,7 +93,7 @@ void showChatsCallsPrivacyOverlay(BuildContext context) {
                                       ),
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 6),
-                                        child: Text('Подробнее', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                                        child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                                       ),
                                     ),
                                   ),
@@ -116,7 +118,7 @@ void showChatsCallsPrivacyOverlay(BuildContext context) {
                                       ),
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 6),
-                                        child: Text('ОК', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
+                                        child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
                                       ),
                                     ),
                                   ),

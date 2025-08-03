@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -58,7 +59,7 @@ class PrivacyCallsScreenState extends State<PrivacyCallsScreen> {
           ),
           child: AppBar(
             title: Text(
-              'Звонки',
+              S.of(context).calls,
               style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
             ),
             titleSpacing: 0,
@@ -82,13 +83,7 @@ class PrivacyCallsScreenState extends State<PrivacyCallsScreen> {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        'Отключить звук для \n'
-                        'неизвестных номеров',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                      ),
-                    ),
+                    Expanded(child: Text(S.of(context).muteUnknownNumbers, style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
                     Container(
                       alignment: Alignment.topRight,
                       child: isLoading ? SizedBox(
@@ -112,16 +107,11 @@ class PrivacyCallsScreenState extends State<PrivacyCallsScreen> {
                 ),
                 RichText(
                   text: TextSpan(
-                    text:
-                      'Звук звонков с неизвестных \n'
-                      'номеров будет отключен. Они \n'
-                      'будут по-прежнему отображаться \n'
-                      'на вкладке Звонки \n'
-                      'и в уведомлениях. ',
+                    text: S.of(context).callsUnknownNumMutedNotify,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
                     children: [
                       TextSpan(
-                        text: 'Подробнее',
+                        text: S.of(context).readMore,
                         style: TextStyle(height: 1.5, color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.bold),
                         recognizer: TapGestureRecognizer()..onTap = () {},
                       ),

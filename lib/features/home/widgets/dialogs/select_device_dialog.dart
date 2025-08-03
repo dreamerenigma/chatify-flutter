@@ -4,6 +4,7 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide navigator;
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -26,7 +27,7 @@ void showSelectDeviceDialog(
 
   Future<List<String>> getMicrophones() async {
     final devices = await navigator.mediaDevices.enumerateDevices();
-    return devices.where((d) => d.kind == 'audioinput').map((d) => d.label.isNotEmpty ? d.label : 'Microphone (${d.deviceId})').toList();
+    return devices.where((d) => d.kind == 'audioinput').map((d) => d.label.isNotEmpty ? d.label : '${S.of(context).microphone} (${d.deviceId})').toList();
   }
 
   Future<void> saveSelectedDevice(String device, DeviceType deviceType) async {
@@ -61,7 +62,7 @@ void showSelectDeviceDialog(
   } else if (deviceType == DeviceType.speaker) {
     try {
       final devices = await navigator.mediaDevices.enumerateDevices();
-      availableDevices = devices.where((d) => d.kind == 'audiooutput').map((d) => d.label.isNotEmpty ? d.label : 'Speaker (${d.deviceId})').toList();
+      availableDevices = devices.where((d) => d.kind == 'audiooutput').map((d) => d.label.isNotEmpty ? d.label : '${S.of(context).speaker} (${d.deviceId})').toList();
     } catch (e) {
       availableDevices = [];
     }
@@ -113,9 +114,7 @@ void showSelectDeviceDialog(
                     child: Padding(
                       padding: const EdgeInsets.only(right: 2, top: 5, bottom: 5),
                       child: ScrollbarTheme(
-                        data: ScrollbarThemeData(
-                          thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) => context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
-                        ),
+                        data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                         child: Scrollbar(
                           controller: scrollController,
                           thickness: 2,
@@ -138,7 +137,7 @@ void showSelectDeviceDialog(
                                             color: ChatifyColors.transparent,
                                             child: InkWell(
                                               onTap: () {
-                                                selectedDevice.value = "Устройство по умолчанию";
+                                                selectedDevice.value = S.of(context).defaultDevice;
                                                 deviceMenuOverlayEntry.remove();
                                               },
                                               splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
@@ -150,17 +149,17 @@ void showSelectDeviceDialog(
                                                     width: double.infinity,
                                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                                     decoration: BoxDecoration(
-                                                      color: selectedDevice.value == "Устройство по умолчанию" ? context.isDarkMode ? ChatifyColors.textPrimary : ChatifyColors.textPrimary : ChatifyColors.transparent,
+                                                      color: selectedDevice.value == S.of(context).defaultDevice ? context.isDarkMode ? ChatifyColors.textPrimary : ChatifyColors.textPrimary : ChatifyColors.transparent,
                                                       borderRadius: BorderRadius.circular(8),
                                                     ),
                                                     child: Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        Text("Устройство по умолчанию"),
+                                                        Text(S.of(context).defaultDevice),
                                                       ],
                                                     ),
                                                   ),
-                                                  if (selectedDevice.value == "Устройство по умолчанию")
+                                                  if (selectedDevice.value == S.of(context).defaultDevice)
                                                   Positioned(
                                                     left: 0,
                                                     top: 8,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../dialogs/light_dialog.dart';
@@ -30,8 +31,8 @@ class WriteToUsInput extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           fillColor: ChatifyColors.blackGrey,
-          contentPadding: const EdgeInsets.all(16.0),
-          hintText: 'Чем мы можем вам помочь?',
+          contentPadding: const EdgeInsets.all(16),
+          hintText: S.of(context).howCanWeHelpYou,
           hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
           border: const OutlineInputBorder(borderSide: BorderSide.none),
           enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.grey)),

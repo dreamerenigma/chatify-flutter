@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../common/entities/base_chat_entity.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -38,10 +39,19 @@ Future<void> showChangeNewContactDialog(
   final GetStorage storage = GetStorage();
   bool isSyncContactEnabled = false;
   bool isInside = false;
+  ValueNotifier<bool> isConfirmButtonEnabled = ValueNotifier(false);
 
   void saveSetting(String key, bool value) {
     storage.write(key, value);
   }
+
+  nameController.addListener(() {
+    if (nameController.text.isNotEmpty) {
+      isConfirmButtonEnabled.value = true;
+    } else {
+      isConfirmButtonEnabled.value = false;
+    }
+  });
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -123,7 +133,7 @@ Future<void> showChangeNewContactDialog(
                                           ),
                                           Center(
                                             child: CircleAvatar(
-                                              radius: 48,
+                                              radius: 50,
                                               backgroundColor: (entity is SupportAppModel)
                                                 ? colorsController.getColor(colorsController.selectedColorScheme.value)
                                                 : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey),
@@ -133,7 +143,7 @@ Future<void> showChangeNewContactDialog(
                                                     placeholder: (context, url) => Shimmer.fromColors(
                                                       baseColor: Colors.grey.shade300,
                                                       highlightColor: Colors.grey.shade100,
-                                                      child: CircleAvatar(radius: 48, backgroundColor: Colors.grey.shade300),
+                                                      child: CircleAvatar(radius: 50, backgroundColor: Colors.grey.shade300),
                                                     ),
                                                     errorWidget: (context, url, error) => SvgPicture.asset(
                                                       ChatifyVectors.newUser,
@@ -141,7 +151,7 @@ Future<void> showChangeNewContactDialog(
                                                       height: 50,
                                                       color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey,
                                                     ),
-                                                    imageBuilder: (context, imageProvider) => CircleAvatar(radius: 48, backgroundImage: imageProvider),
+                                                    imageBuilder: (context, imageProvider) => CircleAvatar(radius: 50, backgroundImage: imageProvider),
                                                   )
                                                 : SvgPicture.asset((entity is SupportAppModel) ? ChatifyVectors.logoApp : ChatifyVectors.newUser,
                                                     width: 50,
@@ -159,7 +169,7 @@ Future<void> showChangeNewContactDialog(
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('Имя', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
+                                                Text(S.of(context).name, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
                                                 SizedBox(height: 6),
                                                 SearchTextInput(
                                                   hintText: '',
@@ -178,7 +188,7 @@ Future<void> showChangeNewContactDialog(
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('Фамилия', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
+                                                Text(S.of(context).surname, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
                                                 SizedBox(height: 6),
                                                 SearchTextInput(
                                                   hintText: '',
@@ -201,8 +211,8 @@ Future<void> showChangeNewContactDialog(
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      Text('Синхронизировать контакт на телефоне', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
-                                                      Text('Этот контакт будет добавлен в адресную книгу вашего телефона.', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
+                                                      Text(S.of(context).syncContactOnPhone, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
+                                                      Text(S.of(context).contactAddYourPhoneAddressBook, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: ChatifyColors.grey, fontWeight: FontWeight.w300)),
                                                     ],
                                                   ),
                                                 ),
@@ -228,12 +238,12 @@ Future<void> showChangeNewContactDialog(
                                 ),
                               ),
                               CustomBottomButtons(
-                                confirmText: 'Сохранить',
-                                cancelText: 'Отмена',
-                                onConfirm: () {},
+                                confirmText: S.of(context).save,
+                                cancelText: S.of(context).cancel,
+                                onConfirm: isConfirmButtonEnabled.value ? () {} : null,
                                 overlayEntry: overlayEntry,
                                 dialogController: dialogController,
-                                primaryColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                primaryColor: isConfirmButtonEnabled.value ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.darkerGrey,
                                 showConfirmButton: false,
                               ),
                             ],

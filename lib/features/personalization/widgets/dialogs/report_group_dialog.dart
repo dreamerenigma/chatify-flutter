@@ -27,17 +27,17 @@ void showReportGroupDialog(BuildContext context) {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Center(child: Text('Пожаловаться в Chatify на эту группу?', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal), textAlign: TextAlign.center)),
+                    child: Center(child: Text(S.of(context).reportGroupApp, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal), textAlign: TextAlign.center)),
                   ),
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 26),
-                    child: Text('Последние 5 сообщений в этой группе будут переслан в Chatify. Если вы выйдете из группы и удалите чат, сообщения будут удалены только с этого устройства и с ваших устройств с более новыми версиями Chatify.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                    child: Text(S.of(context).lastFiveMessagesGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                   ),
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 26),
-                    child: Text('Участники группы не будут об этом оповещены.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                    child: Text(S.of(context).groupMembersNotified, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                   ),
                   const SizedBox(height: 12),
                   Padding(
@@ -57,7 +57,7 @@ void showReportGroupDialog(BuildContext context) {
                             activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                           ),
                         ),
-                        Text('Выйти из группы и удалить чат', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                        Text(S.of(context).leaveGroupDeleteChat, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                       ],
                     ),
                   ),
@@ -74,9 +74,7 @@ void showReportGroupDialog(BuildContext context) {
                           style: TextButton.styleFrom(
                             foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
                           child: Text(S.of(context).cancel, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
                         ),
@@ -86,11 +84,9 @@ void showReportGroupDialog(BuildContext context) {
                           style: TextButton.styleFrom(
                             foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text('Пожаловаться', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).complain, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
                         ),
                       ],
                     ),

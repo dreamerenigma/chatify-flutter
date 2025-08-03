@@ -132,7 +132,7 @@ class ColorsController extends GetxController {
             contentPadding: EdgeInsets.zero,
             titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-            title: const Text('Выбрать цветовую схему'),
+            title: Text(S.of(context).selectColorScheme),
             content: SizedBox(
               width: 300,
               child: Column(
@@ -140,7 +140,7 @@ class ColorsController extends GetxController {
                 children: [
                   buildColorOption(
                     icon: Icons.color_lens,
-                    title: 'По умолчанию',
+                    title: S.of(context).system,
                     value: 'default',
                     color: ChatifyColors.blue,
                     groupValue: tempColorScheme,
@@ -148,7 +148,7 @@ class ColorsController extends GetxController {
                   ),
                   buildColorOption(
                     icon: Icons.color_lens,
-                    title: 'Синий',
+                    title: S.of(context).blueColor,
                     value: 'blue',
                     color: ChatifyColors.blue,
                     groupValue: tempColorScheme,
@@ -156,7 +156,7 @@ class ColorsController extends GetxController {
                   ),
                   buildColorOption(
                     icon: Icons.color_lens,
-                    title: 'Красный',
+                    title: S.of(context).redColor,
                     value: 'red',
                     color: ChatifyColors.red,
                     groupValue: tempColorScheme,
@@ -164,7 +164,7 @@ class ColorsController extends GetxController {
                   ),
                   buildColorOption(
                     icon: Icons.color_lens,
-                    title: 'Зеленый',
+                    title: S.of(context).greenColor,
                     value: 'green',
                     color: ChatifyColors.green,
                     groupValue: tempColorScheme,
@@ -172,7 +172,7 @@ class ColorsController extends GetxController {
                   ),
                   buildColorOption(
                     icon: Icons.color_lens,
-                    title: 'Оранжевый',
+                    title: S.of(context).orangeColor,
                     value: 'orange',
                     color: ChatifyColors.orange,
                     groupValue: tempColorScheme,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -78,7 +79,7 @@ class _NewsletterDialogState extends State<NewsletterDialog> {
                       ),
                       padding: EdgeInsets.symmetric(vertical: mq.size.width * .01, horizontal: mq.size.width * .05),
                       child: Text(
-                        '${widget.newsletters.length} получателя',
+                        '${widget.newsletters.length} ${S.of(context).recipient}',
                         style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w500, color: ChatifyColors.white),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -88,8 +89,8 @@ class _NewsletterDialogState extends State<NewsletterDialog> {
                 ],
               ),
             ),
-            const SizedBox(height: 0.0),
-            const Divider(height: 1.0, thickness: 1.0),
+            const SizedBox(height: 0),
+            const Divider(height: 1, thickness: 1),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -99,7 +100,7 @@ class _NewsletterDialogState extends State<NewsletterDialog> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(context, createPageRoute(const NewsletterChatScreen(newsletters: [], createdAt: '')));
+                        Navigator.push(context, createPageRoute(NewsletterChatScreen(newsletters: widget.newsletters, createdAt: widget.createdAt)));
                       },
                       icon: Icon(Icons.message, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 30),
                     ),

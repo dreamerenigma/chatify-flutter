@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../chat/widgets/input/buttons/camera_button.dart';
@@ -71,7 +72,7 @@ class GroupInputState extends State<GroupInput> {
       groupImage: widget.groupImage,
       groupDescription: '',
       createdAt: widget.createdAt,
-      creatorName: APIs.user.displayName ?? 'Unknown User',
+      creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
       members: widget.members,
       pushToken: '',
       lastMessageTimestamp: 0,
@@ -88,7 +89,7 @@ class GroupInputState extends State<GroupInput> {
         groupImage: widget.groupImage,
         groupDescription: '',
         createdAt: widget.createdAt,
-        creatorName: APIs.user.displayName ?? 'Unknown User',
+        creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
         members: widget.members,
         pushToken: '',
         lastMessageTimestamp: 0,
@@ -107,16 +108,15 @@ class GroupInputState extends State<GroupInput> {
         isTyping = false;
       });
     } else {
-      Dialogs.showSnackbar(context, 'Пожалуйста, введите текст');
+      Dialogs.showSnackbar(context, S.of(context).pleaseEnterText);
     }
   }
 
   Future<void> playSendSound() async {
     try {
       await audioPlayer.play(AssetSource(ChatifySounds.sendMessage));
-      log('Playing sound: ${ChatifySounds.sendMessage}');
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}: $e');
     }
   }
 
@@ -126,10 +126,7 @@ class GroupInputState extends State<GroupInput> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
-              horizontal: 10,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             child: Row(
               children: [
                 Expanded(
@@ -140,11 +137,7 @@ class GroupInputState extends State<GroupInput> {
                       children: [
                         IconButton(
                           onPressed: toggleEmojiKeyboard,
-                          icon: Icon(
-                            Icons.emoji_emotions,
-                            color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            size: 26,
-                          ),
+                          icon: Icon(Icons.emoji_emotions, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
                         ),
                         Expanded(
                           child: TextSelectionTheme(
@@ -161,7 +154,7 @@ class GroupInputState extends State<GroupInput> {
                               textCapitalization: TextCapitalization.sentences,
                               cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                               decoration: InputDecoration(
-                                hintText: 'Сообщение',
+                                hintText: S.of(context).message,
                                 hintStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt())),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -218,7 +211,7 @@ class GroupInputState extends State<GroupInput> {
                     if (isTyping) {
                       sendMessage();
                     } else {
-                      Dialogs.showSnackbar(context, 'Hold to record voice message', fontSize: ChatifySizes.fontSizeMd);
+                      Dialogs.showSnackbar(context, S.of(context).holdRecordVoiceMessage, fontSize: ChatifySizes.fontSizeMd);
                     }
                   },
                   child: CircleAvatar(

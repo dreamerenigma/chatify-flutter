@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../chat/widgets/bars/actions/app_bar_actions.dart';
@@ -149,15 +150,15 @@ class _GroupChatAppBarState extends State<GroupChatAppBar> with SingleTickerProv
                   future: widget.userNamesFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text('Загрузка...', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300));
+                      return Text(S.of(context).loading, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300));
                     } else if (snapshot.hasError) {
-                      return Text('Ошибка загрузки имен', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
+                      return Text(S.of(context).errorLoadingNames, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       );
                     } else if (snapshot.hasData) {
                       final userNames = snapshot.data!;
-                      final membersNames = widget.members.map((id) => userNames[id] ?? 'Неизвестный пользователь').join(', ');
+                      final membersNames = widget.members.map((id) => userNames[id] ?? S.of(context).unknownUser).join(', ');
                       return Flexible(
                         fit: FlexFit.loose,
                         child: Text(
@@ -168,7 +169,7 @@ class _GroupChatAppBarState extends State<GroupChatAppBar> with SingleTickerProv
                         ),
                       );
                     } else {
-                      return Text('Нет участников', style: TextStyle(fontSize: ChatifySizes.fontSizeLm),
+                      return Text(S.of(context).noMembers, style: TextStyle(fontSize: ChatifySizes.fontSizeLm),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       );

@@ -7,6 +7,7 @@ import 'package:heroicons/heroicons.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/formatters/formatter.dart';
@@ -331,7 +332,7 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
     if (widget.videoUrls.isEmpty) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 8),
-        child: Center(child: Text("No videos available")),
+        child: Center(child: Text(S.of(context).noVideosAvailable)),
       );
     }
 

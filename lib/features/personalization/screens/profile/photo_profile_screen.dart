@@ -6,6 +6,7 @@ import 'dart:developer';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 import '../../controllers/photo_profile_controller.dart';
 import '../../controllers/user_controller.dart';
@@ -37,9 +38,9 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      log('Error deleting profile photo: $e');
+      log('${S.of(context).errorDeletingProfilePhoto}: $e');
       if (mounted) {
-        Get.snackbar('Error', 'Failed to delete profile photo');
+        Get.snackbar(S.of(context).error.replaceAll('!', ''), S.of(context).failedDeleteProfilePhoto);
       }
     }
   }
@@ -72,56 +73,50 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
 
     return Scaffold(
       appBar: _isAppBarVisible
-          ? PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha((0.2 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
+        ? PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              decoration: BoxDecoration(
+                color: ChatifyColors.black,
+                boxShadow: [
+                  BoxShadow(
+                    color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            actions: [
-              if (currentUser != null && currentUser.uid == widget.user.id)
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  showEditPhotoBottomSheet(
-                    context,
-                    controller.onImagePicked,
-                        () {
-                      deleteProfilePhoto();
+              child: AppBar(
+                backgroundColor: ChatifyColors.transparent,
+                title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+                actions: [
+                  if (currentUser != null && currentUser.uid == widget.user.id)
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      showEditPhotoBottomSheet(context, controller.onImagePicked, () => deleteProfilePhoto());
                     },
-                  );
-                },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () {
+                      controller.shareImage(context);
+                    },
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  controller.shareImage(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      )
-          : null,
+            ),
+          )
+        : null,
       body: Container(
-        color: Colors.black,
+        color: ChatifyColors.black,
         child: Center(
           child: Obx(() {
             final image = controller.image.value;
@@ -137,15 +132,13 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
                 minScale: 1.0,
                 maxScale: 4.0,
                 child: hasImage
-                    ? CachedNetworkImage(
-                  imageUrl: widget.user.image,
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: double.infinity,
-                )
-                    : Text(
-                  S.of(context).noProfilePhoto,
-                  style: TextStyle(color: Colors.grey, fontSize: ChatifySizes.fontSizeMd),
+                  ? CachedNetworkImage(
+                      imageUrl: widget.user.image,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  : Text(S.of(context).noProfilePhoto, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd),
                 ),
               ),
             );

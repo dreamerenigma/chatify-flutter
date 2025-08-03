@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../features/home/controllers/dialog_controller.dart';
 import '../../../features/home/widgets/checkboxes/custom_checkbox.dart';
 import '../../../features/home/widgets/dialogs/confirmation_dialog.dart';
+import '../../../features/personalization/widgets/dialogs/light_dialog.dart';
 
 class DialogManager {
   final _storage = GetStorage();
@@ -34,6 +35,7 @@ class DialogManager {
         confirmText: 'Оценить',
         cancelText: 'Не сейчас',
         onConfirm: () {},
+        confirmButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
         additionalWidget: Row(
           children: [
             CustomCheckbox(

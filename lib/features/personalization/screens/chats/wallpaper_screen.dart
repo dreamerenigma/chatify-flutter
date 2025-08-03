@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -30,7 +31,6 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   void initState() {
     super.initState();
     final storedImagePath = box.read('backgroundImagePath') ?? widget.imagePath ?? '';
-    log("Stored imagePath: $storedImagePath");
     setState(() {
       imagePath = storedImagePath;
     });
@@ -40,7 +40,6 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final storedImagePath = box.read('backgroundImagePath') ?? widget.imagePath ?? '';
-    log("Updated imagePath in didChangeDependencies: $storedImagePath");
     setState(() {
       imagePath = storedImagePath;
     });
@@ -59,17 +58,10 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text(context.isDarkMode ? 'Обои для тёмной темы' : 'Обои для светлой темы', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        title: Text(context.isDarkMode ? S.of(context).wallpaperDarkTheme : S.of(context).wallpaperLightTheme, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       ),
       body: ScrollbarTheme(
-        data: ScrollbarThemeData(
-          thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-            if (states.contains(WidgetState.dragged)) {
-              return ChatifyColors.darkerGrey;
-            }
-            return ChatifyColors.darkerGrey;
-          }),
-        ),
+        data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
         child: Scrollbar(
           thickness: 4,
           thumbVisibility: false,
@@ -85,7 +77,6 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     if (selectedImagePath != null) {
                       setState(() {
                         imagePath = selectedImagePath;
-                        log("Saving wallpaper: $selectedImagePath");
                         box.write('selectedWallpaper', selectedImagePath);
                       });
                     }
@@ -96,7 +87,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                       height: 400,
                       decoration: BoxDecoration(border: Border.all(color: ChatifyColors.popupColor, width: 1), borderRadius: BorderRadius.circular(16)),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0),
+                        borderRadius: BorderRadius.circular(16),
                         child: Stack(
                           children: [
                             ColorFiltered(
@@ -115,7 +106,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                                   children: [
                                     SvgPicture.asset(ChatifyVectors.profile, width: 20, height: 20),
                                     const SizedBox(width: 8.0),
-                                    Text('Имя контакта', style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 10)),
+                                    Text(S.of(context).contactName, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 10)),
                                   ],
                                 ),
                               ),
@@ -202,7 +193,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     Navigator.pushReplacement(context, createPageRoute(const SelectWallpaperScreen(imagePath: '')));
                   },
                   child: Center(
-                    child: Text('Изменить',
+                    child: Text(S.of(context).change,
                       style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -210,7 +201,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 20),
                 const Divider(),
                 const SizedBox(height: 12),
-                const Padding(padding: EdgeInsets.symmetric(horizontal: 25), child: Text('Затемнение обоев')),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 25), child: Text(S.of(context).darkeningWallpaper)),
                 const SizedBox(height: 16.0),
                 Row(
                   children: [
@@ -229,10 +220,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text('Чтобы изменить обои для светлой темы, включите светлую тему: Настройки > Чаты > Тема.',
-                      style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm),
-                      textAlign: TextAlign.center,
-                    ),
+                    child: Text(S.of(context).changeWallpaperLightTheme, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm), textAlign: TextAlign.center),
                   ),
                 ),
               ],

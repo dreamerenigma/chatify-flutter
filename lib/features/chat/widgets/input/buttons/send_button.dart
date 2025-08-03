@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../utils/constants/app_colors.dart';
 
 class SendButton extends StatelessWidget {
   final bool isTyping;
@@ -19,13 +20,9 @@ class SendButton extends StatelessWidget {
         } else {}
       },
       child: CircleAvatar(
-        backgroundColor: Colors.blue,
+        backgroundColor: ChatifyColors.blue,
         radius: 20,
-        child: Icon(
-          isTyping ? Icons.send : Icons.mic,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(isTyping ? Icons.send : Icons.mic, color: ChatifyColors.white, size: 28),
       ),
     );
   }

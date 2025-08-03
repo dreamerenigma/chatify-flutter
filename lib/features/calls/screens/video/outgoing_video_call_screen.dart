@@ -7,6 +7,7 @@ import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -75,12 +76,10 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
 
   Future<void> _startRingingTone() async {
     try {
-      log('Starting ringing tone...');
       await audioPlayer.setReleaseMode(ReleaseMode.loop);
       await audioPlayer.play(AssetSource(ChatifySounds.cellPhoneRing));
-      log('Ringing tone started successfully.');
     } catch (e) {
-      log('Error starting ringing tone: $e');
+      log('${S.of(context).errorStartingRingingTone}: $e');
     }
   }
 
@@ -88,22 +87,19 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
     try {
       await audioPlayer.stop();
     } catch (e) {
-      log('Error stopping ringing tone: $e');
+      log('${S.of(context).errorStopingRingingTone}: $e');
     }
   }
 
   Future<void> playClickButton(AudioPlayer audioPlayer) async {
     try {
-      log('Attempting to play sound...');
       if (audioPlayer.state == PlayerState.playing) {
-        log('Audio player is already playing.');
         return;
       }
       await audioPlayer.setReleaseMode(ReleaseMode.stop);
       await audioPlayer.play(AssetSource(ChatifySounds.endCallButton));
-      log('Sound played successfully.');
     } catch (e) {
-      log('Error playing sound: $e');
+      log('${S.of(context).errorPlayingSound}: $e');
     }
   }
 
@@ -112,7 +108,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
     if (status.isGranted) {
       await _initializeRecorder();
     } else {
-      log('Microphone permission denied');
+      log(S.of(context).microPermissionDenied);
     }
   }
 
@@ -130,19 +126,18 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
           setState(() {});
         }
       } catch (e) {
-        log('Error initializing camera: $e');
+        log('${S.of(context).errorInitCamera}: $e');
       }
     } else {
-      log('No cameras available');
+      log(S.of(context).noCamerasAvailable);
     }
   }
 
   Future<void> _initializeRecorder() async {
     try {
       await _recorder.openRecorder();
-      log('Recorder initialized');
     } catch (e) {
-      log('Error initializing recorder: $e');
+      log('${S.of(context).errorInitRecorder}: $e');
     }
   }
 
@@ -168,7 +163,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
         setState(() {});
       }
     } catch (e) {
-      log('Error switching camera: $e');
+      log('${S.of(context).errorSwitchingCamera}: $e');
     }
   }
 
@@ -283,7 +278,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                             SizedBox(
                               width: 220,
                               child: Text(
-                                'Защищено скозным шифрованием',
+                                S.of(context).protectedWithEndToEndEncryption,
                                 style: TextStyle(
                                   fontSize: ChatifySizes.fontSizeSm,
                                   color: ChatifyColors.white,
@@ -345,7 +340,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                                title: Text('Переключиться на видеозвонок?',
+                                title: Text(S.of(context).switchToVideoCall,
                                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
@@ -364,7 +359,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                     ),
                                     child: Text(
-                                      'Отмена',
+                                      S.of(context).cancel,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                     ),
                                   ),
@@ -378,7 +373,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                     ),
                                     child: Text(
-                                      'Переключить',
+                                      S.of(context).toggle,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                     ),
                                   ),
@@ -386,7 +381,6 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                               );
                             },
                           );
-
                           if (shouldNavigate == true) {
                             Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: APIs.me)));
                           }
@@ -413,11 +407,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                         backgroundColor: ChatifyColors.darkSlate,
                         radius: 25,
                         child: IconButton(
-                          icon: Icon(
-                            isMuted ? Icons.mic : Icons.mic_off,
-                            color: ChatifyColors.white,
-                            size: 30,
-                          ),
+                          icon: Icon(isMuted ? Icons.mic : Icons.mic_off, color: ChatifyColors.white, size: 30),
                           onPressed: _toggleMicrophone,
                         ),
                       ),
@@ -428,7 +418,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                             _stopRingingTone();
                             Navigator.pop(context);
                           } catch (e) {
-                            log('Error in onTap: $e');
+                            log('${S.of(context).errorInOnTap}: $e');
                           }
                         },
                         child: const CircleAvatar(

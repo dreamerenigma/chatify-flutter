@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../common/widgets/buttons/custom_bottom_buttons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -12,8 +13,10 @@ Future<bool> showConfirmationDialog({
   required VoidCallback onConfirm,
   String? title,
   String? description,
-  String confirmText = 'Да',
-  String cancelText = 'Нет',
+  String? confirmText,
+  String? cancelText,
+  String? middleButtonText,
+  VoidCallback? middleButtonAction,
   bool confirmButton = false,
   bool reverseButtons = false,
   bool showTopTitleDuplicate = false,
@@ -21,11 +24,15 @@ Future<bool> showConfirmationDialog({
   Widget? additionalWidget,
   Color? confirmButtonColor,
   Color? cancelButtonColor,
+  Color? cancelTextColor,
+  double? cancelButtonWidth,
 }) {
   final dialogController = Get.find<DialogController>();
   final overlay = Overlay.of(context);
   final completer = Completer<bool>();
   late OverlayEntry overlayEntry;
+  final String finalConfirmText = confirmText ?? S.of(context).yes;
+  final String finalCancelText = cancelText ?? S.of(context).no;
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -110,19 +117,24 @@ Future<bool> showConfirmationDialog({
                                 ],
                               ),
                             ),
+                            Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.buttonGrey),
                             CustomBottomButtons(
                               onConfirm: onConfirm,
                               onClose: () => completer.complete(true),
                               onCancel: () => completer.complete(false),
-                              confirmText: confirmText,
-                              cancelText: cancelText,
+                              confirmText: finalConfirmText,
+                              cancelText: finalCancelText,
                               overlayEntry: overlayEntry,
                               dialogController: dialogController,
                               primaryColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                               showConfirmButton: confirmButton,
                               confirmButtonColor: confirmButtonColor ?? ChatifyColors.softNight,
                               cancelButtonColor: cancelButtonColor ?? ChatifyColors.softNight,
+                              cancelTextColor: cancelTextColor,
                               reverseButtons: reverseButtons,
+                              middleButtonText: middleButtonText,
+                              middleButtonAction: middleButtonAction,
+                              cancelButtonWidth: cancelButtonWidth,
                             ),
                           ],
                         ),

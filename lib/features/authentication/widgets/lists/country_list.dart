@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../localization/app_localizations.dart';
@@ -251,7 +250,6 @@ final List<Country> countries = [
 
 Widget buildCountryList(BuildContext context) {
   final localizations = AppLocalizations.of(context);
-  log('localizations: $localizations');
 
   return ListView.builder(
     itemCount: countries.length,

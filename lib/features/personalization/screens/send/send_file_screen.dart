@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/features/group/screens/new_group_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +38,6 @@ class SendFileScreenState extends State<SendFileScreen> {
   void initState() {
     super.initState();
     file = File(widget.fileToSend);
-    log('fileToSend: ${widget.fileToSend}');
     searchList = List.from(list);
   }
 
@@ -58,11 +56,7 @@ class SendFileScreenState extends State<SendFileScreen> {
   void _onSearchChanged() {
     final query = searchController.text.toLowerCase();
     setState(() {
-      searchList = list
-          .where((user) =>
-      user.name.toLowerCase().contains(query) ||
-          user.email.toLowerCase().contains(query))
-          .toList();
+      searchList = list.where((user) => user.name.toLowerCase().contains(query) || user.email.toLowerCase().contains(query)).toList();
     });
   }
 
@@ -113,20 +107,20 @@ class SendFileScreenState extends State<SendFileScreen> {
             title: isSearching
               ? TextSelectionTheme(
                 data: TextSelectionThemeData(
-                  cursorColor: Colors.blue,
-                  selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                  selectionHandleColor: Colors.blue,
+                  cursorColor: ChatifyColors.blue,
+                  selectionColor: ChatifyColors.blue.withAlpha((0.3 * 255).toInt()),
+                  selectionHandleColor: ChatifyColors.blue,
                 ),
                 child: TextField(
                 key: textFieldKey,
                 focusNode: searchFocusNode,
-                cursorColor: Colors.blue,
+                cursorColor: ChatifyColors.blue,
                 controller: searchController,
                 keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
                 style: TextStyle(
                   fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
                   decoration: InputDecoration(
-                    hintText: 'Search by name or phone number',
+                    hintText: S.of(context).searchByNameOrPhoneNumber,
                     hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
@@ -137,8 +131,7 @@ class SendFileScreenState extends State<SendFileScreen> {
                   },
                 ),
               )
-            : Text(S.of(context).sendFile,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+            : Text('${S.of(context).send}...', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -189,19 +182,13 @@ class SendFileScreenState extends State<SendFileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    selectedUser!.name,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                  ),
+                  Text(selectedUser!.name, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                   Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue,
-                    ),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.blue),
                     child: IconButton(
                       icon: const Icon(Icons.arrow_forward, size: 30),
                       onPressed: _onArrowPressed,
-                      color: Colors.white,
+                      color: ChatifyColors.white,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -53,16 +54,13 @@ class PrivacyGroupsScreenState extends State<PrivacyGroupsScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(
-              'Группы',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-            ),
+            title: Text(S.of(context).groups[0].toUpperCase(), style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? 'Мои контакты';
+                final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? S.of(context).myContacts;
                 Navigator.pop(context, result);
               },
             ),
@@ -75,7 +73,7 @@ class PrivacyGroupsScreenState extends State<PrivacyGroupsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'Кто может добавлять меня в группы',
+              S.of(context).whoCanAddGroups,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
@@ -98,14 +96,14 @@ class PrivacyGroupsScreenState extends State<PrivacyGroupsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Text(
-              'У админов, которые не могут добавить вас в группу, будет возможность отправить вам личное приглашение.',
+              S.of(context).adminsCannotAddGroupOptionSend,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Text(
-              'Эта настройка не применяется к группам объявлений сообщества. При добавлении в сообщество вы автоматически добавляетесь в группу объявлений сообщества.',
+              S.of(context).settingApplyCommunityAdSets,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),

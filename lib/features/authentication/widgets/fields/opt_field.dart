@@ -46,10 +46,7 @@ class _OtpFieldState extends State<OtpField> {
           keyboardType: TextInputType.number,
           maxLength: 1,
           textAlign: TextAlign.center,
-          decoration: InputDecoration(
-            counterText: '',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+          decoration: InputDecoration(counterText: '', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
           onChanged: (value) {
             widget.onChanged(value);
             if (value.isNotEmpty && widget.nextFocusNode != null) {

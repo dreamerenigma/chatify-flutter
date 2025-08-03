@@ -8,8 +8,10 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/badges/creation_date_badge.dart';
 import '../../../../common/widgets/cards/encryption_notice_card.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
+import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/urls/url_utils.dart';
 import '../../../chat/widgets/dialogs/calendar_dialog.dart';
 import '../../../chat/widgets/dialogs/items/menu_item.dart';
@@ -145,9 +147,9 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
           context: context,
           position: details.globalPosition,
           items: [
-            MenuItem(icon: Ionicons.checkbox_outline, text: 'Выбрать сообщения', onTap: () {}),
-            MenuItem(icon: FluentIcons.open_16_regular, text: 'Открыть чат в другом окне', onTap: () {}),
-            MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: 'Закрыть чат', onTap: () {}),
+            MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+            MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
+            MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
           ],
         );
       },
@@ -186,25 +188,25 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
                       EncryptionNoticeCard(
                         maxWidth: 550,
                         icon: FluentIcons.info_16_regular,
-                        message: 'Вы общаетесь с официальным аккаунтом Службы поддержки Chatify. Нажмите, чтобы узнать подробнее.',
+                        message: S.of(context).officialAppSupportAccount,
                         onTap: () => ContactingSupportOverlay(context).show(),
                       ),
                       _buildSupportNotice(
-                        text: 'Вы общаетесь с официальным бизнес-аккаунтом "Chatify Support".',
+                        text: S.of(context).officialAppSupportBusinessAccount,
                         maxWidth: 400,
                         containerIndex: 0,
                         onTap: () {
                           showConfirmationDialog(
                             context: context,
-                            description: 'Chatify подтверждает, что это официальный бизнес-аккаунт "Chatify Support".',
-                            confirmText: 'Подробнее',
-                            cancelText: 'OK',
-                            onConfirm: () => UrlUtils.launchURL('https://faq.chatify.ru/general/26000089?lg=ru&lc=RU&eea=0'),
+                            description: S.of(context).appConfirmsOfficialAppSupport,
+                            confirmText: S.of(context).readMore,
+                            cancelText: S.of(context).ok,
+                            onConfirm: () => UrlUtils.launchURL(AppLinks.accountSupport),
                           );
                         },
                       ),
                       _buildSupportNotice(
-                        text: 'Сообщения могут быть сгенерированны ИИ и могут быть неточными или неуместными. Нажмите, чтобы узнать подробнее.',
+                        text: S.of(context).messagesAIGeneratedInappropriate,
                         maxWidth: 600,
                         containerIndex: 1,
                         onTap: () {

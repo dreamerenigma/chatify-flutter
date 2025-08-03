@@ -5,6 +5,7 @@ import 'package:chatify/features/status/screens/status_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -42,7 +43,6 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
     focusNode.addListener(() {
       setState(() {
         _isTextFieldFocused = focusNode.hasFocus;
-        log('Focus state changed: $_isTextFieldFocused');
       });
     });
   }
@@ -88,11 +88,11 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _buildIcon(Icons.crop_rotate_outlined, ChatifyColors.blackGrey, 25, () {}),
-                const SizedBox(width: 16.0),
+                const SizedBox(width: 16),
                 _buildIcon(PhosphorIcons.sticker, ChatifyColors.blackGrey, 27, () {}),
-                const SizedBox(width: 16.0),
+                const SizedBox(width: 16),
                 _buildIcon(Icons.text_fields, ChatifyColors.blackGrey, 25, () {}),
-                const SizedBox(width: 16.0),
+                const SizedBox(width: 16),
                 _buildIcon(Icons.mode_edit_outlined, ChatifyColors.blackGrey, 25, () {}),
               ],
             ),
@@ -105,15 +105,12 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
               children: [
                 Visibility(
                   visible: !_isTextFieldFocused && !showEmoji,
-                  child: const Column(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.keyboard_arrow_up_rounded),
                       SizedBox(height: 8.0),
-                      Text(
-                        'Проведите вверх для выбора фильтров',
-                        style: TextStyle(fontWeight: FontWeight.w400),
-                      ),
+                      Text(S.of(context).swipeUpToSelectFilters, style: TextStyle(fontWeight: FontWeight.w400)),
                     ],
                   ),
                 ),
@@ -137,9 +134,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
 
   Widget _buildBottomStatusBar(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: ChatifyColors.blackGrey,
-      ),
+      decoration: const BoxDecoration(color: ChatifyColors.blackGrey),
       child: Padding(
         padding: const EdgeInsets.only(left: 10, top: 8, bottom: 8),
         child: Row(
@@ -156,20 +151,9 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                 ),
                 child: Row(
                   children: [
-                    SvgPicture.asset(
-                      ChatifyVectors.status,
-                      color: ChatifyColors.white,
-                      width: 16,
-                    ),
+                    SvgPicture.asset(ChatifyVectors.status, color: ChatifyColors.white, width: 16),
                     const SizedBox(width: 8.0),
-                    Text(
-                      'Статус (Контакты)',
-                      style: TextStyle(
-                        color: ChatifyColors.white,
-                        fontSize: ChatifySizes.fontSizeSm,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    Text(S.of(context).statusContacts, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
@@ -190,7 +174,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
 
                       Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
                     } catch (e) {
-                      log('Ошибка при добавлении статуса: $e');
+                      log('${S.of(context).errorAddingStatus}: $e');
                     }
                   },
                 ),

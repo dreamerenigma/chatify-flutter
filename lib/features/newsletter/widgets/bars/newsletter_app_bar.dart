@@ -12,7 +12,7 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/dialogs/chat_settings_dialog.dart';
-import '../../models/newsletter.dart';
+import '../../models/newsletter_model.dart';
 
 class NewsletterAppBar extends StatefulWidget implements PreferredSizeWidget {
   final UserModel user;
@@ -66,7 +66,6 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
       setState(() {
         _isLoading = false;
       });
-      log('Error loading newsletters: $e');
     }
   }
 
@@ -78,7 +77,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
 
     NewsletterModel community = _newsletters.isNotEmpty
       ? _newsletters[0]
-      : NewsletterModel(id: '', newsletterName: 'No Newsletter', newsletterImage: '', createdAt: '', creatorName: '', newsletters: []);
+      : NewsletterModel(id: '', newsletterName: S.of(context).noNewsletter, newsletterImage: '', createdAt: '', creatorName: '', newsletters: []);
 
     return _buildAppBar(context, community);
   }
@@ -176,7 +175,13 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
                       );
                     }  else if (snapshot.hasData) {
                       final userNames = snapshot.data!;
-                      final newsletterNames = widget.newsletters.map((id) => userNames[id] ?? S.of(context).unknownUser).join(', ');
+                      final newsletterNames = widget.newsletters.map((id) {
+                        log('User ID: $id');
+                        log('User Name: ${userNames[id]}');
+                        return userNames[id] ?? S.of(context).unknownUser;
+                      }).join(', ');
+
+                      log('Newsletter Names: $newsletterNames');
 
                       return Text(
                         newsletterNames,
@@ -194,7 +199,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Рассылки',
+                  S.of(context).newsletters,
                   style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, color: ChatifyColors.grey, fontWeight: FontWeight.w400),
                 ),
               ],

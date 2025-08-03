@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
@@ -41,7 +42,7 @@ class _FilesOptionWidgetState extends State<FilesOptionWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text('Файлы', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+          child: Text(S.of(context).files, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
         ),
         Expanded(
           child: CustomScrollbar(
@@ -63,7 +64,7 @@ class _FilesOptionWidgetState extends State<FilesOptionWidget> {
                         height: MediaQuery.of(context).size.height * 0.45,
                         child: Center(
                           child: Text(
-                            'Нет файлов',
+                            S.of(context).noFiles,
                             style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
                             textAlign: TextAlign.center,
                           ),
@@ -117,7 +118,7 @@ class _FilesOptionWidgetState extends State<FilesOptionWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Название файла', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, height: 1.2, fontFamily: 'Roboto')),
+                        Text(S.of(context).fileName, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, height: 1.2, fontFamily: 'Roboto')),
                         Text('300 МБ, apk Application', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, height: 1.2, fontFamily: 'Roboto')),
                       ],
                     ),

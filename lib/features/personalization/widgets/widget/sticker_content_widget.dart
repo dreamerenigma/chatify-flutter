@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
 
@@ -27,10 +28,10 @@ class _StickerContentWidgetState extends State<StickerContentWidget> {
 
     switch (index) {
       case 0:
-        displayText.value = 'Вы пока не добавили ни одного стикера';
+        displayText.value = S.of(context).youAddedStickers;
         break;
       case 1:
-        displayText.value = 'Вы пока не добавили ни одного стикера в избранное';
+        displayText.value = S.of(context).youAddedStickersFavorites;
         break;
       case 2:
         await _pickImageFromWindows();
@@ -40,22 +41,19 @@ class _StickerContentWidgetState extends State<StickerContentWidget> {
 
   Future<void> _pickImageFromWindows() async {
     final picturesPath = await FileUtil.getUserPicturesPath();
-    log('Initial directory: $picturesPath');
 
     if (Platform.isWindows) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         allowedExtensions: ['jpg', 'jpeg', 'png'],
-        dialogTitle: 'Открытие',
+        dialogTitle: S.of(context).opening,
         initialDirectory: picturesPath,
       );
-
-      log('File picker result: ${result?.files.single.path}');
 
       if (result != null && result.files.isNotEmpty) {
         final path = result.files.single.path;
         if (path != null) {
-          log('Выбран файл: $path');
+          log('${S.of(context).fileSelected}: $path');
         }
       }
     }
