@@ -13,10 +13,10 @@ import '../../../../../../utils/constants/app_links.dart';
 import '../../../../../../utils/platforms/platform_utils.dart';
 import '../../../../../../utils/popups/custom_tooltip.dart';
 import '../../../../../../utils/urls/url_utils.dart';
-import '../../../../widgets/buttons/support_button.dart';
-import '../../../../widgets/dialogs/light_dialog.dart';
-import '../../../../widgets/forms/support_form.dart';
-import '../../help_screen.dart';
+import '../../../widgets/buttons/support_button.dart';
+import '../../../widgets/dialogs/light_dialog.dart';
+import '../../../widgets/forms/support_form.dart';
+import '../help_screen.dart';
 
 class SupportScreen extends StatefulWidget {
   final String title;

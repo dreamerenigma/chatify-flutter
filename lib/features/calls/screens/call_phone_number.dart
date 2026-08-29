@@ -1,11 +1,12 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../utils/widgets/no_glow_scroll_behavior.dart';
 import '../widgets/dialog/calls_number_sheet_dialog.dart';
 import '../widgets/dialog/create_new_contact_dialog.dart';
@@ -18,13 +19,7 @@ class CallPhoneNumber extends StatefulWidget {
 }
 
 class CallPhoneNumberState extends State<CallPhoneNumber> {
-  final List<String> _buttons = [
-    '1', '2 ABC', '3 DEF',
-    '4 GHI', '5 JKL', '6 MNO',
-    '7 PQRS', '8 TUV', '9 WXYZ',
-    '*', '0 +', '#'
-  ];
-
+  final List<String> _buttons = ['1', '2 ABC', '3 DEF', '4 GHI', '5 JKL', '6 MNO', '7 PQRS', '8 TUV', '9 WXYZ', '*', '0 +', '#'];
   String _enteredNumber = '';
 
   Future<void> _sendSms(String phoneNumber) async {
@@ -40,9 +35,7 @@ class CallPhoneNumberState extends State<CallPhoneNumber> {
     try {
       await intent.launch();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).failedToOpenSMSApp)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).failedToOpenSMSApp)));
     }
   }
 
@@ -82,21 +75,14 @@ class CallPhoneNumberState extends State<CallPhoneNumber> {
                 if (_enteredNumber.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      _enteredNumber,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeGl, fontWeight: FontWeight.normal),
-                    ),
+                    child: Text(_enteredNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeGl, fontWeight: FontWeight.normal)),
                   ),
                 ScrollConfiguration(
                   behavior: NoGlowScrollBehavior(),
                   child: GridView.builder(
                     shrinkWrap: true,
                     itemCount: _buttons.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
                     itemBuilder: (context, index) {
                       final buttonText = _buttons[index];
                       final number = buttonText[0];
@@ -106,12 +92,7 @@ class CallPhoneNumberState extends State<CallPhoneNumber> {
                         width: 70,
                         height: 70,
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(10),
-                            backgroundColor: ChatifyColors.popupColorDark,
-                            side: BorderSide.none,
-                          ),
+                          style: ElevatedButton.styleFrom(shape: const CircleBorder(), padding: const EdgeInsets.all(10), backgroundColor: ChatifyColors.popupColorDark, side: BorderSide.none),
                           onPressed: () {
                             setState(() {
                               _enteredNumber += number;
@@ -155,12 +136,7 @@ class CallPhoneNumberState extends State<CallPhoneNumber> {
                             showCallsNumberBottomSheet(context, _enteredNumber);
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(10),
-                          backgroundColor: ChatifyColors.success,
-                          side: BorderSide.none,
-                        ),
+                        style: ElevatedButton.styleFrom(shape: const CircleBorder(), padding: const EdgeInsets.all(10), backgroundColor: ChatifyColors.success, side: BorderSide.none),
                         child: const Icon(Icons.phone, size: 40),
                       ),
                     ),
@@ -175,7 +151,7 @@ class CallPhoneNumberState extends State<CallPhoneNumber> {
                         child: IconButton(
                           highlightColor: context.isDarkMode ? ChatifyColors.popupColor : ChatifyColors.grey,
                           padding: const EdgeInsets.all(30),
-                          icon: Icon(Ionicons.backspace_outline, size: ChatifySizes.fontSizeUn),
+                          icon: SvgPicture.asset(ChatifyVectors.backspaceOutline, width: ChatifySizes.fontSizeUn, height: ChatifySizes.fontSizeUn),
                           onPressed: () {
                             setState(() {
                               _enteredNumber = _enteredNumber.substring(0, _enteredNumber.length - 1);

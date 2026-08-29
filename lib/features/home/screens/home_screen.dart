@@ -36,7 +36,13 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   final List<UserModel> searchList = [];
+  final UserController userController = Get.find<UserController>();
+  final PageController _pageController = PageController();
+  late bool isHomeScreen;
   bool isSearching = false;
+  bool isSelecting = false;
+  bool isToolbarVisible = true;
+  bool isLoading = true;
   int selectedIndex = 0;
   int selectedChatsCount = 0;
   List<GroupModel> groups = [];
@@ -46,12 +52,6 @@ class HomeScreenState extends State<HomeScreen> {
   List<SupportAppModel> supports = [];
   List<InfoAppModel> infosApp = [];
   Set<int> selectedChats = <int>{};
-  bool isSelecting = false;
-  bool isToolbarVisible = true;
-  bool isLoading = true;
-  final UserController userController = Get.find<UserController>();
-  final PageController _pageController = PageController();
-  late bool isHomeScreen;
 
   @override
   void initState() {
@@ -220,19 +220,19 @@ class HomeScreenState extends State<HomeScreen> {
               )
             : null,
         floatingActionButton: defaultTargetPlatform == TargetPlatform.windows ? null : selectedIndex == 0
-            ? Padding(padding: const EdgeInsets.only(bottom: 5),
-          child: FloatingActionButton(
-            heroTag: 'home',
-            onPressed: () async {
-              Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
-            },
-            elevation: 2,
-            backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            foregroundColor: ChatifyColors.white,
-            child: SvgPicture.asset(ChatifyVectors.chatsAdd, color: ChatifyColors.black, width: 26, height: 26),
-          ),
-        )
-        : null,
+          ? Padding(padding: const EdgeInsets.only(bottom: 5),
+              child: FloatingActionButton(
+                heroTag: 'home',
+                onPressed: () async {
+                  Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
+                },
+                elevation: 2,
+                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                foregroundColor: ChatifyColors.white,
+                child: SvgPicture.asset(ChatifyVectors.chatsAdd, color: ChatifyColors.black, width: 26, height: 26),
+              ),
+            )
+          : null,
         body: HomeScreenWidget(
           selectedIndex: selectedIndex,
           pageController: _pageController,

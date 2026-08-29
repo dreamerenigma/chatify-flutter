@@ -5,12 +5,13 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:icon_forest/iconoir.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/message_model.dart';
@@ -93,7 +94,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
 
   void sendMessage(String msg) {
     if (textController.text.isNotEmpty) {
-      APIs.sendGroupMessage(widget.group, textController.text, Type.text);
+      APIs.sendGroupMessage(widget.group, textController.text, MessageType.text);
 
       textController.clear();
       APIs.playSendSound();
@@ -140,11 +141,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
 
     return Stack(
       children: [
-        Center(
-          child: Container(
-            decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover, alignment: Alignment.center)),
-          ),
-        ),
+        Center(child: Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover, alignment: Alignment.center)))),
         Column(
           children: [
             Expanded(
@@ -212,12 +209,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
               boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
-                ),
+                BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4)),
               ],
             ),
             child: Material(
@@ -235,7 +227,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  child: Iconoir(Iconoir.emoji, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  child: SvgPicture.asset(ChatifyVectors.emoji, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 20, height: 20)
                 ),
               ),
             ),
@@ -251,12 +243,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
               boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
-                ),
+                BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4)),
               ],
             ),
             child: Material(
@@ -276,7 +263,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                   child: Transform(
                     transform: Matrix4.rotationZ(math.pi / 1),
                     alignment: Alignment.center,
-                    child: Iconoir(Iconoir.attachment, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                    child: SvgPicture.asset(ChatifyVectors.attach, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 18, height: 18)
                   ),
                 ),
               ),
@@ -290,9 +277,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: isHovered
-                    ? (context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt()) : ChatifyColors.softGrey.withAlpha((0.2 * 255).toInt()))
-                    : ChatifyColors.transparent,
+                  color: isHovered ? (context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt()) : ChatifyColors.softGrey.withAlpha((0.2 * 255).toInt())) : ChatifyColors.transparent,
                 ),
                 child: TextSelectionTheme(
                   data: TextSelectionThemeData(
@@ -305,10 +290,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                     focusNode: focusNode,
                     decoration: InputDecoration(
                       hintText: S.of(context).enterYourMessage,
-                      hintStyle: TextStyle(
-                        color: focusNode.hasFocus ? ChatifyColors.steelGrey : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey),
-                        fontWeight: FontWeight.w300,
-                      ),
+                      hintStyle: TextStyle(color: focusNode.hasFocus ? ChatifyColors.steelGrey : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey), fontWeight: FontWeight.w300),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -339,14 +321,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
               color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),spreadRadius: 1,blurRadius: 8,offset: Offset(0, 4))],
             ),
             child: Material(
               color: ChatifyColors.transparent,
@@ -364,11 +339,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  child: Icon(
-                    hasText ? FluentIcons.send_16_regular : Icons.mic_none,
-                    size: 20,
-                    color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                  ),
+                  child: Icon(hasText ? FluentIcons.send_16_regular : Icons.mic_none, size: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                 ),
               ),
             ),

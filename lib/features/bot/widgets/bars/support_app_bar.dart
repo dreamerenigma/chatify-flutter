@@ -107,7 +107,7 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
             CircleAvatar(
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              child: SvgPicture.asset(ChatifyVectors.logoApp, color: ChatifyColors.white, width: 26, height: 26),
+              child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 26, height: 26),
             ),
             SizedBox(width: Platform.isWindows ? 14 : 10),
             Column(
@@ -127,8 +127,8 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                       Stack(
                         alignment: Alignment.center,
                         children: [
-                          SvgPicture.asset(ChatifyVectors.starburst, width: 18, height: 18, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, color: ChatifyColors.white),
+                          SvgPicture.asset(ChatifyVectors.starburst, width: 18, height: 18, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+                          SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                         ],
                       ),
                     ],

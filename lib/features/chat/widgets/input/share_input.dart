@@ -90,9 +90,9 @@ class ShareInputState extends State<ShareInput> {
       }
     } else {
       if (list.isEmpty) {
-        await APIs.sendFirstMessage(user, messageText, Type.text);
+        await APIs.sendFirstMessage(user, messageText, MessageType.text);
       } else {
-        await APIs.sendMessage(user, messageText, Type.text);
+        await APIs.sendMessage(user, messageText, MessageType.text);
       }
     }
 

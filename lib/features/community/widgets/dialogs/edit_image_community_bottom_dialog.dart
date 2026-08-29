@@ -5,6 +5,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../screens/emoji_sticker_screen.dart';
 
 void showEditImageCommunityBottomDialog(
@@ -140,8 +141,8 @@ void _showDeleteConfirmationDialog(
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.blue.withAlpha((0.1 * 255).toInt()),
+              foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
             child: Text(S.of(context).cancel, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
@@ -154,11 +155,11 @@ void _showDeleteConfirmationDialog(
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(
-              foregroundColor: ChatifyColors.blue,
-              backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
+              foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
+            child: Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
           ),
         ],
       );

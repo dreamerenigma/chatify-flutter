@@ -3799,6 +3799,36 @@ class S {
     );
   }
 
+  /// `Search unread chats`
+  String get searchUnreadChats {
+    return Intl.message(
+      'Search unread chats',
+      name: 'searchUnreadChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search favorite chats`
+  String get searchFavoriteChats {
+    return Intl.message(
+      'Search favorite chats',
+      name: 'searchFavoriteChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search group chats`
+  String get searchGroupsChats {
+    return Intl.message(
+      'Search group chats',
+      name: 'searchGroupsChats',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Search favorite messages`
   String get searchFavoriteMessages {
     return Intl.message(
@@ -4839,10 +4869,10 @@ class S {
     return Intl.message('Read all', name: 'readAll', desc: '', args: []);
   }
 
-  /// `Name can't be empty`
+  /// `Name can't be empty.`
   String get nameCannotBeEmpty {
     return Intl.message(
-      'Name can\'t be empty',
+      'Name can\'t be empty.',
       name: 'nameCannotBeEmpty',
       desc: '',
       args: [],
@@ -6979,10 +7009,10 @@ class S {
     );
   }
 
-  /// `Your name cannot be empty`
+  /// `Your name cannot be empty.`
   String get yourNameCannotEmpty {
     return Intl.message(
-      'Your name cannot be empty',
+      'Your name cannot be empty.',
       name: 'yourNameCannotEmpty',
       desc: '',
       args: [],

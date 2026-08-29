@@ -1,6 +1,5 @@
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -12,23 +11,8 @@ class StickerBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tabs = [
-      Icons.tag_faces,
-      ChatifyVectors.avatar,
-      PhosphorIcons.sticker,
-    ];
-
-    final bottomIcons = [
-      Icons.emoji_emotions,
-      Icons.favorite,
-      Icons.star,
-      Icons.cake,
-      Icons.flash_on,
-      Icons.music_note,
-      Icons.face,
-      Icons.wb_sunny,
-      Icons.ac_unit,
-    ];
+    final tabs = [Icons.tag_faces, ChatifyVectors.avatar, ChatifyVectors.sticker];
+    final bottomIcons = [Icons.emoji_emotions, Icons.favorite, Icons.star, Icons.cake, Icons.flash_on, Icons.music_note, Icons.face, Icons.wb_sunny, Icons.ac_unit];
 
     Widget buildIcon(dynamic icon, {double size = 24}) {
       if (icon is String && icon.endsWith('.svg')) {
@@ -43,10 +27,7 @@ class StickerBottomSheet extends StatelessWidget {
     return FractionallySizedBox(
       heightFactor: 0.96,
       child: Container(
-        decoration: BoxDecoration(
-          color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-        ),
+        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white, borderRadius: const BorderRadius.vertical(top: Radius.circular(12))),
         child: Column(
           children: [
             const SizedBox(height: 16),

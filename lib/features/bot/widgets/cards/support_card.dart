@@ -100,7 +100,7 @@ class _SupportCardState extends State<SupportCard> {
                         radius: 24,
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        child: SvgPicture.asset(ChatifyVectors.logoApp, color: ChatifyColors.white, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 28, height: 28),
                       ),
                       if (!isWindows && isSelected)
                       Positioned(
@@ -128,32 +128,18 @@ class _SupportCardState extends State<SupportCard> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: Row(
-                                children: [
-                                  Text(
-                                    widget.support.name,
-                                    style: TextStyle(
-                                      fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                                      fontFamily: 'Helvetica',
-                                      fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    widget.support.surname,
-                                    style: TextStyle(
-                                      fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                                      fontFamily: 'Helvetica',
-                                      fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                              child: Text(
+                                '${widget.support.name} ${widget.support.surname}',
+                                style: TextStyle(
+                                  fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                  fontFamily: 'Helvetica',
+                                  fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            SizedBox(width: 16),
                             Text(
                               DateUtil.getCommunityCreationDate(context: context, creationDate: widget.support.createdAt, includeTime: true),
                               style: TextStyle(

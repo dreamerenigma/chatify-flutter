@@ -265,7 +265,7 @@ class _NewContactScreenState extends State<NewContactScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.only(left: 8, right: 16),
-                        child: SvgPicture.asset(ChatifyVectors.arrowReload, color: ChatifyColors.darkGrey, width: 24, height: 24),
+                        child: SvgPicture.asset(ChatifyVectors.arrowReload, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 24, height: 24),
                       ),
                       const SizedBox(width: 10),
                     ],

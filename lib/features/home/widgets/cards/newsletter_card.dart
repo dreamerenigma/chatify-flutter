@@ -1,9 +1,10 @@
 import 'package:chatify/features/newsletter/models/newsletter_model.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../api/apis.dart';
@@ -137,6 +138,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                           showDialog(
                             context: context,
                             builder: (_) => NewsletterDialog(
+                              newsletterId: widget.newsletter.id,
                               newsletterName: widget.newsletterName,
                               newsletterImage: widget.newsletterImage,
                               createdAt: widget.createdAt,
@@ -157,7 +159,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                           errorWidget: (context, url, error) => CircleAvatar(
                             backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                             foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                            child: Icon(Ionicons.megaphone, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey),
+                            child: SvgPicture.asset(ChatifyVectors.megaphone, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                           ),
                         ),
                       ),

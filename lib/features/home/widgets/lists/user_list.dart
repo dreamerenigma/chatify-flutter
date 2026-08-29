@@ -53,54 +53,80 @@ class _UserListState extends State<UserList> {
   }
 
   Future<void> _loadUsersOnce() async {
-    final userIdsSnap = await APIs.getMyUsersId().first;
-    final userIds = userIdsSnap.docs.map((e) => e.id).toList();
+    try {
+      final userIdsSnap = await APIs.getMyUsersId().first;
 
-    final usersSnap = await APIs.getAllUsers(userIds).first;
-    final users = usersSnap.docs.map((e) => UserModel.fromJson(e.data())).toList();
+      if (!mounted) return;
 
-    setState(() {
-      cachedUsers = users;
-      isLoading = false;
-    });
+      final userIds = userIdsSnap.docs.map((e) => e.id).toList();
+      final usersSnap = await APIs.getAllUsers(userIds).first;
+
+      if (!mounted) return;
+
+      final users = usersSnap.docs.map((e) => UserModel.fromJson(e.data())).toList();
+
+      setState(() {
+        cachedUsers = users;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.showContacts) {
       return _buildContactsList();
-    } else {
-      return StreamBuilder(
-        stream: APIs.getMyUsersId(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
-            final userIds = snapshot.data?.docs.map((e) => e.id).toList() ?? [];
-
-            return StreamBuilder(
-              stream: APIs.getAllUsers(userIds),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
-                  final data = snapshot.data?.docs;
-                  final users = data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
-
-                  if (users.isNotEmpty) {
-                    cachedUsers = users;
-                  }
-
-                  isLoading = false;
-
-                  return _buildUserList(widget.isSearching ? widget.searchList : cachedUsers);
-                } else {
-                  return isLoading ? _buildLoadingIndicator() : _buildUserList(widget.isSearching ? widget.searchList : cachedUsers);
-                }
-              },
-            );
-          } else {
-            return isLoading ? _buildLoadingIndicator() : _buildUserList(widget.isSearching ? widget.searchList : cachedUsers);
-          }
-        },
-      );
     }
+
+    return StreamBuilder(
+      stream: APIs.getMyUsersId(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingIndicator();
+        }
+
+        if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+
+        final userIds = snapshot.data?.docs
+            .map((e) => e.id)
+            .toList() ??
+            [];
+
+        if (userIds.isEmpty) {
+          return _buildUserList([]);
+        }
+
+        return StreamBuilder(
+          stream: APIs.getAllUsers(userIds),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingIndicator();
+            }
+
+            if (snapshot.hasError) {
+              return const SizedBox.shrink();
+            }
+
+            final users = snapshot.data?.docs
+                .map((e) => UserModel.fromJson(e.data()))
+                .toList() ??
+                [];
+
+            return _buildUserList(
+              widget.isSearching ? widget.searchList : users,
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildContactsList() {
@@ -122,9 +148,7 @@ class _UserListState extends State<UserList> {
   }
 
   Widget _buildLoadingIndicator() {
-    return Center(
-      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-    );
+    return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))));
   }
 
   Widget _buildUserList(List<UserModel> users) {

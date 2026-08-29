@@ -19,6 +19,7 @@ import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import '../config.dart';
 import '../features/authentication/screens/add_account_screen.dart';
+import '../features/authentication/widgets/dialogs/consent_dialog.dart';
 import '../features/bot/models/info_app_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/chat/models/message_model.dart';
@@ -212,6 +213,7 @@ class APIs {
     }
   }
 
+  /// Returns the user by ID or null if not found
   static Future<UserModel?> getUserById(String userId) async {
     try {
       final userDoc = await firestore.collection('Users').doc(userId).get();
@@ -335,7 +337,7 @@ class APIs {
   }
 
   /// -- Adding an user to my user when first message in send.
-  static Future<void> sendFirstMessage(UserModel chatUser, String msg, Type type) async {
+  static Future<void> sendFirstMessage(UserModel chatUser, String msg, MessageType type) async {
     await firestore
       .collection('Users')
       .doc(chatUser.id)
@@ -430,16 +432,11 @@ class APIs {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       await googleSignIn.initialize(clientId: Config.googleClientId);
-
       await googleSignIn.signOut();
 
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-
+      final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
       final userCredential = await APIs.auth.signInWithCredential(credential);
 
       final userId = userCredential.user?.uid;
@@ -494,7 +491,7 @@ class APIs {
         Config.googleClientSecret,
       );
       var scopes = ['email'];
-      var client = await auths.clientViaUserConsent(clientId, scopes, prompt);
+      var client = await auths.clientViaUserConsent(clientId, scopes, (url) => showConsentDialog(context, url));
       var googleAuth = client.credentials;
 
       String? accessToken = googleAuth.accessToken.data;
@@ -697,10 +694,7 @@ class APIs {
       User? user = auth.currentUser;
 
       if (user != null) {
-        QuerySnapshot userChats = await firestore
-            .collection('Chats')
-            .where('participants', arrayContains: user.uid)
-            .get();
+        QuerySnapshot userChats = await firestore.collection('Chats').where('participants', arrayContains: user.uid).get();
 
         for (QueryDocumentSnapshot chat in userChats.docs) {
           await chat.reference.delete();
@@ -737,6 +731,26 @@ class APIs {
     }
   }
 
+  /// -- Checks the contact list and returns those registered in Firestore.
+  static Future<List<Map<String, dynamic>>> getRegisteredUsers(List<Map<String, dynamic>> contacts) async {
+    final firestore = FirebaseFirestore.instance;
+    List<Map<String, dynamic>> registeredUsers = [];
+
+    for (var contact in contacts) {
+      String formattedPhone = contact['phone_number'];
+      var querySnapshot = await firestore.collection('Users').where('phone_number', isEqualTo: formattedPhone).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        registeredUsers.add({
+          'contact': contact['contact'],
+          'user': querySnapshot.docs.first.data(),
+        });
+      }
+    }
+
+    return registeredUsers;
+  }
+
   ///******************* Chat Screen Related APIs *******************
 
   /// -- Useful for getting conversation id.
@@ -751,7 +765,7 @@ class APIs {
   }
 
   /// -- Sending message.
-  static Future<void> sendMessage(UserModel chatUser, String msg, Type type, {String? fileName, String? fileSize, String? imageUrl}) async {
+  static Future<void> sendMessage(UserModel chatUser, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
     final MessageModel message = MessageModel(
@@ -769,8 +783,7 @@ class APIs {
     );
 
     final ref = firestore.collection('Chats/${getConversationId(chatUser.id)}/messages/');
-    await ref.doc(time).set(message.toJson()).then((value) =>
-        sendPushNotification(chatUser, type == Type.text ? msg : 'image', imageUrl: imageUrl));
+    await ref.doc(time).set(message.toJson()).then((value) => sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
   }
 
   /// -- Update read status of message.
@@ -794,10 +807,7 @@ class APIs {
   static Future<void> sendChatImage(UserModel chatUser, File file) async {
     final ext = file.path.split('.').last.toLowerCase();
     final isGif = ext == 'gif';
-
-    final ref = storage.ref().child(
-      'images/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-
+    final ref = storage.ref().child('images/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
     final contentType = isGif ? 'image/gif' : 'image/$ext';
 
     try {
@@ -807,9 +817,9 @@ class APIs {
         final imageUrl = await ref.getDownloadURL();
 
         if (isGif) {
-          await sendMessage(chatUser, imageUrl, Type.gif);
+          await sendMessage(chatUser, imageUrl, MessageType.gif);
         } else {
-          await sendMessage(chatUser, imageUrl, Type.image);
+          await sendMessage(chatUser, imageUrl, MessageType.image);
         }
       });
     } catch (e) {
@@ -822,32 +832,28 @@ class APIs {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = storage.ref().child(
-        'videos/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = storage.ref().child('videos/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
     final contentType = 'video/$ext';
 
     await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
       log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
 
       final videoUrl = await ref.getDownloadURL();
-      await sendMessage(chatUser, videoUrl, Type.video);
+      await sendMessage(chatUser, videoUrl, MessageType.video);
     });
   }
 
   /// -- Send chat audio.
   static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName) async {
     final ext = file.path.split('.').last.toLowerCase();
-    log('Extension: $ext');
-
-    final ref = storage.ref().child(
-        'audio/${getConversationId(chatUser.id)}/$fileName');
+    final ref = storage.ref().child('audio/${getConversationId(chatUser.id)}/$fileName');
     final contentType = 'audio/$ext';
 
     await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
       log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
 
       final audioUrl = await ref.getDownloadURL();
-      await sendMessage(chatUser, audioUrl, Type.audio);
+      await sendMessage(chatUser, audioUrl, MessageType.audio);
     });
   }
 
@@ -856,8 +862,7 @@ class APIs {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = FirebaseStorage.instance.ref().child(
-        'documents/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = FirebaseStorage.instance.ref().child('documents/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
     final contentType = getContentType(ext);
     log('Content Type: $contentType');
@@ -868,12 +873,7 @@ class APIs {
         final documentUrl = await ref.getDownloadURL();
         log('Document URL: $documentUrl');
 
-        await sendMessage(
-          chatUser,
-          documentUrl,
-          Type.document,
-          fileName: file.path.split('/').last,
-        );
+        await sendMessage(chatUser, documentUrl, MessageType.document, fileName: file.path.split('/').last);
       });
     } on FirebaseException catch (e) {
       if (e.code == 'object-not-found') {
@@ -894,31 +894,41 @@ class APIs {
       .update({'msg': updateMsg});
   }
 
-  /// -- Delete message.
+  /// -- Delete message
   static Future<void> deleteMessage(MessageModel message, {bool deleteForEveryone = false}) async {
-    final docRef = firestore.collection('Chats/${getConversationId(message.toId)}/messages/').doc(message.sent);
+    final docRef = firestore.collection('Chats').doc(getConversationId(message.toId)).collection('messages').doc(message.sent);
 
     try {
-      log('Deleting message with ID: ${message.sent}, deleteForEveryone: $deleteForEveryone');
+      log('Deleting message with ID: ${message.sent}, ''deleteForEveryone: $deleteForEveryone');
+
+      final snapshot = await docRef.get();
+
+      if (!snapshot.exists) {
+        log('Message ${message.sent} no longer exists.');
+        return;
+      }
 
       if (deleteForEveryone) {
-        await docRef.update({
-          'deletedForEveryone': true,
-        });
+        await docRef.update({'deletedForEveryone': true});
+
         log('Message marked as deleted for everyone.');
+
+        if (message.type == MessageType.image) {
+          try {
+            await storage.refFromURL(message.msg).delete();
+            log('Image deleted from storage.');
+          } catch (e) {
+            log('Failed to delete image from storage: $e');
+          }
+        }
       } else {
-        await docRef.update({
-          'deletedBy': FieldValue.arrayUnion([APIs.user.uid]),
-        });
+        await docRef.update({'deletedBy': FieldValue.arrayUnion([APIs.user.uid])});
+
         log('Message marked as deleted by user: ${APIs.user.uid}');
       }
-
-      if (message.type == Type.image && deleteForEveryone) {
-        await storage.refFromURL(message.msg).delete();
-        log('Image deleted from storage.');
-      }
-    } catch (e) {
+    } catch (e, stackTrace) {
       log('Error deleting message with ID ${message.sent}: $e');
+      log('$stackTrace');
     }
   }
 
@@ -927,9 +937,7 @@ class APIs {
     try {
       await storage.refFromURL(imageUrl).delete();
 
-      await FirebaseFirestore.instance.collection('Users').doc(userId).update({
-        'image': null,
-      });
+      await FirebaseFirestore.instance.collection('Users').doc(userId).update({'image': null});
     } catch (e) {
       log('Error deleting profile photo: $e');
     }
@@ -938,19 +946,15 @@ class APIs {
   /// -- Update message reaction.
   static Future<void> updateMessageReaction(MessageModel message, String reaction) async {
     try {
-      final messageRef = FirebaseFirestore.instance
-        .collection('Chats/${getConversationId(message.toId)}/messages')
-        .doc(message.sent);
+      final messageRef = FirebaseFirestore.instance.collection('Chats/${getConversationId(message.toId)}/messages').doc(message.sent);
 
-      await messageRef.update({
-        'reaction': reaction,
-      });
+      await messageRef.update({'reaction': reaction});
     } catch (e) {
       debugPrint('Error updating message reaction: $e');
     }
   }
 
-  /// -- Delete chat.
+  /// -- Delete chat
   static Future<void> deleteChat(String chatId) async {
     final messagesCollection = firestore.collection('Chats/$chatId/messages');
 
@@ -964,7 +968,7 @@ class APIs {
     await firestore.collection('Chats').doc(chatId).delete();
   }
 
-  /// -- Communicate Often Users.
+  /// -- Communicate Often Users
   static Future<List<UserModel>> getCommunicateOftenUsers(UserModel user) async {
     final currentUserId = user.id;
     final snapshot = await FirebaseFirestore.instance
@@ -980,7 +984,6 @@ class APIs {
     }
 
     final sortedUserIds = messageCount.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
-
     final topUserIds = sortedUserIds.take(5).map((e) => e.key).toList();
 
     final users = <UserModel>[];
@@ -1124,7 +1127,7 @@ class APIs {
   }
 
   /// -- Send group message.
-  static Future<void> sendGroupMessage(GroupModel group, String msg, Type type, {String? fileName, String? fileSize, String? imageUrl}) async {
+  static Future<void> sendGroupMessage(GroupModel group, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
     if (group.groupId.isEmpty) {
       log('Error: groupId is empty!');
       return;
@@ -1152,7 +1155,7 @@ class APIs {
     log('Firestore path for messages: ${ref.path}');
 
     try {
-      await ref.doc(time).set(message.toJson()).then((value) => sendGroupPushNotification(group, type == Type.text ? msg : 'image', imageUrl: imageUrl));
+      await ref.doc(time).set(message.toJson()).then((value) => sendGroupPushNotification(group, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
       await firestore.collection('Groups').doc(group.groupId).update({
         'lastMessageTimestamp': int.parse(time),
       });
@@ -1182,9 +1185,9 @@ class APIs {
       final imageUrl = await ref.getDownloadURL();
 
       if (isGif) {
-        await sendGroupMessage(group, imageUrl, Type.gif);
+        await sendGroupMessage(group, imageUrl, MessageType.gif);
       } else {
-        await sendGroupMessage(group, imageUrl, Type.image);
+        await sendGroupMessage(group, imageUrl, MessageType.image);
       }
     });
   }
@@ -1203,7 +1206,7 @@ class APIs {
       log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
 
       final videoUrl = await ref.getDownloadURL();
-      await sendGroupMessage(group, videoUrl, Type.video);
+      await sendGroupMessage(group, videoUrl, MessageType.video);
     });
   }
 
@@ -1221,7 +1224,7 @@ class APIs {
 
       final audioUrl = await ref.getDownloadURL();
 
-      await sendGroupMessage(group, audioUrl, Type.audio);
+      await sendGroupMessage(group, audioUrl, MessageType.audio);
     });
   }
 
@@ -1242,7 +1245,7 @@ class APIs {
         final documentUrl = await ref.getDownloadURL();
         log('Document URL: $documentUrl');
 
-        await sendGroupMessage(group, documentUrl, Type.document, fileName: file.path.split('/').last,
+        await sendGroupMessage(group, documentUrl, MessageType.document, fileName: file.path.split('/').last,
         );
       });
     } on FirebaseException catch (e) {
@@ -1461,7 +1464,7 @@ class APIs {
     }
   }
 
-  /// -- Send message community chat.
+  /// -- Send message community chat
   static Future<void> sendMessageCommunityChat({required String communityId, required String chatId, required String text}) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null || text.trim().isEmpty) return;
@@ -1491,7 +1494,7 @@ class APIs {
 
   ///******************* Newsletter Screen Related APIs *******************
 
-  /// -- Creating new newsletter.
+  /// -- Creating new newsletter
   static Future<bool> createNewsletter(BuildContext context, NewsletterModel newsletter) async {
     try {
       final user = auth.currentUser!;
@@ -1516,7 +1519,7 @@ class APIs {
     }
   }
 
-  /// -- Method to fetch newsletter from Firestore.
+  /// -- Method to fetch newsletter from Firestore
   static Future<List<NewsletterModel>> getNewsletter() async {
     try {
       final querySnapshot = await firestore.collection('Newsletters').get();
@@ -1535,9 +1538,7 @@ class APIs {
 
     final ref = storage.ref().child('newsletter_pictures/$newsletterId.$ext');
 
-    await ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-        .then((p0) {
+    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
       log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
     });
 
@@ -1577,7 +1578,7 @@ class APIs {
 
   ///******************* Support APIs *******************
 
-  /// --- Create new support chat.
+  /// --- Create new support chat
   static Future<void> createSupportChat(String userId) async {
     final supportChatRef = FirebaseFirestore.instance.collection('SupportChats');
     final existingChats = await supportChatRef.where('userId', isEqualTo: userId).limit(1).get();
@@ -1611,7 +1612,7 @@ class APIs {
     });
   }
 
-  /// -- Method to fetch support from Firestore.
+  /// -- Method to fetch support from Firestore
   static Future<List<SupportAppModel>> getSupportChat() async {
     try {
       final querySnapshot = await firestore.collection('SupportChats').get();

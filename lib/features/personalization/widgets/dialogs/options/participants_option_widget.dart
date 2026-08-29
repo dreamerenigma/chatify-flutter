@@ -3,7 +3,6 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -47,17 +46,9 @@ class _ParticipantsOptionWidgetState extends State<ParticipantsOptionWidget> {
           ),
         ),
         SizedBox(height: 20),
-        _buildParticipantsOptions(
-          'Добавить участников',
-          SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-          () {},
-        ),
+        _buildParticipantsOptions('Добавить участников', SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), () {}),
         SizedBox(height: 8),
-        _buildParticipantsOptions(
-          'Пригласить в группу по ссылке',
-          Icon(Ionicons.link_outline, size: 22),
-          () {},
-        ),
+        _buildParticipantsOptions('Пригласить в группу по ссылке', SvgPicture.asset(ChatifyVectors.linkOutline, width: 22, height: 22), () {}),
         SizedBox(height: 8),
         _buildUserAdmin(),
       ],
@@ -87,7 +78,8 @@ class _ParticipantsOptionWidgetState extends State<ParticipantsOptionWidget> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey, width: 1)),
+                    border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey, width: 1),
+                  ),
                   child: Center(child: icon),
                 ),
                 SizedBox(width: 12),
@@ -135,7 +127,7 @@ class _ParticipantsOptionWidgetState extends State<ParticipantsOptionWidget> {
                       errorWidget: (context, url, error) => CircleAvatar(
                         backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                         foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.newUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                       ),
                     ),
                   ),

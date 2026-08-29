@@ -34,96 +34,101 @@ Future<void> showSelectGifOverlay(
 
   overlayEntry = OverlayEntry(
     builder: (context) {
-      return Stack(
-        children: [
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                showConfirmationDialog(
-                  context: context,
-                  title: S.of(context).resetUnsentMessage,
-                  description: S.of(context).messageAttachedMediaScreen,
-                  confirmText: S.of(context).reset,
-                  cancelText: S.of(context).back,
-                  width: 530,
-                  onConfirm: () async {
-                    Get.back();
-                    await animationController.reverse();
-                    overlayEntry.remove();
+      return AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () async {
+                    showConfirmationDialog(
+                      context: context,
+                      title: S.of(context).resetUnsentMessage,
+                      description: S.of(context).messageAttachedMediaScreen,
+                      confirmText: S.of(context).reset,
+                      cancelText: S.of(context).back,
+                      width: 530,
+                      onConfirm: () async {
+                        Get.back();
+                        await animationController.reverse();
+                        overlayEntry.remove();
 
-                    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                    final Offset globalPosition = renderBox.localToGlobal(position);
+                        final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                        final Offset globalPosition = renderBox.localToGlobal(position);
 
-                    await showEmojiStickersDialog(context, globalPosition, onEmojiSelected, onGifSelected);
+                        await showEmojiStickersDialog(context, globalPosition, onEmojiSelected, onGifSelected);
+                      },
+                    );
                   },
-                );
-              },
-            ),
-          ),
-          Positioned(
-            left: position.dx + 200,
-            bottom: 53,
-            child: SlideTransition(
-              position: slideAnimation,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                  child: Container(
-                    width: 560,
-                    decoration: BoxDecoration(
-                      color: (context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.9 * 255).toInt()) : ChatifyColors.lightGrey)..withAlpha((0.9 * 255).toInt()),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: context.isDarkMode ? ChatifyColors.cardColor.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          children: [
-                            _buildTopPanel(context, frames),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: SizedBox(
-                                height: 300,
-                                width: double.infinity,
-                                child: Image.network(gif.url, fit: BoxFit.contain),
-                              ),
+                ),
+              ),
+              Positioned(
+                left: position.dx + 200,
+                bottom: 53,
+                child: SlideTransition(
+                  position: slideAnimation,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                      child: Container(
+                        width: 560,
+                        decoration: BoxDecoration(
+                          color: (context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.9 * 255).toInt()) : ChatifyColors.lightGrey)..withAlpha((0.9 * 255).toInt()),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: context.isDarkMode ? ChatifyColors.cardColor.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey),
+                          boxShadow: [
+                            BoxShadow(
+                              color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(0, 3),
                             ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Column(
                               children: [
-                                MediaContentBottomPanel(
-                                  isFocused: isFocused,
-                                  captionFocusNode: captionFocusNode,
-                                  animationController: animationController,
-                                  overlayEntry: overlayEntry,
-                                  onEmojiSelected: onEmojiSelected,
-                                  onGifSelected: onEmojiSelected,
-                                  user: APIs.me,
-                                  gifUrl: gif.url,
+                                _buildTopPanel(context, frames),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: SizedBox(
+                                    height: 300,
+                                    width: double.infinity,
+                                    child: Image.network(gif.url, fit: BoxFit.contain),
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    MediaContentBottomPanel(
+                                      isFocused: isFocused,
+                                      captionFocusNode: captionFocusNode,
+                                      animationController: animationController,
+                                      overlayEntry: overlayEntry,
+                                      onEmojiSelected: onEmojiSelected,
+                                      onGifSelected: onEmojiSelected,
+                                      user: APIs.me,
+                                      gifUrl: gif.url,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       );
     }
   );

@@ -7,7 +7,7 @@
 
 namespace cloud_firestore_windows {
 
-std::string getPluginVersion() { return "5.6.8"; }
+std::string getPluginVersion() { return "6.0.3"; }
 }  // namespace cloud_firestore_windows
 
 #endif  // PLUGIN_VERSION_CONFIG_H

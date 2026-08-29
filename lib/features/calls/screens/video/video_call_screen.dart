@@ -1,7 +1,5 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class VideoCallScreen extends StatefulWidget {
@@ -12,11 +10,11 @@ class VideoCallScreen extends StatefulWidget {
 }
 
 class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderStateMixin {
-  final String appId = "d0817c9204894d838d4be66706170830";
-  final String channelName = "main_channel";
-  final String token = "007eJxTYJjGYiVXOFVugd2KrbMvbVm/TeLFlz2HKp991D0WX7V3l+ZsBYYUAwtD82RLIwMTC0uTFAtjixSTpFQzM3MDM0NzAwtjg5vyE9IaAhkZ2MpuMjEyQCCIz8OQm5iZF5+ckZiXl5rDwAAAuzcjZA==";
+  late RTCVideoRenderer localRenderer;
+  late RTCVideoRenderer remoteRenderer;
+  RTCPeerConnection? peerConnection;
+  MediaStream? localStream;
 
-  late final RtcEngine engine;
   late AnimationController moveController;
   late Animation<double> moveAnimation;
   bool isRotated = false;
@@ -25,56 +23,49 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
   @override
   void initState() {
     super.initState();
-    moveController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-
-    moveAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
-      parent: moveController,
-      curve: Curves.easeInOut,
-    ));
-
-    initialize();
+    initRenderers();
+    moveController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+    moveAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: moveController, curve: Curves.easeInOut));
+    initLocalStream();
   }
 
-  Future<void> initialize() async {
-    engine = createAgoraRtcEngine();
-    await engine.initialize(RtcEngineContext(
-      appId: appId,
-    ));
+  Future<void> initRenderers() async {
+    localRenderer = RTCVideoRenderer();
+    remoteRenderer = RTCVideoRenderer();
+    await localRenderer.initialize();
+    await remoteRenderer.initialize();
+  }
 
-    engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          print("Local user ${connection.localUid} joined");
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          print("Remote user $remoteUid joined");
-          setState(() {});
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
-          print("Remote user $remoteUid left channel");
-          setState(() {});
-        },
-      ),
-    );
+  Future<void> initLocalStream() async {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      'video': true,
+      'audio': true,
+    });
+    localRenderer.srcObject = localStream;
 
-    await engine.enableVideo();
-    await engine.startPreview();
+    final configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
+    peerConnection = await createPeerConnection(configuration);
 
-    await engine.joinChannel(
-      token: token,
-      channelId: channelName,
-      uid: 0,
-      options: const ChannelMediaOptions(),
-    );
+    if (localStream != null) {
+      localStream!.getTracks().forEach((track) {
+        peerConnection!.addTrack(track, localStream!);
+      });
+    }
+
+    peerConnection!.onTrack = (event) {
+      if (event.streams.isNotEmpty) {
+        setState(() {
+          remoteRenderer.srcObject = event.streams[0];
+        });
+      }
+    };
   }
 
   @override
   void dispose() {
-    engine.leaveChannel();
-    engine.release();
+    localRenderer.dispose();
+    remoteRenderer.dispose();
+    peerConnection?.close();
     moveController.dispose();
     floatingButtonOverlay?.remove();
     super.dispose();
@@ -84,12 +75,7 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
     moveController.forward();
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.all(20),
@@ -97,25 +83,13 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(20),
-                  backgroundColor: ChatifyColors.green,
-                ),
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(shape: const CircleBorder(), padding: const EdgeInsets.all(20), backgroundColor: ChatifyColors.green),
                 child: const Icon(Icons.video_call, color: ChatifyColors.white),
               ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(20),
-                  backgroundColor: ChatifyColors.blue,
-                ),
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(shape: const CircleBorder(), padding: const EdgeInsets.all(20), backgroundColor: ChatifyColors.blue),
                 child: const Icon(Icons.phone, color: ChatifyColors.white),
               ),
             ],
@@ -142,7 +116,7 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
             builder: (context, child) {
               double bottomOffset = MediaQuery.of(context).viewInsets.bottom + 16 + (moveAnimation.value * 200);
               return Transform.rotate(
-                angle: isRotated ? pi : 0,
+                angle: isRotated ? 3.14 : 0,
                 child: Container(margin: EdgeInsets.only(bottom: bottomOffset), child: child),
               );
             },
@@ -174,31 +148,19 @@ class VideoCallScreenState extends State<VideoCallScreen> with TickerProviderSta
         Overlay.of(context).insert(floatingButtonOverlay!);
       });
     }
+
     return Scaffold(
       body: Stack(
         children: [
-          _renderLocalPreview(),
-          _renderRemoteVideo(),
+          Positioned.fill(child: RTCVideoView(remoteRenderer)),
+          Positioned(
+            right: 16,
+            top: 16,
+            width: 120,
+            height: 160,
+            child: RTCVideoView(localRenderer, mirror: true),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _renderLocalPreview() {
-    return AgoraVideoView(
-      controller: VideoViewController(
-        rtcEngine: engine,
-        canvas: const VideoCanvas(uid: 0),
-      ),
-    );
-  }
-
-  Widget _renderRemoteVideo() {
-    return AgoraVideoView(
-      controller: VideoViewController.remote(
-        rtcEngine: engine,
-        canvas: const VideoCanvas(uid: 1),
-        connection: const RtcConnection(channelId: "main_channel"),
       ),
     );
   }

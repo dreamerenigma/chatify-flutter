@@ -7,12 +7,11 @@ import '../features/personalization/screens/chats/chats_screen.dart';
 import '../features/personalization/screens/data_storage/data_storage_screen.dart';
 import '../features/personalization/screens/favorite/favorite_screen.dart';
 import '../features/personalization/screens/help/help_screen.dart';
-import '../features/personalization/screens/help/support/screens/support_screen.dart';
+import '../features/personalization/screens/help/support/support_screen.dart';
 import '../features/personalization/screens/invite_friend/invite_friend_screen.dart';
 import '../features/personalization/screens/lists/lists_screen.dart';
 import '../features/personalization/screens/notifications/notifications_screen.dart';
 import '../features/personalization/screens/privacy/privacy_screen.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import '../features/personalization/screens/special_features/special_features_screen.dart';
 import '../generated/l10n/l10n.dart';
 import '../routes/custom_page_route.dart';
@@ -39,7 +38,7 @@ Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsO
       onTap: () => Navigator.push(context, createPageRoute(const PrivacyScreen())),
     ),
     'Lists': (context, iconColor) => SettingsMenuTile(
-      icon: PhosphorIcons.user_list_fill,
+      icon: ChatifyVectors.userListFilled,
       title: S.of(context).lists,
       subTitle: S.of(context).subtitleLists,
       iconColor: iconColor,

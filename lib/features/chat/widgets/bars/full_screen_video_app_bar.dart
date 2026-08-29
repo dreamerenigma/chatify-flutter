@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/popups/custom_tooltip.dart';
 
 class FullScreenVideoAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -31,31 +32,32 @@ class FullScreenVideoAppBarState extends State<FullScreenVideoAppBar> {
             backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
             leading: _buildIconButton(
               context: context,
-              icon: Icons.arrow_back,
+              icon: Icon(Icons.arrow_back, color: ChatifyColors.white, size: Platform.isWindows ? 18 : 24),
               onTap: () => Navigator.pop(context),
-              size: Platform.isWindows ? 18 : 24,
               message: S.of(context).back,
             ),
             actions: [
               _buildIconButton(
                 context: context,
-                icon: isFavorited ? PhosphorIcons.star_fill : PhosphorIcons.star,
+                icon: SvgPicture.asset(
+                  isFavorited ? ChatifyVectors.starFilled : ChatifyVectors.star,
+                  width: Platform.isWindows ? 19 : 24,
+                  height: Platform.isWindows ? 19 : 24,
+                  colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn),
+                ),
                 onTap: () => setState(() => isFavorited = !isFavorited),
-                size: Platform.isWindows ? 19 : 24,
                 message: S.of(context).imageAddToFavorites,
               ),
               _buildIconButton(
                 context: context,
-                icon: Platform.isWindows ? FluentIcons.emoji_20_regular : FluentIcons.arrow_forward_16_filled,
+                icon: Platform.isWindows ? Icon(FluentIcons.emoji_20_regular) : Icon(FluentIcons.arrow_forward_16_filled, size: Platform.isWindows ? 20 : 24),
                 onTap: () {},
-                size: Platform.isWindows ? 20 : 24,
                 message: S.of(context).reactToMessage,
               ),
               _buildIconButton(
                 context: context,
-                icon: Platform.isWindows ? FluentIcons.more_horizontal_20_filled : Icons.more_vert,
+                icon: Platform.isWindows ? Icon(FluentIcons.more_horizontal_20_filled) : Icon(Icons.more_vert, size: Platform.isWindows ? 18 : 24),
                 onTap: () {},
-                size: Platform.isWindows ? 18 : 24,
                 message: S.of(context).otherOptionsHidden,
               ),
             ],
@@ -68,11 +70,9 @@ class FullScreenVideoAppBarState extends State<FullScreenVideoAppBar> {
 
 Widget _buildIconButton({
   required BuildContext context,
-  required IconData icon,
+  required Widget icon,
   required VoidCallback onTap,
   required String message,
-  double size = 24,
-  Color color = ChatifyColors.white,
   Color? backgroundColor,
   EdgeInsets padding = const EdgeInsets.all(12),
   double borderRadius = 8,
@@ -89,7 +89,7 @@ Widget _buildIconButton({
       child: Container(
         padding: padding,
         decoration: BoxDecoration(color: backgroundColor ?? ChatifyColors.transparent, borderRadius: BorderRadius.circular(borderRadius)),
-        child: Icon(icon, color: color, size: size),
+        child: icon,
       ),
     ),
   );

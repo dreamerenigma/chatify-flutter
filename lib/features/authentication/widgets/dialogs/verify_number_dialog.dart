@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -88,38 +89,70 @@ void showVerifyNumberAlertDialog(BuildContext context, String phoneNumber, UserM
   );
 }
 
-void _sendOtp(BuildContext context, String phoneNumber, UserModel user) {
-  FirebaseAuth.instance.verifyPhoneNumber(
-    phoneNumber: phoneNumber,
-    timeout: const Duration(seconds: 60),
+void _sendOtp(BuildContext context, String phoneNumber, UserModel user) async {
+  log('========== FIREBASE PHONE AUTH ==========');
+  log('Phone: $phoneNumber');
 
-    verificationCompleted: (PhoneAuthCredential credential) async {
-      try {
-        await FirebaseAuth.instance.signInWithCredential(credential);
+  try {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      timeout: const Duration(seconds: 60),
+
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        log('verificationCompleted');
+
+        try {
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+          if (!context.mounted) return;
+
+          Navigator.of(context).pop();
+
+          Navigator.push(context, createPageRoute(VerifyPhoneNumberScreen(verificationId: '', phoneNumber: phoneNumber, user: user)));
+        } on FirebaseAuthException catch (e) {
+          log('signInWithCredential ERROR');
+          log('code: ${e.code}');
+          log('message: ${e.message}');
+
+          if (!context.mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${e.code}: ${e.message}'), backgroundColor: ChatifyColors.red));
+        }
+      },
+
+      verificationFailed: (FirebaseAuthException e) {
+        log('========== verificationFailed ==========');
+        log('code: ${e.code}');
+        log('message: ${e.message}');
+        log('phone: $phoneNumber');
+
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${S.of(context).verificationError}\n''${e.code}: ${e.message}'), backgroundColor: ChatifyColors.red));
+
+        Navigator.of(context).pop();
+      },
+
+      codeSent: (String verificationId, int? resendToken) {
+        log('========== codeSent ==========');
+        log('verificationId: $verificationId');
+        log('resendToken: $resendToken');
+
+        if (!context.mounted) return;
 
         Navigator.of(context).pop();
 
-        Navigator.push(context, createPageRoute(VerifyPhoneNumberScreen(verificationId: '', phoneNumber: phoneNumber, user: user)));
-      } catch (e) {
-        Navigator.of(context).pop();
-      }
-    },
+        Navigator.push(context, createPageRoute(VerifyPhoneNumberScreen(verificationId: verificationId, phoneNumber: phoneNumber, user: user)));
+      },
 
-    verificationFailed: (FirebaseAuthException e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${S.of(context).verificationError}: ${e.message}'), backgroundColor: ChatifyColors.red),
-      );
-      Navigator.of(context).pop();
-    },
-
-    codeSent: (String verificationId, int? resendToken) async {
-      Navigator.of(context).pop();
-
-      Navigator.push(context, createPageRoute(VerifyPhoneNumberScreen(verificationId: verificationId, phoneNumber: phoneNumber, user: user)));
-    },
-
-    codeAutoRetrievalTimeout: (String verificationId) {
-      Navigator.of(context).pop();
-    },
-  );
+      codeAutoRetrievalTimeout: (String verificationId) {
+        log('========== codeAutoRetrievalTimeout ==========');
+        log('verificationId: $verificationId');
+      },
+    );
+  } catch (e, stackTrace) {
+    log('========== verifyPhoneNumber EXCEPTION ==========');
+    log('error: $e');
+    log('stackTrace: $stackTrace');
+  }
 }

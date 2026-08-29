@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:icon_forest/iconoir.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -102,7 +101,7 @@ class _MediaContentBottomPanelState extends State<MediaContentBottomPanel> {
                       hoverColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
                       child: Padding(
                         padding: EdgeInsets.all(10),
-                        child: Iconoir(Iconoir.emoji, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                        child: SvgPicture.asset(ChatifyVectors.emoji, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                       ),
                     ),
                   ),
@@ -145,7 +144,7 @@ class _MediaContentBottomPanelState extends State<MediaContentBottomPanel> {
                         opacity: isActive ? 1.0 : 0.7,
                         child: Padding(
                           padding: const EdgeInsets.all(10),
-                          child: SvgPicture.asset(ChatifyVectors.timer, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 17, height: 17),
+                          child: SvgPicture.asset(ChatifyVectors.timer, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 17, height: 17),
                         ),
                       ),
                     ),
@@ -182,7 +181,7 @@ class _MediaContentBottomPanelState extends State<MediaContentBottomPanel> {
                       hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.grey,
                       child: SvgPicture.asset(
                         ChatifyVectors.add,
-                        color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black,
+                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, BlendMode.srcIn),
                         width: 16,
                         height: 16,
                       ),

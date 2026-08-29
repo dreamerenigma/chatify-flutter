@@ -1,12 +1,13 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:evil_icons_flutter/evil_icons_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 
 class GroupPermissionsScreen extends StatefulWidget {
@@ -89,7 +90,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
               padding: const EdgeInsets.only(left: 16, right: 12, top: 8, bottom: 8),
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(EvilIcons.pencil, color: ChatifyColors.darkGrey),
+                leading: SvgPicture.asset(ChatifyVectors.editPencil, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -117,8 +118,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
                 ),
                 subtitle: Text(
                   S.of(context).groupIncludes,
-                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
-                  ),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
                 ),
               ),
             ),

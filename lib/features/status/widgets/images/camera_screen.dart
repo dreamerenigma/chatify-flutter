@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:tabler_icons/tabler_icons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../personalization/screens/qr_code/gallery_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import 'camera_preview_widget.dart';
@@ -22,9 +23,9 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
   final ImagePicker picker = ImagePicker();
   bool isPhotoMode = true;
   bool _areImagesVisible = true;
+  bool _isFlashOff = true;
   List<AssetEntity> _images = [];
   List<bool> _selectedImages = [];
-  bool _isFlashOff = true;
 
   @override
   void initState() {
@@ -36,15 +37,10 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
     final permissionStatus = await PhotoManager.requestPermissionExtend();
 
     if (permissionStatus.isAuth) {
-      final List<AssetPathEntity> assetPaths = await PhotoManager.getAssetPathList(
-        type: RequestType.image,
-      );
+      final List<AssetPathEntity> assetPaths = await PhotoManager.getAssetPathList(type: RequestType.image);
 
       if (assetPaths.isNotEmpty) {
-        final List<AssetEntity> images = await assetPaths.first.getAssetListPaged(
-          page: 0,
-          size: 5,
-        );
+        final List<AssetEntity> images = await assetPaths.first.getAssetListPaged(page: 0, size: 5);
 
         setState(() {
           _images = images;
@@ -91,10 +87,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return ScaleTransition(scale: animation, child: child);
               },
-              child: Icon(
-                _isFlashOff ? FluentIcons.flash_off_20_regular : FluentIcons.flash_20_regular,
-                key: ValueKey<bool>(_isFlashOff),
-              ),
+              child: Icon(_isFlashOff ? FluentIcons.flash_off_20_regular : FluentIcons.flash_20_regular, key: ValueKey<bool>(_isFlashOff)),
             ),
             onPressed: _toggleFlashIcon,
           ),
@@ -145,12 +138,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))));
                                   } else if (snapshot.hasData && snapshot.data != null) {
-                                    return Image.memory(
-                                      snapshot.data!,
-                                      width: 60,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                    );
+                                    return Image.memory(snapshot.data!, width: 60, height: 50, fit: BoxFit.cover);
                                   } else {
                                     return Container(color: Colors.grey);
                                   }
@@ -183,25 +171,18 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
                         Container(
                           width: 55,
                           height: 55,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: ChatifyColors.white, width: 2),
-                          ),
+                          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.white, width: 2)),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.white),
-                          ),
+                          child: Container(width: 40, height: 40, decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.white)),
                         ),
                       ],
                     ),
                     onPressed: () {},
                   ),
                   _buildIconButton(
-                    icon: const Icon(TablerIcons.refresh_dot, color: ChatifyColors.white, size: 27),
+                    icon: SvgPicture.asset(ChatifyVectors.refreshDot, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                     onPressed: () {},
                   ),
                 ],
@@ -222,10 +203,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: isPhotoMode ? ChatifyColors.transparent : ChatifyColors.darkerGrey,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                          decoration: BoxDecoration(color: isPhotoMode ? ChatifyColors.transparent : ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(20)),
                           child: Text(S.of(context).video, style: TextStyle(color: isPhotoMode ? ChatifyColors.grey : ChatifyColors.white)),
                         ),
                       ),
@@ -238,10 +216,7 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: isPhotoMode ? ChatifyColors.darkerGrey : ChatifyColors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                          decoration: BoxDecoration(color: isPhotoMode ? ChatifyColors.darkerGrey : ChatifyColors.transparent, borderRadius: BorderRadius.circular(20)),
                           child: Text(S.of(context).photo, style: TextStyle(color: isPhotoMode ? ChatifyColors.white : ChatifyColors.grey)),
                         ),
                       ),
@@ -282,16 +257,8 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
 
   Widget _buildIconButton({required Widget icon, required VoidCallback onPressed}) {
     return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()),
-      ),
-      child: IconButton(
-        icon: icon,
-        onPressed: onPressed,
-        splashColor: ChatifyColors.transparent,
-        highlightColor: ChatifyColors.transparent,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt())),
+      child: IconButton(icon: icon, onPressed: onPressed, splashColor: ChatifyColors.transparent, highlightColor: ChatifyColors.transparent),
     );
   }
 }

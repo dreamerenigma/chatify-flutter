@@ -185,9 +185,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               side: BorderSide.none,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
             child: Text(S.of(context).settings, style: TextStyle(color: ChatifyColors.white)),
           ),

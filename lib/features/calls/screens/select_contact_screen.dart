@@ -411,7 +411,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
             final selectedOption = SaveContactController.instance.getOption();
             Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
           },
-          icon: SvgPicture.asset(ChatifyVectors.userAdd, color: ChatifyColors.black, width: 23, height: 23),
+          icon: SvgPicture.asset(ChatifyVectors.userAdd, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 23, height: 23),
           label: S.of(context).newContact,
           trailing: InkWell(
             onTap: () {

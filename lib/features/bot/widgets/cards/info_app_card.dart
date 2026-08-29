@@ -100,7 +100,7 @@ class _InfoAppCardState extends State<InfoAppCard> {
                         radius: 24,
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        child: SvgPicture.asset(ChatifyVectors.logoApp, color: ChatifyColors.white, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 28, height: 28),
                       ),
                       if (!isWindows && isSelected)
                       Positioned(

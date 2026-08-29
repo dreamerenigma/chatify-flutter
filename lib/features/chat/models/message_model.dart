@@ -6,7 +6,7 @@ class MessageModel {
   late final String read;
   late final String fromId;
   late final String sent;
-  late final Type type;
+  late final MessageType type;
   late final String? documentName;
   late final String? fileSize;
   late final List<String> deletedBy;
@@ -43,22 +43,22 @@ class MessageModel {
 
     switch (json['type'].toString()) {
       case 'image':
-        type = Type.image;
+        type = MessageType.image;
         break;
       case 'gif':
-        type = Type.gif;
+        type = MessageType.gif;
         break;
       case 'video':
-        type = Type.video;
+        type = MessageType.video;
         break;
       case 'audio':
-        type = Type.audio;
+        type = MessageType.audio;
         break;
       case 'document':
-        type = Type.document;
+        type = MessageType.document;
         break;
       default:
-        type = Type.text;
+        type = MessageType.text;
     }
   }
 
@@ -87,4 +87,4 @@ class MessageModel {
   }
 }
 
-enum Type { text, image, gif, video, audio, document, emoji }
+enum MessageType { text, image, gif, video, audio, document, emoji }

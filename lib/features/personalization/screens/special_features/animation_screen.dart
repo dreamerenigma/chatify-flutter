@@ -1,19 +1,14 @@
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_keys.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/no_glow_scroll_behavior.dart';
-
-class StorageKeys {
-  static const emoji = 'animation_emoji';
-  static const sticker = 'animation_sticker';
-  static const gif = 'animation_gif';
-}
 
 class AnimationScreen extends StatefulWidget {
   const AnimationScreen({super.key});
@@ -31,9 +26,9 @@ class _AnimationScreenState extends State<AnimationScreen> {
   @override
   void initState() {
     super.initState();
-    isEmojiEnabled = storageBox.read(StorageKeys.emoji) ?? true;
-    isStickerEnabled = storageBox.read(StorageKeys.sticker) ?? false;
-    isGifEnabled = storageBox.read(StorageKeys.gif) ?? true;
+    isEmojiEnabled = storageBox.read(AppKeys.emoji) ?? true;
+    isStickerEnabled = storageBox.read(AppKeys.sticker) ?? false;
+    isGifEnabled = storageBox.read(AppKeys.gif) ?? true;
   }
 
   @override
@@ -44,14 +39,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).subtitleSpecialFeatures, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -108,17 +96,17 @@ class _AnimationScreenState extends State<AnimationScreen> {
             switchValue: isEmojiEnabled,
             onChanged: (val) {
               setState(() => isEmojiEnabled = val);
-              storageBox.write(StorageKeys.emoji, val);
+              storageBox.write(AppKeys.emoji, val);
             },
           ),
           const SizedBox(height: 18),
           _buildSwitchTile(
-            icon: PhosphorIcons.sticker,
+            icon: ChatifyVectors.sticker,
             text: S.of(context).stickers,
             switchValue: isStickerEnabled,
             onChanged: (val) {
               setState(() => isStickerEnabled = val);
-              storageBox.write(StorageKeys.sticker, val);
+              storageBox.write(AppKeys.sticker, val);
             },
           ),
           const SizedBox(height: 18),
@@ -128,7 +116,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
             switchValue: isGifEnabled,
             onChanged: (val) {
               setState(() => isGifEnabled = val);
-              storageBox.write(StorageKeys.gif, val);
+              storageBox.write(AppKeys.gif, val);
             },
           ),
         ],
@@ -136,25 +124,13 @@ class _AnimationScreenState extends State<AnimationScreen> {
     );
   }
 
-  Widget _buildSwitchTile({
-    required IconData icon,
-    required String text,
-    required bool switchValue,
-    required ValueChanged<bool> onChanged,
-  }) {
+  Widget _buildSwitchTile({required dynamic icon, required String text, required bool switchValue, required ValueChanged<bool> onChanged}) {
     return Row(
       children: [
         Icon(icon, size: 24),
         const SizedBox(width: 12),
         Expanded(child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
-        CustomSwitch(
-          value: switchValue,
-          onChanged: onChanged,
-          switchWidth: 50,
-          switchHeight: 31,
-          thumbSize: 21,
-          thumbPadding: 5,
-        ),
+        CustomSwitch(value: switchValue, onChanged: onChanged, switchWidth: 50, switchHeight: 31, thumbSize: 21, thumbPadding: 5),
       ],
     );
   }

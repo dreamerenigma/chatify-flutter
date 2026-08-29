@@ -4,7 +4,6 @@ import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -86,22 +85,22 @@ void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingC
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         buildIconButton(
-                                          icon: SvgPicture.asset(ChatifyVectors.bold, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                          icon: SvgPicture.asset(ChatifyVectors.bold, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                           onTap: () {},
                                           context: context,
                                         ),
                                         buildIconButton(
-                                          icon: SvgPicture.asset(ChatifyVectors.italic, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                          icon: SvgPicture.asset(ChatifyVectors.italic, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                           onTap: () {},
                                           context: context,
                                         ),
                                         buildIconButton(
-                                          icon: SvgPicture.asset(ChatifyVectors.strikethrough, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                          icon: SvgPicture.asset(ChatifyVectors.strikethrough, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                           onTap: () {},
                                           context: context,
                                         ),
                                         buildIconButton(
-                                          icon: Icon(PhosphorIcons.brackets_curly_light, size: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                          icon: SvgPicture.asset(ChatifyVectors.brackets, width: 19, height: 19, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                           onTap: () {},
                                           context: context,
                                         ),

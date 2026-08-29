@@ -8,12 +8,10 @@ import 'package:chatify/provider/wallpaper_provider.dart';
 import 'package:chatify/routes/app_routes.dart';
 import 'package:chatify/utils/local_storage/storage_utility.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'api/apis.dart';
@@ -23,14 +21,9 @@ import 'features/personalization/controllers/language_controller.dart';
 import 'features/personalization/controllers/themes_controller.dart';
 import 'features/splash_screen/screens/main_window_screen.dart';
 import 'features/utils/windows/window_util_desktop.dart';
-import 'firebase_options.dart';
 import 'package:chatify/utils/theme/theme.dart';
 import 'generated/l10n/l10n.dart';
 
-bool get isWindows => !kIsWeb && Platform.isWindows;
-bool get isDesktop => !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
-
-/// -- Initialize application dependencies and services
 Future<void> initApp() async {
   /// -- Widget Binding
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,29 +31,16 @@ Future<void> initApp() async {
   /// -- System Ui mode
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-  /// -- GetX Local Storage
-  await GetStorage.init();
-
   /// -- Initialize LocalStorage
   await ChatifyLocalStorage.init('chatify_bucket');
 
   /// -- Set setting orientation to portrait only
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  /// -- Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then(
-    (FirebaseApp value) {}
-  );
-
   /// -- Activate Firebase App Check
   if (!kIsWeb && defaultTargetPlatform != TargetPlatform.windows) {
-    await FirebaseAppCheck.instance.activate(
-      webProvider: ReCaptchaV3Provider(Config.recaptchaV3Key),
-    );
+    await FirebaseAppCheck.instance.activate(providerWeb: ReCaptchaV3Provider(Config.recaptchaV3Key));
   }
-
-  /// -- Initialize bindings here to ensure they're ready
-  GeneralBindings().dependencies();
 
   /// -- Set system UI status bar color globally
   DeviceUtils.setStatusBarColor(ChatifyColors.transparent);
@@ -109,15 +89,8 @@ class App extends StatelessWidget {
           darkTheme: ChatifyAppTheme.getDarkTheme(),
           getPages: AppRoutes.pages,
           locale: Locale(languageController.selectedLanguage.value),
-          localizationsDelegates: const [
-            AppLocalizationDelegate(),
-            ...GlobalMaterialLocalizations.delegates,
-          ],
-          supportedLocales: const [
-            Locale('ru'),
-            Locale('en'),
-            Locale('es'),
-          ],
+          localizationsDelegates: const [AppLocalizationDelegate(), ...GlobalMaterialLocalizations.delegates, GlobalWidgetsLocalizations.delegate],
+          supportedLocales: const [Locale('ru'), Locale('en'), Locale('es')],
           initialRoute: '/splash',
           navigatorKey: navigatorKey,
           navigatorObservers: [
@@ -129,11 +102,7 @@ class App extends StatelessWidget {
               return child ?? Container();
             }
             else if (Platform.isWindows) {
-              return MainWindow(
-                backButtonNotifier: backButtonNotifier,
-                currentRouteNotifier: currentRouteNotifier,
-                child: child ?? Container(),
-              );
+              return MainWindow(backButtonNotifier: backButtonNotifier, currentRouteNotifier: currentRouteNotifier, child: child ?? Container());
             } else {
               return child ?? Container();
             }

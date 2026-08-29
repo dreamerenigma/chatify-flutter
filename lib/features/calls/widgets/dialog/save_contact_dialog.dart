@@ -56,29 +56,30 @@ class SaveContactController extends GetxController {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Obx(() => RadioListTile<int>(
-                title: Text(APIs.me.email),
-                value: 1,
+              Obx(() => RadioGroup<int>(
                 groupValue: selectedOption.value,
-                activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 onChanged: (value) {
                   if (value != null) {
                     setOption(context, value);
                   }
                 },
-                contentPadding: const EdgeInsets.only(left: 12),
-              )),
-              Obx(() => RadioListTile<int>(
-                title: Text(S.of(context).phone),
-                value: 2,
-                groupValue: selectedOption.value,
-                activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                onChanged: (value) {
-                  if (value != null) {
-                    setOption(context, value);
-                  }
-                },
-                contentPadding: const EdgeInsets.only(left: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RadioListTile<int>(
+                      title: Text(APIs.me.email),
+                      value: 1,
+                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      contentPadding: const EdgeInsets.only(left: 12),
+                    ),
+                    RadioListTile<int>(
+                      title: Text(S.of(context).phone),
+                      value: 2,
+                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      contentPadding: const EdgeInsets.only(left: 12),
+                    ),
+                  ],
+                ),
               )),
             ],
           ),

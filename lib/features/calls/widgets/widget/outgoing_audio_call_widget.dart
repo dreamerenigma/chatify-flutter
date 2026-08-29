@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -209,7 +208,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                                       height: double.infinity,
                                     ),
                                   )
-                                : SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 42, height: 42, fit: BoxFit.cover),
+                                : SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn), width: 42, height: 42, fit: BoxFit.cover),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -366,14 +365,14 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildIconButton(
-                icon: SvgPicture.asset(ChatifyVectors.demonstrationScreen, width: 23, height: 23, color: ChatifyColors.white),
+                icon: SvgPicture.asset(ChatifyVectors.demonstrationScreen, width: 23, height: 23, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                 message: S.of(context).shareScreen,
                 onTap: () {},
                 isEnabled: isCallAccepted,
               ),
               const SizedBox(width: 4),
               _buildIconButton(
-                icon: SvgPicture.asset(ChatifyVectors.addCallUser, width: 26, height: 26, color: ChatifyColors.white),
+                icon: SvgPicture.asset(ChatifyVectors.addCallUser, width: 26, height: 26, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                 message: S.of(context).addParticipants,
                 tooltipOffsetX: -65,
                 onTap: () {
@@ -387,7 +386,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
               ),
               const SizedBox(width: 4),
               _buildIconButton(
-                icon: SvgPicture.asset(ChatifyVectors.text, width: 15, height: 15, color: ChatifyColors.white),
+                icon: SvgPicture.asset(ChatifyVectors.text, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                 message: S.of(context).openChat,
                 tooltipOffsetX: -40,
                 padding: 17,
@@ -426,12 +425,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
       return inkWell;
     }
 
-    return CustomTooltip(
-      message: message,
-      verticalOffset: tooltipOffsetY,
-      horizontalOffset: tooltipOffsetX,
-      child: inkWell,
-    );
+    return CustomTooltip(message: message, verticalOffset: tooltipOffsetY, horizontalOffset: tooltipOffsetX, child: inkWell);
   }
 
   Widget _buildCallEnded() {
@@ -447,7 +441,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
         },
         backgroundColor: ChatifyColors.green),
         const SizedBox(width: 110),
-        _buildEndCallButton(Ionicons.close_outline, S.of(context).close, () {
+        _buildEndCallButton(ChatifyVectors.close, S.of(context).close, () {
           Navigator.pop(context);
         }),
       ],
@@ -476,7 +470,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                 ? SizedBox(
                   width: 18,
                   height: 18,
-                  child: SvgPicture.asset(iconData, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fit: BoxFit.scaleDown, alignment: Alignment.center),
+                  child: SvgPicture.asset(iconData, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), fit: BoxFit.scaleDown, alignment: Alignment.center),
                 )
                 : Icon(iconData, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 30),
             ),
@@ -517,7 +511,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
               onExit: (_) => isIconHovered.value = false,
               child: ValueListenableBuilder<bool>(
                 valueListenable: isIconHovered,
-                builder: (_, hover, __) {
+                builder: (_, hover, _) {
                   return Material(
                     color: ChatifyColors.transparent,
                     child: InkWell(
@@ -546,7 +540,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                 onExit: (_) => isArrowHovered.value = false,
                 child: ValueListenableBuilder<bool>(
                   valueListenable: isArrowHovered,
-                  builder: (_, hover, __) {
+                  builder: (_, hover, _) {
                     return Material(
                       color: ChatifyColors.transparent,
                       child: InkWell(
@@ -564,7 +558,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             transform: Matrix4.translationValues(0, isArrowEnabled ? 2 : 0, 0),
-                            child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 17, height: 17, color: arrowColor),
+                            child: SvgPicture.asset(ChatifyVectors.arrowDown, colorFilter: ColorFilter.mode(arrowColor, BlendMode.srcIn), width: 17, height: 17),
                           ),
                         ),
                       ),
@@ -598,7 +592,7 @@ class _OutgoingAudioCallWidgetState extends State<OutgoingAudioCallWidget> {
             children: [
               Transform.rotate(
                 angle: math.pi / 1.34,
-                child: SvgPicture.asset(ChatifyVectors.calls, color: ChatifyColors.white, width: 21, height: 21),
+                child: SvgPicture.asset(ChatifyVectors.calls, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 21, height: 21),
               ),
             ],
           ),

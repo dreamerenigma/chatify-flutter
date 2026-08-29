@@ -4,8 +4,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:iconoir_icons/iconoir_icons.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -15,12 +13,7 @@ import '../../../home/widgets/dialogs/confirmation_dialog.dart';
 import '../panels/media_content_bottom_panel.dart';
 import 'light_dialog.dart';
 
-Future<void> showEditImageDialog(
-  BuildContext context,
-  Offset position,
-  File selectedFile,
-  Function(File) onImageConfirmed,
-) async {
+Future<void> showEditImageDialog(BuildContext context, Offset position, File selectedFile, Function(File) onImageConfirmed) async {
   final FocusNode captionFocusNode = FocusNode();
   final ValueNotifier<bool> isFocused = ValueNotifier(false);
   final hoveredIcon = ValueNotifier<String?>(null);
@@ -69,14 +62,7 @@ Future<void> showEditImageDialog(
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                      spreadRadius: 1,
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: const Offset(0, 4))],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -139,7 +125,7 @@ Future<void> showEditImageDialog(
                                                       children: [
                                                         SvgPicture.asset(
                                                           iconPath,
-                                                          color: iconPath == ChatifyVectors.highlighter ? null : (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                                          colorFilter: iconPath == ChatifyVectors.highlighter ? null : ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
                                                           width: 20,
                                                           height: 20,
                                                         ),
@@ -208,22 +194,18 @@ Future<void> showEditImageDialog(
                                                         color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey,
                                                         width: 1,
                                                       ),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                                                          spreadRadius: 1,
-                                                          blurRadius: 8,
-                                                          offset: Offset(0, 4),
-                                                        ),
-                                                      ],
+                                                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
                                                     ),
                                                     child: Container(
                                                       margin: const EdgeInsets.only(right: 8),
                                                       padding: const EdgeInsets.all(8),
                                                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: backgroundColor),
                                                       child: iconId == 'rotation'
-                                                        ? SvgPicture.asset(ChatifyVectors.rotation, width: 23, height: 23, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)
-                                                        : Icon(iconId == 'crop' ? Ionicons.crop_outline : FluentIcons.delete_20_regular, size: 24),
+                                                        ? SvgPicture.asset(ChatifyVectors.rotation, width: 23, height: 23, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))
+                                                          : iconId == 'crop'
+                                                            ? SvgPicture.asset(ChatifyVectors.cropOutline, width: 23, height: 23, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))
+                                                            : const Icon(FluentIcons.delete_20_regular, size: 24,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -272,11 +254,7 @@ Future<void> showEditImageDialog(
                                                                 color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                                                                 borderRadius: BorderRadius.circular(8),
                                                                 boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors.black26,
-                                                                    blurRadius: 6,
-                                                                    offset: Offset(0, 4),
-                                                                  ),
+                                                                  BoxShadow(color: ChatifyColors.black, blurRadius: 6, offset: Offset(0, 4)),
                                                                 ],
                                                               ),
                                                               child: Column(
@@ -314,9 +292,8 @@ Future<void> showEditImageDialog(
                                               overlayState.insert(overlayMenu);
                                               animationController.forward();
                                             },
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(8),
-                                              child: Iconoir(IconoirIcons.moreHoriz, size: 24),
+                                            child: Padding(padding: EdgeInsets.all(8),
+                                              child: SvgPicture.asset(ChatifyVectors.moreHorizontal, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 24, height: 24),
                                             ),
                                           ),
                                         ),
@@ -331,8 +308,8 @@ Future<void> showEditImageDialog(
                                 captionFocusNode: captionFocusNode,
                                 animationController: animationController,
                                 overlayEntry: overlayEntry,
-                                onEmojiSelected: (String) {},
-                                onGifSelected: (String) {},
+                                onEmojiSelected: (string) {},
+                                onGifSelected: (string) {},
                                 user: APIs.me,
                               ),
                             ],

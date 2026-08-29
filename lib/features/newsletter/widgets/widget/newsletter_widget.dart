@@ -4,11 +4,11 @@ import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../chat/widgets/dialogs/select_message_dialog.dart';
@@ -143,9 +143,9 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
           context: context,
           position: details.globalPosition,
           items: [
-            MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+            MenuItem(svgPath: ChatifyVectors.checkboxOutline, text: S.of(context).selectMessages, onTap: () {}),
             MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
-            MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
+            MenuItem(svgPath: ChatifyVectors.close, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
           ],
         );
       },

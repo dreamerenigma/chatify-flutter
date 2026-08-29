@@ -7,7 +7,7 @@
 
 namespace firebase_auth_windows {
 
-std::string getPluginVersion() { return "5.5.4"; }
+std::string getPluginVersion() { return "6.1.1"; }
 }  // namespace firebase_auth_windows
 
 #endif  // PLUGIN_VERSION_CONFIG_H

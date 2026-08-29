@@ -10,10 +10,7 @@ PageRouteBuilder<T> createPageRoute<T>(Widget page) {
       var tween = Tween<Offset>(begin: begin, end: end);
       var offsetAnimation = animation.drive(tween.chain(CurveTween(curve: curve)));
 
-      return SlideTransition(
-        position: offsetAnimation,
-        child: child,
-      );
+      return SlideTransition(position: offsetAnimation, child: child);
     },
     transitionDuration: const Duration(milliseconds: 400),
   );

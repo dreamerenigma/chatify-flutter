@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chatify/features/authentication/screens/enter_phone_number.dart';
 import 'package:chatify/features/home/screens/home_screen.dart';

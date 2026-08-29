@@ -341,7 +341,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
-              child: SvgPicture.asset(ChatifyVectors.statusAdd, width: 24, height: 24, color: ChatifyColors.white),
+              child: SvgPicture.asset(ChatifyVectors.statusAdd, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
             ),
             const SizedBox(width: 16),
             Expanded(

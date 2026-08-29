@@ -1,12 +1,10 @@
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:radix_icons/radix_icons.dart';
 import 'package:chatify/features/personalization/screens/account/request_account_information_screen.dart';
 import 'package:chatify/features/personalization/screens/account/two_step_verification_screen.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mono_icons/mono_icons.dart';
@@ -46,14 +44,7 @@ class _AccountScreenState extends State<AccountScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
@@ -66,9 +57,7 @@ class _AccountScreenState extends State<AccountScreen> {
             titleSpacing: 0,
             title: Text(S.of(context).account, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
-            iconTheme: IconThemeData(
-              color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-            ),
+            iconTheme: IconThemeData(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
           ),
         ),
       ),
@@ -80,7 +69,7 @@ class _AccountScreenState extends State<AccountScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSettingsMenuTile(
-                  icon: PhosphorIcons.shield_checkered_fill,
+                  icon: ChatifyVectors.shieldCheckeredFilled,
                   title: S.of(context).securityNotices,
                   onTap: () => Navigator.push(context, createPageRoute(const NotificationsSecurityScreen())),
                 ),
@@ -95,7 +84,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   onTap: () => Navigator.push(context, createPageRoute(const EmailAddressScreen())),
                 ),
                 _buildSettingsMenuTile(
-                  svgIconPath: ChatifyVectors.pinCode,
+                  icon: ChatifyVectors.pinCode,
                   title: S.of(context).twoStepVerification,
                   onTap: () {
                     Navigator.push(context, createPageRoute(const TwoStepVerificationScreen()));
@@ -114,12 +103,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 _buildSettingsMenuTile(
                   icon: Icons.person_add_alt,
                   title: S.of(context).addAccount,
-                  onTap: () => showAddUserBottomSheet(
-                    context,
-                    widget.user.image,
-                    widget.user.name,
-                    widget.user.phoneNumber,
-                  ),
+                  onTap: () => showAddUserBottomSheet(context, widget.user.image, widget.user.name, widget.user.phoneNumber),
                 ),
                 _buildSettingsMenuTile(
                   icon: MonoIcons.delete,
@@ -127,7 +111,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   onTap: () => Get.to(() => const DeleteAccountScreen()),
                 ),
                 _buildSettingsMenuTile(
-                  icon: RadixIcons.Exit,
+                  icon: ChatifyVectors.exit,
                   title: S.of(context).logout,
                   onTap: () async {
                     await LogoutDialog.showLogoutDialog(
@@ -173,15 +157,9 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Widget _buildSettingsMenuTile({
-    IconData? icon,
-    String? svgIconPath,
-    required String title,
-    required VoidCallback onTap,
-    String subTitle = '',
-  }) {
+  Widget _buildSettingsMenuTile({dynamic icon, required String title, required VoidCallback onTap, String subTitle = ''}) {
     return SettingsMenuTile(
-      icon: svgIconPath ?? icon,
+      icon: icon,
       title: title,
       subTitle: subTitle,
       titleFontSize: ChatifySizes.fontSizeSm,

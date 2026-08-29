@@ -13,6 +13,7 @@ import '../../../../utils/platforms/platform_utils.dart';
 import '../../../calls/widgets/dialog/new_calls_dialog.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../dialogs/overlays/add_favorite_overlay.dart';
 import '../dialogs/overlays/favorite_call_overlay.dart';
 import '../input/search_text_input.dart';
 
@@ -36,8 +37,10 @@ class CallsWidget extends StatefulWidget {
 
 class _CallsWidgetState extends State<CallsWidget> {
   final TextEditingController callsController = TextEditingController();
+  final TextEditingController userGroupController = TextEditingController();
   final GlobalKey _favoriteMoreKey = GlobalKey();
-  List<UserModel> recentsCalls = [];
+  final GlobalKey _addFavoriteKey = GlobalKey();
+  List<UserModel> favoriteCalls = [];
   bool _isDialogOpen = false;
   bool isHovered = false;
 
@@ -54,7 +57,7 @@ class _CallsWidgetState extends State<CallsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final hasRecentCalls = recentsCalls.isNotEmpty;
+    final hasFavoriteCalls = favoriteCalls.isNotEmpty;
 
     return Expanded(
       child: SingleChildScrollView(
@@ -142,12 +145,17 @@ class _CallsWidgetState extends State<CallsWidget> {
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
                     ),
-                    _buildFavoriteCalls(),
-                    _buildMoreFavorite(),
+                    favoriteCalls.isEmpty ? _buildAddFavorite() : Column(
+                      children: [
+                        _buildFavoriteCalls(),
+                        _buildMoreFavorite(),
+                      ],
+                    ),
                   ],
                 ),
+                if (favoriteCalls.isNotEmpty)
                 Divider(height: 12, thickness: 6, color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.1 * 255).toInt())),
-                if (hasRecentCalls) ...[
+                if (hasFavoriteCalls) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     child: Text(S.of(context).recent, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
@@ -156,6 +164,55 @@ class _CallsWidgetState extends State<CallsWidget> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddFavorite() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      child: Material(
+        color: ChatifyColors.transparent,
+        child: InkWell(
+          onTap: () async {
+            final RenderBox renderBox = _addFavoriteKey.currentContext?.findRenderObject() as RenderBox;
+            final position = renderBox.localToGlobal(Offset.zero);
+            final size = renderBox.size;
+            final adjustedOffset = Offset(position.dx + size.width + 210, position.dy - 45);
+
+            await showAddFavoriteOverlay(context, adjustedOffset, userGroupController);
+          },
+          mouseCursor: SystemMouseCursors.basic,
+          borderRadius: BorderRadius.circular(6),
+          splashFactory: NoSplash.splashFactory,
+          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.1 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.1 * 255).toInt()) : ChatifyColors.grey,
+          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.1 * 255).toInt()) : ChatifyColors.grey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  key: _addFavoriteKey,
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey,
+                    border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1),
+                  ),
+                  child: SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, fit: BoxFit.scaleDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  S.of(context).addToFavorites,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -270,13 +327,13 @@ class _CallsWidgetState extends State<CallsWidget> {
               final RenderBox renderBox = _favoriteMoreKey.currentContext?.findRenderObject() as RenderBox;
               final position = renderBox.localToGlobal(Offset.zero);
               final size = renderBox.size;
-
               final adjustedOffset = Offset(position.dx + size.width + 10, position.dy - 45);
 
               await showFavoriteCallOverlay(context, adjustedOffset);
             },
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(8),
+            splashFactory: NoSplash.splashFactory,
             splashColor: ChatifyColors.transparent,
             highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
             hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,

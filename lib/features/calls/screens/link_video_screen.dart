@@ -6,13 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
+import '../../../stubs/sound_real.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -32,14 +32,14 @@ class LinkVideoScreen extends StatefulWidget {
 }
 
 class LinkVideoScreenState extends State<LinkVideoScreen> {
-  CameraController? _cameraController;
+  final AudioRecorder _recorder = AudioRecorder();
   late List<CameraDescription> _cameras;
+  late String videoPath;
+  CameraController? _cameraController;
   bool _isRecording = false;
   bool _isMicrophone = false;
   bool _isOverlayVisible = false;
-  late String videoPath;
   Timer? _timer;
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
 
   @override
   void initState() {
@@ -60,17 +60,14 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
     if (_isMicrophone) {
       _microphoneOff();
     }
-    _recorder.closeRecorder();
+    _recorder.dispose();
     super.dispose();
   }
 
   Future<void> _initializeCamera() async {
     _cameras = await availableCameras();
     if (_cameras.isNotEmpty) {
-      _cameraController = CameraController(
-        _cameras[0],
-        ResolutionPreset.high,
-      );
+      _cameraController = CameraController(_cameras[0], ResolutionPreset.high);
 
       try {
         await _cameraController!.initialize();
@@ -110,6 +107,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
 
     try {
       final XFile videoFile = await _cameraController!.stopVideoRecording();
+
       setState(() {
         _isRecording = false;
       });
@@ -121,18 +119,9 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
   Future<void> _requestPermission() async {
     final status = await Permission.microphone.request();
     if (status.isGranted) {
-      await _initializeRecorder();
+
     } else {
       log(S.of(context).microPermissionDenied);
-    }
-  }
-
-  Future<void> _initializeRecorder() async {
-    try {
-      await _recorder.openRecorder();
-      log(S.of(context).recorderInitialized);
-    } catch (e) {
-      log('${S.of(context).errorInitRecorder}: $e');
     }
   }
 
@@ -142,7 +131,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
     }
 
     try {
-      await _recorder.startRecorder(toFile: 'audio_recording.aac');
+      await _recorder.start(const RecordConfig(), path: 'audio_recording.aac');
       setState(() {
         _isMicrophone = true;
       });
@@ -157,7 +146,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
     }
 
     try {
-      await _recorder.stopRecorder();
+      await _recorder.stop();
       setState(() {
         _isMicrophone = false;
       });
@@ -290,12 +279,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                     color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                        spreadRadius: 5,
-                        blurRadius: 10,
-                        offset: const Offset(0, -3),
-                      ),
+                      BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 5, blurRadius: 10, offset: const Offset(0, -3)),
                     ],
                   ),
                   child: Padding(
@@ -316,10 +300,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                               side: BorderSide.none,
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             ),
-                            child: Text(
-                              S.of(context).skip,
-                              style: TextStyle(fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                            ),
+                            child: Text(S.of(context).skip, style: TextStyle(fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -333,14 +314,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                               side: BorderSide.none,
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             ),
-                            child: Text(
-                              S.of(context).join,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
+                            child: Text(S.of(context).join, style: TextStyle(fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, overflow: TextOverflow.ellipsis)),
                           ),
                         ),
                       ],

@@ -4,17 +4,22 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:jam_icons/jam_icons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 
-Future <void> showFilterChatsDialog(BuildContext context, Offset position) async {
+Future<void> showFilterChatsDialog({required BuildContext context, required Offset position, required Function(String) onFilterSelected}) async {
   final completer = Completer<void>();
   final overlay = Overlay.of(context);
   late OverlayEntry overlayEntry;
   final AnimationController animationController = AnimationController(vsync: Navigator.of(context), duration: Duration(milliseconds: 300));
   final Animation<Offset> offsetAnimation = Tween<Offset>(begin: Offset(0, -0.1), end: Offset(0, 0)).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic));
+  final unreadText = S.of(context).unread;
+  final favoriteText = S.of(context).favorite;
+  final contactsText = S.of(context).contacts;
+  final areNotContactsText = S.of(context).areNotContacts;
+  final groupsText = '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}';
+  final draftsText = S.of(context).drafts;
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -61,19 +66,61 @@ Future <void> showFilterChatsDialog(BuildContext context, Offset position) async
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+                          padding: EdgeInsets.only(left: 16, right: 16, top: 12),
                           child: Text(S.of(context).chatFilter, style: TextStyle(color: ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                         ),
                         SizedBox(height: 10),
                         Column(
                           children: [
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.messageNotification, text: S.of(context).unread, iconSize: 18, icon: null),
-                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).favorite, iconSize: 20, icon: Icons.favorite_border_rounded),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.contact, text: S.of(context).contacts, iconSize: 20, icon: null),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.blockUser, text: S.of(context).areNotContacts, iconSize: 22, icon: null),
-                            _buildFilterChats(context: context, iconPath: ChatifyVectors.newGroup, text: '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', iconSize: 22, icon: null),
-                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).drafts, iconSize: 20, icon: JamIcons.pencil),
-                            SizedBox(height: 8),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.messageNotification, text: S.of(context).unread, iconSize: 18, icon: null, onTap: () {
+                              animationController.reverse().then((_) {
+                                overlayEntry.remove();
+                                completer.complete();
+                                animationController.dispose();
+                                onFilterSelected(unreadText);
+                              });
+                            }),
+                            _buildFilterChats(context: context, iconPath: '', text: S.of(context).favorite, iconSize: 20, icon: Icons.favorite_border_rounded, onTap: () {
+                              animationController.reverse().then((_) {
+                                overlayEntry.remove();
+                                completer.complete();
+                                animationController.dispose();
+                                onFilterSelected(favoriteText);
+                              });
+                            }),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.contact, text: S.of(context).contacts, iconSize: 20, icon: null, onTap: () {
+                              animationController.reverse().then((_) {
+                                overlayEntry.remove();
+                                completer.complete();
+                                animationController.dispose();
+                                onFilterSelected(contactsText);
+                              });
+                            }),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.blockUser, text: S.of(context).areNotContacts, iconSize: 22, icon: null, onTap: () {
+                              animationController.reverse().then((_) {
+                                overlayEntry.remove();
+                                completer.complete();
+                                animationController.dispose();
+                                onFilterSelected(areNotContactsText);
+                              });
+                            }),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.newGroup, text: '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', iconSize: 22, icon: null, onTap: () {
+                              animationController.reverse().then((_) {
+                                overlayEntry.remove();
+                                completer.complete();
+                                animationController.dispose();
+                                onFilterSelected(groupsText);
+                              });
+                            }),
+                            _buildFilterChats(context: context, iconPath: ChatifyVectors.pencilOutline, text: S.of(context).drafts, iconSize: 20, icon: null, onTap: () {
+                              animationController.reverse().then((_) {
+                                overlayEntry.remove();
+                                completer.complete();
+                                animationController.dispose();
+                                onFilterSelected(draftsText);
+                              });
+                            }),
+                            SizedBox(height: 5),
                           ],
                         ),
                       ],
@@ -100,13 +147,16 @@ Widget _buildFilterChats({
   required IconData? icon,
   required String text,
   required double iconSize,
+  required VoidCallback onTap
 }) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: Material(
       color: ChatifyColors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
+        mouseCursor: SystemMouseCursors.basic,
+        splashFactory: NoSplash.splashFactory,
         splashColor: ChatifyColors.grey.withAlpha((0.2 * 255).toInt()),
         highlightColor: ChatifyColors.grey.withAlpha((0.2 * 255).toInt()),
         borderRadius: BorderRadius.circular(8),
@@ -119,7 +169,7 @@ Widget _buildFilterChats({
                   iconPath,
                   width: iconSize,
                   height: iconSize,
-                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
                   placeholderBuilder: (context) => Icon(icon ?? Icons.image_not_supported, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                 )
               else

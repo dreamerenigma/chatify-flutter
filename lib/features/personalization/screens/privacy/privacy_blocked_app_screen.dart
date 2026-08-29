@@ -41,6 +41,8 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
 
   Future<bool> authenticate() async {
     try {
+      final LocalAuthentication auth = LocalAuthentication();
+
       bool canCheckBiometrics = await auth.canCheckBiometrics;
       if (!canCheckBiometrics) {
         return false;
@@ -48,11 +50,9 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
 
       bool authenticated = await auth.authenticate(
         localizedReason: S.of(context).pleaseConfirmYourIdentity,
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          stickyAuth: true,
-          sensitiveTransaction: true,
-        ),
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
+        sensitiveTransaction: true,
       );
 
       return authenticated;
@@ -127,7 +127,7 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
                         alignment: Alignment.topRight,
                         child: Switch(
                           value: isBiometricEnabled,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                           activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
                           onChanged: (value) {
                             toggleSwitch(value);

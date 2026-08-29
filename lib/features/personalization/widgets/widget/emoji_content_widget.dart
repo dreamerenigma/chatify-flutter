@@ -1,11 +1,8 @@
 import 'dart:developer';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:icon_forest/iconoir.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../data/emoji_data.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -339,15 +336,15 @@ class _EmojiContentWidgetState extends State<EmojiContentWidget> {
           final Color iconColor = isSelected || isHovered ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black) : ChatifyColors.darkGrey;
 
           List<Widget Function(Color)> icons = [
-                (color) => Icon(Ionicons.time_outline, size: 18, color: color),
-                (color) => Icon(Icons.emoji_emotions_outlined, size: 18, color: color),
-                (color) => SvgPicture.asset(ChatifyVectors.animal, width: 18, color: color),
-                (color) => Icon(FluentIcons.food_pizza_20_regular, size: 18, color: color),
-                (color) => Transform.rotate(angle: -0.5, child: Iconoir(Iconoir.basketball, width: 18, color: color)),
-                (color) => Icon(PhosphorIcons.car, size: 18, color: color),
-                (color) => Icon(FluentIcons.lightbulb_filament_20_regular, size: 18, color: color),
-                (color) => Icon(FluentIcons.symbols_20_regular, size: 18, color: color),
-                (color) => Icon(FluentIcons.flag_20_regular, size: 18, color: color),
+            (color) => SvgPicture.asset(ChatifyVectors.timeOutline, width: 18, height: 18, colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
+            (color) => Icon(Icons.emoji_emotions_outlined, size: 18, color: color),
+            (color) => SvgPicture.asset(ChatifyVectors.animal, width: 18, colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
+            (color) => Icon(FluentIcons.food_pizza_20_regular, size: 18, color: color),
+            (color) => Transform.rotate(angle: -0.5, child: SvgPicture.asset(ChatifyVectors.basketball, width: 18, colorFilter: ColorFilter.mode(color, BlendMode.srcIn))),
+            (color) => SvgPicture.asset(ChatifyVectors.car, width: 18, height: 18, colorFilter: ColorFilter.mode(color,  BlendMode.srcIn)),
+            (color) => Icon(FluentIcons.lightbulb_filament_20_regular, size: 18, color: color),
+            (color) => Icon(FluentIcons.symbols_20_regular, size: 18, color: color),
+            (color) => Icon(FluentIcons.flag_20_regular, size: 18, color: color),
           ];
 
           return MouseRegion(

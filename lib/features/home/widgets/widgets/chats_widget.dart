@@ -1,7 +1,6 @@
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
-import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -75,6 +74,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _newChatIconKey = GlobalKey();
   final GlobalKey _newFilterChatsIconKey = GlobalKey();
+  String selectedFilter = '';
   GroupModel? selectedGroup;
   NewsletterModel? selectedNewsletter;
   CommunityModel? selectedCommunity;
@@ -83,6 +83,25 @@ class _ChatsWidgetState extends State<ChatsWidget> {
   InfoAppModel? selectedInfoApp;
   bool _isNewChatDialogOpen = false;
   bool _isFilterDialogOpen = false;
+  late String selectedFilterTitle;
+
+  String _getHintTextForSelectedFilter() {
+    if (selectedFilterTitle == S.of(context).unread) {
+      return S.of(context).searchUnreadChats;
+    } else if (selectedFilterTitle == S.of(context).favorite) {
+      return S.of(context).searchFavoriteChats;
+    } else if (selectedFilterTitle == S.of(context).contacts) {
+      return S.of(context).search;
+    } else if (selectedFilterTitle == S.of(context).areNotContacts) {
+      return S.of(context).search;
+    } else if (selectedFilterTitle == '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}') {
+      return S.of(context).searchGroupsChats;
+    } else if (selectedFilterTitle == S.of(context).drafts) {
+      return S.of(context).search;
+    } else {
+      return S.of(context).searchNewChat;
+    }
+  }
 
   @override
   void initState() {
@@ -94,6 +113,12 @@ class _ChatsWidgetState extends State<ChatsWidget> {
         _focusNode.requestFocus();
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedFilterTitle = S.of(context).chats;
   }
 
   @override
@@ -122,8 +147,32 @@ class _ChatsWidgetState extends State<ChatsWidget> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-                child: Text(S.of(context).chats, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+                child: Row(
+                  children: [
+                    if (selectedFilterTitle != S.of(context).chats)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedFilterTitle = S.of(context).chats;
+                          });
+                        },
+                        child: Icon(Icons.arrow_back, size: 18),
+                      ),
+                    if (selectedFilterTitle != S.of(context).chats)
+                      SizedBox(width: 20),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        final offsetAnimation = Tween<Offset>(begin: const Offset(-0.5, 0), end: Offset.zero).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));
+
+                        return SlideTransition(position: offsetAnimation, child: FadeTransition(opacity: animation, child: child));
+                      },
+                      child: Text(selectedFilterTitle, key: ValueKey<String>(selectedFilterTitle), style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis, maxLines: 1),
+                    ),
+                  ],
+                ),
               ),
+              if (selectedFilterTitle == S.of(context).chats)
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 12, top: 16, bottom: 8),
                 child: Row(
@@ -135,14 +184,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                             color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                             border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
                             borderRadius: BorderRadius.circular(6),
-                            boxShadow: [
-                              BoxShadow(
-                                color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                                spreadRadius: 1,
-                                blurRadius: 8,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
+                            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
                           ),
                           textStyle: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
                         ),
@@ -172,7 +214,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                             highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                             child: Container(
                               decoration: BoxDecoration(color: _isNewChatDialogOpen ? hoverBackgroundColor : ChatifyColors.transparent, borderRadius: BorderRadius.circular(8)),
-                              child: Padding(padding: const EdgeInsets.all(12), child: Icon(FeatherIcons.edit, size: 15, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                              child: Padding(padding: EdgeInsets.all(12), child: SvgPicture.asset(ChatifyVectors.edit, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
                             ),
                           ),
                         ),
@@ -192,7 +234,15 @@ class _ChatsWidgetState extends State<ChatsWidget> {
 
                             setState(() => _isFilterDialogOpen = true);
 
-                            await showFilterChatsDialog(context, position);
+                            await showFilterChatsDialog(
+                              context: context,
+                              position: position,
+                              onFilterSelected: (String selected) {
+                                setState(() {
+                                  selectedFilterTitle = selected;
+                                });
+                              },
+                            );
 
                             setState(() => _isFilterDialogOpen = false);
                           },
@@ -205,7 +255,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                             decoration: BoxDecoration(color: _isFilterDialogOpen ? hoverBackgroundColor : ChatifyColors.transparent, borderRadius: BorderRadius.circular(8)),
                             child: Padding(
                               padding: const EdgeInsets.all(12),
-                              child: SvgPicture.asset(ChatifyVectors.filter, width: 16, height: 16, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                              child: SvgPicture.asset(ChatifyVectors.filter, width: 16, height: 16, colorFilter: ColorFilter.mode( context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                             ),
                           ),
                         ),
@@ -217,7 +267,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
             ],
           ),
           SearchTextInput(
-            hintText: S.of(context).searchNewChat,
+            hintText: _getHintTextForSelectedFilter(),
             controller: chatsController,
             focusNode: _focusNode,
             wrapInScrollView: false,

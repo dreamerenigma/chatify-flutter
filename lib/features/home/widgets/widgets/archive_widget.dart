@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 import '../input/search_text_input.dart';
 import '../lists/archive_list.dart';
@@ -28,6 +30,8 @@ class ArchiveWidgetState extends State<ArchiveWidget> with SingleTickerProviderS
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   final TextEditingController favoriteController = TextEditingController();
+  final List<String> favoriteMessages = [];
+  bool hasResults = false;
 
   @override
   void initState() {
@@ -45,6 +49,8 @@ class ArchiveWidgetState extends State<ArchiveWidget> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
+    hasResults = favoriteMessages.isNotEmpty;
+
     return Expanded(
       child: SingleChildScrollView(
         child: Column(
@@ -61,19 +67,30 @@ class ArchiveWidgetState extends State<ArchiveWidget> with SingleTickerProviderS
                   ),
                 ),
                 SearchTextInput(hintText: S.of(context).searchInChatSArchive, controller: favoriteController, padding: EdgeInsets.all(16)),
-                SlideTransition(
-                  position: _slideAnimation,
-                  child: Visibility(
-                    visible: widget.users.isEmpty,
-                    child: ArchiveList(
-                      isSearching: widget.isSearching,
-                      searchList: widget.searchList,
-                      archivedUsers: widget.archivedUsers,
-                      onUserSelected: (user) {},
-                      user: widget.user,
+                if (hasResults && favoriteMessages.isNotEmpty)
+                  SlideTransition(
+                    position: _slideAnimation,
+                    child: Visibility(
+                      visible: widget.users.isEmpty,
+                      child: ArchiveList(
+                        isSearching: widget.isSearching,
+                        searchList: widget.searchList,
+                        archivedUsers: widget.archivedUsers,
+                        onUserSelected: (user) {},
+                        user: widget.user,
+                      ),
                     ),
-                  ),
-                ),
+                  )
+                else
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    alignment: Alignment.center,
+                    child: Text(
+                      S.of(context).noResults,
+                      style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                  ) ,
               ],
             ),
           ],

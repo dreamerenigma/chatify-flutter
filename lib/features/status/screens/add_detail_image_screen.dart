@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/status/screens/status_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -12,6 +12,7 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../utils/widgets/icons/custom_icon.dart';
 import '../widgets/dialogs/update_status_bottom_dialog.dart';
 import '../widgets/inputs/detail_image_input.dart';
 
@@ -77,9 +78,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
           Positioned(
             top: 40,
             left: 16.0,
-            child: _buildIcon(Icons.close, ChatifyColors.blackGrey, 25, () {
-              Navigator.pop(context);
-            }),
+            child: _buildIcon(icon: Icons.close, color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () => Navigator.pop(context)),
           ),
           Positioned(
             top: 40,
@@ -87,13 +86,13 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildIcon(Icons.crop_rotate_outlined, ChatifyColors.blackGrey, 25, () {}),
+                _buildIcon(icon: Icon(Icons.crop_rotate_outlined), color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () {}),
                 const SizedBox(width: 16),
-                _buildIcon(PhosphorIcons.sticker, ChatifyColors.blackGrey, 27, () {}),
+                _buildIcon(icon: ChatifyVectors.sticker, color: ChatifyColors.blackGrey, iconSize: 27, onPressed: () {}),
                 const SizedBox(width: 16),
-                _buildIcon(Icons.text_fields, ChatifyColors.blackGrey, 25, () {}),
+                _buildIcon(icon: Icons.text_fields, color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () {}),
                 const SizedBox(width: 16),
-                _buildIcon(Icons.mode_edit_outlined, ChatifyColors.blackGrey, 25, () {}),
+                _buildIcon(icon: Icons.mode_edit_outlined, color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () {}),
               ],
             ),
           ),
@@ -109,7 +108,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.keyboard_arrow_up_rounded),
-                      SizedBox(height: 8.0),
+                      SizedBox(height: 8),
                       Text(S.of(context).swipeUpToSelectFilters, style: TextStyle(fontWeight: FontWeight.w400)),
                     ],
                   ),
@@ -151,8 +150,8 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                 ),
                 child: Row(
                   children: [
-                    SvgPicture.asset(ChatifyVectors.status, color: ChatifyColors.white, width: 16),
-                    const SizedBox(width: 8.0),
+                    SvgPicture.asset(ChatifyVectors.status, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn) , width: 16),
+                    const SizedBox(width: 8),
                     Text(S.of(context).statusContacts, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                   ],
                 ),
@@ -160,7 +159,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
             ),
             const Spacer(),
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.only(right: 8),
               child: CircleAvatar(
                 radius: 25,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -186,16 +185,11 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
     );
   }
 
-  Widget _buildIcon(IconData icon, Color color, double iconSize, VoidCallback onPressed) {
+  Widget _buildIcon({required dynamic icon, required Color color, required double iconSize, required VoidCallback onPressed}) {
     return CircleAvatar(
       backgroundColor: color,
       radius: 22,
-      child: Center(
-        child: IconButton(
-          icon: Icon(icon, color: ChatifyColors.white, size: iconSize),
-          onPressed: onPressed,
-        ),
-      ),
+      child: Center(child: IconButton(icon: CustomIcon(icon: icon, color: ChatifyColors.white, size: iconSize), onPressed: onPressed)),
     );
   }
 }

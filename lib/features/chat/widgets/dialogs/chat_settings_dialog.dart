@@ -252,7 +252,7 @@ Widget _buildOptionsByIndex(int index, dynamic entity, UserModel currentUser) {
         }
         return SizedBox();
       case 6:
-        return GroupsOptionWidget();
+        return GroupsOptionWidget(currentUserGroups: []);
       default:
         return SizedBox();
     }

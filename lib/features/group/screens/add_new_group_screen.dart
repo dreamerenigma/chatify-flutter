@@ -240,7 +240,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                               Text(durationText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                             ],
                           ),
-                          const Icon(HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
+                          const HugeIcon(icon: HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
                         ],
                       ),
                     ),

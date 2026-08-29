@@ -27,7 +27,7 @@ Future<void> disableAutoLaunch({String appName = 'Chatify'}) async {
   }
 }
 
-bool isAutoLaunchEnabled({String appName = 'MyFlutterApp'}) {
+bool isAutoLaunchEnabled({String appName = 'Chatify'}) {
   final startupFolder = Platform.environment['APPDATA']! + r'\Microsoft\Windows\Start Menu\Programs\Startup';
   final shortcutPath = p.join(startupFolder, '$appName.lnk');
 

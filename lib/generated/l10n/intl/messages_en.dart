@@ -1540,7 +1540,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "myStatus": MessageLookupByLibrary.simpleMessage("My status"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
-      "Name can\'t be empty",
+      "Name can\'t be empty.",
     ),
     "nameEmail": MessageLookupByLibrary.simpleMessage("Name, Email, ..."),
     "nearestPlaces": MessageLookupByLibrary.simpleMessage("Nearest places"),
@@ -2043,6 +2043,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchCountryRegion": MessageLookupByLibrary.simpleMessage(
       "Search for country/region",
     ),
+    "searchFavoriteChats": MessageLookupByLibrary.simpleMessage(
+      "Search favorite chats",
+    ),
     "searchFavoriteMessages": MessageLookupByLibrary.simpleMessage(
       "Search favorite messages",
     ),
@@ -2050,6 +2053,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search for emoticons",
     ),
     "searchGifTenor": MessageLookupByLibrary.simpleMessage(""),
+    "searchGroupsChats": MessageLookupByLibrary.simpleMessage(
+      "Search group chats",
+    ),
     "searchHelpCenter": MessageLookupByLibrary.simpleMessage(
       "Search the Help Center",
     ),
@@ -2062,6 +2068,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "searchNewCall": MessageLookupByLibrary.simpleMessage("Search or new call"),
     "searchNewChat": MessageLookupByLibrary.simpleMessage("Search or new chat"),
+    "searchUnreadChats": MessageLookupByLibrary.simpleMessage(
+      "Search unread chats",
+    ),
     "seasons": MessageLookupByLibrary.simpleMessage("Seasons"),
     "secretCodeReset": MessageLookupByLibrary.simpleMessage(
       "Also reset the secret code (if any).",
@@ -2641,7 +2650,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "yourLists": MessageLookupByLibrary.simpleMessage("Your lists"),
     "yourLocation": MessageLookupByLibrary.simpleMessage("Your location"),
     "yourNameCannotEmpty": MessageLookupByLibrary.simpleMessage(
-      "Your name cannot be empty",
+      "Your name cannot be empty.",
     ),
     "yourPrivateMessagesAndCalls": MessageLookupByLibrary.simpleMessage(
       "With end-to-end encryption, your private messages and calls stay between you and the people you\'re communicating with. Not even Chatify can access them. These include:",

@@ -1,7 +1,8 @@
 import 'package:chatify/routes/custom_page_route.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../api/apis.dart';
@@ -48,10 +49,10 @@ class _NewsletterAppbarState extends State<NewsletterAppbar> {
                 Navigator.pop(context);
               },
             ),
-            const SizedBox(
+            SizedBox(
               child: Row(
                 children: [
-                  CircleAvatar(radius: 20, backgroundColor: Colors.grey, child: Icon(Ionicons.megaphone, color: ChatifyColors.white, size: 20)),
+                  CircleAvatar(radius: 20, backgroundColor: ChatifyColors.grey, child: SvgPicture.asset(ChatifyVectors.megaphone, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
                 ],
               ),
             ),

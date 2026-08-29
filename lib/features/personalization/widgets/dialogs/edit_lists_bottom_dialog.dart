@@ -63,10 +63,7 @@ void showEditListsBottomSheet(BuildContext context) {
                         children: [
                           Text(S.of(context).unread, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                           const SizedBox(height: 8),
-                          Text(
-                            S.of(context).preset,
-                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
-                          ),
+                          Text(S.of(context).preset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                         ],
                       ),
                       const Row(
@@ -95,10 +92,7 @@ void showEditListsBottomSheet(BuildContext context) {
                         children: [
                           Text('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                           const SizedBox(height: 8),
-                          Text(
-                            S.of(context).preset,
-                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
-                          ),
+                          Text(S.of(context).preset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                         ],
                       ),
                       const Row(
@@ -114,10 +108,7 @@ void showEditListsBottomSheet(BuildContext context) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        S.of(context).availablePresets,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
-                      ),
+                      Text(S.of(context).availablePresets, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                       const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),

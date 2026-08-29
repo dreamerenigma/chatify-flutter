@@ -1,13 +1,13 @@
 import 'package:camera/camera.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:iconoir_icons/iconoir_icons.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../core/services/camera/camera_service.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../home/controllers/dialog_controller.dart';
 import '../../../home/widgets/dialogs/confirmation_dialog.dart';
 import '../../../home/widgets/dialogs/settings_dialog.dart';
@@ -65,24 +65,14 @@ void showTakePhotoDialog(BuildContext context) async {
                     decoration: BoxDecoration(
                       border: Border.all(color: ChatifyColors.darkerGrey, width: 1),
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                            color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.softGrey,
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                          ),
+                          decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.softGrey, borderRadius: const BorderRadius.vertical(top: Radius.circular(15))),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -91,14 +81,7 @@ void showTakePhotoDialog(BuildContext context) async {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      S.of(context).takePhoto,
-                                      style: TextStyle(
-                                        fontSize: ChatifySizes.fontSizeBg,
-                                        fontWeight: FontWeight.w500,
-                                        color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                                      ),
-                                    ),
+                                    Text(S.of(context).takePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                                     InkWell(
                                       onTap: () {
                                         overlayEntry.remove();
@@ -107,7 +90,7 @@ void showTakePhotoDialog(BuildContext context) async {
                                       mouseCursor: SystemMouseCursors.basic,
                                       child: Padding(
                                         padding: const EdgeInsets.all(9.0),
-                                        child: Icon(Ionicons.close_outline, size: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                        child: SvgPicture.asset(ChatifyVectors.close, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                       ),
                                     ),
                                   ],
@@ -147,7 +130,7 @@ void showTakePhotoDialog(BuildContext context) async {
                                   hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                                   child: Padding(
                                     padding: const EdgeInsets.all(9.0),
-                                    child: Iconoir(IconoirIcons.moreHoriz, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 24),
+                                    child: SvgPicture.asset(ChatifyVectors.moreHorizontal, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 24, height: 24),
                                   ),
                                 ),
                               ),

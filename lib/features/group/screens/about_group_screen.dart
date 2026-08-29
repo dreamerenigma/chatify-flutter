@@ -8,7 +8,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:icon_forest/system_uicons.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:intl/intl.dart';
@@ -510,7 +509,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 child: Row(
                   children: [
-                    const Icon(HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
+                    HugeIcon(icon: HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
                     const SizedBox(width: 25),
                     Expanded(
                       child: Column(
@@ -556,8 +555,10 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                           saveSwitchState(isCloseChatEnabled);
                         });
                       },
-                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                       activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
+                      inactiveThumbColor: ChatifyColors.grey,
+                      inactiveTrackColor: ChatifyColors.grey.withAlpha(128),
                     ),
                   ],
                 ),
@@ -743,7 +744,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Row(
                 children: [
-                  isFavorite ? SvgPicture.asset(ChatifyVectors.deleteFavorite, width: 23, height: 23, color: ChatifyColors.darkGrey)
+                  isFavorite ? SvgPicture.asset(ChatifyVectors.deleteFavorite, width: 23, height: 23, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))
                   : const Icon(Icons.favorite_outline_outlined, color: ChatifyColors.darkGrey, size: 26),
                   const SizedBox(width: 25),
                   Text(
@@ -786,7 +787,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
               child: Row(
                 children: [
-                  const SystemUicons(SystemUicons.exit_right, color: ChatifyColors.red, height: 30),
+                  SvgPicture.asset(ChatifyVectors.exitRight, colorFilter: ColorFilter.mode(ChatifyColors.red, BlendMode.srcIn), width: 30, height: 30),
                   const SizedBox(width: 23),
                   Text(S.of(context).leaveGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.red)),
                 ],

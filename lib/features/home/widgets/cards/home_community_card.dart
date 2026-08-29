@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:chatify/features/community/models/community_model.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../app.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../community/screens/community_info_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../dialogs/edit_settings_chat_dialog.dart';
@@ -135,12 +135,13 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            SizedBox(width: 16),
                             isWindows
-                          ? Text(
-                              DateUtil.getCommunityCreationDate(context: context, creationDate: widget.community.createdAt, includeTime: true),
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
-                            )
-                          : Icon(Icons.arrow_forward_ios_rounded, size: 16, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                              ? Text(
+                                  DateUtil.getCommunityCreationDate(context: context, creationDate: widget.community.createdAt, includeTime: true),
+                                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
+                                )
+                              : Icon(Icons.arrow_forward_ios_rounded, size: 16, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                           ],
                         ),
                         const SizedBox(height: 4),

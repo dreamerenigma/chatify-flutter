@@ -1,9 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/buttons/custom_search_button.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -150,7 +151,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
                   return CircleAvatar(
                     backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                     foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    child: Icon(Ionicons.megaphone, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey),
+                    child: SvgPicture.asset(ChatifyVectors.megaphone, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                   );
                 },
               ),

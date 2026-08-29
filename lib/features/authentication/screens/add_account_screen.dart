@@ -16,7 +16,7 @@ import '../../../utils/popups/dialogs.dart';
 import '../../../utils/urls/url_utils.dart';
 import '../../../version.dart';
 import '../../personalization/controllers/language_controller.dart';
-import '../../personalization/screens/help/support/screens/support_screen.dart';
+import '../../personalization/screens/help/support/support_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/dialogs/select_language_dialog.dart';
 import 'enter_phone_number.dart';

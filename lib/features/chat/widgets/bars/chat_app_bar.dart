@@ -63,7 +63,6 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
         });
       }
     });
-
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {
@@ -154,8 +153,8 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
 
   Widget _buildMobileAppBar(BuildContext context) {
     return AppBar(
-      leadingWidth: 40,
-      titleSpacing: -10,
+      leadingWidth: 50,
+      titleSpacing: 0,
       surfaceTintColor: ChatifyColors.transparent,
       backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
       elevation: 0,
@@ -163,7 +162,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         child: Row(
           children: [
-            _buildUserInfo(context, widget.user),
+            Expanded(child: _buildUserInfo(context, widget.user)),
             const SizedBox(width: 10),
           ],
         ),
@@ -188,22 +187,23 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
     double imageSize = Platform.isWindows ? 40.0 : 35.0;
 
     return InkWell(
-      onTap: () {
-        if (Platform.isWindows) {
-          final RenderBox renderBox = context.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
-          showChatSettingsDialog(context, user, position, initialIndex: 0);
-        } else {
-          Navigator.push(context, createPageRoute(ViewProfileScreen(user: user)));
-        }
-      },
       mouseCursor: SystemMouseCursors.basic,
       borderRadius: BorderRadius.circular(8),
       splashColor: ChatifyColors.transparent,
       highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
       hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
+      onTap: () {
+        if (Platform.isWindows) {
+          final RenderBox renderBox = context.findRenderObject() as RenderBox;
+          final position = renderBox.localToGlobal(Offset.zero);
+
+          showChatSettingsDialog(context, user, position, initialIndex: 0);
+        } else {
+          Navigator.push(context, createPageRoute(ViewProfileScreen(user: user)));
+        }
+      },
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -221,7 +221,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                   return CircleAvatar(
                     backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                     foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                    child: SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn), width: 28, height: 28),
                   );
                 },
               ),
@@ -236,11 +236,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                     '${user.name}${user.surname.isNotEmpty ? ' ${user.surname}' : ''}',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-                    style: TextStyle(
-                      fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg,
-                      fontFamily: 'Roboto',
-                      fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400,
-                    ),
+                    style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
                   ),
                   SizedBox(height: 2),
                   StreamBuilder<DocumentSnapshot>(

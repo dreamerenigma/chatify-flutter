@@ -36,21 +36,21 @@ class ChatInput extends StatefulWidget {
 }
 
 class ChatInputState extends State<ChatInput> {
-  List<MessageModel> list = [];
-  late final UserModel user;
   final TextEditingController textController = TextEditingController();
   final AudioPlayer audioPlayer = AudioPlayer();
   late final ValueChanged<bool> setUploading;
+  late final UserModel user;
   bool showEmoji = false, isUploading = false;
   bool sendWithEnter = false;
   Timer? typingTimer;
+  List<MessageModel> list = [];
+
   bool get hasText => textController.text.trim().isNotEmpty;
 
   @override
   void initState() {
     super.initState();
     user = widget.user;
-
     textController.addListener(() {
       setState(() {});
       _handleTyping();
@@ -66,7 +66,6 @@ class ChatInputState extends State<ChatInput> {
   @override
   void dispose() {
     textController.dispose();
-    widget.focusNode.dispose();
     audioPlayer.dispose();
     typingTimer?.cancel();
     super.dispose();
@@ -112,9 +111,9 @@ class ChatInputState extends State<ChatInput> {
   void sendMessage() {
     if (hasText) {
       if (list.isEmpty) {
-        APIs.sendFirstMessage(widget.user, textController.text, Type.text);
+        APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
       } else {
-        APIs.sendMessage(widget.user, textController.text, Type.text);
+        APIs.sendMessage(widget.user, textController.text, MessageType.text);
       }
 
       textController.clear();
@@ -157,11 +156,7 @@ class ChatInputState extends State<ChatInput> {
                       children: [
                         IconButton(
                           onPressed: toggleEmojiKeyboard,
-                          icon: Icon(
-                            Icons.emoji_emotions_outlined,
-                            color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            size: 26,
-                          ),
+                          icon: Icon(Icons.emoji_emotions_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
                         ),
                         Expanded(
                           child: TextSelectionTheme(
@@ -222,11 +217,7 @@ class ChatInputState extends State<ChatInput> {
                     if (hasText) {
                       sendMessage();
                     } else {
-                      Dialogs.showSnackbarMargin(
-                        context, S.of(context).holdRecord,
-                        fontSize: ChatifySizes.fontSizeLm,
-                        margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10),
-                      );
+                      Dialogs.showSnackbarMargin(context, S.of(context).holdRecord, fontSize: ChatifySizes.fontSizeLm, margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10));
                     }
                   },
                   child: CircleAvatar(

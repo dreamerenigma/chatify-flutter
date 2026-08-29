@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as math;
+import 'package:audioplayers/audioplayers.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:icon_forest/iconoir.dart';
+import '../../../../stubs/sound_real.dart';
 import '../../../../utils/constants/app_colors.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/popups/custom_tooltip.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -49,8 +50,8 @@ class _BottomInputState extends State<BottomInput> {
   double _thumbPosition = 0.0;
   final double _dotSpacing = 4.4;
   final int _dotCount = 25;
-  final FlutterSoundRecorder _audioRecorder = FlutterSoundRecorder();
-  final FlutterSoundPlayer _audioPlayer = FlutterSoundPlayer();
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   String? _audioFilePath;
   bool isHovered = false;
   bool hasText = false;
@@ -111,7 +112,7 @@ class _BottomInputState extends State<BottomInput> {
       });
 
       String filePath = 'audio_message.aac';
-      await _audioRecorder.startRecorder(toFile: filePath, codec: Codec.aacADTS);
+      await _audioRecorder.start(const RecordConfig(), path: filePath);
 
       setState(() {
         _audioFilePath = filePath;
@@ -122,7 +123,8 @@ class _BottomInputState extends State<BottomInput> {
   }
 
   Future<void> stopRecording() async {
-    final path = await _audioRecorder.stopRecorder();
+    final path = await _audioRecorder.stop();
+
     setState(() {
       isRecording = false;
       _audioFilePath = path;
@@ -133,8 +135,9 @@ class _BottomInputState extends State<BottomInput> {
   }
 
   Future<void> playRecording() async {
-    if (_audioFilePath != null) {
-      await _audioPlayer.startPlayer(fromURI: _audioFilePath, codec: Codec.aacADTS);
+    final path = _audioFilePath;
+    if (path != null) {
+      await _audioPlayer.play(DeviceFileSource(path));
       setState(() {
         isPlaying = true;
       });
@@ -144,7 +147,7 @@ class _BottomInputState extends State<BottomInput> {
   }
 
   Future<void> stopPlaying() async {
-    await _audioPlayer.stopPlayer();
+    await _audioPlayer.stop();
     setState(() {
       isPlaying = false;
     });
@@ -226,8 +229,8 @@ class _BottomInputState extends State<BottomInput> {
           child: Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(color: isEmojiDialogOpen ? hoverBackgroundColor : ChatifyColors.transparent, borderRadius: BorderRadius.circular(8)),
-            child: Iconoir(Iconoir.emoji, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-          ),
+            child: SvgPicture.asset(ChatifyVectors.emoji, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 20, height: 20),
+            ),
         ),
       ),
     );
@@ -262,7 +265,7 @@ class _BottomInputState extends State<BottomInput> {
             child: Transform(
               transform: Matrix4.rotationZ(math.pi / 1),
               alignment: Alignment.center,
-              child: Iconoir(Iconoir.attachment, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              child: SvgPicture.asset(ChatifyVectors.attach, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 18, height: 18),
             ),
           ),
         ),
@@ -556,10 +559,9 @@ class _BottomInputState extends State<BottomInput> {
               borderRadius: BorderRadius.circular(8),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  isPaused ? FluentIcons.mic_28_regular : PhosphorIcons.pause_light,
-                  color: isPaused ? ChatifyColors.ascentRed : (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                  size: 21,
+                child: isPaused
+                  ? Icon(FluentIcons.mic_28_regular, color: ChatifyColors.ascentRed, size: 21)
+                  : SvgPicture.asset(ChatifyVectors.pauseOutline, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
                 ),
               ),
             ),

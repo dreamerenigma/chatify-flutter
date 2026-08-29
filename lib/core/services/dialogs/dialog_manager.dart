@@ -10,6 +10,7 @@ import '../../../features/personalization/widgets/dialogs/light_dialog.dart';
 class DialogManager {
   final _storage = GetStorage();
   static const _lastMonthlyDialogKey = 'last_confirmation_dialog_shown';
+  static const _shouldNotShowAgainKey = 'should_not_show_rating_dialog';
   final dialogController = Get.find<DialogController>();
 
   void _saveCheckboxState(bool selected) {
@@ -18,11 +19,12 @@ class DialogManager {
 
   Future<void> showMonthlyRatingDialog(BuildContext context) async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-
-
-      final lastShownStr = _storage.read<String>(_lastMonthlyDialogKey);
       final now = DateTime.now();
 
+      final shouldNotShowAgain = _storage.read<bool>(_shouldNotShowAgainKey) ?? false;
+      if (shouldNotShowAgain) return;
+
+      final lastShownStr = _storage.read<String>(_lastMonthlyDialogKey);
       if (lastShownStr != null) {
         final lastShown = DateTime.tryParse(lastShownStr);
         if (lastShown != null && now.difference(lastShown).inDays < 30) return;
@@ -40,7 +42,10 @@ class DialogManager {
           children: [
             CustomCheckbox(
               selectedOptions: dialogController.selectedOptions,
-              onChanged: _saveCheckboxState,
+              onChanged: (selected) {
+                _saveCheckboxState(selected);
+                _storage.write(_shouldNotShowAgainKey, selected);
+              },
               index: 0,
             ),
             const SizedBox(width: 8),

@@ -102,7 +102,7 @@ class _HelpOptionWidgetState extends State<HelpOptionWidget> {
                   decoration: BoxDecoration(color: ChatifyColors.transparent, borderRadius: BorderRadius.circular(4)),
                   child: Text(
                     text,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                   ),
                 ),
               ),

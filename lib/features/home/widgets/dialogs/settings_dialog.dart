@@ -1,7 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/features/home/widgets/dialogs/options/help_option_widget.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
-import 'package:feather_icons/feather_icons.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -81,36 +80,21 @@ void showSettingsDialog(BuildContext context, Offset position, {int initialIndex
                         dialogWidth = dialogWidth.clamp(minWidth, maxWidth);
 
                         return  ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: minHeight,
-                            maxHeight: maxHeight,
-                            minWidth: minWidth,
-                            maxWidth: maxWidth,
-                          ),
+                          constraints: BoxConstraints(minHeight: minHeight, maxHeight: maxHeight, minWidth: minWidth, maxWidth: maxWidth),
                           child: Container(
                             width: dialogWidth,
                             height: dialogHeight,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.cardColor.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
+                              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1))],
                             ),
                             child: Row(
                               children: [
                                 Container(
                                   width: isWindows ? 180 : (kIsWeb ? 200 : 180),
                                   height: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.softGrey,
-                                    borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
-                                  ),
+                                  decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.softGrey, borderRadius: BorderRadius.horizontal(left: Radius.circular(8))),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                                     child: ValueListenableBuilder<int>(
@@ -196,12 +180,12 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
     {'icon': BootstrapIcons.laptop, 'text': S.of(context).general, 'iconSize': 18, 'iconWidth': 20},
     {'icon': FluentIcons.key_32_regular, 'text': S.of(context).account, 'iconSize': 23, 'iconWidth': 15},
     {'icon': IconsaxPlusLinear.messages_1, 'text': S.of(context).chats, 'iconSize': 20, 'iconWidth': 17},
-    {'icon': FeatherIcons.video, 'text': S.of(context).videoAudio, 'iconSize': 18, 'iconWidth': 18},
+    {'icon': ChatifyVectors.videoOutlined, 'text': S.of(context).videoAudio, 'iconSize': 18, 'iconWidth': 18},
     {'icon': ChatifyVectors.notification, 'text': S.of(context).notifications, 'iconSize': 21, 'iconWidth': 16, 'isSvg': true},
     {'icon': BootstrapIcons.brush, 'text': S.of(context).personalization, 'iconSize': 18, 'iconWidth': 18},
     {'icon': FluentIcons.storage_20_regular, 'text': S.of(context).storage, 'iconSize': 19, 'iconWidth': 17},
     {'icon': FluentIcons.keyboard_16_regular, 'text': S.of(context).hotKeys, 'iconSize': 18, 'iconWidth': 18},
-    {'icon': FeatherIcons.info, 'text': S.of(context).help, 'iconSize': 19, 'iconWidth': 17},
+    {'icon': BootstrapIcons.info, 'text': S.of(context).help, 'iconSize': 19, 'iconWidth': 17},
     {'icon': HugeIcons.strokeRoundedUser, 'text': S.of(context).profile, 'iconSize': 19, 'iconWidth': 17},
   ];
 
@@ -233,7 +217,7 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
                         options[index]['icon'],
                         width: options[index]['iconSize']?.toDouble() ?? 24.0,
                         height: options[index]['iconSize']?.toDouble() ?? 24.0,
-                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn) ,
                       )
                     : Icon(options[index]['icon'], size: options[index]['iconSize']?.toDouble(), color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                   SizedBox(width: (options[index]['iconWidth']?.toDouble() ?? 24.0)),

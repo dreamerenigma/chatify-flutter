@@ -1595,7 +1595,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "myStatus": MessageLookupByLibrary.simpleMessage("Мой статус"),
     "name": MessageLookupByLibrary.simpleMessage("Имя"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
-      "Имя не может быть пустым",
+      "Имя не может быть пустым.",
     ),
     "nameEmail": MessageLookupByLibrary.simpleMessage("Имя, Email, ..."),
     "nearestPlaces": MessageLookupByLibrary.simpleMessage("Ближайшие места"),
@@ -2124,6 +2124,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchCountryRegion": MessageLookupByLibrary.simpleMessage(
       "Поиск страны/региона",
     ),
+    "searchFavoriteChats": MessageLookupByLibrary.simpleMessage(
+      "Поиск избранных чатов",
+    ),
     "searchFavoriteMessages": MessageLookupByLibrary.simpleMessage(
       "Поиск избранных сообщений",
     ),
@@ -2131,6 +2134,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Поиск смайликов",
     ),
     "searchGifTenor": MessageLookupByLibrary.simpleMessage(""),
+    "searchGroupsChats": MessageLookupByLibrary.simpleMessage(
+      "Поиск групповых чатов",
+    ),
     "searchHelpCenter": MessageLookupByLibrary.simpleMessage(
       "Поиск в Справочном центре",
     ),
@@ -2144,6 +2150,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "searchNewChat": MessageLookupByLibrary.simpleMessage(
       "Поиск или новый чат",
+    ),
+    "searchUnreadChats": MessageLookupByLibrary.simpleMessage(
+      "Поиск непрочитанных чатов",
     ),
     "seasons": MessageLookupByLibrary.simpleMessage("Сезоны"),
     "secretCodeReset": MessageLookupByLibrary.simpleMessage(
@@ -2772,7 +2781,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "yourLists": MessageLookupByLibrary.simpleMessage("Ваши списки"),
     "yourLocation": MessageLookupByLibrary.simpleMessage("Ваше местоположение"),
     "yourNameCannotEmpty": MessageLookupByLibrary.simpleMessage(
-      "Ваше имя не может быть пустым",
+      "Ваше имя не может быть пустым.",
     ),
     "yourPrivateMessagesAndCalls": MessageLookupByLibrary.simpleMessage(
       "Благодаря сквозному шифрованию ваши личные сообщения и звонки остаются только между вами и людьми, с которыми вы общаетесь. Даже Chatify не может получить к ним доступ. К ним относятся:",

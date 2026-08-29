@@ -200,9 +200,9 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
   void sendMessage() {
     if (textController.text.isNotEmpty) {
       if (list.isEmpty) {
-        APIs.sendFirstMessage(widget.user, textController.text, Type.text);
+        APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
       } else {
-        APIs.sendMessage(widget.user, textController.text, Type.text);
+        APIs.sendMessage(widget.user, textController.text, MessageType.text);
       }
       textController.clear();
       APIs.playSendSound();
@@ -278,7 +278,9 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
         Positioned.fill(
           child: Center(
             child: Container(
-              decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover, alignment: Alignment.center)),
+              decoration: BoxDecoration(
+                image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.none, repeat: ImageRepeat.repeat, alignment: Alignment.center),
+              ),
             ),
           ),
         ),

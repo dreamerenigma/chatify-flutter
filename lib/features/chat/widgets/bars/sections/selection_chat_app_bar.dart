@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:vector_math/vector_math_64.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/constants/app_vectors.dart';
 
 class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Set<int> selectedMessages;
@@ -37,7 +39,7 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
             onPressed: () {},
             icon: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.identity()..scale(1.0, -1.0),
+              transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 1.0)),
               child: const Icon(BootstrapIcons.arrow_return_left),
             ),
           ),
@@ -51,7 +53,7 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
           ),
           IconButton(
             onPressed: () {},
-            icon: Icon(PhosphorIcons.arrow_bend_double_up_right_bold),
+            icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           ),
           PopupMenuButton<int>(
             position: PopupMenuPosition.under,

@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:record/record.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -38,7 +38,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
   late AudioPlayer audioPlayer = AudioPlayer();
   late AnimationController _animationController;
   late Animation<double> _animation;
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+  final AudioRecorder _recorder = AudioRecorder();
 
   @override
   void initState() {
@@ -56,7 +56,6 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
     );
 
     _initializeCamera();
-    _initializeRecorder();
 
     audioPlayer = AudioPlayer();
     _requestPermission().then((_) {
@@ -69,7 +68,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
     _animationController.dispose();
     _cameraController?.dispose();
     _stopRingingTone();
-    _recorder.closeRecorder();
+    _recorder.dispose();
     audioPlayer.dispose();
     super.dispose();
   }
@@ -105,8 +104,9 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
 
   Future<void> _requestPermission() async {
     final status = await Permission.microphone.request();
+
     if (status.isGranted) {
-      await _initializeRecorder();
+      log('Microphone permission granted');
     } else {
       log(S.of(context).microPermissionDenied);
     }
@@ -130,14 +130,6 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
       }
     } else {
       log(S.of(context).noCamerasAvailable);
-    }
-  }
-
-  Future<void> _initializeRecorder() async {
-    try {
-      await _recorder.openRecorder();
-    } catch (e) {
-      log('${S.of(context).errorInitRecorder}: $e');
     }
   }
 
@@ -173,9 +165,9 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
     });
 
     if (isMuted) {
-      await _recorder.pauseRecorder();
+      await _recorder.pause();
     } else {
-      await _recorder.startRecorder(toFile: 'path/to/your/recording/file');
+      await _recorder.resume();
     }
   }
 
@@ -202,9 +194,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(
-            child: CameraPreview(_cameraController!),
-          ),
+          Positioned.fill(child: CameraPreview(_cameraController!)),
           Positioned(
             top: 30,
             left: 0,
@@ -224,10 +214,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                           return Transform(
                             transform: Matrix4.identity()..rotateY(_animation.value * 3.1415926535897932),
                             alignment: Alignment.center,
-                            child: IconButton(
-                              icon: const Icon(Icons.flip_camera_ios_rounded, color: ChatifyColors.white),
-                              onPressed: _switchCamera,
-                            ),
+                            child: IconButton(icon: const Icon(Icons.flip_camera_ios_rounded, color: ChatifyColors.white), onPressed: _switchCamera),
                           );
                         },
                       ),
@@ -239,11 +226,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                       onTap: () {
                         Navigator.push(context, createPageRoute(const AddParticipantsScreen()));
                       },
-                      child: const CircleAvatar(
-                        backgroundColor: ChatifyColors.darkSlate,
-                        radius: 25,
-                        child: Icon(Icons.person_add_alt_1_rounded, color: ChatifyColors.white),
-                      ),
+                      child: const CircleAvatar(backgroundColor: ChatifyColors.darkSlate, radius: 25, child: Icon(Icons.person_add_alt_1_rounded, color: ChatifyColors.white)),
                     ),
                   ),
                   Center(

@@ -8,7 +8,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
@@ -67,13 +66,8 @@ Future<void> showAttachFileDialog(BuildContext context, Offset position, Future<
                           const SizedBox(height: 6),
                           Column(
                             children: [
-                              _buildFilterChats(context: context, iconPath: '', text: 'Фото и видео', iconSize: 18, icon: Ionicons.image_outline, onTap: () async {
-                                await FileUtil.pickFileAndProcess(
-                                  context: context,
-                                  onFileSelected: onImageSelected,
-                                  animationController: animationController,
-                                  overlayEntry: overlayEntry,
-                                );
+                              _buildFilterChats(context: context, iconPath: ChatifyVectors.imageOutline, icon: null, text: 'Фото и видео', iconSize: 18, onTap: () async {
+                                await FileUtil.pickFileAndProcess(context: context, onFileSelected: onImageSelected, animationController: animationController, overlayEntry: overlayEntry);
                                 closeOverlay();
                               }),
                               _buildFilterChats(context: context, iconPath: '', text: S.of(context).camera, iconSize: 20, icon: Icons.camera_alt_outlined, onTap: () async {

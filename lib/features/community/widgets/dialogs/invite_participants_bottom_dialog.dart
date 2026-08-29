@@ -1,12 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../personalization/screens/send/send_file_screen.dart';
 import '../../screens/add_user_screen.dart';
 
@@ -41,7 +42,7 @@ void showBottomSheetDialogNewGroups(BuildContext context, String fileToSend) {
           const Divider(height: 0, thickness: 1),
           InkWell(
             onTap: () {
-              Share.share(invitationLink);
+              SharePlus.instance.share(ShareParams(text: invitationLink));
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -65,7 +66,7 @@ void showBottomSheetDialogNewGroups(BuildContext context, String fileToSend) {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Row(
                 children: [
-                  const Icon(PhosphorIcons.arrow_bend_double_up_right_bold),
+                  SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(S.of(context).sendLinkViaApp, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),

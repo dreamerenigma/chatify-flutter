@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:chatify/features/personalization/screens/help/help_center_screen.dart';
-import 'package:chatify/features/personalization/screens/help/support/screens/support_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:get/get.dart';
@@ -9,6 +8,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/platforms/platform_utils.dart';
 import '../../../utils/popups/custom_tooltip.dart';
 import '../../../utils/popups/dialogs.dart';
+import '../../personalization/screens/help/support/support_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/no_glow_scroll_behavior.dart';
 

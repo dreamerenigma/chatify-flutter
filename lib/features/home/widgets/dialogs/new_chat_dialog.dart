@@ -480,6 +480,7 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
     color: ChatifyColors.transparent,
     child: InkWell(
       onTap: () {},
+      mouseCursor: SystemMouseCursors.basic,
       splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
       highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
       borderRadius: BorderRadius.circular(12),
@@ -511,7 +512,10 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(user.phoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
-                Text(userController.currentUser.about, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
+                SizedBox(
+                  width: 220,
+                  child: Text(userController.currentUser.about, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300), overflow: TextOverflow.ellipsis, maxLines: 1),
+                ),
               ],
             ),
           ],

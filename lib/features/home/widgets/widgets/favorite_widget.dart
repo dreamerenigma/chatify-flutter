@@ -28,7 +28,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(S.of(context).favoriteMessages, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                Text(S.of(context).favoriteMessages, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
@@ -46,16 +46,13 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
               },
             )
           else
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(S.of(context).noResults, style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black)),
-                  ],
-                ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              alignment: Alignment.center,
+              child: Text(
+                S.of(context).noResults,
+                style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                textAlign: TextAlign.center,
               ),
             ),
         ],

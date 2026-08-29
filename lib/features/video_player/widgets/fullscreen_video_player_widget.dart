@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get_video_thumbnail/get_video_thumbnail.dart';
+import 'package:get_video_thumbnail/index.dart' show ImageFormat;
 import 'package:heroicons/heroicons.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -87,12 +89,8 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
 
   Future<Uint8List?> _getVideoThumbnail(String url) async {
     try {
-      final thumbnail = await VideoThumbnail.thumbnailData(
-        video: url,
-        imageFormat: ImageFormat.JPEG,
-        maxWidth: 128,
-        quality: 75,
-      );
+      final thumbnail = await VideoThumbnail.thumbnailData(video: url, imageFormat: ImageFormat.JPEG, maxWidth: 128, quality: 75);
+
       return thumbnail;
     } catch (e) {
       return null;
@@ -105,11 +103,7 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
       _activeIndex = newIndex;
     });
 
-    _pageController.animateToPage(
-      _activeIndex,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    _pageController.animateToPage(_activeIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
@@ -238,10 +232,7 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
       child: Container(
-        decoration: BoxDecoration(
-          color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
-          borderRadius: BorderRadius.circular(6),
-        ),
+        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()), borderRadius: BorderRadius.circular(6)),
         child: Row(
           children: [
             Material(
@@ -268,7 +259,7 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
                 borderRadius: BorderRadius.circular(6),
                 child: Padding(
                   padding: const EdgeInsets.all(13),
-                  child: Icon((_isEnded || !_controller.player.state.playing) ? PhosphorIcons.play_fill : PhosphorIcons.pause, color: ChatifyColors.white, size: 21),
+                  child: SvgPicture.asset((_isEnded || !_controller.player.state.playing) ? ChatifyVectors.playFilled : ChatifyVectors.pauseFilled, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                 ),
               ),
             ),
@@ -330,10 +321,7 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
 
   Widget _buildBottomGrid() {
     if (widget.videoUrls.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Center(child: Text(S.of(context).noVideosAvailable)),
-      );
+      return Padding(padding: const EdgeInsets.only(bottom: 8), child: Center(child: Text(S.of(context).noVideosAvailable)));
     }
 
     return Padding(
@@ -395,14 +383,9 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
                                     future: _getVideoThumbnail(widget.videoUrls[index]),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 2),
-                                        );
+                                        return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 2));
                                       } else if (snapshot.hasData) {
-                                        return Image.memory(
-                                          snapshot.data!,
-                                          fit: BoxFit.cover,
-                                        );
+                                        return Image.memory(snapshot.data!, fit: BoxFit.cover);
                                       } else {
                                         return const Icon(Icons.videocam_off, color: ChatifyColors.white);
                                       }
@@ -413,9 +396,7 @@ class _FullScreenVideoPlayerWidgetState extends State<FullScreenVideoPlayerWidge
                                 Positioned.fill(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 2),
-                                    child: Container(
-                                      decoration: BoxDecoration(color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()), borderRadius: BorderRadius.circular(6)),
-                                    ),
+                                    child: Container(decoration: BoxDecoration(color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()), borderRadius: BorderRadius.circular(6))),
                                   ),
                                 ),
                               ],

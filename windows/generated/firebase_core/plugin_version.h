@@ -7,7 +7,7 @@
 
 namespace firebase_core_windows {
 
-std::string getPluginVersion() { return "3.13.1"; }
+std::string getPluginVersion() { return "4.2.0"; }
 }  // namespace firebase_core_windows
 
 #endif  // PLUGIN_VERSION_CONFIG_H

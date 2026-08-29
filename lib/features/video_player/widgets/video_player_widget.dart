@@ -1,9 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/features/video_player/screens/fullscreen_video_player_screen.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import '../../../generated/l10n/l10n.dart';
@@ -108,7 +110,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                       borderRadius: Platform.isWindows ? BorderRadius.circular(4) : null,
                       color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()),
                     ),
-                    child: Icon(Platform.isWindows ? PhosphorIcons.play : Icons.play_arrow_rounded, size: Platform.isWindows ? 18 : 26, color: ChatifyColors.white),
+                    child: Platform.isWindows
+                      ? SvgPicture.asset(ChatifyVectors.playFilled, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))
+                      : Icon(Icons.play_arrow_rounded, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                    ),
                   );
                 }
                 return const SizedBox.shrink();

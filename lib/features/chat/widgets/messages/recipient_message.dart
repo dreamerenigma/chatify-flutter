@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:chatify/utils/platforms/platform_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
@@ -80,7 +79,7 @@ class RecipientMessageState extends State<RecipientMessage> {
   }
 
   Widget _buildMessageContent() {
-    if (widget.message.type == Type.text) {
+    if (widget.message.type == MessageType.text) {
       return _buildTextMessage();
     }
 
@@ -103,7 +102,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                 onPressed: () {
                   Navigator.push(context, createPageRoute(ForwardMessageScreen()));
                 },
-                icon: const Icon(PhosphorIcons.arrow_bend_double_up_right_bold, color: ChatifyColors.white, size: 20),
+                icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
               ),
             ),
           ),
@@ -161,10 +160,10 @@ class RecipientMessageState extends State<RecipientMessage> {
             Container(
               key: _containerKey,
               padding: isWebOrWindows
-                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .012, vertical: DeviceUtils.getScreenWidth(context) * .005)
+                ? EdgeInsets.symmetric(horizontal: 12, vertical: 8)
                 : EdgeInsets.only(left: 10, right: 10, top: 10),
               margin: isWebOrWindows
-                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
+                ? EdgeInsets.symmetric(horizontal: 16, vertical: 6)
                 : EdgeInsets.only(left: 16, right: 16, top: 5, bottom: widget.hasReaction ? 12 : 5),
               decoration: BoxDecoration(
                 color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder,
@@ -252,7 +251,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                               ChatifyVectors.doubleCheck,
                               width: isWebOrWindows ? 13 : 19,
                               height: isWebOrWindows ? 13 : 19,
-                              color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                              colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, BlendMode.srcIn),
                             ),
                           ),
                         ],
@@ -263,8 +262,8 @@ class RecipientMessageState extends State<RecipientMessage> {
               ),
             ),
             Positioned(
-              top: isWebOrWindows ? 2 : 5,
-              right: isWebOrWindows ? 13 : 7,
+              top: isWebOrWindows ? 6 : 5,
+              right: 7,
               child: CustomPaint(
                 size: const Size(10, 10),
                 painter: TrianglePainter(
@@ -273,7 +272,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ),
               ),
             ),
-            if (widget.message.type == Type.emoji)
+            if (widget.message.type == MessageType.emoji)
             Positioned(
               left: 0,
               top: 0,
@@ -321,14 +320,14 @@ class RecipientMessageState extends State<RecipientMessage> {
   }
 
   Widget _buildMediaMessage() {
-    final isVideo = widget.message.type == Type.video;
+    final isVideo = widget.message.type == MessageType.video;
 
     final double bottomOffset;
     switch (widget.message.type) {
-      case Type.video:
+      case MessageType.video:
         bottomOffset = 1;
         break;
-      case Type.audio:
+      case MessageType.audio:
         bottomOffset = -3;
         break;
       default:
@@ -394,7 +393,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                         isDownloading = false;
                       });
                     },
-                    imageUrls: widget.messages.where((m) => m.type == Type.image).map((m) => m.msg.trim()).toList(),
+                    imageUrls: widget.messages.where((m) => m.type == MessageType.image).map((m) => m.msg.trim()).toList(),
                   ),
                   Positioned(
                     bottom: bottomOffset,
@@ -415,7 +414,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                           ChatifyVectors.doubleCheck,
                           width: isWebOrWindows ? 13 : 19,
                           height: isWebOrWindows ? 13 : 19,
-                          color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                          colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, BlendMode.srcIn),
                         ),
                       ],
                     ),

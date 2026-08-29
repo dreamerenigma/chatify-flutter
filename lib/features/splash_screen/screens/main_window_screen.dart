@@ -25,11 +25,7 @@ class _MainWindowState extends State<MainWindow> {
     super.initState();
     overlayEntry = OverlayEntry(
       builder: (context) {
-        return WindowTitleBar(
-          overlayEntry: overlayEntry,
-          backButtonNotifier: widget.backButtonNotifier,
-          currentRouteNotifier: widget.currentRouteNotifier,
-        );
+        return WindowTitleBar(overlayEntry: overlayEntry, backButtonNotifier: widget.backButtonNotifier, currentRouteNotifier: widget.currentRouteNotifier);
       },
     );
   }
@@ -45,11 +41,7 @@ class _MainWindowState extends State<MainWindow> {
     return Scaffold(
       body: Column(
         children: [
-          WindowTitleBar(
-            overlayEntry: overlayEntry,
-            backButtonNotifier: widget.backButtonNotifier,
-            currentRouteNotifier: widget.currentRouteNotifier,
-          ),
+          WindowTitleBar(overlayEntry: overlayEntry, backButtonNotifier: widget.backButtonNotifier, currentRouteNotifier: widget.currentRouteNotifier),
           Expanded(child: widget.child),
         ],
       ),

@@ -94,7 +94,7 @@ class GroupInputState extends State<GroupInput> {
         pushToken: '',
         lastMessageTimestamp: 0,
       );
-      const messageType = Type.text;
+      const messageType = MessageType.text;
 
       APIs.sendGroupMessage(
         group,

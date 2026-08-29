@@ -4,7 +4,6 @@ import 'package:chatify/features/home/widgets/dialogs/confirmation_dialog.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/badges/creation_date_badge.dart';
 import '../../../../common/widgets/cards/encryption_notice_card.dart';
@@ -12,6 +11,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_links.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/urls/url_utils.dart';
 import '../../../chat/widgets/dialogs/calendar_dialog.dart';
 import '../../../chat/widgets/dialogs/items/menu_item.dart';
@@ -147,9 +147,9 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
           context: context,
           position: details.globalPosition,
           items: [
-            MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+            MenuItem(svgPath: ChatifyVectors.checkboxOutline, text: S.of(context).selectMessages, onTap: () {}),
             MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
-            MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
+            MenuItem(svgPath: ChatifyVectors.close, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
           ],
         );
       },
@@ -187,7 +187,7 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
                       ),
                       EncryptionNoticeCard(
                         maxWidth: 550,
-                        icon: FluentIcons.info_16_regular,
+                        icon: Icon(FluentIcons.info_16_regular, size: 11, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                         message: S.of(context).officialAppSupportAccount,
                         onTap: () => ContactingSupportOverlay(context).show(),
                       ),

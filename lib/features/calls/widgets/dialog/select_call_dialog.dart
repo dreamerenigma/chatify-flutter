@@ -17,31 +17,30 @@ void showSelectCallDialog(BuildContext context, String title, String initialCall
     content: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Obx(() => RadioListTile<String>(
-          title: Text(S.of(context).video, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-          value: 'Видео',
-          activeColor: ChatifyColors.blue,
+        Obx(() => RadioGroup<String>(
           groupValue: callTypeController.selectedCallType.value,
-          onChanged: (String? value) {
+          onChanged: (value) {
             if (value != null) {
               callTypeController.updateCallType(value);
               onSelected(value);
               Get.back();
             }
           },
-        )),
-        Obx(() => RadioListTile<String>(
-          title: Text(S.of(context).audio, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-          value: 'Аудио',
-          activeColor: ChatifyColors.blue,
-          groupValue: callTypeController.selectedCallType.value,
-          onChanged: (String? value) {
-            if (value != null) {
-              callTypeController.updateCallType(value);
-              onSelected(value);
-              Get.back();
-            }
-          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                title: Text(S.of(context).video, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                value: 'Видео',
+                activeColor: ChatifyColors.blue,
+              ),
+              RadioListTile<String>(
+                title: Text(S.of(context).audio, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                value: 'Аудио',
+                activeColor: ChatifyColors.blue,
+              ),
+            ],
+          ),
         )),
       ],
     ),

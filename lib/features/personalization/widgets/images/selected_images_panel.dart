@@ -30,16 +30,17 @@ class _SelectedImagesPanelState extends State<SelectedImagesPanel> {
   final int maxImages = 5;
 
   Future<void> pickImageForWindows() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
+    final PlatformFile? file = await FilePicker.pickFile(type: FileType.image);
 
-    if (result != null) {
-      File selectedFile = File(result.files.single.path!);
-      widget.selectedFiles.add(selectedFile);
-
-      setState(() {});
+    if (file == null || file.path == null) {
+      return;
     }
+
+    final File selectedFile = File(file.path!);
+
+    widget.selectedFiles.add(selectedFile);
+
+    setState(() {});
   }
 
   Future<void> pickImageForMobile() async {

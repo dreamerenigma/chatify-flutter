@@ -78,7 +78,7 @@ class CustomMaximizeRestoreButtonState extends State<CustomMaximizeRestoreButton
                           ChatifyVectors.maximize,
                           width: 12,
                           height: 12,
-                          color: isHovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey),
+                          colorFilter: ColorFilter.mode(isHovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn),
                         ),
                       )
                     : Padding(

@@ -1,0 +1,306 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+ <html xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><meta content="en-us" http-equiv="Content-Language" /><meta content="text/html; charset=utf-16" http-equiv="Content-Type" /><title _locID="ConversionReport0">
+          Отчет о переносе
+        </title><style> 
+                    /* Body style, for the entire document */
+                    body
+                    {
+                        background: #F3F3F4;
+                        color: #1E1E1F;
+                        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    /* Header1 style, used for the main title */
+                    h1
+                    {
+                        padding: 10px 0px 10px 10px;
+                        font-size: 21pt;
+                        background-color: #E2E2E2;
+                        border-bottom: 1px #C1C1C2 solid; 
+                        color: #201F20;
+                        margin: 0;
+                        font-weight: normal;
+                    }
+
+                    /* Header2 style, used for "Overview" and other sections */
+                    h2
+                    {
+                        font-size: 18pt;
+                        font-weight: normal;
+                        padding: 15px 0 5px 0;
+                        margin: 0;
+                    }
+
+                    /* Header3 style, used for sub-sections, such as project name */
+                    h3
+                    {
+                        font-weight: normal;
+                        font-size: 15pt;
+                        margin: 0;
+                        padding: 15px 0 5px 0;
+                        background-color: transparent;
+                    }
+
+                    /* Color all hyperlinks one color */
+                    a
+                    {
+                        color: #1382CE;
+                    }
+
+                    /* Table styles */ 
+                    table
+                    {
+                        border-spacing: 0 0;
+                        border-collapse: collapse;
+                        font-size: 10pt;
+                    }
+
+                    table th
+                    {
+                        background: #E7E7E8;
+                        text-align: left;
+                        text-decoration: none;
+                        font-weight: normal;
+                        padding: 3px 6px 3px 6px;
+                    }
+
+                    table td
+                    {
+                        vertical-align: top;
+                        padding: 3px 6px 5px 5px;
+                        margin: 0px;
+                        border: 1px solid #E7E7E8;
+                        background: #F7F7F8;
+                    }
+
+                    /* Local link is a style for hyperlinks that link to file:/// content, there are lots so color them as 'normal' text until the user mouse overs */
+                    .localLink
+                    {
+                        color: #1E1E1F;
+                        background: #EEEEED;
+                        text-decoration: none;
+                    }
+
+                    .localLink:hover
+                    {
+                        color: #1382CE;
+                        background: #FFFF99;
+                        text-decoration: none;
+                    }
+
+                    /* Center text, used in the over views cells that contain message level counts */ 
+                    .textCentered
+                    {
+                        text-align: center;
+                    }
+
+                    /* The message cells in message tables should take up all avaliable space */
+                    .messageCell
+                    {
+                        width: 100%;
+                    }
+
+                    /* Padding around the content after the h1 */ 
+                    #content 
+                    {
+	                    padding: 0px 12px 12px 12px; 
+                    }
+
+                    /* The overview table expands to width, with a max width of 97% */ 
+                    #overview table
+                    {
+                        width: auto;
+                        max-width: 75%; 
+                    }
+
+                    /* The messages tables are always 97% width */
+                    #messages table
+                    {
+                        width: 97%;
+                    }
+
+                    /* All Icons */
+                    .IconSuccessEncoded, .IconInfoEncoded, .IconWarningEncoded, .IconErrorEncoded
+                    {
+                        min-width:18px;
+                        min-height:18px; 
+                        background-repeat:no-repeat;
+                        background-position:center;
+                    }
+
+                    /* Success icon encoded */
+                    .IconSuccessEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconSuccess#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABcElEQVR4Xq2TsUsCURzHv15g8ZJcBWlyiYYgCIWcb9DFRRwMW5TA2c0/QEFwFkxxUQdxVlBwCYWOi6IhWgQhBLHJUCkhLr/BW8S7gvrAg+N+v8/v+x68Z8MGy+XSCyABQAXgBgHGALoASkIIDWSLeLBetdHryMjd5IxQPWT4rn1c/P7+xxp72Cs9m5SZ0Bq2vPnbPFafK2zDvmNHypdC0BPkLlQhxJsCAhQoZwdZU5mwxh720qGo8MzTxTTKZDPCx2HoVzp6lz0Q9tKhyx0kGs8Ny+TkWRKk8lCROwEduhyg9l/6lunOPSfmH3NUH6uQ0KHLAe7JYvJjevm+DAMGJHToKtigE+vwvIidxLamb8IBY9e+C5LiXREkfho3TSd06HJA13/oh6T51MTsfQbHrsMynQ5dDihFjiK8JJAU9AKIWTp76dCVN7HWHrajmUEGvyF9nkbAE6gLIS7kTUyuf2gscLoJrElZo/Mvj+nPz/kLTmfnEwP3tB0AAAAASUVORK5CYII=);
+                    }
+
+                    /* Information icon encoded */
+                    .IconInfoEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconInformation#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR4Xs2TsUoDQRRF7wwoziokjZUKadInhdhukR9YP8DMX1hYW+QvdsXa/QHBbcXC7W0CamWTQnclFutceIQJwwaWNLlwm5k5d94M76mmaeCrrmsLYOocY12FcxZFUeozCqKqqgYA8uevv1H6VuPxcwlfk5N92KHBxfFeCSAxxswlYAW/Xr989x/mv9gkhtyMDhcAxgzRsp7flj8B/HF1RsMXq+NZMkopaHe7lbKxQUEIGbKsYNoGn969060hZBkQex/W8oRQwsQaW2o3Ago2SVcJUzAgY3N0lTCZZm+zPS8HB51gMmS1DEYyOz9acKO1D8JWTlafKIMxdhvlfdyT94Vv5h7P8Ky7nQzACmhvKq3zk3PjW9asz9D/1oigecsioooAAAAASUVORK5CYII=);
+                    }
+
+                    /* Warning icon encoded */
+                    .IconWarningEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconWarning#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAx0lEQVR4XpWSMQ7CMAxFf4xAyBMLCxMrO8dhaBcuwdCJS3RJBw7SA/QGTCxdWJgiQYWKXJWKIXHIlyw5lqr34tQgEOdcBsCOx5yZK3hCCKdYXneQkh4pEfqzLfu+wVDSyyzFoJjfz9NB+pAF+eizx2Vruts0k15mPgvS6GYvpVtQhB61IB/dk6AF6fS4Ben0uIX5odtFe8Q/eW1KvFeH4e8khT6+gm5B+t3juyDt7n0jpe+CANTd+oTUjN/U3yVaABnSUjFz/gFq44JaVSCXeQAAAABJRU5ErkJggg==);
+                    }
+
+                    /* Error icon encoded */
+                    .IconErrorEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconError#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQElEQVR4XqWTvUoEQRCE6wYPZUA80AfwAQz23uCMjA7MDRQEIzPBVEyNTQUFIw00vcQTTMzuAh/AxEQQT8HF/3G/oGGnEUGuoNnd6qoZuqltyKEsyzVJq5I6rnUp6SjGeGhESikzzlc1eL7opfuVbrqbU1Zw9NCgtQMaZpY0eNnaaL2fHusvTK5vKu7sjSS1Y4y3QUA6K3e3Mau5UFDyMP7tYF9o8cAHZv68vipoIJg971PZIZ5HiwdvYGGvFVFHmGmZ2MxwmQYPXubPl9Up0tfoMQGetXd6mRbvhBw+boZ6WF7Mbv1+GsHRk0fQmPAH1GfmZirbCfDJ61tw3Px8/8pZsPAG4jlVhcPgZ7adwNWBB68lkRQWFiTgFlbnLY3DGGM7izIJIyT/jjIvEJw6fdJTc6krDzh6aMwMP9bvDH4ADSsa9uSWVJkAAAAASUVORK5CYII=);
+                    }
+                 </style><script type="text/javascript" language="javascript"> 
+          
+            // Startup 
+            // Hook up the the loaded event for the document/window, to linkify the document content
+            var startupFunction = function() { linkifyElement("messages"); };
+            
+            if(window.attachEvent)
+            {
+              window.attachEvent('onload', startupFunction);
+            }
+            else if (window.addEventListener) 
+            {
+              window.addEventListener('load', startupFunction, false);
+            }
+            else 
+            {
+              document.addEventListener('load', startupFunction, false);
+            } 
+            
+            // Toggles the visibility of table rows with the specified name 
+            function toggleTableRowsByName(name)
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  if(!!currentName && currentName.indexOf(name) == 0)
+                  {
+                      var isVisible = allRows[i].style.display == ''; 
+                      isVisible ? allRows[i].style.display = 'none' : allRows[i].style.display = '';
+                  }
+               }
+            }
+            
+            function scrollToFirstVisibleRow(name) 
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  var isVisible = allRows[i].style.display == ''; 
+                  if(!!currentName && currentName.indexOf(name) == 0 && isVisible)
+                  {
+                     allRows[i].scrollIntoView(true); 
+                     return true; 
+                  }
+               }
+               
+               return false;
+            }
+            
+            // Linkifies the specified text content, replaces candidate links with html links 
+            function linkify(text)
+            {
+                 if(!text || 0 === text.length)
+                 {
+                     return text; 
+                 }
+
+                 // Find http, https and ftp links and replace them with hyper links 
+                 var urlLink = /(http|https|ftp)\:\/\/[a-zA-Z0-9\-\.]+(:[a-zA-Z0-9]*)?\/?([a-zA-Z0-9\-\._\?\,\/\\\+&%\$#\=~;\{\}])*/gi;
+                 
+                 return text.replace(urlLink, '<a href="$&">$&</a>') ;
+            }
+            
+            // Linkifies the specified element by ID
+            function linkifyElement(id)
+            {
+                var element = document.getElementById(id);
+                if(!!element)
+                {
+                  element.innerHTML = linkify(element.innerHTML); 
+                }
+            }
+            
+            function ToggleMessageVisibility(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              toggleTableRowsByName("MessageRowClass" + projectName);
+              toggleTableRowsByName('MessageRowHeaderShow' + projectName);
+              toggleTableRowsByName('MessageRowHeaderHide' + projectName); 
+            }
+            
+            function ScrollToFirstVisibleMessage(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              // First try the 'Show messages' row
+              if(!scrollToFirstVisibleRow('MessageRowHeaderShow' + projectName))
+              {
+                // Failed to find a visible row for 'Show messages', try an actual message row 
+                scrollToFirstVisibleRow('MessageRowClass' + projectName); 
+              }
+            }
+           </script></head><body><h1 _locID="ConversionReport">
+          Отчет о миграции - </h1><div id="content"><h2 _locID="OverviewTitle">Обзор</h2><div id="overview"><table><tr><th></th><th _locID="ProjectTableHeader">Проект</th><th _locID="PathTableHeader">Путь</th><th _locID="ErrorsTableHeader">Ошибки</th><th _locID="WarningsTableHeader">Предупреждения</th><th _locID="MessagesTableHeader">Сообщения</th></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#agora_rtc_engine_plugin">agora_rtc_engine_plugin</a></strong></td><td>plugins\agora_rtc_engine\agora_rtc_engine_plugin.vcxproj</td><td class="textCentered"><a href="#agora_rtc_engine_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#ALL_BUILD">ALL_BUILD</a></strong></td><td>ALL_BUILD.vcxproj</td><td class="textCentered"><a href="#ALL_BUILDError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#audioplayers_windows_plugin">audioplayers_windows_plugin</a></strong></td><td>plugins\audioplayers_windows\audioplayers_windows_plugin.vcxproj</td><td class="textCentered"><a href="#audioplayers_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#bitsdojo_window_windows_plugin">bitsdojo_window_windows_plugin</a></strong></td><td>plugins\bitsdojo_window_windows\bitsdojo_window_windows_plugin.vcxproj</td><td class="textCentered"><a href="#bitsdojo_window_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#camera_windows_plugin">camera_windows_plugin</a></strong></td><td>plugins\camera_windows\camera_windows_plugin.vcxproj</td><td class="textCentered"><a href="#camera_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#chatify">chatify</a></strong></td><td>runner\chatify.vcxproj</td><td class="textCentered"><a href="#chatifyError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#cloud_firestore_plugin">cloud_firestore_plugin</a></strong></td><td>plugins\cloud_firestore\cloud_firestore_plugin.vcxproj</td><td class="textCentered"><a href="#cloud_firestore_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#connectivity_plus_plugin">connectivity_plus_plugin</a></strong></td><td>plugins\connectivity_plus\connectivity_plus_plugin.vcxproj</td><td class="textCentered"><a href="#connectivity_plus_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#emoji_picker_flutter_plugin">emoji_picker_flutter_plugin</a></strong></td><td>plugins\emoji_picker_flutter\emoji_picker_flutter_plugin.vcxproj</td><td class="textCentered"><a href="#emoji_picker_flutter_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#file_selector_windows_plugin">file_selector_windows_plugin</a></strong></td><td>plugins\file_selector_windows\file_selector_windows_plugin.vcxproj</td><td class="textCentered"><a href="#file_selector_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#firebase_auth_plugin">firebase_auth_plugin</a></strong></td><td>plugins\firebase_auth\firebase_auth_plugin.vcxproj</td><td class="textCentered"><a href="#firebase_auth_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#firebase_core_plugin">firebase_core_plugin</a></strong></td><td>plugins\firebase_core\firebase_core_plugin.vcxproj</td><td class="textCentered"><a href="#firebase_core_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#firebase_storage_plugin">firebase_storage_plugin</a></strong></td><td>plugins\firebase_storage\firebase_storage_plugin.vcxproj</td><td class="textCentered"><a href="#firebase_storage_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#flutter_assemble">flutter_assemble</a></strong></td><td>flutter\flutter_assemble.vcxproj</td><td class="textCentered"><a href="#flutter_assembleError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#flutter_local_notifications_windows">flutter_local_notifications_windows</a></strong></td><td>plugins\flutter_local_notifications_windows\shared\flutter_local_notifications_windows.vcxproj</td><td class="textCentered"><a href="#flutter_local_notifications_windowsError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#flutter_webrtc_plugin">flutter_webrtc_plugin</a></strong></td><td>plugins\flutter_webrtc\flutter_webrtc_plugin.vcxproj</td><td class="textCentered"><a href="#flutter_webrtc_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#flutter_wrapper_app">flutter_wrapper_app</a></strong></td><td>flutter\flutter_wrapper_app.vcxproj</td><td class="textCentered"><a href="#flutter_wrapper_appError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#flutter_wrapper_plugin">flutter_wrapper_plugin</a></strong></td><td>flutter\flutter_wrapper_plugin.vcxproj</td><td class="textCentered"><a href="#flutter_wrapper_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#INSTALL">INSTALL</a></strong></td><td>INSTALL.vcxproj</td><td class="textCentered"><a href="#INSTALLError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#iris_method_channel">iris_method_channel</a></strong></td><td>plugins\iris_method_channel\shared\iris_method_channel.vcxproj</td><td class="textCentered"><a href="#iris_method_channelError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#iris_method_channel_plugin">iris_method_channel_plugin</a></strong></td><td>plugins\iris_method_channel\iris_method_channel_plugin.vcxproj</td><td class="textCentered"><a href="#iris_method_channel_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#local_auth_windows_plugin">local_auth_windows_plugin</a></strong></td><td>plugins\local_auth_windows\local_auth_windows_plugin.vcxproj</td><td class="textCentered"><a href="#local_auth_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#media_kit_libs_windows_video_ANGLE_EXTRACT">media_kit_libs_windows_video_ANGLE_EXTRACT</a></strong></td><td>plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_ANGLE_EXTRACT.vcxproj</td><td class="textCentered"><a href="#media_kit_libs_windows_video_ANGLE_EXTRACTError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#media_kit_libs_windows_video_LIBMPV_EXTRACT">media_kit_libs_windows_video_LIBMPV_EXTRACT</a></strong></td><td>plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_LIBMPV_EXTRACT.vcxproj</td><td class="textCentered"><a href="#media_kit_libs_windows_video_LIBMPV_EXTRACTError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#media_kit_libs_windows_video_plugin">media_kit_libs_windows_video_plugin</a></strong></td><td>plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_plugin.vcxproj</td><td class="textCentered"><a href="#media_kit_libs_windows_video_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#media_kit_video_plugin">media_kit_video_plugin</a></strong></td><td>plugins\media_kit_video\media_kit_video_plugin.vcxproj</td><td class="textCentered"><a href="#media_kit_video_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#permission_handler_windows_plugin">permission_handler_windows_plugin</a></strong></td><td>plugins\permission_handler_windows\permission_handler_windows_plugin.vcxproj</td><td class="textCentered"><a href="#permission_handler_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#record_windows_plugin">record_windows_plugin</a></strong></td><td>plugins\record_windows\record_windows_plugin.vcxproj</td><td class="textCentered"><a href="#record_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#screen_retriever_windows_plugin">screen_retriever_windows_plugin</a></strong></td><td>plugins\screen_retriever_windows\screen_retriever_windows_plugin.vcxproj</td><td class="textCentered"><a href="#screen_retriever_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#share_plus_plugin">share_plus_plugin</a></strong></td><td>plugins\share_plus\share_plus_plugin.vcxproj</td><td class="textCentered"><a href="#share_plus_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#url_launcher_windows_plugin">url_launcher_windows_plugin</a></strong></td><td>plugins\url_launcher_windows\url_launcher_windows_plugin.vcxproj</td><td class="textCentered"><a href="#url_launcher_windows_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#volume_controller_plugin">volume_controller_plugin</a></strong></td><td>plugins\volume_controller\volume_controller_plugin.vcxproj</td><td class="textCentered"><a href="#volume_controller_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#window_manager_plugin">window_manager_plugin</a></strong></td><td>plugins\window_manager\window_manager_plugin.vcxproj</td><td class="textCentered"><a href="#window_manager_pluginError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#ZERO_CHECK">ZERO_CHECK</a></strong></td><td>ZERO_CHECK.vcxproj</td><td class="textCentered"><a href="#ZERO_CHECKError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#">0</a></td></tr><tr><td class="IconSuccessEncoded" /><td><strong><a href="#Solution"><span _locID="OverviewSolutionSpan">Решение</span></a></strong></td><td>chatify.sln</td><td class="textCentered"><a>0</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('Solution'); return false;">1</a></td></tr></table></div><h2 _locID="SolutionAndProjectsTitle">Решение и проекты</h2><div id="messages"><a name="agora_rtc_engine_plugin" /><h3>agora_rtc_engine_plugin</h3><table><tr id="agora_rtc_engine_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassagora_rtc_engine_plugin"><td class="IconErrorEncoded"><a name="agora_rtc_engine_pluginError" /></td><td class="messageCell"><strong>plugins\agora_rtc_engine\agora_rtc_engine_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="ALL_BUILD" /><h3>ALL_BUILD</h3><table><tr id="ALL_BUILDHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassALL_BUILD"><td class="IconErrorEncoded"><a name="ALL_BUILDError" /></td><td class="messageCell"><strong>ALL_BUILD.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="audioplayers_windows_plugin" /><h3>audioplayers_windows_plugin</h3><table><tr id="audioplayers_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassaudioplayers_windows_plugin"><td class="IconErrorEncoded"><a name="audioplayers_windows_pluginError" /></td><td class="messageCell"><strong>plugins\audioplayers_windows\audioplayers_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="bitsdojo_window_windows_plugin" /><h3>bitsdojo_window_windows_plugin</h3><table><tr id="bitsdojo_window_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassbitsdojo_window_windows_plugin"><td class="IconErrorEncoded"><a name="bitsdojo_window_windows_pluginError" /></td><td class="messageCell"><strong>plugins\bitsdojo_window_windows\bitsdojo_window_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="camera_windows_plugin" /><h3>camera_windows_plugin</h3><table><tr id="camera_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClasscamera_windows_plugin"><td class="IconErrorEncoded"><a name="camera_windows_pluginError" /></td><td class="messageCell"><strong>plugins\camera_windows\camera_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="chatify" /><h3>chatify</h3><table><tr id="chatifyHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClasschatify"><td class="IconErrorEncoded"><a name="chatifyError" /></td><td class="messageCell"><strong>runner\chatify.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="cloud_firestore_plugin" /><h3>cloud_firestore_plugin</h3><table><tr id="cloud_firestore_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClasscloud_firestore_plugin"><td class="IconErrorEncoded"><a name="cloud_firestore_pluginError" /></td><td class="messageCell"><strong>plugins\cloud_firestore\cloud_firestore_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="connectivity_plus_plugin" /><h3>connectivity_plus_plugin</h3><table><tr id="connectivity_plus_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassconnectivity_plus_plugin"><td class="IconErrorEncoded"><a name="connectivity_plus_pluginError" /></td><td class="messageCell"><strong>plugins\connectivity_plus\connectivity_plus_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="emoji_picker_flutter_plugin" /><h3>emoji_picker_flutter_plugin</h3><table><tr id="emoji_picker_flutter_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassemoji_picker_flutter_plugin"><td class="IconErrorEncoded"><a name="emoji_picker_flutter_pluginError" /></td><td class="messageCell"><strong>plugins\emoji_picker_flutter\emoji_picker_flutter_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="file_selector_windows_plugin" /><h3>file_selector_windows_plugin</h3><table><tr id="file_selector_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassfile_selector_windows_plugin"><td class="IconErrorEncoded"><a name="file_selector_windows_pluginError" /></td><td class="messageCell"><strong>plugins\file_selector_windows\file_selector_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="firebase_auth_plugin" /><h3>firebase_auth_plugin</h3><table><tr id="firebase_auth_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassfirebase_auth_plugin"><td class="IconErrorEncoded"><a name="firebase_auth_pluginError" /></td><td class="messageCell"><strong>plugins\firebase_auth\firebase_auth_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="firebase_core_plugin" /><h3>firebase_core_plugin</h3><table><tr id="firebase_core_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassfirebase_core_plugin"><td class="IconErrorEncoded"><a name="firebase_core_pluginError" /></td><td class="messageCell"><strong>plugins\firebase_core\firebase_core_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="firebase_storage_plugin" /><h3>firebase_storage_plugin</h3><table><tr id="firebase_storage_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassfirebase_storage_plugin"><td class="IconErrorEncoded"><a name="firebase_storage_pluginError" /></td><td class="messageCell"><strong>plugins\firebase_storage\firebase_storage_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="flutter_assemble" /><h3>flutter_assemble</h3><table><tr id="flutter_assembleHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassflutter_assemble"><td class="IconErrorEncoded"><a name="flutter_assembleError" /></td><td class="messageCell"><strong>flutter\flutter_assemble.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="flutter_local_notifications_windows" /><h3>flutter_local_notifications_windows</h3><table><tr id="flutter_local_notifications_windowsHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassflutter_local_notifications_windows"><td class="IconErrorEncoded"><a name="flutter_local_notifications_windowsError" /></td><td class="messageCell"><strong>plugins\flutter_local_notifications_windows\shared\flutter_local_notifications_windows.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="flutter_webrtc_plugin" /><h3>flutter_webrtc_plugin</h3><table><tr id="flutter_webrtc_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassflutter_webrtc_plugin"><td class="IconErrorEncoded"><a name="flutter_webrtc_pluginError" /></td><td class="messageCell"><strong>plugins\flutter_webrtc\flutter_webrtc_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="flutter_wrapper_app" /><h3>flutter_wrapper_app</h3><table><tr id="flutter_wrapper_appHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassflutter_wrapper_app"><td class="IconErrorEncoded"><a name="flutter_wrapper_appError" /></td><td class="messageCell"><strong>flutter\flutter_wrapper_app.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="flutter_wrapper_plugin" /><h3>flutter_wrapper_plugin</h3><table><tr id="flutter_wrapper_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassflutter_wrapper_plugin"><td class="IconErrorEncoded"><a name="flutter_wrapper_pluginError" /></td><td class="messageCell"><strong>flutter\flutter_wrapper_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="INSTALL" /><h3>INSTALL</h3><table><tr id="INSTALLHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassINSTALL"><td class="IconErrorEncoded"><a name="INSTALLError" /></td><td class="messageCell"><strong>INSTALL.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="iris_method_channel" /><h3>iris_method_channel</h3><table><tr id="iris_method_channelHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassiris_method_channel"><td class="IconErrorEncoded"><a name="iris_method_channelError" /></td><td class="messageCell"><strong>plugins\iris_method_channel\shared\iris_method_channel.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="iris_method_channel_plugin" /><h3>iris_method_channel_plugin</h3><table><tr id="iris_method_channel_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassiris_method_channel_plugin"><td class="IconErrorEncoded"><a name="iris_method_channel_pluginError" /></td><td class="messageCell"><strong>plugins\iris_method_channel\iris_method_channel_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="local_auth_windows_plugin" /><h3>local_auth_windows_plugin</h3><table><tr id="local_auth_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClasslocal_auth_windows_plugin"><td class="IconErrorEncoded"><a name="local_auth_windows_pluginError" /></td><td class="messageCell"><strong>plugins\local_auth_windows\local_auth_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="media_kit_libs_windows_video_ANGLE_EXTRACT" /><h3>media_kit_libs_windows_video_ANGLE_EXTRACT</h3><table><tr id="media_kit_libs_windows_video_ANGLE_EXTRACTHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassmedia_kit_libs_windows_video_ANGLE_EXTRACT"><td class="IconErrorEncoded"><a name="media_kit_libs_windows_video_ANGLE_EXTRACTError" /></td><td class="messageCell"><strong>plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_ANGLE_EXTRACT.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="media_kit_libs_windows_video_LIBMPV_EXTRACT" /><h3>media_kit_libs_windows_video_LIBMPV_EXTRACT</h3><table><tr id="media_kit_libs_windows_video_LIBMPV_EXTRACTHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassmedia_kit_libs_windows_video_LIBMPV_EXTRACT"><td class="IconErrorEncoded"><a name="media_kit_libs_windows_video_LIBMPV_EXTRACTError" /></td><td class="messageCell"><strong>plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_LIBMPV_EXTRACT.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="media_kit_libs_windows_video_plugin" /><h3>media_kit_libs_windows_video_plugin</h3><table><tr id="media_kit_libs_windows_video_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassmedia_kit_libs_windows_video_plugin"><td class="IconErrorEncoded"><a name="media_kit_libs_windows_video_pluginError" /></td><td class="messageCell"><strong>plugins\media_kit_libs_windows_video\media_kit_libs_windows_video_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="media_kit_video_plugin" /><h3>media_kit_video_plugin</h3><table><tr id="media_kit_video_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassmedia_kit_video_plugin"><td class="IconErrorEncoded"><a name="media_kit_video_pluginError" /></td><td class="messageCell"><strong>plugins\media_kit_video\media_kit_video_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="permission_handler_windows_plugin" /><h3>permission_handler_windows_plugin</h3><table><tr id="permission_handler_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClasspermission_handler_windows_plugin"><td class="IconErrorEncoded"><a name="permission_handler_windows_pluginError" /></td><td class="messageCell"><strong>plugins\permission_handler_windows\permission_handler_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="record_windows_plugin" /><h3>record_windows_plugin</h3><table><tr id="record_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassrecord_windows_plugin"><td class="IconErrorEncoded"><a name="record_windows_pluginError" /></td><td class="messageCell"><strong>plugins\record_windows\record_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="screen_retriever_windows_plugin" /><h3>screen_retriever_windows_plugin</h3><table><tr id="screen_retriever_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassscreen_retriever_windows_plugin"><td class="IconErrorEncoded"><a name="screen_retriever_windows_pluginError" /></td><td class="messageCell"><strong>plugins\screen_retriever_windows\screen_retriever_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="share_plus_plugin" /><h3>share_plus_plugin</h3><table><tr id="share_plus_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassshare_plus_plugin"><td class="IconErrorEncoded"><a name="share_plus_pluginError" /></td><td class="messageCell"><strong>plugins\share_plus\share_plus_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="url_launcher_windows_plugin" /><h3>url_launcher_windows_plugin</h3><table><tr id="url_launcher_windows_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassurl_launcher_windows_plugin"><td class="IconErrorEncoded"><a name="url_launcher_windows_pluginError" /></td><td class="messageCell"><strong>plugins\url_launcher_windows\url_launcher_windows_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="volume_controller_plugin" /><h3>volume_controller_plugin</h3><table><tr id="volume_controller_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassvolume_controller_plugin"><td class="IconErrorEncoded"><a name="volume_controller_pluginError" /></td><td class="messageCell"><strong>plugins\volume_controller\volume_controller_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="window_manager_plugin" /><h3>window_manager_plugin</h3><table><tr id="window_manager_pluginHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClasswindow_manager_plugin"><td class="IconErrorEncoded"><a name="window_manager_pluginError" /></td><td class="messageCell"><strong>plugins\window_manager\window_manager_plugin.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="ZERO_CHECK" /><h3>ZERO_CHECK</h3><table><tr id="ZERO_CHECKHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassZERO_CHECK"><td class="IconErrorEncoded"><a name="ZERO_CHECKError" /></td><td class="messageCell"><strong>ZERO_CHECK.vcxproj:
+        </strong><span>Приложение, на котором основан этот тип проектов, не найдено. Попробуйте воспользоваться этой ссылкой для получения дополнительной информации: 8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942</span></td></tr></table><a name="Solution" /><h3 _locID="ProjectDisplayNameHeader">Решение</h3><table><tr id="SolutionHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="MessageRowHeaderShowSolution"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="SolutionMessage" onclick="ToggleMessageVisibility('Solution'); return false;">
+          Показать 1 дополнительные сообщения
+        </a></td></tr><tr name="MessageRowClassSolution" style="display: none"><td class="IconInfoEncoded"><a name="SolutionMessage" /></td><td class="messageCell"><strong>chatify.sln:
+        </strong><span>Для файла решения не требуется перенос.</span></td></tr><tr style="display: none" name="MessageRowHeaderHideSolution"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="SolutionMessage" onclick="ToggleMessageVisibility('Solution'); return false;">
+          Скрыть 1 дополнительные сообщения
+        </a></td></tr></table></div></div></body></html>

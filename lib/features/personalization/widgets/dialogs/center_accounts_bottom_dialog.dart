@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import '../../../../utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../utils/constants/app_images.dart';
 
 void showCenterAccountsBottomDialog(BuildContext context) {

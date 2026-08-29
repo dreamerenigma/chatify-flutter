@@ -439,7 +439,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                const Icon(HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
+                const HugeIcon(icon: HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
                 const SizedBox(width: 25),
                 Expanded(
                   child: Column(
@@ -491,7 +491,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                       isCloseChatEnabled = value;
                     });
                   },
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   activeTrackColor: ChatifyColors.blueAccent,
                 ),
               ],

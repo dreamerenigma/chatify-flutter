@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -11,6 +12,7 @@ import '../../screens/newsletter_chat_screen.dart';
 import '../../screens/photo_newsletter_screen.dart';
 
 class NewsletterDialog extends StatefulWidget {
+  final String newsletterId;
   final String newsletterName;
   final String newsletterImage;
   final List<String> newsletters;
@@ -18,6 +20,7 @@ class NewsletterDialog extends StatefulWidget {
 
   const NewsletterDialog({
     super.key,
+    required this.newsletterId,
     required this.newsletterName,
     required this.newsletterImage,
     required this.createdAt,
@@ -48,7 +51,7 @@ class _NewsletterDialogState extends State<NewsletterDialog> {
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(context, createPageRoute(PhotoNewsletterScreen(imageNewsletter: widget.newsletterImage, id: '', newsletters: widget.newsletters)));
+                      Navigator.push(context, createPageRoute(PhotoNewsletterScreen(imageNewsletter: widget.newsletterImage, id: widget.newsletterId, newsletters: widget.newsletters)));
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -62,7 +65,7 @@ class _NewsletterDialogState extends State<NewsletterDialog> {
                             width: double.infinity,
                             height: double.infinity,
                             decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                            child: const Icon(Ionicons.megaphone, color: ChatifyColors.white, size: 80),
+                            child: SvgPicture.asset(ChatifyVectors.megaphone, width: 80, height: 80, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                           );
                         },
                       ),

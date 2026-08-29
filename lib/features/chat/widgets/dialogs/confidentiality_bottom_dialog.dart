@@ -62,106 +62,76 @@ class _ConfidentialityStatusBottomSheetState extends State<ConfidentialityStatus
               padding: const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 12),
               child: Text(S.of(context).seeStatusUpdates, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
             ),
-            ListTile(
-              contentPadding: EdgeInsets.only(left: 10, right: 24),
-              horizontalTitleGap: 8,
-              title: Text(S.of(context).myContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              leading: Transform.scale(
-                scale: 1.2,
-                child: Radio<int>(
-                  value: 1,
-                  groupValue: _selectedValue,
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedValue = value!;
-                      _saveSelectedValue(value);
-                    });
+            Obx(() => RadioGroup<int>(
+              groupValue: _selectedValue,
+              onChanged: (int? value) {
+                if (value != null) {
+                  _selectedValue = value;
+                  _saveSelectedValue(value);
+                }
+              },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 10, right: 24),
+                  horizontalTitleGap: 8,
+                  title: Text(S.of(context).myContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  leading: Transform.scale(scale: 1.2, child: Radio<int>(value: 1, activeColor: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                  onTap: () {
+                    _selectedValue = 1;
+                    _saveSelectedValue(_selectedValue!);
                   },
                 ),
-              ),
-              onTap: () {
-                setState(() {
-                  _selectedValue = 1;
-                  _saveSelectedValue(_selectedValue!);
-                });
-              },
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.only(left: 10, right: 24),
-              horizontalTitleGap: 8,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(S.of(context).contactsOtherThan, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                  InkWell(
-                    onTap: () => Navigator.push(context, createPageRoute(const ExceptionsScreen())),
-                    child: Text(
-                      '${S.of(context).exception} ($counter)',
-                      style: TextStyle(fontSize: 15, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                    ),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 10, right: 24),
+                  horizontalTitleGap: 8,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(S.of(context).contactsOtherThan, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      InkWell(
+                        onTap: () => Navigator.push(context, createPageRoute(const ExceptionsScreen())),
+                        child: Text('${S.of(context).exception} ($counter)',
+                          style: TextStyle(fontSize: 15, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              leading: Transform.scale(
-                scale: 1.2,
-                child: Radio<int>(
-                  value: 2,
-                  groupValue: _selectedValue,
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedValue = value!;
-                      _saveSelectedValue(value);
-                    });
-                  },
-                ),
-              ),
-              onTap: () {
-                setState(() {
-                  _selectedValue = 2;
-                  _saveSelectedValue(_selectedValue!);
-                });
-              },
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.only(left: 10, right: 24),
-              horizontalTitleGap: 8,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(S.of(context).only, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                  InkWell(
-                    onTap: () => Navigator.push(context, createPageRoute(const ShareScreen())),
-                    child: Text(
-                      '${S.of(context).on} ($counter)',
-                      style: TextStyle(fontSize: 15, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                    ),
+                  leading: Transform.scale(
+                    scale: 1.2,
+                    child: Radio<int>(value: 2, activeColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
                   ),
-                ],
-              ),
-              leading: Transform.scale(
-                scale: 1.2,
-                child: Radio<int>(
-                  value: 3,
-                  groupValue: _selectedValue,
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedValue = value!;
-                      _saveSelectedValue(value);
-                    });
+                  onTap: () {
+                    _selectedValue = 2;
+                    _saveSelectedValue(_selectedValue!);
                   },
                 ),
-              ),
-              onTap: () {
-                setState(() {
-                  _selectedValue = 3;
-                  _saveSelectedValue(_selectedValue!);
-                });
-              },
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 10, right: 24),
+                  horizontalTitleGap: 8,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(S.of(context).only, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      InkWell(
+                        onTap: () => Navigator.push(context, createPageRoute(const ShareScreen())),
+                        child: Text('${S.of(context).on} ($counter)',
+                          style: TextStyle(fontSize: 15, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  leading: Transform.scale(scale: 1.2, child: Radio<int>(value: 3, activeColor: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                  onTap: () {
+                    _selectedValue = 3;
+                    _saveSelectedValue(_selectedValue!);
+                  },
+                ),
+              ],
             ),
-            Padding(
+          )),
+          Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 4),
               child: SizedBox(
                 width: double.infinity,

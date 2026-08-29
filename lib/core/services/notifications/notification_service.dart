@@ -18,7 +18,7 @@ class NotificationService {
     );
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         showMessageDialog(response);
       },
@@ -26,11 +26,8 @@ class NotificationService {
   }
 
   static void show(String title, String body) {
-    var notificationDetails = NotificationDetails(
-      windows: WindowsNotificationDetails(subtitle: body),
-    );
-
-    flutterLocalNotificationsPlugin.show(0, title, body, notificationDetails);
+    var notificationDetails = NotificationDetails(windows: WindowsNotificationDetails(subtitle: body));
+    flutterLocalNotificationsPlugin.show(id: 0, title: title, body: body, notificationDetails: notificationDetails);
   }
 
   static void showMessageDialog(NotificationResponse response) {

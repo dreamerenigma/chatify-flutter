@@ -27,8 +27,19 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
   @override
   void initState() {
     super.initState();
-    intelligenceTexts = List<String>.from(storage.read<List<dynamic>>('intelligenceTexts') ?? [S.of(context).helloProfile]);
-    status = storage.read<String>('status') ?? (intelligenceTexts.isNotEmpty ? intelligenceTexts.first : '');
+    intelligenceTexts = List<String>.from(storage.read<List<dynamic>>('intelligenceTexts') ?? []);
+    status = storage.read<String>('status') ?? '';
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (intelligenceTexts.isEmpty) {
+      intelligenceTexts = [S.of(context).helloProfile];
+    }
+    if (status.isEmpty && intelligenceTexts.isNotEmpty) {
+      status = intelligenceTexts.first;
+    }
   }
 
   void addIntelligenceText(String text) {
@@ -68,14 +79,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,

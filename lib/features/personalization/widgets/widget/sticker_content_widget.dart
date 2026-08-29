@@ -1,13 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/helper/file_util.dart';
 
 class StickerContentWidget extends StatefulWidget {
@@ -21,7 +21,7 @@ class _StickerContentWidgetState extends State<StickerContentWidget> {
   final RxInt selectedIndex = 0.obs;
   final RxList<bool> hoverStates = List.generate(3, (_) => false).obs;
   final RxString displayText = 'Вы пока не добавили ни одного стикера'.obs;
-  final List<IconData> icons = [Ionicons.time_outline, Icons.star_border_rounded, PhosphorIcons.plus];
+  final List<dynamic> icons = [ChatifyVectors.timeOutline, Icons.star_border_rounded, BootstrapIcons.plus];
 
   void _handleIconTap(int index) async {
     selectedIndex.value = index;
@@ -43,15 +43,10 @@ class _StickerContentWidgetState extends State<StickerContentWidget> {
     final picturesPath = await FileUtil.getUserPicturesPath();
 
     if (Platform.isWindows) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-        dialogTitle: S.of(context).opening,
-        initialDirectory: picturesPath,
-      );
+      List<PlatformFile>? result = await FilePicker.pickFiles(type: FileType.image, allowedExtensions: ['jpg', 'jpeg', 'png'], dialogTitle: S.of(context).opening, initialDirectory: picturesPath);
 
-      if (result != null && result.files.isNotEmpty) {
-        final path = result.files.single.path;
+      if (result.isNotEmpty) {
+        final path = result.single.path;
         if (path != null) {
           log('${S.of(context).fileSelected}: $path');
         }
@@ -65,10 +60,7 @@ class _StickerContentWidgetState extends State<StickerContentWidget> {
       body: Stack(
         children: [
           Obx(() => Center(child: Text(displayText.value, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto')))),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildStickerPanel(context),
-          ),
+          Align(alignment: Alignment.bottomCenter, child: _buildStickerPanel(context)),
         ],
       ),
     );
@@ -94,10 +86,7 @@ class _StickerContentWidgetState extends State<StickerContentWidget> {
             onExit: (_) => hoverStates[index] = false,
             child: GestureDetector(
               onTap: () => _handleIconTap(index),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Icon(icons[index], size: 19, color: iconColor),
-              ),
+              child: Padding(padding: const EdgeInsets.only(right: 12), child: Icon(icons[index], size: 19, color: iconColor)),
             ),
           );
         }),

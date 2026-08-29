@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:vector_math/vector_math_64.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/bars/image_app_bar.dart';
@@ -15,15 +16,16 @@ class FullScreenImageScreen extends StatefulWidget {
 }
 
 class FullScreenImageScreenState extends State<FullScreenImageScreen> with SingleTickerProviderStateMixin {
-  double _initialYOffset = 0.0;
-  double _currentYOffset = 0.0;
+
+  late int _activeIndex;
   late AnimationController _controller;
   late Animation<double> _animation;
   late TransformationController _transformationController;
-  TapDownDetails _doubleTapDetails = TapDownDetails();
   bool _isAppBarVisible = true;
   bool _zoomedIn = false;
-  late int _activeIndex;
+  double _initialYOffset = 0.0;
+  double _currentYOffset = 0.0;
+  TapDownDetails _doubleTapDetails = TapDownDetails();
 
   @override
   void initState() {
@@ -67,8 +69,8 @@ class FullScreenImageScreenState extends State<FullScreenImageScreen> with Singl
     final scale = _zoomedIn ? 1.0 : 2.0;
 
     _transformationController.value = Matrix4.identity()
-      ..translate(-localPosition.dx * (scale - 1), -localPosition.dy * (scale - 1))
-      ..scale(scale);
+      ..translateByVector3(Vector3(-localPosition.dx * (scale - 1), -localPosition.dy * (scale - 1), 0))
+      ..scaleByVector3(Vector3(scale, scale, 1));
 
     setState(() {
       _zoomedIn = !_zoomedIn;

@@ -201,6 +201,7 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
     color: ChatifyColors.transparent,
     child: InkWell(
       onTap: () {},
+      mouseCursor: SystemMouseCursors.basic,
       splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
       highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
       borderRadius: BorderRadius.circular(12),
@@ -222,7 +223,7 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
                   errorWidget: (context, url, error) => Center(
-                    child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, width: 28, height: 28),
+                    child: SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, BlendMode.srcIn), width: 28, height: 28),
                   ),
                 ),
               ),
@@ -259,6 +260,7 @@ Widget _buildAllContacts(BuildContext context, UserController userController, bo
               onSelected(isSelected);
             });
           },
+          mouseCursor: SystemMouseCursors.basic,
           splashColor: ChatifyColors.transparent,
           highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.buttonDisabled.withAlpha((0.6 * 255).toInt()),
           borderRadius: BorderRadius.circular(12),
@@ -282,7 +284,7 @@ Widget _buildAllContacts(BuildContext context, UserController userController, bo
                       errorWidget: (context, url, error) => Center(
                         child: SvgPicture.asset(
                           ChatifyVectors.newUser,
-                          color: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey,
+                          colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
                           width: 28,
                           height: 28,
                         ),
@@ -328,14 +330,7 @@ Widget _buildOptionIconBox(BuildContext context, {String? svgPath, IconData? ico
       color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.white,
       borderRadius: BorderRadius.circular(8),
       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey, width: 1),
-      boxShadow: [
-        BoxShadow(
-          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-          spreadRadius: 1,
-          blurRadius: 2,
-          offset: Offset(1, 2),
-        ),
-      ],
+      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(1, 2))],
     ),
     child: Material(
       color: ChatifyColors.transparent,
@@ -349,17 +344,10 @@ Widget _buildOptionIconBox(BuildContext context, {String? svgPath, IconData? ico
           decoration: BoxDecoration(
             color: colorsController.getColor(colorsController.selectedColorScheme.value),
             borderRadius: BorderRadius.circular(6),
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 1))],
           ),
           child: Center(
-            child: svgPath != null ? SvgPicture.asset(svgPath, width: 22, height: 22, color: ChatifyColors.white) : Icon(icon,size: 22,color: ChatifyColors.white)),
+            child: svgPath != null ? SvgPicture.asset(svgPath, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)) : Icon(icon,size: 22,color: ChatifyColors.white)),
         ),
       ),
     ),
@@ -377,14 +365,7 @@ Widget _buildCancelBox(BuildContext context, VoidCallback onTap) {
       color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.white,
       borderRadius: BorderRadius.circular(8),
       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey, width: 1),
-      boxShadow: [
-        BoxShadow(
-          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-          spreadRadius: 1,
-          blurRadius: 2,
-          offset: Offset(1, 2),
-        ),
-      ],
+      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(1, 2))],
     ),
     child: GestureDetector(
       onTap: onTap,
@@ -395,14 +376,7 @@ Widget _buildCancelBox(BuildContext context, VoidCallback onTap) {
           color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
           border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey, width: 1),
           borderRadius: BorderRadius.circular(6),
-          boxShadow: [
-            BoxShadow(
-              color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: Offset(0, 1),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 1))],
         ),
         child: Center(child: Text(S.of(context).cancel, style: TextStyle(fontWeight: FontWeight.w500))),
       ),

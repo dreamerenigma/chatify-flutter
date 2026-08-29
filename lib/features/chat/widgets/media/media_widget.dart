@@ -103,21 +103,16 @@ class MediaWidgetState extends State<MediaWidget> {
   @override
   Widget build(BuildContext context) {
     switch (widget.message.type) {
-      case Type.image:
+      case MessageType.image:
         return _buildImageWidget(context);
-      case Type.gif:
+      case MessageType.gif:
         return _buildGifWidget(context);
-      case Type.video:
+      case MessageType.video:
         final urls = widget.message.msg.split(',').map((e) => e.trim()).toList();
         return VideoPlayerWidget(videoUrls: urls, message: widget.message);
-      case Type.audio:
-        return AudioWidget(
-          audioUrl: widget.message.msg,
-          documentName: widget.message.documentName ?? 'Unknown',
-          fileSize: widget.message.fileSize ?? 'Unknown size',
-          isSender: widget.isSender,
-        );
-      case Type.document:
+      case MessageType.audio:
+        return AudioWidget(audioUrl: widget.message.msg, documentName: widget.message.documentName ?? 'Unknown', fileSize: widget.message.fileSize ?? 'Unknown size', isSender: widget.isSender);
+      case MessageType.document:
         return _buildDocumentWidget(context, isSender: widget.isSender);
       default:
         return const SizedBox.shrink();
@@ -150,10 +145,7 @@ class MediaWidgetState extends State<MediaWidget> {
               width: 250,
               height: 250,
               decoration: const BoxDecoration(color: ChatifyColors.transparent),
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt()), BlendMode.darken),
-                child: const SizedBox.expand(),
-              ),
+              child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt()), BlendMode.darken), child: const SizedBox.expand()),
             ),
             imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 250, height: 250),
             errorWidget: (context, url, error) => const Icon(Icons.image, size: 70),
@@ -194,14 +186,7 @@ class MediaWidgetState extends State<MediaWidget> {
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 0),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 0))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -25,23 +25,23 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.inputstudios.chatify"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
 
         coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
@@ -64,6 +64,10 @@ android {
         }
     }
 
+    buildFeatures {
+        resValues = true
+    }
+
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def newApkName = "Chatify-${variant.versionName}.apk"
@@ -77,9 +81,9 @@ flutter {
 }
 
 dependencies {
-    implementation "androidx.credentials:credentials:1.5.0"
-    implementation "androidx.credentials:credentials-play-services-auth:1.5.0"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
+    implementation "androidx.credentials:credentials:1.6.0"
+    implementation "androidx.credentials:credentials-play-services-auth:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
-    implementation "com.google.guava:guava:33.4.8-jre"
+    implementation "com.google.guava:guava:33.7.1-jre"
 }

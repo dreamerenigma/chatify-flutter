@@ -36,34 +36,44 @@ class FileUtil {
     }
 
     try {
-      String initialDirectory = "C:\\Users\\${await getUserName()}\\Pictures";
-      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image, initialDirectory: initialDirectory, allowMultiple: true);
+      final String initialDirectory = "C:\\Users\\${await getUserName()}\\Pictures";
+      final List<PlatformFile> files = await FilePicker.pickFiles(type: FileType.image, initialDirectory: initialDirectory);
 
-      if (result != null) {
-        String filePath = result.files.single.path!;
-        File selectedFile = File(filePath);
-
-        log("Выбран файл: $filePath");
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final renderBox = context.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
-
-          if (Platform.isWindows) {
-            showEditImageDialog(context, position, selectedFile, onFileSelected);
-          } else {
-            onFileSelected(selectedFile);
-          }
-        });
-
-        if (overlayEntry != null) {
-          animationController.reverse().then((_) => overlayEntry.remove());
-        }
-      } else {
+      if (files.isEmpty) {
         log("Файл не выбран");
+        return;
       }
-    } catch (e) {
-      log("Ошибка при выборе файла: $e");
+
+      final PlatformFile file = files.single;
+      final String? filePath = file.path;
+
+      if (filePath == null) {
+        log("Не удалось получить путь к файлу");
+        return;
+      }
+
+      final File selectedFile = File(filePath);
+
+      log("Выбран файл: $filePath");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final renderBox = context.findRenderObject() as RenderBox;
+        final position = renderBox.localToGlobal(Offset.zero);
+
+        if (Platform.isWindows) {
+          showEditImageDialog(context, position, selectedFile, onFileSelected);
+        } else {
+          onFileSelected(selectedFile);
+        }
+      });
+
+      if (overlayEntry != null) {
+        animationController.reverse().then((_) {
+          overlayEntry.remove();
+        });
+      }
+    } catch (e, stackTrace) {
+      log("Ошибка при выборе файла: $e", stackTrace: stackTrace);
     }
   }
 

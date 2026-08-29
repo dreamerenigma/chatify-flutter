@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
@@ -6,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:jam_icons/jam_icons.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../../utils/helper/file_util.dart';
+import '../../../../../utils/popups/dialogs.dart';
 import '../../../../chat/models/user_model.dart';
 import '../../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../../chat/widgets/dialogs/select_message_dialog.dart';
@@ -34,14 +33,16 @@ class ProfileOptionWidget extends StatefulWidget {
 
 class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerProviderStateMixin {
   final userController = Get.find<UserController>();
-  bool isHovered = false;
-  bool isEditingUsername = false;
-  bool isEditingIntelligence = false;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController intelligenceController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   late Worker _userListener;
   late Future<void> Function(File) onImageSelected;
+  bool isHovered = false;
+  bool isEditingUsername = false;
+  bool isEditingIntelligence = false;
+  bool isPressedLogout = false;
+  bool isHoveredLogout = false;
 
   @override
   void initState() {
@@ -96,20 +97,17 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
             child: GestureDetector(
               onTap: () async {
                 if (userController.currentUser.image.isEmpty) {
-                  String initialDirectory = "C:\\Users\\${await FileUtil.getUserName()}\\Pictures";
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                    type: FileType.image,
-                    initialDirectory: initialDirectory,
-                  );
+                  final String initialDirectory = "C:\\Users\\${await FileUtil.getUserName()}\\Pictures";
+                  final List<PlatformFile> result = await FilePicker.pickFiles(type: FileType.image, initialDirectory: initialDirectory);
 
-                  if (result != null) {
-                    String filePath = result.files.single.path!;
-                    File selectedFile = File(filePath);
-
-                    await onImageSelected(selectedFile);
-                  } else {
-                    log(S.of(context).fileNotSelected);
+                  if (result.isEmpty) {
+                    return;
                   }
+
+                  final String filePath = result.single.path!;
+                  final File selectedFile = File(filePath);
+
+                  await onImageSelected(selectedFile);
                 } else {
                   showEditProfileImageDialog(context, this, _updateProfileImage);
                 }
@@ -126,7 +124,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                       errorWidget: (context, url, error) => CircleAvatar(
                         backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                         foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.avatar, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.avatar, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                       ),
                     ),
                   ),
@@ -140,7 +138,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                   AnimatedOpacity(
                     opacity: isHovered ? 1.0 : 0.0,
                     duration: Duration(milliseconds: 200),
-                    child: Icon(JamIcons.pencil, color: ChatifyColors.white, size: 20),
+                    child: SvgPicture.asset(ChatifyVectors.pencil, width: 20, height: 20, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn)),
                   ),
                 ],
               ),
@@ -157,7 +155,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                       focusNode: _focusNode,
                       fontSize: ChatifySizes.fontSizeBg,
                       contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 15),
-                      onUnFocus: () {
+                      onUnFocus: () async {
                         String updatedName = usernameController.text.trim();
 
                         if (updatedName.isEmpty) {
@@ -180,7 +178,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                         } else {
                           final updatedUser = userController.currentUser.copyWith(name: updatedName);
 
-                          userController.updateUser(updatedUser);
+                          await userController.updateUser(updatedUser);
                           usernameController.text = updatedName;
 
                           Future.delayed(Duration(milliseconds: 100), () {
@@ -218,7 +216,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                   highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                   hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
                   borderRadius: BorderRadius.circular(8),
-                  child: Padding(padding: const EdgeInsets.all(8), child: Icon(JamIcons.pencil, size: 18)),
+                  child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencil, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn))),
                 ),
               ),
             ],
@@ -268,17 +266,11 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                         )
                       : Theme(
                           data: Theme.of(context).copyWith(
-                            textSelectionTheme: TextSelectionThemeData(
-                              selectionColor: ChatifyColors.info,
-                              selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            ),
+                            textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
                           ),
                           child: Obx(() {
                             intelligenceController.text = userController.user.value.status;
-                            return SelectableText(
-                              userController.user.value.status,
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
-                            );
+                            return SelectableText(userController.user.value.status, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto'));
                           }),
                         ),
                   ),
@@ -297,7 +289,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                       highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
                       hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
                       borderRadius: BorderRadius.circular(8),
-                      child: Padding(padding: const EdgeInsets.all(8), child: Icon(JamIcons.pencil, size: 18)),
+                      child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencil, width: 18, height: 18, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn))),
                     ),
                   ),
                 ],
@@ -365,37 +357,78 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
           SizedBox(height: 15),
           Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
           SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: () async {
-              showConfirmationDialog(
-                context: context,
-                width: 420,
-                title: S.of(context).confirmExit,
-                description: S.of(context).areYouSureYouLogout,
-                confirmButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                reverseButtons: false,
-                onConfirm: () {
-                  widget.overlayEntry.remove();
-                  APIs.signOut();
-                },
-              );
+          GestureDetector(
+            onLongPress: () {
+              setState(() {
+                isPressedLogout = true;
+              });
             },
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              backgroundColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.transparent,
-              foregroundColor: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.darkGrey,
-              side: BorderSide(color: context.isDarkMode ? ChatifyColors.transparent : ChatifyColors.grey),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              elevation: 0,
-            ).copyWith(
-              splashFactory: NoSplash.splashFactory,
-              shadowColor: WidgetStateProperty.all(ChatifyColors.transparent),
-              mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
-              elevation: WidgetStateProperty.all(0),
-            ),
-            child: Text(
-              '${S.of(context).signOut[0].toUpperCase()}${S.of(context).signOut.substring(1)}',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.error, fontWeight: FontWeight.w400),
+            onLongPressEnd: (_) {
+              setState(() {
+                isPressedLogout = false;
+              });
+            },
+            onLongPressUp: () {
+              setState(() {
+                isPressedLogout = false;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  isHoveredLogout = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  isHoveredLogout = false;
+                });
+              },
+              child: ElevatedButton(
+                onPressed: () async {
+                  setState(() {
+                    isPressedLogout = true;
+                  });
+                  showConfirmationDialog(
+                    context: context,
+                    width: 420,
+                    title: S.of(context).confirmExit,
+                    description: S.of(context).areYouSureYouLogout,
+                    confirmButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    reverseButtons: false,
+                    onConfirm: () async {
+                      widget.overlayEntry.remove();
+
+                      Dialogs.showProgressBarDialog(context, title: 'Выход', message: 'Не закрывайте это окно', verticalLayout: true, maxWidth: 400, maxHeight: 250);
+
+                      await Future.delayed(const Duration(seconds: 2));
+
+                      APIs.signOut();
+
+                      if (context.mounted) Navigator.of(context).pop();
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  backgroundColor: isPressedLogout ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100)) : isHoveredLogout
+                    ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
+                    : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
+                  foregroundColor: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.darkGrey,
+                  side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey, width: 1),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  elevation: 0,
+                ).copyWith(
+                  splashFactory: NoSplash.splashFactory,
+                  shadowColor: WidgetStateProperty.all(ChatifyColors.transparent),
+                  mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                  elevation: WidgetStateProperty.all(0),
+                ),
+                child: Text(
+                  '${S.of(context).signOut[0].toUpperCase()}${S.of(context).signOut.substring(1)}',
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.error, fontWeight: FontWeight.w400),
+                ),
+              ),
             ),
           ),
           SizedBox(height: 10),

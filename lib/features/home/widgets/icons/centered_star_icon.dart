@@ -17,7 +17,7 @@ class CenteredStarIcon extends StatelessWidget {
               width: 70,
               height: 70,
               decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-              child: const Icon(HugeIcons.strokeRoundedStar, color: ChatifyColors.black, size: 38),
+              child: const HugeIcon(icon: HugeIcons.strokeRoundedStar, color: ChatifyColors.black, size: 38),
             ),
             Container(
               width: 58,

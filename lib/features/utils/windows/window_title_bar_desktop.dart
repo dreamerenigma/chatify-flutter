@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'dart:io';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,6 +14,9 @@ import '../../../utils/constants/app_vectors.dart';
 import '../../../common/widgets/buttons/custom_close_button.dart';
 import '../../../common/widgets/buttons/custom_maximize_restore_button.dart';
 import '../../../common/widgets/buttons/custom_minimize_button.dart';
+
+final _user32 = DynamicLibrary.open('user32.dll');
+final _trackPopupMenu = _user32.lookupFunction<Int32 Function(Pointer, Uint32, Int32, Int32, Int32, Pointer, Pointer), int Function(Pointer, int, int, int, int, Pointer, Pointer)>('TrackPopupMenu');
 
 class WindowTitleBar extends StatefulWidget {
   final OverlayEntry overlayEntry;
@@ -89,42 +91,42 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
 
   void showSystemMenu(BuildContext context, Offset position) {
     final hwnd = win32.GetForegroundWindow();
-    if (hwnd == 0) {
+
+    if (hwnd == win32.NULL) {
       log("HWND is null");
       return;
     }
 
     win32.SetForegroundWindow(hwnd);
 
-    final hMenu = win32.GetSystemMenu(hwnd, win32.FALSE);
-    if (hMenu == 0) {
+    final hMenu = win32.GetSystemMenu(hwnd, false);
+
+    if (hMenu == win32.NULL) {
       log("System menu is null");
       return;
     }
 
     final point = calloc<win32.POINT>();
-    win32.GetCursorPos(point);
 
-    Future.delayed(Duration(milliseconds: 50), ()
-    {
-      final result = win32.TrackPopupMenu(
-        hMenu,
-        win32.TPM_LEFTALIGN | win32.TPM_TOPALIGN | win32.TPM_RETURNCMD | win32.TPM_RIGHTBUTTON | win32.TPM_NOANIMATION,
-        point.ref.x,
-        point.ref.y,
-        0,
-        hwnd,
-        nullptr,
-      );
+    try {
+      final cursorResult = win32.GetCursorPos(point);
 
-      calloc.free(point);
+      if (!cursorResult.value) {
+        log('GetCursorPos failed');
+        return;
+      }
+
+      final flags = win32.TPM_LEFTALIGN | win32.TPM_TOPALIGN | win32.TPM_RETURNCMD | win32.TPM_RIGHTBUTTON | win32.TPM_NOANIMATION;
+      final result = _trackPopupMenu(hMenu, flags, point.ref.x, point.ref.y, 0, hwnd, nullptr);
 
       log("TrackPopupMenu result: $result");
 
       if (result != 0) {
-        win32.PostMessage(hwnd, win32.WM_SYSCOMMAND, result, 0);
+        win32.PostMessage(hwnd, win32.WM_SYSCOMMAND, win32.WPARAM(result), win32.LPARAM(0));
       }
-    });
+    } finally {
+      calloc.free(point);
+    }
   }
 
   @override
@@ -156,8 +158,7 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
                     ),
                   )
                 : (Platform.isWindows || Platform.isMacOS || Platform.isLinux)
-                  ? WindowTitleBarBox(
-                  child: GestureDetector(
+                  ? GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () {
                       if (isOverlayOpen) {
@@ -170,38 +171,24 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
                           padding: const EdgeInsets.only(left: 10, top: 10, bottom: 2),
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
-                            onPanUpdate: (_) => appWindow.startDragging(),
+                            onPanStart: (_) {
+                              windowManager.startDragging();
+                            },
                             onDoubleTap: toggleWindow,
                             onSecondaryTapDown: (details) {
                               final renderBox = context.findRenderObject() as RenderBox;
                               final offset = renderBox.localToGlobal(details.localPosition);
+
                               showSystemMenu(context, offset);
                             },
                             child: Row(
                               children: [
-                                // AnimatedSwitcher(
-                                //   duration: const Duration(milliseconds: 200),
-                                //   transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-                                //   child: showBackButton
-                                //     ? IconButton(
-                                //       key: const ValueKey("back_button"),
-                                //       icon: const Icon(Icons.arrow_back, size: 18),
-                                //       color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                                //       padding: const EdgeInsets.only(right: 4),
-                                //       constraints: const BoxConstraints(),
-                                //       onPressed: () {
-                                //         widget.navigatorKey.currentState?.maybePop();
-                                //       },
-                                //     )
-                                //   : const SizedBox(key: ValueKey("empty_space")),
-                                // ),
-                                // if (showBackButton) const SizedBox(width: 6),
                                 if (!isSplashScreen) ...[
                                   SvgPicture.asset(
                                     ChatifyVectors.logoApp,
                                     width: 21,
                                     height: 21,
-                                    color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                    colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                                   ),
                                   const SizedBox(width: 10),
                                   Text(S.of(context).appName, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w300)),
@@ -210,12 +197,26 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
                             ),
                           ),
                         ),
-                        Expanded(child: MoveWindow()),
+                        Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onPanStart: (_) {
+                              windowManager.startDragging();
+                            },
+                            onDoubleTap: toggleWindow,
+                            onSecondaryTapDown: (details) {
+                              final renderBox = context.findRenderObject() as RenderBox;
+                              final offset = renderBox.localToGlobal(details.localPosition);
+
+                              showSystemMenu(context, offset);
+                            },
+                            child: const SizedBox.expand(),
+                          ),
+                        ),
                         WindowButtons(isMaximizedNotifier: isMaximizedNotifier),
                       ],
                     ),
-                  ),
-                ) : Container(),
+                  ) : Container(),
             );
           },
         );
@@ -226,27 +227,26 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
 
 class WindowButtons extends StatelessWidget {
   final ValueNotifier<bool> isMaximizedNotifier;
-  const WindowButtons({super.key, required this.isMaximizedNotifier});
+
+  const WindowButtons({
+    super.key,
+    required this.isMaximizedNotifier,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final buttonColors = WindowButtonColors(
-      iconNormal: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-      mouseOver: ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()),
-      mouseDown: ChatifyColors.darkerGrey.withAlpha((0.6 * 255).toInt()),
-    );
-
-    final closeButtonColors = WindowButtonColors(
-      iconNormal: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-      mouseOver: context.isDarkMode ? ChatifyColors.red : ChatifyColors.ascentRed,
-      mouseDown: ChatifyColors.ascentRed,
-    );
+    final isDark = context.isDarkMode;
+    final iconColor = isDark ? ChatifyColors.white : ChatifyColors.black;
+    final hoverColor = ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt());
+    final highlightColor = ChatifyColors.darkerGrey.withAlpha((0.6 * 255).toInt());
+    final closeHoverColor = isDark ? ChatifyColors.red : ChatifyColors.ascentRed;
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        CustomMinimizeButton(iconColor: buttonColors.iconNormal, hoverColor: buttonColors.mouseOver, highlightColor: buttonColors.mouseDown),
-        CustomMaximizeRestoreButton(isMaximizedNotifier: isMaximizedNotifier, iconColor: buttonColors.iconNormal, hoverColor: buttonColors.mouseOver, highlightColor: buttonColors.mouseDown),
-        CustomCloseButton(iconColor: closeButtonColors.iconNormal, hoverColor: closeButtonColors.mouseOver, highlightColor: closeButtonColors.mouseDown),
+        CustomMinimizeButton(iconColor: iconColor, hoverColor: hoverColor, highlightColor: highlightColor),
+        CustomMaximizeRestoreButton(isMaximizedNotifier: isMaximizedNotifier, iconColor: iconColor, hoverColor: hoverColor, highlightColor: highlightColor),
+        CustomCloseButton(iconColor: iconColor, hoverColor: closeHoverColor, highlightColor: ChatifyColors.ascentRed),
       ],
     );
   }

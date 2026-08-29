@@ -1,5 +1,6 @@
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:window_manager/window_manager.dart';
 import '../../../utils/constants/app_colors.dart';
 
@@ -45,7 +46,7 @@ class CustomCloseButtonState extends State<CustomCloseButton> {
 
     return ValueListenableBuilder<bool>(
       valueListenable: isHovered,
-      builder: (_, hovered, __) {
+      builder: (_, hovered, _) {
         return MouseRegion(
           onEnter: (_) => isHovered.value = true,
           onExit: (_) => isHovered.value = false,
@@ -59,10 +60,11 @@ class CustomCloseButtonState extends State<CustomCloseButton> {
               hoverColor: widget.hoverColor,
               child: Padding(
                 padding: const EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 10),
-                child: Icon(
-                  Ionicons.close_outline,
-                  size: 21,
-                  color: hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey),
+                child: SvgPicture.asset(
+                  ChatifyVectors.close,
+                  width: 21,
+                  height: 21,
+                  colorFilter: ColorFilter.mode(hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn),
                 ),
               ),
             ),

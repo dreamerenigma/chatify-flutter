@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -48,6 +47,8 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
   bool _isHoveredTheme = false;
   bool _isHoveredColor = false;
   bool _isHoveredFont = false;
+  bool isPressedReset = false;
+  bool _isHoveredReset = false;
   int selectedIndex = -1;
   int hoveredIndex = -1;
   String selectedOption = 'light';
@@ -318,18 +319,12 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                             children: [
                               Row(
                                 children: [
-                                  (selectedOption == 'dark')
-                                  ? Transform.rotate(
-                                    angle: 0.3,
-                                    child: Icon(Icons.brightness_2_outlined, size: 17, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                                  )
-                                  : Icon(
-                                    selectedOption == 'system' ? Ionicons.settings_outline
-                                      : selectedOption == 'light' ? Icons.wb_sunny_outlined
-                                      : Icons.wb_sunny_outlined,
-                                    size: 17,
-                                    color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                                  ),
+                                  if (selectedOption == 'dark')
+                                    Transform.rotate(angle: 0.3, child: Icon(Icons.brightness_2_outlined, size: 17, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black))
+                                  else if (selectedOption == 'system')
+                                    SvgPicture.asset(ChatifyVectors.settingsOutline, width: 17, height: 17, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))
+                                  else
+                                    Icon(Icons.wb_sunny_outlined, size: 17, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                                   const SizedBox(width: 10),
                                   Text(
                                     selectedOption == 'light' ? S.of(context).light : selectedOption == 'dark' ? S.of(context).dark : S.of(context).systemTheme,
@@ -340,7 +335,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                               AnimatedContainer(
                                 duration: const Duration(milliseconds: 50),
                                 transform: Matrix4.translationValues(0, (_isTappedTheme || isDropdownVisible) ? 2.0 : 0, 0),
-                                child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                                child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                               ),
                             ],
                           ),
@@ -407,7 +402,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                               AnimatedContainer(
                                 duration: const Duration(milliseconds: 50),
                                 transform: Matrix4.translationValues(0, (_isTappedColor || isColorAppDropdown) ? 2.0 : 0, 0),
-                                child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                                child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                               ),
                             ],
                           ),
@@ -423,21 +418,14 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                   child: GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5,
-                      crossAxisSpacing: 9,
-                      mainAxisSpacing: 9,
-                      childAspectRatio: 1,
-                    ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, crossAxisSpacing: 9, mainAxisSpacing: 9, childAspectRatio: 1),
                     itemCount: (context.isDarkMode ? ChatifyColors.containerColorsDark.length : ChatifyColors.containerColorsLight.length) + containerGradients.length,
                     itemBuilder: (context, index) {
                       final isSelected = selectedIndex == index;
                       final isHovered = hoveredIndex == index;
                       final totalSolidColors = context.isDarkMode ? ChatifyColors.containerColorsDark.length : ChatifyColors.containerColorsLight.length;
                       final isGradient = index >= totalSolidColors;
-                      final borderColor = isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value) : isHovered
-                        ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey
-                        : ChatifyColors.transparent;
+                      final borderColor = isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value) : isHovered ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey : ChatifyColors.transparent;
                       final backgroundColor = context.isDarkMode ? ChatifyColors.containerColorsDark : ChatifyColors.containerColorsLight;
 
                       return MouseRegion(
@@ -446,11 +434,8 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                             hoveredIndex = index;
                             if (isGradient) {
                               final gradient = containerGradients[index - totalSolidColors];
-                              final fadedGradient = LinearGradient(
-                                colors: gradient.colors.map((c) => c.withAlpha((0.5 * 255).toInt())).toList(),
-                                begin: gradient.begin,
-                                end: gradient.end,
-                              );
+                              final fadedGradient = LinearGradient(colors: gradient.colors.map((c) => c.withAlpha((0.5 * 255).toInt())).toList(), begin: gradient.begin, end: gradient.end);
+
                               overlayController.updateOverlayGradient(fadedGradient);
                             } else {
                               overlayController.updateOverlayColor(backgroundColor[index].withAlpha((0.5 * 255).toInt()));
@@ -464,11 +449,8 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                               final isSelectedGradient = selectedIndex >= totalSolidColors;
                               if (isSelectedGradient) {
                                 final gradient = containerGradients[selectedIndex - totalSolidColors];
-                                final fadedGradient = LinearGradient(
-                                  colors: gradient.colors.map((c) => c.withAlpha((0.5 * 255).toInt())).toList(),
-                                  begin: gradient.begin,
-                                  end: gradient.end,
-                                );
+                                final fadedGradient = LinearGradient(colors: gradient.colors.map((c) => c.withAlpha((0.5 * 255).toInt())).toList(), begin: gradient.begin, end: gradient.end);
+
                                 overlayController.updateOverlayGradient(fadedGradient);
                               } else {
                                 overlayController.updateOverlayColor(backgroundColor[selectedIndex].withAlpha((0.5 * 255).toInt()));
@@ -485,6 +467,7 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                               if (isGradient) {
                                 final gradient = containerGradients[index - totalSolidColors];
                                 final fadedGradient = LinearGradient(colors: gradient.colors.map((c) => c.withAlpha((0.5 * 255).toInt())).toList(), begin: gradient.begin, end: gradient.end);
+
                                 overlayController.updateOverlayGradient(fadedGradient);
                               } else {
                                 overlayController.updateOverlayColor(backgroundColor[index].withAlpha((0.5 * 255).toInt()));
@@ -541,23 +524,64 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                   child: SizedBox(
                     width: 125,
                     height: 35,
-                    child: ElevatedButton(
-                      key: ValueKey('resetButton_${DateTime.now().millisecondsSinceEpoch}'),
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: ChatifyColors.darkGrey,
-                        backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.softGrey,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey, width: 1),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      ).copyWith(
-                        shadowColor: WidgetStateProperty.all(ChatifyColors.transparent),
-                        mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
-                      ),
-                      child: Text(
-                        S.of(context).reset,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isPressedReset = !isPressedReset;
+                        });
+                      },
+                      onLongPress: () {
+                        setState(() {
+                          isPressedReset = true;
+                        });
+                      },
+                      onLongPressEnd: (_) {
+                        setState(() {
+                          isPressedReset = false;
+                        });
+                      },
+                      onLongPressUp: () {
+                        setState(() {
+                          isPressedReset = false;
+                        });
+                      },
+                      child: MouseRegion(
+                        onEnter: (_) {
+                          setState(() {
+                            _isHoveredReset = true;
+                          });
+                        },
+                        onExit: (_) {
+                          setState(() {
+                            _isHoveredReset = false;
+                          });
+                        },
+                        child: ElevatedButton(
+                          key: ValueKey('resetButton_${DateTime.now().millisecondsSinceEpoch}'),
+                          onPressed: () {
+                            setState(() {
+                              isPressedReset = !isPressedReset;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
+                            foregroundColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100),
+                            backgroundColor: isPressedReset ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100)) : _isHoveredReset
+                              ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
+                              : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey, width: 1),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ).copyWith(
+                            shadowColor: WidgetStateProperty.all(ChatifyColors.transparent),
+                            mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                          ),
+                          child: Text(
+                            S.of(context).reset,
+                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -611,15 +635,12 @@ class _PersonalizedOptionWidgetState extends State<PersonalizedOptionWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Obx(() {
-                                return Text(
-                                  fontsController.getFontDescription(context, FontsController.instance.selectedFont.value),
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
-                                );
+                                return Text(fontsController.getFontDescription(context, FontsController.instance.selectedFont.value), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontFamily: 'Roboto'));
                               }),
                               AnimatedContainer(
                                 duration: const Duration(milliseconds: 50),
                                 transform: Matrix4.translationValues(0, (_isTappedFont || isFontDropdown) ? 2.0 : 0, 0),
-                                child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                                child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                               ),
                             ],
                           ),

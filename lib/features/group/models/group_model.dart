@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../api/apis.dart';
 import '../../../utils/helper/date_util.dart';
-import '../../chat/widgets/chat_target.dart';
+import '../../../domain/entities/chat_target.dart';
 
 class GroupModel implements ChatTarget {
   late String groupId;

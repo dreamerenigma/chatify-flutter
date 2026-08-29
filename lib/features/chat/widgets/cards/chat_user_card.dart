@@ -134,7 +134,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 errorWidget: (context, url, error) => CircleAvatar(
                                   backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                                   foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                                  child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                                  child: SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn), width: 28, height: 28),
                                 ),
                               ),
                             ),
@@ -171,7 +171,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                SizedBox(width: 6),
+                                SizedBox(width: 16),
                                 if (message != null) ...[
                                   Text(
                                     DateUtil.getLastMessageTime(
@@ -188,7 +188,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                             message != null && message!.msg.isNotEmpty
                                 ? Row(
                               children: [
-                                if (message!.type == Type.gif) ...[
+                                if (message!.type == MessageType.gif) ...[
                                   HeroIcon(HeroIcons.gif, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
                                   const SizedBox(width: 4),
                                   Flexible(
@@ -199,7 +199,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                                     ),
                                   ),
-                                ] else if (message!.type == Type.image) ...[
+                                ] else if (message!.type == MessageType.image) ...[
                                   Icon(Icons.image, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                                   const SizedBox(width: 4),
                                   Flexible(
@@ -210,7 +210,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                                     ),
                                   ),
-                                ] else if (message!.type == Type.video) ...[
+                                ] else if (message!.type == MessageType.video) ...[
                                   Icon(Icons.videocam, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                                   const SizedBox(width: 4),
                                   Flexible(
@@ -224,7 +224,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       ),
                                     ),
                                   ),
-                                ] else if (message!.type == Type.audio) ...[
+                                ] else if (message!.type == MessageType.audio) ...[
                                   Icon(Icons.audiotrack, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                                   const SizedBox(width: 4),
                                   Flexible(
@@ -235,7 +235,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                                     ),
                                   ),
-                                ] else if (message!.type == Type.document) ...[
+                                ] else if (message!.type == MessageType.document) ...[
                                   Icon(FluentIcons.document_16_filled, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                                   const SizedBox(width: 4),
                                   Flexible(

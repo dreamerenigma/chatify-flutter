@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:iconoir_icons/iconoir_icons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -138,7 +137,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                   child: isRatioOneToOne
                     ? Padding(
                         padding: const EdgeInsets.all(12),
-                        child: SvgPicture.asset(ChatifyVectors.maximizeImage, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 18, height: 18),
+                        child: SvgPicture.asset(ChatifyVectors.maximizeImage, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn) , width: 18, height: 18),
                       )
                     : Padding(padding: const EdgeInsets.all(10), child: Icon(FluentIcons.ratio_one_to_one_20_regular, size: 22))),
               ),
@@ -197,7 +196,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                   splashColor: ChatifyColors.transparent,
                   highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                   hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                  child: Padding(padding: const EdgeInsets.all(11), child: Iconoir(IconoirIcons.emoji, size: 20)),
+                  child: Padding(padding: const EdgeInsets.all(11), child: SvgPicture.asset(ChatifyVectors.emoji, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 20, height: 20)),
                 ),
               ),
               CustomTooltip(

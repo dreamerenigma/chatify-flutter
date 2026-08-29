@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:iconoir_icons/iconoir_icons.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../dialogs/edit_message_dialog.dart';
 
 class EmojiHoverButton extends StatefulWidget {
@@ -24,11 +25,7 @@ class _EmojiHoverButtonState extends State<EmojiHoverButton> {
       color: ChatifyColors.transparent,
       child: InkWell(
         onTap: () {
-          setState(() {
-            isPressed = true;
-            isDialogVisible = true;
-          });
-
+          setState(() { isPressed = true; isDialogVisible = true; });
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
 
@@ -69,7 +66,7 @@ class _EmojiHoverButtonState extends State<EmojiHoverButton> {
             ),
             child: Row(
               children: [
-                Iconoir(IconoirIcons.emoji, size: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                SvgPicture.asset(ChatifyVectors.emoji, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 18, height: 18),
                 const SizedBox(width: 2),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),

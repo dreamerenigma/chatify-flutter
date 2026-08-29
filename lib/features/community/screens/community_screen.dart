@@ -37,6 +37,16 @@ class CommunityScreenState extends State<CommunityScreen> {
   DateTime? createdAt;
   bool _isLoading = true;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadCommunities();
+  }
+
+  bool isValidDate(DateTime date) {
+    return date.isAfter(DateTime(2000)) && date.isBefore(DateTime.now());
+  }
+
   void onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
@@ -59,50 +69,35 @@ class CommunityScreenState extends State<CommunityScreen> {
     }
   }
 
-  Future<void> fetchCommunities() async {
+  Future<void> _loadCommunities() async {
     try {
-      List<CommunityModel> communities = await APIs.getCommunity();
+      final communities = await APIs.getCommunity();
+
+      if (!mounted) return;
+
       setState(() {
         list = communities;
-        createdAt = list.isNotEmpty ? list[0].createdAt : null;
+        createdAt = communities.isNotEmpty ? communities.first.createdAt : null;
+        APIs.community = communities.isNotEmpty ? communities.first : null;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
+        list = [];
         createdAt = null;
+        APIs.community = null;
         _isLoading = false;
       });
     }
-  }
-
-  bool isValidDate(DateTime date) {
-    return date.isAfter(DateTime(2000)) && date.isBefore(DateTime.now());
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchCommunities();
-    initializeCommunity();
-  }
-
-  Future<void> initializeCommunity() async {
-    List<CommunityModel> communities = await APIs.getCommunity();
-    if (communities.isNotEmpty) {
-      APIs.community = communities.first;
-    } else {
-      APIs.community = null;
-    }
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context);
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-      );
+      return Center(child: CircularProgressIndicator(color: colorsController.getColor(colorsController.selectedColorScheme.value)));
     }
 
     return Scaffold(
@@ -147,10 +142,7 @@ class CommunityScreenState extends State<CommunityScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    S.of(context).communityExamples,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                  ),
+                  Text(S.of(context).communityExamples, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
                   const SizedBox(width: 5),
                   Icon(Icons.arrow_forward_ios_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 13),
                 ],

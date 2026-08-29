@@ -1,10 +1,9 @@
 import 'dart:math' as math;
 import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -124,23 +123,13 @@ class SearchTextInputState extends State<SearchTextInput> {
             color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: Offset(0, 4),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
           ),
           child: _buildSearchTextInput(),
         )
       : _buildSearchTextInput();
 
-    return GestureDetector(
-      onTap: _onTapOutside,
-      child: Padding(padding: widget.padding, child: tooltipWidget),
-    );
+    return GestureDetector(onTap: _onTapOutside, child: Padding(padding: widget.padding, child: tooltipWidget));
   }
 
   Widget _buildSearchTextInput() {
@@ -174,7 +163,7 @@ class SearchTextInputState extends State<SearchTextInput> {
                 ? Transform(
                     alignment: Alignment.center,
                     transform: Matrix4.rotationY(math.pi),
-                    child: Icon(Ionicons.search_outline, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, size: 14),
+                    child: SvgPicture.asset(ChatifyVectors.searchOutline, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, BlendMode.srcIn)),
                   )
                 : null,
               suffixIconConstraints: BoxConstraints(minWidth: 28, minHeight: 28),
@@ -200,55 +189,28 @@ class SearchTextInputState extends State<SearchTextInput> {
                               verticalOffset: -50,
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                               message: S.of(context).phoneNumber,
-                              textStyle: TextStyle(
-                                color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                                fontSize: ChatifySizes.fontSizeLm,
-                                fontWeight: FontWeight.w300,
-                              ),
+                              textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
                               decoration: BoxDecoration(
                                 color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.white,
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey,
-                                  width: 1,
-                                ),
+                                border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey, width: 1),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 6),
-                                child: Icon(Icons.dialpad_rounded, size: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground),
-                              ),
+                              child: Padding(padding: const EdgeInsets.only(right: 6), child: Icon(Icons.dialpad_rounded, size: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground)),
                             ),
                           if (widget.showAdditionalSuffixIcon && _isPhoneValid(_controller.text))
-                            Padding(
-                              padding: const EdgeInsets.only(left: 6, right: 4),
-                              child: Icon(PhosphorIcons.check_circle_fill, size: 20, color: ChatifyColors.green),
-                            ),
+                            Padding(padding: const EdgeInsets.only(left: 6, right: 4), child: SvgPicture.asset(ChatifyVectors.checkCircleFilled, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.green, BlendMode.srcIn))),
                           if (!widget.hideClearIcon && _controller.text.isNotEmpty && _isFocused)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 4),
-                              child: Icon(Icons.close, size: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground),
-                            ),
+                            Padding(padding: const EdgeInsets.only(right: 4), child: Icon(Icons.close, size: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground)),
                         ],
                       ),
                     ),
                   )
                 : null,
               hintText: widget.hintText,
-              hintStyle: TextStyle(
-                color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.steelGrey,
-                fontSize: ChatifySizes.fontSizeSm,
-                fontWeight: FontWeight.w200,
-                overflow: TextOverflow.ellipsis,
-              ),
+              hintStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200, overflow: TextOverflow.ellipsis),
               border: InputBorder.none,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: widget.underlineBorderColor ?? widget.enabledBorderColor ?? (context.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.grey), width: 0.5),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2),
-                borderRadius: BorderRadius.circular(4),
-              ),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: widget.underlineBorderColor ?? widget.enabledBorderColor ?? (context.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.grey), width: 0.5), borderRadius: BorderRadius.circular(4)),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2), borderRadius: BorderRadius.circular(4)),
               contentPadding: widget.showPrefixIcon ? EdgeInsets.only(right: 12) : EdgeInsets.only(left: 12, right: 4, bottom: 18),
             ),
             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto', height: 1.3),
@@ -258,10 +220,7 @@ class SearchTextInputState extends State<SearchTextInput> {
     );
 
     if (widget.wrapInScrollView) {
-      inputField = ScrollConfiguration(
-        behavior: NoGlowScrollBehavior(),
-        child: SingleChildScrollView(child: inputField),
-      );
+      inputField = ScrollConfiguration(behavior: NoGlowScrollBehavior(), child: SingleChildScrollView(child: inputField));
     }
 
     return inputField;

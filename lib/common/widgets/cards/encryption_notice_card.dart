@@ -5,18 +5,14 @@ import '../../../utils/constants/app_colors.dart';
 class EncryptionNoticeCard extends StatefulWidget {
   final String message;
   final VoidCallback? onTap;
-  final IconData icon;
-  final double iconSize;
-  final Color? iconColor;
+  final Widget icon;
   final double? maxWidth;
 
   const EncryptionNoticeCard({
     super.key,
     required this.message,
     this.onTap,
-    this.icon = Icons.lock_outline_rounded,
-    this.iconSize = 11,
-    this.iconColor,
+    this.icon = const Icon(Icons.lock_outline_rounded, size: 11),
     this.maxWidth,
   });
 
@@ -84,14 +80,7 @@ class _EncryptionNoticeCardState extends State<EncryptionNoticeCard> {
                             children: [
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 4),
-                                  child: Icon(
-                                    widget.icon,
-                                    color: widget.iconColor ?? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                                    size: widget.iconSize,
-                                  ),
-                                ),
+                                child: Padding(padding: const EdgeInsets.only(right: 4), child: widget.icon),
                               ),
                               TextSpan(text: widget.message, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w300, height: 1.2)),
                             ],

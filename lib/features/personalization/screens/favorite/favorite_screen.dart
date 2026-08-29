@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:jam_icons/jam_icons.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -33,7 +32,13 @@ class FavoriteScreenState extends State<FavoriteScreen> {
         titleSpacing: 0,
         title: Text(_isEditing ? S.of(context).editFavorites : S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         actions: [
-          IconButton(icon: Icon(_isEditing ? Icons.check : JamIcons.pencil), onPressed: _toggleEdit),
+          IconButton(
+            icon: _isEditing
+              ? const Icon(Icons.check)
+              : SvgPicture.asset(ChatifyVectors.pencilOutline, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
+            ),
+            onPressed: _toggleEdit,
+          ),
           IconButton(icon: Icon(Icons.person_add_alt_outlined), onPressed: () {}),
         ],
       ),

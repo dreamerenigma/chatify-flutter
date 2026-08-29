@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -179,7 +178,7 @@ class SeasonsController extends GetxController {
                     iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
                   ),
                   CustomRadioListTile(
-                    icon: Ionicons.leaf,
+                    icon: ChatifyVectors.leaf,
                     title: const Text('Осень'),
                     value: 'autumn',
                     groupValue: selectedSeason.value,

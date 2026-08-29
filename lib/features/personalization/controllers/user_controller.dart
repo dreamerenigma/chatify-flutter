@@ -31,8 +31,14 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    log('UserController onInit called');
-    _loadUserData();
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user != null) {
+        log("[DEBUG] Firebase user is available: ${user.uid}");
+        _loadUserData();
+      } else {
+        log("[DEBUG] No user signed in yet");
+      }
+    });
   }
 
   Future<void> _loadUserData() async {
@@ -45,10 +51,11 @@ class UserController extends GetxController {
 
     try {
       final snapshot = await _firestore.collection('Users').doc(firebaseUser.uid).get();
+      log("Firestore snapshot: $snapshot");
 
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        log("Data fetched from Firestore: $data");
+        log("[DEBUG] Data fetched from Firestore: $data");
 
         user.value = UserModel(
           id: snapshot.id,
@@ -64,26 +71,30 @@ class UserController extends GetxController {
           pushToken: data['push_token'] ?? '',
           email: data['email'] ?? '',
           isTyping: data['is_typing'] ?? false,
-          role: data['is_typing'] ?? 'User',
+          role: data['role'] ?? 'User',
         );
+
+        log('[DEBUG] User data set: ${user.value.name}');
 
         isDataLoaded.value = true;
 
         Get.lazyPut(() => TextEditingController(text: user.value.name));
+      } else {
+        log("[DEBUG] No data in Firestore");
       }
     } catch (e) {
       log("Error loading user data from Firestore: $e");
     }
   }
 
-  void updateUser(UserModel newUser) {
+  Future<void> updateUser(UserModel newUser) async {
     final oldUser = user.value;
-    user.value = newUser;
-    _saveUserDataToFirestore(newUser, oldUser);
+    final updatedUser = await _saveUserDataToFirestore(newUser, oldUser);
+    user.value = updatedUser;
     update();
   }
 
-  Future<void> _saveUserDataToFirestore(UserModel newUser, UserModel oldUser) async {
+  Future<UserModel> _saveUserDataToFirestore(UserModel newUser, UserModel oldUser) async {
     try {
       if (newUser.id.isEmpty) {
         final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -92,7 +103,7 @@ class UserController extends GetxController {
           log("User ID был пустой. Присвоили из FirebaseAuth: '${newUser.id}'");
         } else {
           log("Ошибка: не удалось присвоить ID — FirebaseUser = null");
-          return;
+          return oldUser;
         }
       }
 
@@ -127,8 +138,10 @@ class UserController extends GetxController {
         log("No fields to update");
       }
 
+      return newUser;
     } catch (e) {
       log("Error saving user data to Firestore: $e");
+      return oldUser;
     }
   }
 

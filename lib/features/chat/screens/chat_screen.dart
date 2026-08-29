@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chatify/features/chat/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -34,39 +35,44 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
-  List<MessageModel> list = [];
-  List<MessageModel> messages = [];
-  late final MessageModel message;
   final TextEditingController textController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
-  Set<int> selectedMessages = <int>{};
+  late final AnimationController animationController;
+  late final Animation<double> opacityAnimation;
+  late final Stream<QuerySnapshot<Map<String, dynamic>>> messagesStream;
   bool isSelecting = false;
   bool isToolbarVisible = true;
   bool isIconVisible = false;
   bool showEmoji = false;
   bool isUploading = false;
-  late final AnimationController animationController;
-  late final Animation<double> opacityAnimation;
+  List<MessageModel> list = [];
+  List<MessageModel> messages = [];
+  Set<int> selectedMessages = <int>{};
 
   @override
   void initState() {
     super.initState();
-    // scrollController.addListener(onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        inputFocusNode.requestFocus();
-
-        await Future.delayed(const Duration(milliseconds: 100));
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-      }
-    });
+    messagesStream = APIs.getAllMessages(widget.user);
+    scrollController.addListener(onScroll);
     animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(animationController);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
+      inputFocusNode.requestFocus();
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      if (!mounted) return;
+
+      await SystemChannels.textInput.invokeMethod('TextInput.hide');
+    });
   }
 
   @override
   void dispose() {
+    scrollController.removeListener(onScroll);
     textController.dispose();
     inputFocusNode.dispose();
     scrollController.dispose();
@@ -75,11 +81,26 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   }
 
   void scrollToBottom() {
-    scrollController.animateTo(
-      scrollController.position.minScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    if (!scrollController.hasClients) return;
+    scrollController.animateTo(scrollController.position.minScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+  }
+
+  void onScroll() {
+    if (!mounted || !scrollController.hasClients) return;
+
+    final shouldShowButton = scrollController.offset > 100;
+
+    if (shouldShowButton == isIconVisible) return;
+
+    setState(() {
+      isIconVisible = shouldShowButton;
+    });
+
+    if (shouldShowButton) {
+      animationController.forward();
+    } else {
+      animationController.reverse();
+    }
   }
 
   void _toggleMessageSelection(int index) {
@@ -112,15 +133,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   }
 
   void _handleUpdateMessage(MessageModel message) {
-    ShowMessageUpdateDialog.showMessageUpdateDialog(
-        context,
-        message,
-            () {
-          setState(() {
-            _clearSelection();
-          });
-        }
-    );
+    ShowMessageUpdateDialog.showMessageUpdateDialog(context, message, () => setState(() => _clearSelection()));
   }
 
   void _handleDeleteSelectedMessages() {
@@ -161,14 +174,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
           children: [
             Container(
               decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
               ),
               child: AppBar(
                 automaticallyImplyLeading: false,
@@ -210,9 +216,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                       ? wallpaperProvider.backgroundImage
                       : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
 
-                    return Container(
-                      decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)),
-                    );
+                    return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
                   },
                 ),
                 Column(
@@ -221,39 +225,43 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                       child: Stack(
                         children: [
                           StreamBuilder(
-                            stream: APIs.getAllMessages(widget.user),
+                            stream: messagesStream,
                             builder: (context, snapshot) {
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                case ConnectionState.none: return const SizedBox();
-                                case ConnectionState.active:
-                                case ConnectionState.done:
-                                  final data = snapshot.data?.docs;
-                                  list = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
-                                  if (list.isNotEmpty) {
-                                    return ListView.builder(
-                                      controller: scrollController,
-                                      reverse: true,
-                                      itemCount: list.length,
-                                      padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
-                                      physics: const ClampingScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        return MessageCard(
-                                          message: list[index],
-                                          isSelected: selectedMessages.contains(index),
-                                          onLongPress: () {
-                                            _startSelection();
-                                            _toggleMessageSelection(index);
-                                          },
-                                          onTap: () => _toggleMessageSelection(index),
-                                          messages: [],
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
-                                  }
+                              if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
+                                return const SizedBox();
                               }
+
+                              final data = snapshot.data?.docs;
+                              final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+
+                              list = newList;
+
+                              if (list.isEmpty) {
+                                return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
+                              }
+
+                              return ListView.builder(
+                                controller: scrollController,
+                                reverse: true,
+                                itemCount: list.length,
+                                padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
+                                physics: const ClampingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final message = list[index];
+
+                                  return MessageCard(
+                                    key: ValueKey(message.sent),
+                                    message: message,
+                                    isSelected: selectedMessages.contains(index),
+                                    onLongPress: () {
+                                      _startSelection();
+                                      _toggleMessageSelection(index);
+                                    },
+                                    onTap: () => _toggleMessageSelection(index),
+                                    messages: list,
+                                  );
+                                },
+                              );
                             },
                           ),
                           if (isSelecting && selectedMessages.isNotEmpty)
@@ -292,23 +300,22 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                 Positioned(
                   bottom: 65,
                   right: 10,
-                  child: FadeTransition(
-                    opacity: opacityAnimation,
-                    child: isIconVisible
-                      ? SizedBox(
+                  child: IgnorePointer(
+                    ignoring: !isIconVisible,
+                    child: FadeTransition(
+                      opacity: opacityAnimation,
+                      child: SizedBox(
                         width: 30,
                         height: 30,
                         child: FloatingActionButton(
-                          onPressed: () {
-                            scrollToBottom();
-                          },
+                          onPressed: scrollToBottom,
                           backgroundColor: ChatifyColors.blackGrey,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           mini: true,
                           child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
                         ),
-                      )
-                    : const SizedBox.shrink(),
+                      ),
+                    ),
                   ),
                 ),
               ],

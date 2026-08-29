@@ -53,6 +53,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
   void validateAndProceed() async {
     final String countryCode = countryCodeController.text.trim();
     final String phoneNumber = phoneNumberController.text.trim();
+    final normalizedPhoneNumber = '+$countryCode${phoneNumber.replaceAll(RegExp(r'\D'), '')}';
 
     if (countryCode.isEmpty || countryCode.length > 3) {
       showCorrectTextFieldDialog(context, S.of(context).invalidCountryCodeLength);
@@ -64,7 +65,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
       return;
     }
 
-    showVerifyNumberAlertDialog(context, '+$countryCode $phoneNumber', userController.currentUser);
+    showVerifyNumberAlertDialog(context, normalizedPhoneNumber, userController.currentUser);
   }
 
   @override

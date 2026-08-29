@@ -78,17 +78,13 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
                 if (!isMobile) ...[
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: VerticalDivider(
-                      color: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
-                      thickness: 1,
-                      width: 1,
-                    ),
+                    child: VerticalDivider(color: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, thickness: 1, width: 1),
                   ),
                 ],
                 _buildIcon(
                   context,
                   message: S.of(context).audioCall,
-                  icon: SvgPicture.asset(ChatifyVectors.calls, width: 22, height: 22, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  icon: SvgPicture.asset(ChatifyVectors.calls, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 22, height: 22),
                   onTap: () async {
                     if (await DeviceUtils.hasInternetConnection()) {
                       widget.onAudioCall?.call();
@@ -104,33 +100,36 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
         ],
         if (isMobile) ...[
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              InkWell(
-                onTap: widget.onVideoCall,
-                mouseCursor: SystemMouseCursors.basic,
-                borderRadius: BorderRadius.circular(30),
-                splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
-                highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: HeroIcon(HeroIcons.videoCamera, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: InkWell(
+                  onTap: widget.onVideoCall,
+                  mouseCursor: SystemMouseCursors.basic,
+                  borderRadius: BorderRadius.circular(30),
+                  splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
+                  highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: HeroIcon(HeroIcons.videoCamera, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  ),
                 ),
               ),
-              SizedBox(width: 6),
-              InkWell(
-                onTap: widget.onAudioCall,
-                mouseCursor: SystemMouseCursors.basic,
-                borderRadius: BorderRadius.circular(30),
-                splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
-                highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: SvgPicture.asset(
-                    ChatifyVectors.calls,
-                    width: 24,
-                    height: 24,
-                    color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+              SizedBox(width: 4),
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: InkWell(
+                  onTap: widget.onAudioCall,
+                  mouseCursor: SystemMouseCursors.basic,
+                  borderRadius: BorderRadius.circular(30),
+                  splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
+                  highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(ChatifyVectors.calls, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                   ),
                 ),
               ),
@@ -139,24 +138,29 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
         ],
         if (Platform.isWindows) const SizedBox(width: 5),
         if (!Platform.isWindows)
-          PopupMenuButton<int>(
-            tooltip: S.of(context).more,
-            padding: EdgeInsets.zero,
-            position: PopupMenuPosition.under,
-            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-            icon: const Icon(Icons.more_vert, size: 26),
-            onSelected: widget.onPopupItemSelected,
-            itemBuilder: (context) => [
-              _popupItem(context, 1, S.of(context).groupData),
-              _popupItem(context, 2, S.of(context).mediaGroups),
-              _popupItem(context, 3, S.of(context).search),
-              _popupItem(context, 4, S.of(context).noSound),
-              _popupItem(context, 5, S.of(context).disappearingMessages),
-              _popupItem(context, 6, S.of(context).wallpaper),
-              _popupItem(context, 7, S.of(context).addToList),
-              _popupItem(context, 8, S.of(context).more),
-            ],
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          SizedBox(
+            width: 44,
+            height: 44,
+            child: PopupMenuButton<int>(
+              tooltip: S.of(context).more,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              position: PopupMenuPosition.under,
+              color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+              icon: const Icon(Icons.more_vert, size: 24),
+              onSelected: widget.onPopupItemSelected,
+              itemBuilder: (context) => [
+                _popupItem(context, 1, S.of(context).groupData),
+                _popupItem(context, 2, S.of(context).mediaGroups),
+                _popupItem(context, 3, S.of(context).search),
+                _popupItem(context, 4, S.of(context).noSound),
+                _popupItem(context, 5, S.of(context).disappearingMessages),
+                _popupItem(context, 6, S.of(context).wallpaper),
+                _popupItem(context, 7, S.of(context).addToList),
+                _popupItem(context, 8, S.of(context).more),
+              ],
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            ),
           ),
         if (Platform.isWindows)
         CustomSearchButton(
@@ -172,10 +176,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
   PopupMenuItem<int> _popupItem(BuildContext context, int value, String title) {
     return PopupMenuItem<int>(
       value: value,
-      child: Text(
-        title,
-        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-      ),
+      child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
     );
   }
 

@@ -1,10 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/helper/date_util.dart';
 import '../../../../utils/platforms/platform_utils.dart';
@@ -65,12 +65,8 @@ class _MessageCardState extends State<MessageCard> {
             position: tapPosition,
             width: 190,
             items: [
-              MenuItem(icon: FluentIcons.delete_16_regular, text: S.of(context).deleteFromMe, onTap: () {
-
-              }),
-              MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).choose, onTap: () {
-
-              }),
+              MenuItem(icon: FluentIcons.delete_16_regular, text: S.of(context).deleteFromMe, onTap: () {}),
+              MenuItem(svgPath: ChatifyVectors.checkboxOutline, text: S.of(context).choose, onTap: () {}),
             ],
           );
         },
@@ -91,14 +87,7 @@ class _MessageCardState extends State<MessageCard> {
                     color: backgroundColor,
                     border: Border.all(color: borderColor),
                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 2,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 2))],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -109,10 +98,7 @@ class _MessageCardState extends State<MessageCard> {
                       Text(S.of(context).messageHasBeenRemoved, style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()))),
                       Text(
                         deletedTime != null ? DateUtil.getFormattedTimeFromDateTime(context: context, time: deletedTime) : '',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: context.isDarkMode ? ChatifyColors.buttonDisabled.withAlpha((0.7 * 255).toInt()) : ChatifyColors.darkGrey.withAlpha((0.7 * 255).toInt()),
-                        ),
+                        style: TextStyle(fontSize: 10, color: context.isDarkMode ? ChatifyColors.buttonDisabled.withAlpha((0.7 * 255).toInt()) : ChatifyColors.darkGrey.withAlpha((0.7 * 255).toInt())),
                       ),
                     ],
                   ),
@@ -145,9 +131,9 @@ class _MessageCardState extends State<MessageCard> {
           position: position,
           width: 230,
           items: [
-            MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+            MenuItem(svgPath: ChatifyVectors.checkboxOutline, text: S.of(context).selectMessages, onTap: () {}),
             MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
-            MenuItem(icon: Ionicons.close_outline, text: S.of(context).closeChat, onTap: () {}),
+            MenuItem(svgPath: ChatifyVectors.close, text: S.of(context).closeChat, onTap: () {}),
           ],
         );
       },
@@ -166,15 +152,8 @@ class _MessageCardState extends State<MessageCard> {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
                     child: isMe
-                      ? RecipientMessage(
-                          message: widget.message,
-                          messages: widget.messages,
-                          hasReaction: hasReaction,
-                        )
-                      : SenderMessage(
-                        message: widget.message,
-                        messages: widget.messages,
-                        hasReaction: hasReaction,
+                      ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
+                      : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction,
                     ),
                   ),
                 ),

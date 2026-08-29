@@ -1,6 +1,7 @@
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -42,7 +43,7 @@ void showShareLinkBottomSheetDialog(BuildContext context) {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(PhosphorIcons.arrow_bend_double_up_right_bold, color: ChatifyColors.darkGrey),
+                      icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                       onPressed: () {},
                     ),
                     const SizedBox(width: 20),

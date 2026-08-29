@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';
@@ -10,6 +9,7 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../utils/widgets/icons/custom_icon.dart';
 import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import '../widgets/dialogs/sticker_bottom_dialog.dart';
 import '../widgets/dialogs/update_status_bottom_dialog.dart';
@@ -76,12 +76,7 @@ class EnterStatusScreenState extends State<EnterStatusScreen> with WidgetsBindin
   void _changeBackgroundColor() {
     final random = Random();
     setState(() {
-      backgroundColor = Color.fromARGB(
-        255,
-        random.nextInt(256),
-        random.nextInt(256),
-        random.nextInt(256),
-      );
+      backgroundColor = Color.fromARGB(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
     });
   }
 
@@ -131,7 +126,7 @@ class EnterStatusScreenState extends State<EnterStatusScreen> with WidgetsBindin
           Positioned(
             top: 40,
             left: 16,
-            child: _buildIcon(Icons.close, ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), 25, _showDeleteConfirmationDialog),
+            child: _buildIcon(icon: Icons.close, color: ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), iconSize: 25, onPressed: _showDeleteConfirmationDialog),
           ),
           Positioned(
             top: 40,
@@ -139,13 +134,13 @@ class EnterStatusScreenState extends State<EnterStatusScreen> with WidgetsBindin
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildIcon(PhosphorIcons.sticker, ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), 25, _toggleStickerDialog),
+                _buildIcon(icon: ChatifyVectors.sticker, color: ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), iconSize: 25, onPressed: _toggleStickerDialog),
                 const SizedBox(width: 8),
-                _buildIcon(Remix.text, ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), 27, _changeFontAndIcon),
+                _buildIcon(icon: Remix.text, color: ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), iconSize: 27, onPressed: _changeFontAndIcon),
                 const SizedBox(width: 8),
-                _buildIcon(Icons.palette_outlined, ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), 25, _changeBackgroundColor),
+                _buildIcon(icon: Icons.palette_outlined, color: ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), iconSize: 25, onPressed: _changeBackgroundColor),
                 const SizedBox(width: 8),
-                _buildIcon(FluentIcons.edit_16_regular, ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), 25, () {}),
+                _buildIcon(icon: FluentIcons.edit_16_regular, color: ChatifyColors.darkerGrey.withAlpha((0.7 * 255).toInt()), iconSize: 25, onPressed: () {}),
               ],
             ),
           ),
@@ -216,10 +211,7 @@ class EnterStatusScreenState extends State<EnterStatusScreen> with WidgetsBindin
               padding: const EdgeInsets.only(right: 12),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: isSelected ? context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey : ChatifyColors.transparent,
-                  borderRadius: BorderRadius.circular(25),
-                ),
+                decoration: BoxDecoration(color: isSelected ? context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey : ChatifyColors.transparent, borderRadius: BorderRadius.circular(25)),
                 child: Text(item, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
               ),
             );
@@ -245,7 +237,7 @@ class EnterStatusScreenState extends State<EnterStatusScreen> with WidgetsBindin
                 decoration: BoxDecoration(color: ChatifyColors.darkSlate, borderRadius: BorderRadius.circular(20)),
                 child: Row(
                   children: [
-                    SvgPicture.asset(ChatifyVectors.status, color: ChatifyColors.white, width: 16),
+                    SvgPicture.asset(ChatifyVectors.status, width: 16, height: 16, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                     const SizedBox(width: 8),
                     Text(S.of(context).statusContacts, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
                   ],
@@ -270,13 +262,11 @@ class EnterStatusScreenState extends State<EnterStatusScreen> with WidgetsBindin
     );
   }
 
-  Widget _buildIcon(IconData icon, Color color, double iconSize, VoidCallback onPressed) {
+  Widget _buildIcon({required dynamic icon, required Color color, required double iconSize, required VoidCallback onPressed}) {
     return CircleAvatar(
       backgroundColor: color,
       radius: 22,
-      child: Center(
-        child: IconButton(icon: Icon(icon, color: ChatifyColors.white, size: iconSize), onPressed: onPressed),
-      ),
+      child: Center(child: IconButton(icon: CustomIcon(icon: icon, color: ChatifyColors.white, size: iconSize), onPressed: onPressed)),
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:chatify/utils/constants/app_sizes.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../confirmation_dialog.dart';
@@ -27,7 +28,7 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
           const SizedBox(height: 10),
           Row(
             children: [
-              Icon(PhosphorIcons.devices(), size: 20),
+              SvgPicture.asset(ChatifyVectors.devices, width: 20, height: 20),
               const SizedBox(width: 10),
               Text(S.of(context).syncedWithPhone, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
             ],

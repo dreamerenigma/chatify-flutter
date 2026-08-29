@@ -75,7 +75,7 @@ class SenderMessageState extends State<SenderMessage> {
   }
 
   Widget _buildMessageContent() {
-    return widget.message.type == Type.text ? _buildTextMessage() : _buildMediaMessage();
+    return widget.message.type == MessageType.text ? _buildTextMessage() : _buildMediaMessage();
   }
 
   Widget _buildTextMessage() {
@@ -125,12 +125,8 @@ class SenderMessageState extends State<SenderMessage> {
           children: [
             Container(
               key: _containerKey,
-              padding: isWebOrWindows
-                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .012, vertical: DeviceUtils.getScreenWidth(context) * .005)
-                : EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 3),
-              margin: isWebOrWindows
-                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .005)
-                : EdgeInsets.only(left: 16, right: 16, top: 5, bottom: widget.hasReaction ? 12 : 5),
+              padding: isWebOrWindows ? EdgeInsets.symmetric(horizontal: 12, vertical: 4) : EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 3),
+              margin: isWebOrWindows ? EdgeInsets.symmetric(horizontal: 16, vertical: 10) : EdgeInsets.only(left: 16, right: 16, top: 5, bottom: widget.hasReaction ? 12 : 5),
               decoration: BoxDecoration(
                 color: isPressed
                   ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey)
@@ -225,8 +221,8 @@ class SenderMessageState extends State<SenderMessage> {
               ),
             ),
             Positioned(
-              top: isWebOrWindows ? 3 : 5,
-              left: isWebOrWindows ? 13 : 7,
+              top: isWebOrWindows ? 10 : 5,
+              left: 7,
               child: Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.identity()..scale(-1.0, 1.0),
@@ -239,7 +235,7 @@ class SenderMessageState extends State<SenderMessage> {
                 ),
               ),
             ),
-            if (widget.message.type == Type.emoji)
+            if (widget.message.type == MessageType.emoji)
             Positioned(
               left: 0,
               top: 0,
@@ -301,14 +297,14 @@ class SenderMessageState extends State<SenderMessage> {
   }
 
   Widget _buildMediaMessage() {
-    final isVideo = widget.message.type == Type.video;
+    final isVideo = widget.message.type == MessageType.video;
 
     final double bottomOffset;
     switch (widget.message.type) {
-      case Type.video:
+      case MessageType.video:
         bottomOffset = 1;
         break;
-      case Type.audio:
+      case MessageType.audio:
         bottomOffset = -3;
         break;
       default:
@@ -372,7 +368,7 @@ class SenderMessageState extends State<SenderMessage> {
                         isDownloading = false;
                       });
                     },
-                    imageUrls: widget.messages.where((m) => m.type == Type.image).map((m) => m.msg.trim()).toList(),
+                    imageUrls: widget.messages.where((m) => m.type == MessageType.image).map((m) => m.msg.trim()).toList(),
                   ),
                   Positioned(
                     bottom: bottomOffset,

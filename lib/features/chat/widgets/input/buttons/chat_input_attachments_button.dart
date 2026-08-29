@@ -2,17 +2,18 @@ import 'dart:io';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../routes/custom_page_route.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../../status/widgets/images/camera_screen.dart';
 import '../../../screens/contact_seeding_screen.dart';
 import '../../../screens/create_survey_screen.dart';
-import '../../chat_target.dart';
+import '../../../../../domain/entities/chat_target.dart';
 import '../../dialogs/add_geolocation_dialog.dart';
 import 'circle_split_painter.dart';
 
@@ -59,14 +60,7 @@ class ChatInputAttachments extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha((0.1 * 255).toInt()),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1))],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -76,26 +70,25 @@ class ChatInputAttachments extends StatelessWidget {
                           children: [
                             _buildIconButton(
                               context,
-                              icon: BootstrapIcons.file_earmark,
+                              icon: Icon(BootstrapIcons.file_earmark, color: ChatifyColors.white, size: 30),
                               color1: ChatifyColors.violetDark,
                               color2: ChatifyColors.violet,
                               label: S.of(context).documents,
                               onTap: () async {
-                                final result = await FilePicker.platform.pickFiles(
-                                  type: FileType.custom,
-                                  allowedExtensions: [
-                                    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'apk', 'zip', 'rar'
-                                  ],
-                                  allowMultiple: true,
-                                );
-                                if (result != null && result.files.isNotEmpty) {
+                                final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'apk', 'zip', 'rar']);
+                                if (result.isNotEmpty) {
                                   setUploading(true);
-                                  for (var file in result.files) {
+
+                                  for (var file in result) {
+                                    if (file.path == null) continue;
+
                                     final documentFile = File(file.path!);
                                     await chatTarget.sendDocument(documentFile);
                                   }
+
                                   setUploading(false);
                                 }
+
                                 Navigator.pop(context);
                               },
                             ),
@@ -103,7 +96,7 @@ class ChatInputAttachments extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 8),
                               child: _buildIconButton(
                                 context,
-                                icon: Icons.videocam,
+                                icon: Icon(Icons.videocam, color: ChatifyColors.white, size: 30),
                                 color1: ChatifyColors.pinkDark,
                                 color2: ChatifyColors.pink,
                                 label: S.of(context).camera,
@@ -114,17 +107,15 @@ class ChatInputAttachments extends StatelessWidget {
                             ),
                             _buildIconButton(
                               context,
-                              icon: Icons.image,
+                              icon: Icon(Icons.image, color: ChatifyColors.white, size: 30),
                               color1: ChatifyColors.purpleDark,
                               color2: ChatifyColors.purple,
                               label: S.of(context).gallery,
                               onTap: () async {
-                                final result = await FilePicker.platform.pickFiles(
-                                  type: FileType.custom,
-                                  allowedExtensions: ['gif', 'jpg', 'jpeg', 'png'],
-                                );
-                                if (result != null && result.files.isNotEmpty) {
-                                  for (var file in result.files) {
+                                final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['gif', 'jpg', 'jpeg', 'png']);
+
+                                if (result.isNotEmpty) {
+                                  for (var file in result) {
                                     final filePath = file.path!;
                                     if (file.extension == 'gif') {
                                       await sendGif(File(filePath));
@@ -148,23 +139,19 @@ class ChatInputAttachments extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 20),
                               child: _buildIconButton(
                                 context,
-                                icon: Icons.headphones,
+                                icon: Icon(Icons.headphones, color: ChatifyColors.white, size: 30),
                                 color1: ChatifyColors.orangeDark,
                                 color2: ChatifyColors.orange,
                                 label: S.of(context).audio,
                                 onTap: () async {
-                                  final result = await FilePicker.platform.pickFiles(
-                                    type: FileType.custom,
-                                    allowedExtensions: [
-                                      'mp3', 'aac', 'wav', 'm4a', 'ogg', 'flac', 'wma'
-                                    ],
-                                    allowMultiple: true,
-                                  );
-                                  if (result != null && result.files.isNotEmpty) {
+                                  final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'aac', 'wav', 'm4a', 'ogg', 'flac', 'wma']);
+
+                                  if (result.isNotEmpty) {
                                     setUploading(true);
-                                    for (var file in result.files) {
+                                    for (var file in result) {
                                       final documentFile = File(file.path!);
                                       final originalFileName = file.name;
+
                                       await chatTarget.sendAudio(documentFile, originalFileName);
                                     }
                                     setUploading(false);
@@ -177,7 +164,7 @@ class ChatInputAttachments extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 8),
                               child: _buildIconButton(
                                 context,
-                                icon: Icons.location_on,
+                                icon: Icon(Icons.location_on, color: ChatifyColors.white, size: 30),
                                 color1: ChatifyColors.greenDark,
                                 color2: ChatifyColors.green,
                                 label: S.of(context).location,
@@ -191,16 +178,13 @@ class ChatInputAttachments extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 8),
                               child: _buildIconButton(
                                 context,
-                                icon: Icons.person,
+                                icon: Icon(Icons.person, color: ChatifyColors.white, size: 30),
                                 color1: ChatifyColors.lightBlueDark,
                                 color2: ChatifyColors.lightBlue,
                                 label: S.of(context).contact,
                                 onTap: () {
                                   Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    createPageRoute(const ContactsSendingScreen(selectedUsers: [])),
-                                  );
+                                  Navigator.push(context, createPageRoute(const ContactsSendingScreen(selectedUsers: [])));
                                 },
                               ),
                             ),
@@ -214,16 +198,13 @@ class ChatInputAttachments extends StatelessWidget {
                             children: [
                               _buildIconButton(
                                 context,
-                                icon: LucideIcons.text,
+                                icon: SvgPicture.asset(ChatifyVectors.list, width: 30, height: 30, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                                 color1: ChatifyColors.blueGreenDark,
                                 color2: ChatifyColors.blueGreen,
                                 label: S.of(context).survey,
                                 onTap: () {
                                   Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    createPageRoute(const CreateSurveyScreen()),
-                                  );
+                                  Navigator.push(context, createPageRoute(const CreateSurveyScreen()));
                                 },
                               ),
                             ],
@@ -242,13 +223,7 @@ class ChatInputAttachments extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(BuildContext context, {
-    required IconData icon,
-    required Color color1,
-    required Color color2,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildIconButton(BuildContext context, {required Widget icon, required Color color1, required Color color2, required String label, required VoidCallback onTap}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -256,13 +231,7 @@ class ChatInputAttachments extends StatelessWidget {
           onTap: onTap,
           child: CustomPaint(
             painter: CircleSplitPainter(color1: color1, color2: color2),
-            child: SizedBox(
-              width: 60,
-              height: 60,
-              child: Center(
-                child: Icon(icon, color: ChatifyColors.white, size: 30),
-              ),
-            ),
+            child: SizedBox(width: 60, height: 60, child: Center(child: icon)),
           ),
         ),
         const SizedBox(height: 8),

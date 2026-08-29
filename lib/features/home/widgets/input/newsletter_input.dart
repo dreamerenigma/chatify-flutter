@@ -84,9 +84,9 @@ class NewsletterInputState extends State<NewsletterInput> {
   void sendMessage() {
     if (textController.text.isNotEmpty) {
       if (list.isEmpty) {
-        APIs.sendFirstMessage(widget.user, textController.text, Type.text);
+        APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
       } else {
-        APIs.sendMessage(widget.user, textController.text, Type.text);
+        APIs.sendMessage(widget.user, textController.text, MessageType.text);
       }
       textController.clear();
       playSendSound();

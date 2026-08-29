@@ -3,13 +3,14 @@ import 'package:chatify/features/chat/models/message_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -68,9 +69,9 @@ class DetailImageInputState extends State<DetailImageInput> {
   void sendMessage() {
     if (textController.text.isNotEmpty) {
       if (list.isEmpty) {
-        APIs.sendFirstMessage(widget.user, textController.text, Type.text);
+        APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
       } else {
-        APIs.sendMessage(widget.user, textController.text, Type.text);
+        APIs.sendMessage(widget.user, textController.text, MessageType.text);
       }
       textController.clear();
       setState(() {
@@ -118,10 +119,11 @@ class DetailImageInputState extends State<DetailImageInput> {
                         children: [
                           IconButton(
                             onPressed: toggleEmojiKeyboard,
-                            icon: Icon(
-                              showEmoji ? Icons.keyboard : focusNode.hasFocus ? Icons.emoji_emotions_outlined : LucideIcons.imagePlus,
-                              color: ChatifyColors.white,
-                              size: 26,
+                            icon: showEmoji
+                              ? const Icon(Icons.keyboard, color: ChatifyColors.white, size: 26)
+                              : focusNode.hasFocus
+                                ? const Icon(Icons.emoji_emotions_outlined, color: ChatifyColors.white, size: 26)
+                                : SvgPicture.asset(ChatifyVectors.imagePlus, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn,),
                             ),
                           ),
                           Expanded(

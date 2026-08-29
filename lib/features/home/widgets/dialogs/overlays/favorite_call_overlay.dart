@@ -7,7 +7,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:jam_icons/jam_icons.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -117,7 +116,7 @@ Widget _buildFavoriteCalls(BuildContext context, String groupImage) {
                       hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                       child: Padding(
                         padding: const EdgeInsets.all(10),
-                        child: Icon(JamIcons.pencil, size: 20),
+                        child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                       ),
                     ),
                   ),
@@ -164,7 +163,7 @@ Widget _buildFavoriteCalls(BuildContext context, String groupImage) {
                       foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                       child: SvgPicture.asset(
                         ChatifyVectors.communityUsers,
-                        color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey,
+                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
                         width: 28,
                         height: 28,
                       ),

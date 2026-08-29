@@ -59,7 +59,14 @@ class Dialogs {
     );
   }
 
-  static Future<void> showProgressBarDialog(BuildContext context, {required String title, required String message}) async {
+  static Future<void> showProgressBarDialog(
+    BuildContext context, {
+    required String title,
+    required String message,
+    bool verticalLayout = false,
+    double maxWidth = 300,
+    double maxHeight = 200,
+  }) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -69,31 +76,44 @@ class Dialogs {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           content: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 300, maxHeight: 200),
+            constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal), textAlign: TextAlign.left),
+                verticalLayout
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: SizedBox(
+                              width: 42,
+                              height: 42,
+                              child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal), textAlign: TextAlign.center),
+                          const SizedBox(height: 16),
+                          Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+                        ],
+                      ),
+                    )
+                  : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 42,
+                        height: 42,
+                        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(child: Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), overflow: TextOverflow.ellipsis)),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(child: Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), overflow: TextOverflow.ellipsis)),
-                  ],
-                ),
               ],
             ),
           ),

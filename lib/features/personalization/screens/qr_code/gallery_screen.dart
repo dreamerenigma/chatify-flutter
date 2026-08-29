@@ -24,10 +24,9 @@ class GalleryScreen extends StatefulWidget {
 
 class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<AssetEntity> _galleryImages = [];
   bool _hasRecentImages() => recentImages.isNotEmpty;
   bool _hasLastWeekImages() => lastWeekImages.isNotEmpty;
-
+  List<AssetEntity> galleryImages = [];
   List<AssetEntity> recentImages = [];
   List<AssetEntity> lastWeekImages = [];
   List<AssetEntity> lastMonthImages = [];
@@ -79,16 +78,9 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
   Future<void> _loadImages() async {
     final permitted = await PhotoManager.requestPermissionExtend();
     if (permitted.isAuth) {
-      final albums = await PhotoManager.getAssetPathList(
-        type: RequestType.image,
-        onlyAll: true,
-      );
+      final albums = await PhotoManager.getAssetPathList(type: RequestType.image, onlyAll: true);
       final recentAlbum = albums.first;
-
-      final images = await recentAlbum.getAssetListPaged(
-        page: 0,
-        size: 100,
-      );
+      final images = await recentAlbum.getAssetListPaged(page: 0, size: 100);
 
       recentImages.clear();
       lastWeekImages.clear();
@@ -114,7 +106,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
       }
 
       setState(() {
-        _galleryImages = images;
+        galleryImages = images;
       });
     } else {
       PhotoManager.openSetting();
@@ -189,27 +181,25 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
   }
 
   Widget _buildRecentTab() {
-    return _galleryImages.isEmpty
-        ? Center(
-      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-    )
-    : Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (_hasRecentImages()) ...[
-          _buildLabel(S.of(context).recent),
-          _buildImageGrid(recentImages),
-        ],
-        if (_hasLastWeekImages()) ...[
-          _buildLabel(S.of(context).lastWeek),
-          _buildImageGrid(lastWeekImages),
-        ],
-        if (lastMonthImages.isNotEmpty) ...[
-          _buildLabel(S.of(context).lastMonth),
-          _buildImageGrid(lastMonthImages),
-        ],
-      ],
-    );
+    return galleryImages.isEmpty
+      ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))
+      : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_hasRecentImages()) ...[
+              _buildLabel(S.of(context).recent),
+              _buildImageGrid(recentImages),
+            ],
+            if (_hasLastWeekImages()) ...[
+              _buildLabel(S.of(context).lastWeek),
+              _buildImageGrid(lastWeekImages),
+            ],
+            if (lastMonthImages.isNotEmpty) ...[
+              _buildLabel(S.of(context).lastMonth),
+              _buildImageGrid(lastMonthImages),
+            ],
+          ],
+        );
   }
 
   Widget _buildLabel(String text) {
@@ -243,10 +233,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
             future: images[index].thumbnailDataWithSize(const ThumbnailSize(250, 250)),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.memory(snapshot.data!, fit: BoxFit.cover),
-                );
+                return ClipRRect(borderRadius: BorderRadius.circular(8.0), child: Image.memory(snapshot.data!, fit: BoxFit.cover));
               } else {
                 return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))));
               }

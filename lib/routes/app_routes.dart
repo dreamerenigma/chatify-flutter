@@ -14,12 +14,12 @@ import '../features/home/screens/new_newsletter_screen.dart';
 import '../features/personalization/screens/account/account_screen.dart';
 import '../features/personalization/screens/chats/chats_screen.dart';
 import '../features/personalization/screens/favorite/favorite_message_screen.dart';
-import '../features/personalization/screens/help/support/screens/support_screen.dart';
+import '../features/personalization/screens/help/support/support_screen.dart';
 import '../features/personalization/screens/send/send_file_screen.dart';
 
 class AppRoutes {
   static final pages = [
-    GetPage(name: ChatifyRoutes.splash, page: () => const SplashScreen(), transition: Transition.fade,),
+    GetPage(name: ChatifyRoutes.splash, page: () => const SplashScreen(), transition: Transition.fade),
     GetPage(name: ChatifyRoutes.signIn, page: () => const LoginScreen()),
     GetPage(name: ChatifyRoutes.home, page: () => HomeScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.addAccount, page: () => AddAccountScreen(isFromSplashScreen: true)),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../utils/widgets/icons/custom_icon.dart';
 import 'light_dialog.dart';
 
 class CustomRadioListTile extends StatefulWidget {
-  final IconData? icon;
+  final dynamic icon;
   final Widget title;
   final String value;
   final String groupValue;
@@ -38,7 +39,7 @@ class CustomRadioListTileState extends State<CustomRadioListTile> {
             Row(
               children: [
                 if (widget.icon != null) ...[
-                  Icon(widget.icon, color: widget.iconColor),
+                  CustomIcon(icon: widget.icon, color: widget.iconColor, size: 24),
                   const SizedBox(width: 16),
                 ],
                 widget.title,

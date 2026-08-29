@@ -67,7 +67,7 @@ class _IncomingAudioCallWidgetState extends State<IncomingAudioCallWidget> {
                                           height: double.infinity,
                                         ),
                                       )
-                                    : SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 42, height: 42, fit: BoxFit.cover),
+                                    : SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn), width: 42, height: 42, fit: BoxFit.cover),
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -121,7 +121,7 @@ class _IncomingAudioCallWidgetState extends State<IncomingAudioCallWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SvgPicture.asset(ChatifyVectors.calls, color: ChatifyColors.white, width: 21, height: 21),
+                          SvgPicture.asset(ChatifyVectors.calls, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 21, height: 21),
                         ],
                       ),
                     ),

@@ -1,5 +1,6 @@
-import 'package:carbon_icons/carbon_icons.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
@@ -114,7 +115,7 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                       padding: const EdgeInsets.all(20.0),
                       child: Row(
                         children: [
-                          Icon(CarbonIcons.network_3_reference, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                          SvgPicture.asset(ChatifyVectors.networkThreeReference, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
                           const SizedBox(width: 20),
                           Expanded(
                             child: Column(

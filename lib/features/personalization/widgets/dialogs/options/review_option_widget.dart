@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:intl/intl.dart';
-import 'package:jam_icons/jam_icons.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../common/widgets/switches/custom_switch.dart';
@@ -285,12 +284,12 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                                   final imageUrl = (communityImage?.isNotEmpty ?? false) ? communityImage! : (userImage?.isNotEmpty ?? false) ? userImage! : '';
 
                                   if (isSupport) {
-                                    return SvgPicture.asset(ChatifyVectors.logoApp, width: 60, height: 60, color: context.isDarkMode ? ChatifyColors.white : null);
+                                    return SvgPicture.asset(ChatifyVectors.logoApp, width: 60, height: 60, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn));
                                   }
 
                                   return CachedNetworkImage(
                                     imageUrl: imageUrl,
-                                    errorWidget: (context, url, error) => SvgPicture.asset(ChatifyVectors.newUser, width: 55, height: 55, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey),
+                                    errorWidget: (context, url, error) => SvgPicture.asset(ChatifyVectors.newUser, width: 55, height: 55, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                                     imageBuilder: (context, imageProvider) => CircleAvatar(radius: 50, backgroundImage: imageProvider),
                                   );
                                 },
@@ -330,7 +329,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                                   borderRadius: BorderRadius.circular(6),
                                   child: Padding(
                                     padding: const EdgeInsets.all(9),
-                                    child: Icon(JamIcons.pencil, size: 21, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                    child: SvgPicture.asset(ChatifyVectors.pencil, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                   ),
                                 ),
                               ),
@@ -364,7 +363,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                               const SizedBox(width: 8),
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
-                                child: Icon(JamIcons.pencil, size: 17, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
+                                child: SvgPicture.asset(ChatifyVectors.pencil, width: 17, height: 17, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, BlendMode.srcIn))
                               ),
                             ],
                             if ((widget.support?.name.isNotEmpty ?? false)) ...[
@@ -372,10 +371,10 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                               Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  SvgPicture.asset(ChatifyVectors.starburst, width: 25, height: 25, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                  SvgPicture.asset(ChatifyVectors.starburst, width: 25, height: 25, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 1, top: 2),
-                                    child: SvgPicture.asset(ChatifyVectors.checkmark, width: 14, height: 14, color: ChatifyColors.white),
+                                    child: SvgPicture.asset(ChatifyVectors.checkmark, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.white,  BlendMode.srcIn)),
                                   ),
                                 ],
                               ),
@@ -405,7 +404,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                             SizedBox(width: 2),
                             _buildIconWithText(
                               label: S.of(context).audio,
-                              icon: SvgPicture.asset(ChatifyVectors.calls, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                              icon: SvgPicture.asset(ChatifyVectors.calls, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                             ),
                           ],
                         ),
@@ -415,7 +414,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                             Expanded(
                               child: _buildIconWithText(
                                 label: S.of(context).add,
-                                icon: SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                icon: SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                               ),
                             ),
                           ],
@@ -440,7 +439,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                               trailing: widget.community?.creatorId == APIs.me.id
                                 ? Padding(
                                     padding: const EdgeInsets.only(top: 2),
-                                    child: Icon(JamIcons.pencil, size: 17, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
+                                    child: SvgPicture.asset(ChatifyVectors.pencil, width: 17, height: 17, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, BlendMode.srcIn))
                                   )
                                 : null,
                             ),
@@ -793,7 +792,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
           Row(
             children: [
               if (isDisappearingMessages && !isDisappearingOff)
-                SvgPicture.asset(ChatifyVectors.timer, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                SvgPicture.asset(ChatifyVectors.timer, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
               if (isDisappearingMessages && !isDisappearingOff) SizedBox(width: 8),
               isDisappearingMessages
                   ? Text(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300))
@@ -864,7 +863,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                     children: [
                       SvgPicture.asset(
                         isNoSound ? ChatifyVectors.notificationNone : ChatifyVectors.notification,
-                        color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -877,7 +876,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         transform: Matrix4.translationValues(0, (_isTappedNoSound || isNoSoundDropDown) ? 2.0 : 0, 0),
-                        child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                        child: SvgPicture.asset(ChatifyVectors.arrowDown, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 14, height: 14),
                       ),
                     ],
                   ),
@@ -931,8 +930,8 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: _isTappedSound ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100)) : _isHoveredSound
-                        ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
-                        : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
+                      ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
+                      : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
                     borderRadius: isSoundNotifyTapped ? BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)) : BorderRadius.circular(6),
                     border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
                   ),
@@ -979,8 +978,8 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(
                       color: _isTappedSoundDefault ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100)) : _isHoveredSoundDefault
-                          ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
-                          : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
+                        ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
+                        : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
                       borderRadius: isSoundDefaultDropdown ? BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)) : BorderRadius.circular(6),
                       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
                     ),
@@ -994,7 +993,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           transform: Matrix4.translationValues(0, (_isTappedSoundDefault || isSoundDefaultDropdown) ? 2.0 : 0, 0),
-                          child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                          child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                         ),
                       ],
                     ),
@@ -1126,7 +1125,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                       const SizedBox(width: 12),
                       Align(
                         alignment: Alignment.center,
-                        child: SvgPicture.asset(iconAssetPath, width: 14, height: 14, color: ChatifyColors.grey),
+                        child: SvgPicture.asset(iconAssetPath, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.grey, BlendMode.srcIn)),
                       ),
                     ],
                   ),

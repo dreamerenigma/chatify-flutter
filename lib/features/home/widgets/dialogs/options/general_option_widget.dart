@@ -174,11 +174,11 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                   });
                   _onLongPress.call();
                 },
-                onLongPressEnd: (_) {
+                onLongPressEnd: (details) {
                   setState(() {
                     isLongPressed = false;
                   });
-                  _onLongPressEnd.call(_);
+                  _onLongPressEnd.call(details);
                 },
                 child: MouseRegion(
                   onEnter: (_) {

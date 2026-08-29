@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:window_manager/window_manager.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_vectors.dart';
 
 class CustomMinimizeButton extends StatefulWidget {
   final Color iconColor;
@@ -45,7 +46,7 @@ class CustomMinimizeButtonState extends State<CustomMinimizeButton> {
 
     return ValueListenableBuilder<bool>(
       valueListenable: isHovered,
-      builder: (_, hovered, __) {
+      builder: (_, hovered, _) {
         return MouseRegion(
           onEnter: (_) => isHovered.value = true,
           onExit: (_) => isHovered.value = false,
@@ -59,10 +60,11 @@ class CustomMinimizeButtonState extends State<CustomMinimizeButton> {
               hoverColor: widget.hoverColor,
               child: Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18, top: 11, bottom: 14),
-                child: Icon(
-                  Ionicons.remove,
-                  size: 17,
-                  color: hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey),
+                child: SvgPicture.asset(
+                  ChatifyVectors.remove,
+                  width: 17,
+                  height: 17,
+                  colorFilter: ColorFilter.mode(hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn) ,
                 ),
               ),
             ),

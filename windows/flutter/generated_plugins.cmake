@@ -3,19 +3,17 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  agora_rtc_engine
   audioplayers_windows
-  bitsdojo_window_windows
   camera_windows
   cloud_firestore
   connectivity_plus
   emoji_picker_flutter
   file_selector_windows
+  firebase_app_check
   firebase_auth
   firebase_core
   firebase_storage
   flutter_webrtc
-  iris_method_channel
   local_auth_windows
   media_kit_libs_windows_video
   media_kit_video
@@ -24,7 +22,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   screen_retriever_windows
   share_plus
   url_launcher_windows
-  volume_controller
   window_manager
 )
 

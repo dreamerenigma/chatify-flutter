@@ -6,7 +6,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../common/widgets/panels/emoji_panel.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -44,14 +43,7 @@ Future<void> showEditMessageDialog(
   final overlay = Overlay.of(context);
   late OverlayEntry overlayEntry;
   final AnimationController animationController = AnimationController(vsync: Navigator.of(context), duration: Duration(milliseconds: 300));
-
-  final Animation<Offset> slideAnimation = Tween<Offset>(
-    begin: Offset(0, 0.1),
-    end: Offset(0, 0),
-  ).animate(CurvedAnimation(
-    parent: animationController,
-    curve: Curves.easeOutCubic,
-  ));
+  final Animation<Offset> slideAnimation = Tween<Offset>(begin: Offset(0, 0.1), end: Offset(0, 0)).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic));
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -76,14 +68,7 @@ Future<void> showEditMessageDialog(
               position: slideAnimation,
               child: Container(
                 decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 3))],
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: ClipRRect(
@@ -123,7 +108,7 @@ Future<void> showEditMessageDialog(
                                 showDeleteMessageDialog(context, title: '${S.of(context).deleteMessage}?', description: S.of(context).youCanDeleteMessageYourself);
                               }),
                               Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-                              _buildEditMessage(context: context, iconPath: '', text: S.of(context).choose, iconSize: 20, icon: Ionicons.checkbox_outline, onTap: () {}),
+                              _buildEditMessage(context: context, iconPath: ChatifyVectors.checkboxOutline, text: S.of(context).choose, iconSize: 20, icon: null, onTap: () {}),
                               _buildEditMessage(context: context, iconPath: '', text: S.of(context).share, iconSize: 20, icon: FluentIcons.share_24_regular, onTap: () {}),
                               Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
                               _buildEditMessage(context: context, iconPath: '', text: S.of(context).data, iconSize: 20, icon: Icons.info_outline_rounded, onTap: () {}),
@@ -147,14 +132,7 @@ Future<void> showEditMessageDialog(
   animationController.forward();
 }
 
-Widget _buildEditMessage({
-  required BuildContext context,
-  required String iconPath,
-  required IconData? icon,
-  required String text,
-  required double iconSize,
-  required VoidCallback onTap,
-}) {
+Widget _buildEditMessage({required BuildContext context, required String iconPath, required IconData? icon, required String text, required double iconSize, required VoidCallback onTap}) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: Material(
@@ -173,19 +151,11 @@ Widget _buildEditMessage({
                   iconPath,
                   width: iconSize,
                   height: iconSize,
-                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                  placeholderBuilder: (context) => Icon(
-                    icon ?? Icons.image_not_supported,
-                    size: iconSize,
-                    color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                  ),
+                  colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
+                  placeholderBuilder: (context) => Icon(icon ?? Icons.image_not_supported, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                 )
               else
-                Icon(
-                  icon ?? Icons.image_not_supported,
-                  size: iconSize,
-                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
+                Icon(icon ?? Icons.image_not_supported, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
               SizedBox(width: 10),
               Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
             ],

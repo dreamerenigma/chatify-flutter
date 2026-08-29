@@ -1,9 +1,10 @@
 import 'package:chatify/features/personalization/widgets/dialogs/emoji_stickers_dialog.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:icon_forest/iconoir.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -201,11 +202,8 @@ class EditTextInputState extends State<EditTextInput> {
             hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-              decoration: BoxDecoration(
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Iconoir(Iconoir.emoji, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              decoration: BoxDecoration(border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey), borderRadius: BorderRadius.circular(8)),
+              child: SvgPicture.asset(ChatifyVectors.emoji, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 20, height: 20),
             ),
           ),
         ),

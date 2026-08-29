@@ -4,7 +4,7 @@ class ChatifyLocalStorage {
 
   late final GetStorage _storage;
 
-  // Singleton instance
+  /// -- Singleton instance
   static ChatifyLocalStorage? _instance;
 
   ChatifyLocalStorage._internal();
@@ -20,22 +20,22 @@ class ChatifyLocalStorage {
     _instance!._storage = GetStorage(bucketName);
   }
 
-  // Generic method to save data
+  /// -- Generic method to save data
   Future<void> writeData<T>(String key, T value) async {
     await _storage.write(key, value);
   }
 
-  // Generic method to read data
+  /// -- Generic method to read data
   T? readData<T>(String key) {
     return _storage.read<T>(key);
   }
 
-  // Generic method to remove data
+  /// -- Generic method to remove data
   Future<void> removeData(String key) async {
     await _storage.remove(key);
   }
 
-  // Clear all data in storage
+  /// -- Clear all data in storage
   Future<void> clearAll() async {
     await _storage.erase();
   }

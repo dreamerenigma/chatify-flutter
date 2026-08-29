@@ -1,7 +1,8 @@
 import 'dart:math' as math;
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/popups/custom_tooltip.dart';
 
@@ -48,7 +49,7 @@ class CustomSearchButton extends StatelessWidget {
               transform: Matrix4.rotationY(math.pi),
               child: ScaleTransition(
                 scale: searchScaleAnimation,
-                child: Icon(Ionicons.search_outline, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, size: 18),
+                child: SvgPicture.asset(ChatifyVectors.searchOutline, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, BlendMode.srcIn)),
               ),
             ),
           ),

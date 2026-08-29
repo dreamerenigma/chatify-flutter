@@ -30,19 +30,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   @override
   void initState() {
     super.initState();
-    final storedImagePath = box.read('backgroundImagePath') ?? widget.imagePath ?? '';
-    setState(() {
-      imagePath = storedImagePath;
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final storedImagePath = box.read('backgroundImagePath') ?? widget.imagePath ?? '';
-    setState(() {
-      imagePath = storedImagePath;
-    });
+    imagePath = box.read('backgroundImagePath') ?? widget.imagePath;
   }
 
   void checkStoredData() {
@@ -72,7 +60,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () async {
-                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(const SelectWallpaperScreen(imagePath: '')));
+                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen(imagePath: imagePath)));
 
                     if (selectedImagePath != null) {
                       setState(() {

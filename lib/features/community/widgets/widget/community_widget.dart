@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/badges/creation_date_badge.dart';
 import '../../../../common/widgets/cards/encryption_notice_card.dart';
@@ -159,9 +159,9 @@ class _CommunityWidgetState extends State<CommunityWidget> {
             context: context,
             position: details.globalPosition,
             items: [
-              MenuItem(icon: Ionicons.checkbox_outline, text: S.of(context).selectMessages, onTap: () {}),
+              MenuItem(svgPath: ChatifyVectors.checkboxOutline, text: S.of(context).selectMessages, onTap: () {}),
               MenuItem(icon: FluentIcons.open_16_regular, text: S.of(context).openChatInAnotherWindow, onTap: () {}),
-              MenuItem(icon: Ionicons.close_outline, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
+              MenuItem(svgPath: ChatifyVectors.close, iconSize: 20, text: S.of(context).closeChat, onTap: () {}),
             ],
           );
         },
@@ -199,7 +199,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
                           },
                         ),
                         EncryptionNoticeCard(
-                          icon: PhosphorIcons.lock_simple_thin,
+                          icon: SvgPicture.asset(ChatifyVectors.lockOutline, width: 11, height: 11, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                           message: S.of(context).messagesCallsProtectedEndToEndEncryption,
                           onTap: () => showChatsCallsPrivacyOverlay(context),
                         ),

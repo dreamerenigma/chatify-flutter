@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../../core/services/dialogs/dialog_manager.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -97,10 +98,11 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       double screenWidth = MediaQuery.of(context).size.width;
+      await Future.delayed(Duration(milliseconds: 300));
       adjustSidePanelSize(screenWidth);
-      dialogManager.showMonthlyRatingDialog(context);
+      await _checkAndShowDialog();
     });
     _scrollController.addListener(_handleScroll);
     _tabController = TabController(length: 5, vsync: this);
@@ -113,6 +115,23 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
     _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkAndShowDialog() async {
+    final now = DateTime.now();
+    final lastShownStr = GetStorage().read<String>('last_confirmation_dialog_shown');
+    final shouldNotShowAgain = GetStorage().read<bool>('should_not_show_rating_dialog') ?? false;
+
+    if (shouldNotShowAgain) return;
+
+    if (lastShownStr != null) {
+      final lastShown = DateTime.tryParse(lastShownStr);
+      if (lastShown != null && now.difference(lastShown).inDays < 30) return;
+    }
+
+    dialogManager.showMonthlyRatingDialog(context);
+
+    GetStorage().write('last_confirmation_dialog_shown', now.toIso8601String());
   }
 
   void _onTabChanged() {

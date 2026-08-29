@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../api/apis.dart';
 import '../../../common/entities/base_chat_entity.dart';
 import '../../../utils/helper/date_util.dart';
-import '../widgets/chat_target.dart';
+import '../../../domain/entities/chat_target.dart';
 
 class UserModel implements ChatTarget, BaseChatEntity {
   @override

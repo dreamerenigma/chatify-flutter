@@ -8,7 +8,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:icon_forest/iconoir.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -417,7 +416,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                     children: [
                                       Row(
                                         children: [
-                                          Iconoir(Iconoir.camera, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 20, height: 20),
+                                          SvgPicture.asset(ChatifyVectors.camera, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 20, height: 20),
                                           SizedBox(width: 8),
                                           Text(FileUtil.cleanDeviceName(_controller?.description.name ?? S.of(context).unknownDevice), style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                         ],
@@ -425,7 +424,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                       AnimatedContainer(
                                         duration: const Duration(milliseconds: 200),
                                         transform: Matrix4.translationValues(0, _isTappedVideo ? 2.0 : 0, 0),
-                                        child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 15, height: 15),
+                                        child: SvgPicture.asset(ChatifyVectors.arrowDown, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 15, height: 15),
                                       ),
                                     ],
                                   ),
@@ -433,9 +432,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                               ),
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(S.of(context).cameraNotFound, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
+                        : Padding(padding: const EdgeInsets.only(left: 5), child: Text(S.of(context).cameraNotFound, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                         );
                       },
                     ),
@@ -565,7 +562,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                     AnimatedContainer(
                                       duration: const Duration(milliseconds: 200),
                                       transform: Matrix4.translationValues(0, _isTappedMicrophone ? 2.0 : 0, 0),
-                                      child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 15, height: 15),
+                                      child: SvgPicture.asset(ChatifyVectors.arrowDown, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 15, height: 15),
                                     ),
                                   ],
                                 ),
@@ -606,7 +603,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                               height: 30,
                               child: isRecording && !isPaused ? Icon(BootstrapIcons.stop_circle, size: 20) : isRecording && isPaused
                                 ? Icon(Icons.play_arrow, size: 22)
-                                : SvgPicture.asset(ChatifyVectors.radioButtonChecked, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 16, height: 16),
+                                : SvgPicture.asset(ChatifyVectors.radioButtonChecked, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 16, height: 16),
                             ),
                           ),
                         ),
@@ -730,7 +727,7 @@ class _VideoAudioOptionWidgetState extends State<VideoAudioOptionWidget> {
                                     AnimatedContainer(
                                       duration: const Duration(milliseconds: 200),
                                       transform: Matrix4.translationValues(0, _isTappedSpeakers ? 2.0 : 0, 0),
-                                      child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 15, height: 15),
+                                      child: SvgPicture.asset(ChatifyVectors.arrowDown, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 15, height: 15),
                                     ),
                                   ],
                                 ),
