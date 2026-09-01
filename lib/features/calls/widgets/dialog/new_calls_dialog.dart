@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';

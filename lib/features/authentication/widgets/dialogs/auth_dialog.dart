@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/urls/url_utils.dart';
+import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 Future<void> showAuthDialog(BuildContext context, Future<String> Function() getAuthUrl) async {
   showDialog(
@@ -13,7 +14,7 @@ Future<void> showAuthDialog(BuildContext context, Future<String> Function() getA
           future: getAuthUrl(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox(height: 60, child: Center(child: CircularProgressIndicator()));
+              return SizedBox(height: 60, child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))));
             } else if (snapshot.hasError) {
               return Text('${S.of(context).error}: ${snapshot.error}');
             } else {
@@ -24,27 +25,16 @@ Future<void> showAuthDialog(BuildContext context, Future<String> Function() getA
                 children: [
                   Text(S.of(context).clickOnLinkToLogIn),
                   const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () => UrlUtils.launchURL(authUrl),
-                    child: Text(
-                      authUrl,
-                      style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                    ),
-                  ),
+                  GestureDetector(onTap: () => UrlUtils.launchURL(authUrl), child: Text(authUrl, style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline))),
                 ],
               );
             }
           },
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(S.of(context).close),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).close)),
         ],
       );
     },
   );
 }
-
-

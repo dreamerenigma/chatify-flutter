@@ -3,7 +3,6 @@ import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:chatify/features/status/widgets/images/camera_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../api/apis.dart';
@@ -18,7 +17,7 @@ import '../../community/models/community_model.dart';
 import '../../group/models/group_model.dart';
 import '../../personalization/controllers/user_controller.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/bottom_nav.dart';
+import '../../utils/widgets/bars/nav_bars/bottom_nav.dart';
 import '../widgets/app_bars/home_app_bar_widget.dart';
 import '../widgets/app_bars/selection_app_bar.dart';
 import '../widgets/dialogs/delete_chat_dialog.dart';
@@ -34,13 +33,13 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final List<UserModel> searchList = [];
+  final Set<String> selectedChats = <String>{};
   final UserController userController = Get.find<UserController>();
   final PageController _pageController = PageController();
   late bool isHomeScreen;
   bool isSearching = false;
-  bool isSelecting = false;
   bool isToolbarVisible = true;
   bool isLoading = true;
   int selectedIndex = 0;
@@ -51,32 +50,19 @@ class HomeScreenState extends State<HomeScreen> {
   List<UserModel> users = [];
   List<SupportAppModel> supports = [];
   List<InfoAppModel> infosApp = [];
-  Set<int> selectedChats = <int>{};
+
+  bool get isSelecting => selectedChats.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
     isHomeScreen = selectedIndex == 0;
+    WidgetsBinding.instance.addObserver(this);
     APIs.getSelfInfo();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_pageController.hasClients) {
-        _pageController.animateToPage(
-          selectedIndex,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        _pageController.animateToPage(selectedIndex, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
       }
-    });
-    SystemChannels.lifecycle.setMessageHandler((message) {
-      if (APIs.auth.currentUser != null) {
-        if (message.toString().contains('resume')) {
-          APIs.updateActiveStatus(true);
-        }
-        if (message.toString().contains('pause')) {
-          APIs.updateActiveStatus(false);
-        }
-      }
-      return Future.value(message);
     });
     _loadUserInfo();
     _fetchGroups();
@@ -88,6 +74,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -101,6 +88,27 @@ class HomeScreenState extends State<HomeScreen> {
     _fetchCommunities();
     _fetchNewsletters();
     _fetchSupportChat();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (APIs.auth.currentUser == null) return;
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        APIs.updateActiveStatus(true);
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        APIs.updateActiveStatus(false);
+        break;
+      case AppLifecycleState.hidden:
+        APIs.updateActiveStatus(false);
+        break;
+    }
   }
 
   Future<void> _loadUserInfo() async {
@@ -157,21 +165,33 @@ class HomeScreenState extends State<HomeScreen> {
   void _clearSelection() {
     setState(() {
       selectedChats.clear();
-      isSelecting = false;
     });
   }
 
   void _handleDeleteSelectedChats() {
-    if (selectedChats.isNotEmpty) {
-      bool allFromCurrentUser = selectedChats.every((index) => users[index].id == APIs.user.uid);
+    if (selectedChats.isEmpty) return;
 
-      if (allFromCurrentUser) {
-        final selectedUsers = selectedChats.map((index) => users[index]).toList();
-        showDeleteChatDialog(context, selectedUsers, selectedChats.toList(), APIs.me);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).unableDeleteUsersChats)));
-      }
+    final selectedUsers = users.where((user) => selectedChats.contains(user.id)).toList();
+
+    if (selectedUsers.isEmpty) return;
+
+    final allFromCurrentUser = selectedUsers.every((user) => user.id == APIs.user.uid);
+
+    if (allFromCurrentUser) {
+      showDeleteChatDialog(context, selectedUsers, APIs.me);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).unableDeleteUsersChats)));
     }
+  }
+
+  void _toggleChatSelection(UserModel user) {
+    setState(() {
+      if (selectedChats.contains(user.id)) {
+        selectedChats.remove(user.id);
+      } else {
+        selectedChats.add(user.id);
+      }
+    });
   }
 
   @override
@@ -191,7 +211,15 @@ class HomeScreenState extends State<HomeScreen> {
         appBar: defaultTargetPlatform == TargetPlatform.windows
           ? null
           : isSelecting
-            ? SelectionAppBar(selectedChatsCount: selectedChatsCount, onClearSelection: _clearSelection, onHandleDeleteSelectedChats: _handleDeleteSelectedChats)
+            ? SelectionAppBar(
+                selectedChatsCount: selectedChats.length,
+                onClearSelection: _clearSelection,
+                onDelete: _handleDeleteSelectedChats,
+                onPin: () {},
+                onMute: () {},
+                onArchive: () {},
+                onAddToFavorites: () {},
+              )
             : selectedIndex == 0
               ? HomeAppBarWidget(
                 isSearching: isSearching,
@@ -216,7 +244,7 @@ class HomeScreenState extends State<HomeScreen> {
                 onCameraPressed: () {
                   Navigator.push(context, createPageRoute(const CameraScreen()));
                 },
-                hintText: S.of(context).nameEmail,
+                hintText: S.of(context).search,
               )
             : null,
         floatingActionButton: defaultTargetPlatform == TargetPlatform.windows ? null : selectedIndex == 0
@@ -229,7 +257,7 @@ class HomeScreenState extends State<HomeScreen> {
                 elevation: 2,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 foregroundColor: ChatifyColors.white,
-                child: SvgPicture.asset(ChatifyVectors.chatsAdd, color: ChatifyColors.black, width: 26, height: 26),
+                child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
               ),
             )
           : null,
@@ -245,11 +273,14 @@ class HomeScreenState extends State<HomeScreen> {
           searchList: searchList,
           supports: supports,
           infosApp: infosApp,
+          selectedChats: selectedChats,
           onPageChanged: _onPageChanged,
           onItemTapped: onItemTapped,
           onGroupSelected: (group) {},
-          onUserSelected: (chatUser) {},
-          user: widget.user
+          onUserSelected: (user) {
+            _toggleChatSelection(user);
+          },
+          user: widget.user,
         ),
         bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped) : null,
       ),

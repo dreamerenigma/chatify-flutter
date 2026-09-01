@@ -17,7 +17,7 @@ class ChatifyAppTheme {
   static ThemeData getLightTheme() {
     return ThemeData(
       useMaterial3: true,
-      fontFamily: 'Satoshi',
+      fontFamily: 'Roboto',
       disabledColor: ChatifyColors.grey,
       brightness: Brightness.light,
       primaryColor: ChatifyColors.primary,
@@ -36,7 +36,7 @@ class ChatifyAppTheme {
   static ThemeData getDarkTheme() {
     return ThemeData(
       useMaterial3: true,
-      fontFamily: 'Satoshi',
+      fontFamily: 'Roboto',
       disabledColor: ChatifyColors.grey,
       brightness: Brightness.dark,
       primaryColor: ChatifyColors.primary,

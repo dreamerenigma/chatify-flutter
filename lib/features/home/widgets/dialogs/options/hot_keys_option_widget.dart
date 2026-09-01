@@ -7,7 +7,7 @@ import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class HotKeysOptionWidget extends StatefulWidget {
   const HotKeysOptionWidget({super.key});

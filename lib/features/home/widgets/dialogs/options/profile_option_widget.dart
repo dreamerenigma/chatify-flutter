@@ -225,7 +225,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
+              Text(S.of(context).info, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -302,12 +302,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
             children: [
               Text(
                 S.of(context).phoneNumber,
-                style: TextStyle(
-                  fontSize: ChatifySizes.fontSizeSm,
-                  color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
-                  fontWeight: FontWeight.w200,
-                  height: 1.5,
-                ),
+                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.5),
               ),
               const SizedBox(height: 5),
               GestureDetector(

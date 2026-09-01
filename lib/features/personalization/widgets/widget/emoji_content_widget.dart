@@ -10,7 +10,7 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../home/controllers/emoji_stickers_controller.dart';
 import '../../../home/widgets/input/search_text_input.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../dialogs/emoji_variant_dialog.dart';
 import '../dialogs/light_dialog.dart';
 

@@ -11,6 +11,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/input/buttons/camera_button.dart';

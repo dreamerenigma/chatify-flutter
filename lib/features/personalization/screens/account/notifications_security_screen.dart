@@ -11,7 +11,7 @@ import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/urls/url_utils.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class NotificationsSecurityScreen extends StatefulWidget {
@@ -22,8 +22,8 @@ class NotificationsSecurityScreen extends StatefulWidget {
 }
 
 class _NotificationsSecurityScreenState extends State<NotificationsSecurityScreen> {
-  bool isNotifySecurityEnabled = false;
   final storage = GetStorage();
+  bool isNotifySecurityEnabled = false;
 
   @override
   void initState() {
@@ -44,17 +44,7 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: BoxDecoration(
-            color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
+          decoration: BoxDecoration(color: ChatifyColors.white, boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))]),
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
@@ -75,48 +65,28 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 40),
-                  Center(
-                    child: SvgPicture.asset(colorsController.getImagePath(), width: 70, height: 70),
-                  ),
+                  Center(child: SvgPicture.asset(colorsController.getImagePath(), width: 70, height: 70)),
                   const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    child: Text(S.of(context).chatsCallsConfidential,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
-                    ),
+                    child: Text(S.of(context).chatsCallsConfidential, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      S.of(context).endToEndEncryptionPrivateMessages,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
-                    ),
+                    child: Text(S.of(context).endToEndEncryptionPrivateMessages, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey, height: 1.5)),
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(Icon(Icons.message, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).textVoiceMessages),
+                  _buildInfoRow(Icon(Icons.message, size: 22, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).textVoiceMessages),
                   _buildInfoRow(Icon(Icons.call, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).openInBrowser),
                   _buildInfoRow(Icon(Icons.attach_file, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).photosVideosDocuments),
                   _buildInfoRow(Icon(Icons.location_on, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)), S.of(context).yourLocation),
-                  _buildInfoRow(SvgPicture.asset(ChatifyVectors.status), S.of(context).statusUpdate),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(ChatifyVectors.status, width: 22, height: 22, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                        const SizedBox(width: 16),
-                        Text(S.of(context).statusUpdates, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  _buildInfoRow(SvgPicture.asset(ChatifyVectors.status, width: 24, height: 24, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)), S.of(context).statusUpdates),
+                  const SizedBox(height: 12),
                   GestureDetector(
                     onTap: () => UrlUtils.launchURL(AppLinks.security),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(S.of(context).readMore,
-                        style: TextStyle(fontSize: 14, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
-                      ),
+                      child: Text(S.of(context).readMore, style: TextStyle(color: ChatifyColors.lightBlueLink, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500, decoration: TextDecoration.none)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -133,31 +103,36 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(S.of(context).securityNotificationsDevice, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                              Expanded(
+                                child: Text(S.of(context).securityNotificationsDevice, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                              ),
+                              const SizedBox(width: 12),
                               Switch(
                                 value: isNotifySecurityEnabled,
                                 onChanged: toggleSwitch,
-                                activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                 activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
                               ),
                             ],
                           ),
                           const SizedBox(height: 6),
-                          RichText(
-                            text: TextSpan(
-                              style: const TextStyle(fontSize: 15, color: ChatifyColors.darkGrey, height: 1.5),
-                              children: [
-                                TextSpan(text: S.of(context).notifySecurityCodeEndToEndEncrypted),
-                                TextSpan(
-                                  text: S.of(context).readMore,
-                                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none),
-                                  recognizer: TapGestureRecognizer()..onTap = () {
-                                    Navigator.push(context, createPageRoute(const HelpCenterScreen()));
-                                  },
-                                ),
-                              ],
+                          Padding(
+                            padding: const EdgeInsets.only(right: 60),
+                            child: RichText(
+                              text: TextSpan(
+                                style: const TextStyle(fontSize: 15, color: ChatifyColors.darkGrey, height: 1.5),
+                                children: [
+                                  TextSpan(text: S.of(context).notifySecurityCodeEndToEndEncrypted),
+                                  TextSpan(
+                                    text: S.of(context).readMore,
+                                    style: TextStyle(color: ChatifyColors.lightBlueLink, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500, decoration: TextDecoration.none),
+                                    recognizer: TapGestureRecognizer()..onTap = () {
+                                      Navigator.push(context, createPageRoute(const HelpCenterScreen()));
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

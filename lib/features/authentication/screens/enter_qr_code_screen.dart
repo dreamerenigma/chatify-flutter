@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../welcome/screen/problem_detected_screen.dart';
 import '../widgets/bars/auth_app_bar.dart';
 import '../widgets/widget/qr_code_widget.dart';

@@ -10,7 +10,7 @@ import '../../../utils/popups/custom_tooltip.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../personalization/screens/help/support/support_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class ProblemDetectedScreen extends StatefulWidget {
   const ProblemDetectedScreen({super.key});

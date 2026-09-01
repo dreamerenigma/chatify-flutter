@@ -20,7 +20,7 @@ import '../../chat/models/user_model.dart';
 import '../models/group_model.dart';
 import '../../home/screens/group_permissions_screen.dart';
 import '../../home/widgets/dialogs/disappear_message_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../controllers/photo_group_controller.dart';
 import '../../personalization/widgets/dialogs/edit_image_group_bottom_dialog.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';

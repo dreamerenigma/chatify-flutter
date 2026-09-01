@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/helper/date_util.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/formatters/formatter.dart';
@@ -37,14 +38,15 @@ class SenderMessage extends StatefulWidget {
 }
 
 class SenderMessageState extends State<SenderMessage> {
+  final GlobalKey _containerKey = GlobalKey();
+  static MessageModel? hoveredMessage;
   bool isDownloading = false;
   bool isPressed = false;
   bool isDialogVisible = false;
-  bool get isHovered => hoveredMessage == widget.message;
-  static MessageModel? hoveredMessage;
-  final GlobalKey _containerKey = GlobalKey();
-  Timer? hoverTimer;
   Duration? videoDuration;
+  Timer? hoverTimer;
+
+  bool get isHovered => hoveredMessage == widget.message;
 
   set isHovered(bool value) {
     if (value) {
@@ -118,6 +120,7 @@ class SenderMessageState extends State<SenderMessage> {
         onSecondaryTap: () {
           final RenderBox renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           showEditMessageDialog(context, position, _containerKey);
         },
         child: Stack(
@@ -133,14 +136,7 @@ class SenderMessageState extends State<SenderMessage> {
                   : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder),
                 borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                    color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: Offset(0, 2),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 2))],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,6 +153,7 @@ class SenderMessageState extends State<SenderMessage> {
                               if (event.kind == PointerDeviceKind.mouse && event.buttons == kSecondaryMouseButton) {
                                 final renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
                                 final position = renderBox.localToGlobal(Offset.zero);
+
                                 showEditMessageDialog(context, position, _containerKey);
                               }
                             },
@@ -189,14 +186,7 @@ class SenderMessageState extends State<SenderMessage> {
                         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                            spreadRadius: 1,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -225,7 +215,7 @@ class SenderMessageState extends State<SenderMessage> {
               left: 7,
               child: Transform(
                 alignment: Alignment.center,
-                transform: Matrix4.identity()..scale(-1.0, 1.0),
+                transform: Matrix4.identity()..scaleByDouble(-1.0, 1.0, 1.0, 1.0),
                 child: CustomPaint(
                   size: const Size(10, 10),
                   painter: TrianglePainter(
@@ -347,7 +337,9 @@ class SenderMessageState extends State<SenderMessage> {
             Container(
               key: _containerKey,
               padding: EdgeInsets.all(DeviceUtils.getScreenWidth(context) * .008),
-              margin: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003),
+              margin: isWebOrWindows
+                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
+                : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
                 color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight,
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.lightBlue),
@@ -375,54 +367,76 @@ class SenderMessageState extends State<SenderMessage> {
                     right: 2,
                     child: Text(
                       DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                      style: TextStyle(fontSize: 9, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey),
+                      style: TextStyle(
+                        color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                        fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Roboto',
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            if (isVideo)
             Positioned(
-              left: 35,
-              bottom: 12,
-              child: Row(
-                children: [
-                  HeroIcon(HeroIcons.videoCamera, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, size: 13),
-                  const SizedBox(width: 2),
-                  Text(Formatter.formatDurationVideo(videoDuration), style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 9, fontWeight: FontWeight.w300, fontFamily: 'Roboto', letterSpacing: 1)),
-                ],
-              ),
-            ),
-            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
-            Positioned(
-              right: -35,
-              top: 0,
-              bottom: 0,
-              child: AnimatedSlide(
-                offset: isHovered ? Offset.zero : const Offset(-1.0, 0),
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOut,
-                child: AnimatedOpacity(
-                  opacity: isHovered ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOutBack,
-                    width: isHovered ? null : 0,
-                    constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
-                    clipBehavior: Clip.hardEdge,
-                    decoration: const BoxDecoration(),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        EmojiHoverButton(containerKey: _containerKey),
-                      ],
-                    ),
+              top: 5,
+              left: 7,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()..scaleByDouble(-1.0, 1.0, 1.0, 1.0),
+                child: CustomPaint(
+                  size: const Size(10, 10),
+                  painter: TrianglePainter(
+                    fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
+                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder,
                   ),
                 ),
               ),
             ),
+            if (isVideo)
+              Positioned(
+                left: 30,
+                bottom: 12,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    HeroIcon(HeroIcons.videoCamera, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, size: 13),
+                    const SizedBox(width: 4),
+                    Text(Formatter.formatDurationVideo(videoDuration), style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1)),
+                  ],
+                ),
+              ),
+            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+              Positioned(
+                right: -35,
+                top: 0,
+                bottom: 0,
+                child: AnimatedSlide(
+                  offset: isHovered ? Offset.zero : const Offset(-1.0, 0),
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                  child: AnimatedOpacity(
+                    opacity: isHovered ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOutBack,
+                      width: isHovered ? null : 0,
+                      constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          EmojiHoverButton(containerKey: _containerKey),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

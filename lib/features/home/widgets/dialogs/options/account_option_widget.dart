@@ -13,7 +13,7 @@ import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/urls/url_utils.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class AccountOptionWidget extends StatefulWidget {
   const AccountOptionWidget({super.key});
@@ -71,7 +71,7 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                 Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 Text(S.of(context).myContacts, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, height: 2)),
                 const SizedBox(height: 10),
-                Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                Text(S.of(context).info, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 Text(S.of(context).myContacts, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, height: 2)),
                 const SizedBox(height: 10),
                 Text(S.of(context).addingGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
@@ -80,10 +80,8 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                 Text(S.of(context).readingReports, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 Text(S.of(context).off, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, height: 2)),
                 Text(S.of(context).readReceiptsCannotDisabled, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
-
                 const SizedBox(height: 20),
                 Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-
                 Text(S.of(context).blockedContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 10),
                 Text(S.of(context).controlYourPhone, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontStyle: FontStyle.italic)),
@@ -95,10 +93,8 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                     Text(S.of(context).noBlockedContacts, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300)),
                   ],
                 ),
-
                 const SizedBox(height: 15),
                 Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-
                 const SizedBox(height: 15),
                 Text(S.of(context).security, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
                 const SizedBox(height: 10),
@@ -108,11 +104,11 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                 const SizedBox(height: 15),
                 Column(
                   children: [
-                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.text, width: 15, height: 15, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), S.of(context).textVoiceMessages),
-                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.calls, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), S.of(context).audioVideoCalls),
+                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.text, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), S.of(context).textVoiceMessages),
+                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.calls, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), S.of(context).audioVideoCalls),
                     _buildInfoRow(Icon(FluentIcons.attach_12_regular, size: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), S.of(context).photosVideosDocuments),
-                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.locationPin, width: 19, height: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), S.of(context).locationSharing),
-                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.status, width: 19, height: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), S.of(context).statusUpdate),
+                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.locationPin, width: 19, height: 19, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), S.of(context).locationSharing),
+                    _buildInfoRow(SvgPicture.asset(ChatifyVectors.status, width: 19, height: 19, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), S.of(context).statusUpdate),
                   ],
                 ),
                 const SizedBox(height: 5),

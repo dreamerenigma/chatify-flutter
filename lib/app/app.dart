@@ -12,17 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'api/apis.dart';
-import 'bindings/general_bindings.dart';
-import 'config.dart';
-import 'features/personalization/controllers/language_controller.dart';
-import 'features/personalization/controllers/themes_controller.dart';
-import 'features/splash_screen/screens/main_window_screen.dart';
-import 'features/utils/windows/window_util_desktop.dart';
+import '../api/apis.dart';
+import '../bindings/general_bindings.dart';
+import '../config/config.dart';
+import '../features/personalization/controllers/language_controller.dart';
+import '../features/personalization/controllers/themes_controller.dart';
+import '../features/splash_screen/screens/main_window_screen.dart';
+import '../features/utils/windows/window_util_desktop.dart';
 import 'package:chatify/utils/theme/theme.dart';
-import 'generated/l10n/l10n.dart';
+import '../generated/l10n/l10n.dart';
+import '../routes/routes.dart';
 
 Future<void> initApp() async {
   /// -- Widget Binding
@@ -34,6 +34,9 @@ Future<void> initApp() async {
   /// -- Initialize LocalStorage
   await ChatifyLocalStorage.init('chatify_bucket');
 
+  /// -- Initialize bindings here to ensure they're ready
+  GeneralBindings().dependencies();
+
   /// -- Set setting orientation to portrait only
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -42,8 +45,15 @@ Future<void> initApp() async {
     await FirebaseAppCheck.instance.activate(providerWeb: ReCaptchaV3Provider(Config.recaptchaV3Key));
   }
 
+  /// -- System Ui mode
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+
   /// -- Set system UI status bar color globally
   DeviceUtils.setStatusBarColor(ChatifyColors.transparent);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: ChatifyColors.transparent, statusBarIconBrightness: Brightness.light));
+
+  /// -- Set setting orientation to portrait only
+  DeviceUtils.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   /// -- Initialize user data
   try {
@@ -57,24 +67,19 @@ Future<void> initApp() async {
 
   /// -- Size window app
   setupWindow();
-
-  String timestamp = "1723669526894";
-  DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
-  String formattedDate = DateFormat('MMMM d, yyyy ' 'at h:mm:ss a').format(date);
-  String finalFormattedDate = '$formattedDate UTC+4';
-  log(finalFormattedDate);
 }
 
 class App extends StatelessWidget {
   const App({super.key});
 
+  static final ValueNotifier<bool> backButtonNotifier = ValueNotifier<bool>(false);
+  static final ValueNotifier<String?> currentRouteNotifier = ValueNotifier<String?>(null);
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
-    final LanguageController languageController = Get.find<LanguageController>();
+    final LanguagesController languagesController = Get.find<LanguagesController>();
     final ThemesController themesController = Get.find<ThemesController>();
-    final backButtonNotifier = ValueNotifier<bool>(false);
-    final currentRouteNotifier = ValueNotifier<String?>(null);
-    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
     return MultiProvider(
       providers: [
@@ -88,15 +93,12 @@ class App extends StatelessWidget {
           theme: ChatifyAppTheme.getLightTheme(),
           darkTheme: ChatifyAppTheme.getDarkTheme(),
           getPages: AppRoutes.pages,
-          locale: Locale(languageController.selectedLanguage.value),
+          locale: Locale(languagesController.selectedLanguage.value),
           localizationsDelegates: const [AppLocalizationDelegate(), ...GlobalMaterialLocalizations.delegates, GlobalWidgetsLocalizations.delegate],
           supportedLocales: const [Locale('ru'), Locale('en'), Locale('es')],
-          initialRoute: '/splash',
+          initialRoute: ChatifyRoutes.splash,
           navigatorKey: navigatorKey,
-          navigatorObservers: [
-            RouteNotifierObserver(currentRouteNotifier),
-            BackButtonObserver(backButtonNotifier)
-          ],
+          navigatorObservers: [RouteNotifierObserver(currentRouteNotifier), BackButtonObserver(backButtonNotifier)],
           builder: (context, child) {
             if (kIsWeb) {
               return child ?? Container();

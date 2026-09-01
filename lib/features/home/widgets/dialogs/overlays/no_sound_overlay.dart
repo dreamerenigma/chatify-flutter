@@ -37,14 +37,7 @@ class NoSoundOverlayEntry {
                       color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white,
                       borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
                       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

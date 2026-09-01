@@ -54,8 +54,6 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       }
     });
 
-    updateActiveStatus(true);
-
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {
@@ -74,7 +72,6 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    updateActiveStatus(false);
     _searchController.dispose();
     super.dispose();
   }
@@ -88,10 +85,6 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   void showNoSoundDialog() {
     final noSoundDialog = NoSoundDialog();
     noSoundDialog.showNoSoundDialog(context, selectedDuration, updateDuration);
-  }
-
-  void updateActiveStatus(bool isOnline) async {
-    await APIs.updateActiveStatus(isOnline);
   }
 
   @override
@@ -289,7 +282,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                                 duration: const Duration(milliseconds: 600),
                                 curve: Curves.easeInCubic,
                                 child: Text(
-                                  isOnline ? S.of(context).online : isTyping ? S.of(context).printing : lastActiveText,
+                                  isTyping ? S.of(context).printing : isOnline ? S.of(context).online : lastActiveText,
                                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,

@@ -18,6 +18,7 @@ import '../../controllers/user_controller.dart';
 import '../../screens/profile/add_links_screen.dart';
 import '../../screens/profile/profile_intelligence_screen.dart';
 import '../../screens/profile/photo_profile_screen.dart';
+import '../../screens/profile/username_screen.dart';
 import '../dialogs/enter_name_bottom_dialog.dart';
 import '../dialogs/light_dialog.dart';
 import '../dialogs/profile_bottom_dialog.dart';
@@ -112,11 +113,7 @@ class ProfileFormState extends State<ProfileForm> {
                                       radius: DeviceUtils.getScreenHeight(context) * .075,
                                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                       foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      child: SvgPicture.asset(
-                                        ChatifyVectors.profile,
-                                        width: DeviceUtils.getScreenHeight(context) * .2,
-                                        height: DeviceUtils.getScreenHeight(context) * .2,
-                                      ),
+                                      child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .2, height: DeviceUtils.getScreenHeight(context) * .2),
                                     ),
                                   )
                                   : CircleAvatar(
@@ -144,9 +141,7 @@ class ProfileFormState extends State<ProfileForm> {
                                     child: Container(
                                       width: DeviceUtils.getScreenHeight(context) * .2,
                                       height: DeviceUtils.getScreenHeight(context) * .2,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(80),
-                                      ),
+                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(80)),
                                     ),
                                   ),
                                 ),
@@ -169,7 +164,7 @@ class ProfileFormState extends State<ProfileForm> {
                                         shape: const CircleBorder(),
                                         color: colorsController.getColor(colorsController.selectedColorScheme.value),
                                         padding: const EdgeInsets.all(8),
-                                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.black, size: 20),
+                                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.white, size: 20),
                                       ),
                                     ),
                                   ),
@@ -181,7 +176,7 @@ class ProfileFormState extends State<ProfileForm> {
                   ],
                 ),
                 SizedBox(height: 18),
-                _buildProfileInfo(Icons.person_outline_rounded, S.of(context).name, APIs.me.name, null, () {
+                _buildProfileInfo(Icons.person_outline_rounded, S.of(context).name, APIs.me.name, ChatifyColors.darkGrey, () {
                   showEnterNameBottomDialog(
                     context,
                     APIs.me.name,
@@ -192,16 +187,19 @@ class ProfileFormState extends State<ProfileForm> {
                     },
                   );
                 }),
-                _buildProfileInfo(Icons.info_outline, S.of(context).intelligence, APIs.me.about, null, () {
+                _buildProfileInfo(Icons.info_outline, S.of(context).info, APIs.me.about, ChatifyColors.darkGrey, () {
                   Navigator.push(context, createPageRoute(ProfileIntelligenceScreen()));
                 }),
-                _buildProfileInfo(FluentIcons.status_16_filled, S.of(context).status, APIs.me.status, null, () {
+                _buildProfileInfo(Icons.alternate_email_outlined, S.of(context).username, 'Зарезервируйте имя пользователя', colorsController.getColor(colorsController.selectedColorScheme.value), () {
+                  Navigator.push(context, createPageRoute(UsernameScreen()));
+                }),
+                _buildProfileInfo(FluentIcons.status_16_filled, S.of(context).status, APIs.me.status, ChatifyColors.darkGrey, () {
                   Navigator.push(context, createPageRoute(ProfileIntelligenceScreen()));
                 }),
-                _buildProfileInfo(Icons.phone_android, S.of(context).phone, APIs.me.phoneNumber, null, () {
+                _buildProfileInfo(Icons.phone_android, S.of(context).phone, APIs.me.phoneNumber, ChatifyColors.darkGrey, () {
                   Navigator.push(context, createPageRoute(EditPhoneScreen()));
                 }),
-                _buildProfileInfo(Icons.alternate_email_outlined, S.of(context).email, widget.user.email, null, () {
+                _buildProfileInfo(Icons.mail_outline_rounded, S.of(context).email, widget.user.email, ChatifyColors.darkGrey, () {
                   Clipboard.setData(ClipboardData(text: widget.user.email));
                   Get.snackbar(
                     S.of(context).copied,
@@ -220,34 +218,37 @@ class ProfileFormState extends State<ProfileForm> {
     );
   }
 
-  Widget _buildProfileInfo(IconData icon, String title, String subtitle, Color? color, VoidCallback? onTap) {
-    return InkWell(
-      onTap: onTap,
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          children: [
-            Icon(icon, size: 26, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-            const SizedBox(width: 25),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 100,
-                  child: Text(
-                    subtitle,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: color, fontFamily: 'Roboto'),
-                    softWrap: true,
-                    overflow: TextOverflow.visible,
+  Widget _buildProfileInfo(IconData icon, String title, String subtitle, Color? color, VoidCallback? onTap, {String placeholder = ''}) {
+    final bool hasSubtitle = subtitle.trim().isNotEmpty;
+
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 26, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+              const SizedBox(width: 25),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 100,
+                    child: Text(
+                      hasSubtitle ? subtitle : placeholder,
+                      style: TextStyle(color: hasSubtitle ? color : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontFamily: 'Roboto'), softWrap: true, overflow: TextOverflow.visible,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

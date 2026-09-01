@@ -36,14 +36,14 @@ class StatusScreen extends StatefulWidget {
 }
 
 class StatusScreenState extends State<StatusScreen> {
-  List<UserModel> list = [];
-  int selectedIndex = 1;
   final List<UserModel> searchList = [];
-  bool isSearching = false;
   final expandController = Get.put(ExpandController());
   final box = GetStorage();
   final isExpanded = false.obs;
   final RxList<String> viewedUserIds = <String>[].obs;
+  bool isSearching = false;
+  List<UserModel> list = [];
+  int selectedIndex = 1;
 
   void markStatusAsViewed(String userId) {
     if (!viewedUserIds.contains(userId)) {
@@ -145,9 +145,7 @@ class StatusScreenState extends State<StatusScreen> {
                 child: Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ),
         floatingActionButton: selectedIndex == 1 ? const StatusFAB() : null,
@@ -174,10 +172,14 @@ class StatusScreenState extends State<StatusScreen> {
                             imageUrl: widget.user.image,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
-                            errorWidget: (context, url, error) => CircleAvatar(
-                              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                              foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                              child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .062, height: DeviceUtils.getScreenHeight(context) * .062),
+                            errorWidget: (context, url, error) => Container(
+                              width: DeviceUtils.getScreenHeight(context) * .062,
+                              height: DeviceUtils.getScreenHeight(context) * .062,
+                              color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+                              alignment: Alignment.center,
+                              child: SvgPicture.asset(
+                                ChatifyVectors.person, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
+                              ),
                             ),
                           ),
                         ),
@@ -195,7 +197,7 @@ class StatusScreenState extends State<StatusScreen> {
                                 color: colorsController.getColor(colorsController.selectedColorScheme.value),
                                 border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                               ),
-                              child: const Icon(Icons.add, color: ChatifyColors.white, size: 19),
+                              child: const Icon(Icons.add, color: ChatifyColors.black, size: 18),
                             ),
                           ),
                         ),
@@ -206,7 +208,7 @@ class StatusScreenState extends State<StatusScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(S.of(context).addStatus, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                          Text(S.of(context).addStatus, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w600)),
                           Text(
                             S.of(context).addNewStatus,
                             style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
@@ -245,10 +247,7 @@ class StatusScreenState extends State<StatusScreen> {
             },
             child: Row(
               children: [
-                Text(
-                  S.of(context).viewed,
-                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                ),
+                Text(S.of(context).viewed, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 const Spacer(),
                 AnimatedRotation(
                   duration: const Duration(milliseconds: 200),
@@ -260,85 +259,74 @@ class StatusScreenState extends State<StatusScreen> {
           ),
         ),
         expandController.isExpanded.value
-      ? Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Row(
-          children: [
-            Stack(
-              alignment: Alignment.centerRight,
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, width: 2.2),
-                  ),
-                  child: Container(
-                    width: DeviceUtils.getScreenHeight(context) * .07,
-                    height: DeviceUtils.getScreenHeight(context) * .07,
-                    decoration: BoxDecoration(
-                      color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Image.asset(ChatifyImages.appLogoLight, width: 34, height: 34, fit: BoxFit.contain),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
                 children: [
-                  Row(
+                  Stack(
+                    alignment: Alignment.centerRight,
+                    clipBehavior: Clip.none,
                     children: [
-                      Text(
-                        S.of(context).appName,
-                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(width: 4),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SvgPicture.asset(ChatifyVectors.starburst, width: 16, height: 16, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                              SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, color: ChatifyColors.white),
-                            ],
-                          ),
-                          const Positioned(
-                            top: 3,
-                            right: 3,
-                            child: Icon(BootstrapIcons.check, size: 13, color: ChatifyColors.white),
-                          ),
-                        ],
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, width: 2.2)),
+                        child: Container(
+                          width: DeviceUtils.getScreenHeight(context) * .07,
+                          height: DeviceUtils.getScreenHeight(context) * .07,
+                          decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                          child: Center(child: Image.asset(ChatifyImages.appLogoLight, width: 34, height: 34, fit: BoxFit.contain)),
+                        ),
                       ),
                     ],
                   ),
-                  Text(
-                    'Сегодня, 14:56',
-                    style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(S.of(context).appName, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
+                            const SizedBox(width: 4),
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SvgPicture.asset(ChatifyVectors.starburst, width: 16, height: 16, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+                                    SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+                                  ],
+                                ),
+                                const Positioned(
+                                  top: 3,
+                                  right: 3,
+                                  child: Icon(BootstrapIcons.check, size: 13, color: ChatifyColors.white),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Text(
+                          'Сегодня, 14:56',
+                          style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      )
-      : const SizedBox.shrink(),
+            )
+          : const SizedBox.shrink(),
       ],
     );
   }
 
   Widget _buildEncryptionText() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Expanded(
@@ -349,25 +337,20 @@ class StatusScreenState extends State<StatusScreen> {
                   children: [
                     WidgetSpan(
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: Icon(Icons.lock_outline, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, size: 14),
+                        padding: const EdgeInsets.only(right: 2),
+                        child: Icon(Icons.lock_outline, size: 13, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
                       ),
                       alignment: PlaceholderAlignment.middle,
                     ),
                     TextSpan(
                       text: S.of(context).statusUpdatesEncryption,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
-                      ),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: 13),
                     ),
                     TextSpan(
-                      text: S.of(context).encryption,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      text: S.of(context).endToEndEncryption,
+                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13),
                       recognizer: TapGestureRecognizer()..onTap = () {
-                        showChatsCallsPrivacyBottomSheet(
-                          context,
-                          headerText: S.of(context).yourStatusAndChatsPrivate,
-                          titleText: S.of(context).statusUpdatesAndPrivateMessages,
-                        );
+                        showChatsCallsPrivacyBottomSheet(context, headerText: S.of(context).yourStatusAndChatsPrivate, titleText: S.of(context).statusUpdatesAndPrivateMessages);
                       },
                     ),
                   ],

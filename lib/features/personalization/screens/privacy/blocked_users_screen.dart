@@ -8,7 +8,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../calls/screens/select_contact_screen.dart';
 import '../../../chat/models/user_model.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../models/blocked_user.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/lists/blocked_list.dart';

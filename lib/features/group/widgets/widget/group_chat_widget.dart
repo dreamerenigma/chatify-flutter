@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';

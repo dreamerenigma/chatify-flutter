@@ -1,9 +1,9 @@
-import 'package:chatify/features/personalization/screens/chats/wallpaper_screen.dart';
-import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:provider/provider.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../provider/wallpaper_provider.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -162,28 +162,24 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
               width: double.infinity,
               height: 80,
               padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-              ),
+              decoration: BoxDecoration(color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()), borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
               child: Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    final result = await Navigator.pushReplacement(
-                      context,
-                      createPageRoute(WallpaperScreen(imagePath: widget.imagePath)),
-                    );
-
-                    if (result == true) {
-                      if (widget.imagePath.isNotEmpty) {
-                        saveImagePath(widget.imagePath);
-                        Dialogs.showSnackbar(context, S.of(context).wallpaperInstalled);
-                      } else {
-                        Dialogs.showSnackbar(context, S.of(context).wallpaperImageSelected);
-                      }
-                    } else {
-                      Dialogs.showSnackbar(context, S.of(context).wallpaperNotInstalled);
+                    if (widget.imagePath.isEmpty) {
+                      Dialogs.showSnackbar(context, S.of(context).wallpaperImageSelected);
+                      return;
                     }
+
+                    final wallpaperProvider = Provider.of<WallpaperProvider>(context, listen: false);
+
+                    await wallpaperProvider.setBackgroundImage(widget.imagePath);
+
+                    if (!context.mounted) return;
+
+                    Dialogs.showSnackbar(context, S.of(context).wallpaperInstalled);
+
+                    Navigator.pop(context, true);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ChatifyColors.transparent,

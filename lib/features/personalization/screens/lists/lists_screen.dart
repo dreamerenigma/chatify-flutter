@@ -7,7 +7,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/edit_lists_bottom_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/new_list_bottom_dialog.dart';
@@ -30,14 +30,7 @@ class ListsScreenState extends State<ListsScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).lists, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -74,11 +67,7 @@ class ListsScreenState extends State<ListsScreen> {
                     children: [
                       SvgPicture.asset(ChatifyVectors.createLists, height: 100),
                       const SizedBox(height: 8),
-                      Text(
-                        S.of(context).listCreateFilterTopChats,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary),
-                      ),
+                      Text(S.of(context).listCreateFilterTopChats, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary)),
                     ],
                   ),
                 ),
@@ -110,7 +99,6 @@ class ListsScreenState extends State<ListsScreen> {
                     child: Text(S.of(context).yourLists, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
                   ),
                   const SizedBox(height: 8),
-
                   _buildListItem(S.of(context).unread, S.of(context).preset, () {
                     Navigator.push(context, createPageRoute(const UnreadListScreen()));
                   }),
@@ -130,11 +118,7 @@ class ListsScreenState extends State<ListsScreen> {
                   const SizedBox(height: 12),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25),
-                    child: Text(
-                      S.of(context).deleteOnePresetListsUnreadGroups,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
-                    ),
+                    child: Text(S.of(context).deleteOnePresetListsUnreadGroups, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal)),
                   ),
                 ],
               ),

@@ -36,6 +36,7 @@ class SidePanelWidget extends StatefulWidget {
   final List<UserModel> users;
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
+  final Set<String> selectedUserIds;
   final bool isSearching;
   final List<UserModel> searchList;
   final int selectedIndex;
@@ -55,6 +56,7 @@ class SidePanelWidget extends StatefulWidget {
     required this.users,
     required this.supports,
     required this.infosApp,
+    required this.selectedUserIds,
     required this.isSearching,
     required this.searchList,
     required this.selectedIndex,
@@ -197,6 +199,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                                 selectedSupport = null;
                               });
                             },
+                            selectedUserIds: widget.selectedUserIds,
                           )
                         else if (widget.selectedIndex == 1)
                           CallsWidget(

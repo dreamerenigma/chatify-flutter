@@ -7,7 +7,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../authentication/widgets/lists/country_list.dart';
 import '../../../community/controllers/country_controller.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class SelectCountryScreen extends StatefulWidget {

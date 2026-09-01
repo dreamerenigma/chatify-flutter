@@ -182,6 +182,11 @@ class ChatifyVectors {
   static const String backspaceOutline = "assets/vectors/backspace_outline.svg";
   static const String linkOutline = "assets/vectors/link_outline.svg";
   static const String settingsOutline = "assets/vectors/settings_outline.svg";
+  static const String folder = "assets/vectors/folder.svg";
+  static const String person = "assets/vectors/person.svg";
+  static const String storage = "assets/vectors/storage.svg";
+  static const String privateCalls = "assets/vectors/private_calls.svg";
+  static const String lockCheck = "assets/vectors/lock_check.svg";
 
   /// -- Flags country
   static const String abw = '${pathFlags}abw$format';

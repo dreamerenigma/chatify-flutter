@@ -7,7 +7,7 @@
     "confirmTerms": "Al hacer clic en el botón, confirmas que estás familiarizado con las Condiciones de Tratamiento de Datos Personales.",
     "phone": "Teléfono",
     "checkInternet": "Algo salió mal (¡Revisa Internet!)",
-    "nameEmail": "Nombre, correo electrónico, ...",
+    "search": "Buscar...",
     "addUser": "Añadir usuario",
     "emailOrId": "Correo electrónico o ID",
     "add": "Añadir",
@@ -209,10 +209,10 @@
     "audioSaved": "¡Audio guardado correctamente!",
     "addStatus": "Agregar estado",
     "addNewStatus": "Desaparece después de 24 horas",
-    "statusUpdatesEncryption": "Sus actualizaciones de estado están protegidas por",
+    "statusUpdatesEncryption": "Tus estados están protegidos ",
     "endToEndEncryption": "cifrado de extremo a extremo",
     "confidentialityStatus": "Estado de confidencialidad",
-    "seeStatusUpdates": "¿Quién puede ver mis actualizaciones de estado?",
+    "seeStatusUpdates": "La audiencia que ve mi estado",
     "myContacts": "Mis contactos",
     "contactsExcept": "Contactos, excepto...",
     "only": "Solo...",
@@ -483,5 +483,8 @@
     "hotKeys": "Teclas de acceso rápido",
     "links": "Campo de golf",
     "addDataAbout": "Agregar datos sobre",
-    "username": "Nombre de usuario"
+    "username": "Nombre de usuario",
+    "noInternetConnection": "Sin conexión a Internet",
+    "checkInternetSettings": "Por favor, compruebe su configuración de Internet e inténtelo de nuevo.",
+    "loadMore": "Cargar más"
 }

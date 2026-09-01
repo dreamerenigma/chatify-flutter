@@ -14,32 +14,31 @@ class ArchivePrivacySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey;
 
-    return Expanded(
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () {
-              Navigator.push(context, createPageRoute(ArchiveScreen()));
-            },
-            splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-            highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 36, right: 22, top: 14, bottom: 14),
-              child: Row(
-                children: [
-                  Icon(Icons.archive_outlined, size: 24, color: color),
-                  const SizedBox(width: 22),
-                  Text(S.of(context).inArchive, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: color)),
-                  const Spacer(),
-                  Text('3', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: color)),
-                ],
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: () {
+            Navigator.push(context, createPageRoute(ArchiveScreen()));
+          },
+          splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 36, right: 22, top: 14, bottom: 14),
+            child: Row(
+              children: [
+                Icon(Icons.archive_outlined, size: 24, color: color),
+                const SizedBox(width: 22),
+                Text(S.of(context).inArchive, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: color)),
+                const Spacer(),
+                Text('3', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: color)),
+              ],
             ),
           ),
-          Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-          PrivateMessagesProtectedNotice(),
-        ],
-      ),
+        ),
+        Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
+        PrivateMessagesProtectedNotice(),
+      ],
     );
   }
 }

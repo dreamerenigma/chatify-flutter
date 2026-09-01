@@ -142,9 +142,11 @@ class DateUtil {
     bool hideLastSeenText = false,
     bool removeWasPrefix = false,
     bool addWasPrefix = false,
+    bool capitalizeWasPrefix = false,
   }) {
     DateTime time = lastActive.toDate();
     DateTime now = DateTime.now();
+
     String formattedTime = TimeOfDay.fromDateTime(time).format(context);
 
     String todayPrefix = S.of(context).lastSeenToday;
@@ -166,11 +168,19 @@ class DateUtil {
       weekPrefix = 'был(-а) $weekPrefix';
     }
 
+    if (capitalizeWasPrefix) {
+      prefixDate = _capitalizeFirstLetter(prefixDate);
+      todayPrefix = _capitalizeFirstLetter(todayPrefix);
+      yesterdayPrefix = _capitalizeFirstLetter(yesterdayPrefix);
+      weekPrefix = _capitalizeFirstLetter(weekPrefix);
+    }
+
     if (time.year == now.year && time.month == now.month && time.day == now.day) {
       return '$todayPrefix $formattedTime';
     }
 
     DateTime yesterday = now.subtract(const Duration(days: 1));
+
     if (time.year == yesterday.year && time.month == yesterday.month && time.day == yesterday.day) {
       return '$yesterdayPrefix $formattedTime';
     }
@@ -178,11 +188,19 @@ class DateUtil {
     if (time.year == now.year) {
       String dayOfWeek = getDayOfWeekAbbreviation(time.weekday);
       String month = getMonth(time, context);
-      return '$weekPrefix $dayOfWeek ${time.day} $month ${S.of(context).lastSeenTime}$formattedTime';
+
+      return '$weekPrefix $dayOfWeek ${time.day} $month ''${S.of(context).lastSeenTime}$formattedTime';
     }
 
-    String fullDate = '${time.day.toString().padLeft(2, '0')}.${time.month.toString().padLeft(2, '0')}.${time.year} ${time.hour}:${time.minute.toString().padLeft(2, '0')}';
+    String fullDate = '${time.day.toString().padLeft(2, '0')}.''${time.month.toString().padLeft(2, '0')}.''${time.year} ''${time.hour}:''${time.minute.toString().padLeft(2, '0')}';
+
     return '$prefixDate $fullDate'.trim();
+  }
+
+  static String _capitalizeFirstLetter(String value) {
+    if (value.isEmpty) return value;
+
+    return value[0].toUpperCase() + value.substring(1);
   }
 
   /// -- Returns a string with a date, depending on whether it is today.

@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -39,8 +39,8 @@ class SupportScreen extends StatefulWidget {
 }
 
 class SupportScreenState extends State<SupportScreen> {
-  TextEditingController problemController = TextEditingController();
   late List<AssetEntity> selectedImages;
+  TextEditingController problemController = TextEditingController();
   bool isHovered = false;
   bool allFieldsFilled = false;
   bool isHoveredHelp = false;
@@ -60,11 +60,7 @@ class SupportScreenState extends State<SupportScreen> {
         imageBytes.add(bytes);
       }
     }
-    bool success = await EmailSendRepository.instance.sendFeedback(
-      context,
-      suggestion: problemController.text.isEmpty ? null : problemController.text,
-      images: imageBytes,
-    );
+    bool success = await EmailSendRepository.instance.sendFeedback(context, suggestion: problemController.text.isEmpty ? null : problemController.text, images: imageBytes);
     if (success) {
       setState(() {
         problemController.clear();
@@ -78,77 +74,10 @@ class SupportScreenState extends State<SupportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: isWebOrWindows ? (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt())) : null,
+      appBar: _buildAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            height: (isWebOrWindows && !isMobile) ? 55 : 75,
-            decoration: BoxDecoration(
-              color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
-              boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.none,
-            child: Padding(
-              padding: EdgeInsets.only(left: 5, right: 5, top: isMobile ? 35 : 5),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomTooltip(
-                    message: S.of(context).back,
-                    horizontalOffset: -35,
-                    verticalOffset: 10,
-                    child: MouseRegion(
-                      onEnter: (_) {
-                        setState(() {
-                          isHovered = true;
-                        });
-                      },
-                      onExit: (_) {
-                        setState(() {
-                          isHovered = false;
-                        });
-                      },
-                      child: Material(
-                        color: ChatifyColors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          mouseCursor: SystemMouseCursors.basic,
-                          splashFactory: NoSplash.splashFactory,
-                          borderRadius: BorderRadius.circular(8),
-                          splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                          highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
-                            clipBehavior: Clip.hardEdge,
-                            child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 15),
-                  isWindows
-                    ? Expanded(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
-                        ),
-                      )
-                    : Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
-                ],
-              ),
-            ),
-          ),
           Expanded(
             child: isWebOrWindows
               ? Center(
@@ -198,8 +127,8 @@ class SupportScreenState extends State<SupportScreen> {
                                     style: TextStyle(
                                       fontSize: ChatifySizes.fontSizeSm,
                                       color: isHoveredHelp
-                                          ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
-                                          : colorsController.getColor(colorsController.selectedColorScheme.value),
+                                        ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
+                                        : colorsController.getColor(colorsController.selectedColorScheme.value),
                                       decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
                                       decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                       decorationThickness: 1.5,
@@ -249,8 +178,7 @@ class SupportScreenState extends State<SupportScreen> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text:
-                              S.of(context).continuingAgreeAppTechInfo,
+                              text: S.of(context).continuingAgreeAppTechInfo,
                               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.2),
                             ),
                             WidgetSpan(
@@ -292,8 +220,8 @@ class SupportScreenState extends State<SupportScreen> {
                                 style: TextStyle(
                                   fontSize: ChatifySizes.fontSizeSm,
                                   color: isHoveredHelp
-                                      ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
-                                      : colorsController.getColor(colorsController.selectedColorScheme.value),
+                                    ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
+                                    : colorsController.getColor(colorsController.selectedColorScheme.value),
                                   decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
                                   decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   decorationThickness: 1.5,
@@ -315,32 +243,98 @@ class SupportScreenState extends State<SupportScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: widget.showCompactButtonOnly
-                  ? SizedBox(
-                width: double.infinity,
-                child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback, buttonText: S.of(context).save),
-              )
-                  : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
-                    child: Text(
-                      S.of(context).visitHelpCenter,
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeSm,
-                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        decoration: TextDecoration.none,
+                ? SizedBox(
+                    width: double.infinity,
+                    child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback, buttonText: S.of(context).save),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
+                        child: Text(S.of(context).visitHelpCenter, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none)),
                       ),
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback),
-                  ),
-                ],
+                      const Spacer(),
+                      SizedBox(child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
+                    ],
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    if (isWindows || isWebOrWindows) {
+      return PreferredSize(preferredSize: const Size.fromHeight(55), child: _buildDesktopAppBar());
+    }
+
+    return AppBar(
+      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+      leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
+      titleSpacing: 0,
+      title: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400,)),
+      elevation: 1,
+      iconTheme: IconThemeData(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+    );
+  }
+
+  Widget _buildDesktopAppBar() {
+    return Container(
+      height: 55,
+      decoration: BoxDecoration(
+        color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
+        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 2))],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8, right: 5, top: 5),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomTooltip(
+              message: S.of(context).back,
+              horizontalOffset: -35,
+              verticalOffset: 10,
+              child: MouseRegion(
+                onEnter: (_) {
+                  setState(() {
+                    isHovered = true;
+                  });
+                },
+                onExit: (_) {
+                  setState(() {
+                    isHovered = false;
+                  });
+                },
+                child: Material(
+                  color: ChatifyColors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    mouseCursor: SystemMouseCursors.basic,
+                    splashFactory: NoSplash.splashFactory,
+                    borderRadius: BorderRadius.circular(8),
+                    splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
+                      child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

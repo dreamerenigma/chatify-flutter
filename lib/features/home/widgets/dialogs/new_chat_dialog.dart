@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/home/widgets/dialogs/widget/tiles/user_profile_tile.dart';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:chatify/utils/popups/custom_tooltip.dart';
 import 'package:flutter/material.dart';
@@ -23,19 +23,19 @@ import 'change_new_contact_dialog.dart';
 import 'overlays/select_country_overlay.dart';
 
 Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel user) async {
-  final completer = Completer<void>();
-  final overlay = Overlay.of(context);
-  late OverlayEntry overlayEntry;
   final TextEditingController chatsController = TextEditingController();
   final TextEditingController groupController = TextEditingController();
   final userController = Get.find<UserController>();
-  List<UserModel> communicateOftenUsers = [];
   final AnimationController animationController = AnimationController(vsync: Navigator.of(context), duration: Duration(milliseconds: 300));
   final Animation<Offset> slideAnimation = Tween<Offset>(begin: Offset(0, -0.1), end: Offset(0, 0)).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic));
   final ValueNotifier<bool> isPhoneNumberVisibleNotifier = ValueNotifier(false);
   final ValueNotifier<bool> isCreatingGroupNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<Country?> selectedCountryNotifier = ValueNotifier(null);
+  final completer = Completer<void>();
+  final overlay = Overlay.of(context);
   final FocusNode inputFocusNode = FocusNode();
+  late OverlayEntry overlayEntry;
+  List<UserModel> communicateOftenUsers = [];
 
   void insertOverlay() {
     overlayEntry = OverlayEntry(
@@ -117,12 +117,7 @@ Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
                                     child: isPhoneNumberVisible
-                                      ? _buildPhoneNumber(
-                                          context,
-                                          chatsController,
-                                          isPhoneNumberVisibleNotifier,
-                                          selectedCountryNotifier,
-                                        )
+                                      ? _buildPhoneNumber(context, chatsController, isPhoneNumberVisibleNotifier, selectedCountryNotifier)
                                       : SearchTextInput(
                                           controller: chatsController,
                                           focusNode: inputFocusNode,
@@ -340,7 +335,7 @@ Widget _buildNewGroup(BuildContext context, ValueNotifier<bool> isCreatingGroupN
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: SvgPicture.asset(ChatifyVectors.newGroup, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 22, height: 22),
+                child: SvgPicture.asset(ChatifyVectors.newGroup, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
               ),
             ),
             SizedBox(width: 14),
@@ -400,9 +395,7 @@ Widget _buildNewContact(BuildContext context, VoidCallback onClose, UserModel us
                 color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled, width: 1),
                 shape: BoxShape.circle,
               ),
-              child: Center(
-                child: SvgPicture.asset(ChatifyVectors.contact, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 20, height: 20),
-              ),
+              child: Center(child: SvgPicture.asset(ChatifyVectors.contact, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
             ),
             SizedBox(width: 14),
             Text(S.of(context).newContact, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
@@ -442,6 +435,7 @@ Widget _buildAddPhoneNumber(
                 final renderBox = newSelectCountryKey.currentContext?.findRenderObject();
                 if (renderBox is RenderBox) {
                   final position = renderBox.localToGlobal(Offset.zero);
+
                   showSelectCountryOverlay(context, position, (Country selected) {
                     selectedCountryNotifier.value = selected;
                     controller.text = selected.code;
@@ -502,7 +496,7 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
                   errorWidget: (context, url, error) => Center(
-                    child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, width: 28, height: 28),
+                    child: SvgPicture.asset(ChatifyVectors.newUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, BlendMode.srcIn)),
                   ),
                 ),
               ),
@@ -526,7 +520,7 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
 }
 
 Widget _buildPhoneNumber(
-  BuildContext context, 
+  BuildContext context,
   TextEditingController chatsController, 
   ValueNotifier<bool> isPhoneNumberVisibleNotifier, 
   ValueNotifier<Country?> selectedCountryNotifier
@@ -589,13 +583,13 @@ Widget _buildPhoneNumber(
                 if (renderBox is RenderBox) {
                   final position = renderBox.localToGlobal(Offset.zero);
                   showSelectCountryOverlay(context, position, (Country selected) {
-                    selectedCountryNotifier.value = selected;
                     final code = selected.code;
                     final currentText = chatsController.text;
                     final regex = RegExp(r'^\+\d+\s*');
                     final cleanedText = currentText.replaceFirst(regex, '');
-                    chatsController.text = '$code $cleanedText';
 
+                    selectedCountryNotifier.value = selected;
+                    chatsController.text = '$code $cleanedText';
                     chatsController.selection = TextSelection.fromPosition(TextPosition(offset: chatsController.text.length));
 
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -639,7 +633,7 @@ Widget _buildPhoneNumber(
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 50),
                           transform: Matrix4.translationValues(0, (isTappedColorNotifier.value || isSelectCountryDropdownNotifier.value) ? 2.0 : 0, 0),
-                          child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                          child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                         ),
                       ],
                     );
@@ -707,23 +701,13 @@ Widget _buildNumberPad(TextEditingController chatsController, ValueNotifier<Coun
             behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1.2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 1.2, crossAxisSpacing: 12, mainAxisSpacing: 12),
               itemCount: keys.length,
                 itemBuilder: (context, index) {
                   final digit = keys[index]['digit']!;
                   final letters = keys[index]['letters']!;
 
-                  return InkWellKey(
-                    digit: digit,
-                    letters: letters,
-                    onTap: () => onKeyPressed(digit, chatsController, selectedCountryNotifier),
-                    isCentered: letters.isEmpty,
-                  );
+                  return InkWellKey(digit: digit, letters: letters, onTap: () => onKeyPressed(digit, chatsController, selectedCountryNotifier), isCentered: letters.isEmpty);
                 }
             ),
           ),

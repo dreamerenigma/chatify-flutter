@@ -11,14 +11,14 @@ import '../../../personalization/widgets/cards/use_app_user_card.dart';
 
 class UserList extends StatefulWidget {
   final bool isSearching;
-  final List<UserModel> searchList;
-  final List<UserModel> list;
   final bool isSharing;
   final bool isInviting;
   final bool useApp;
   final bool showContacts;
-  final UserModel? selectedUser;
+  final Set<String> selectedUserIds;
   final List<Contact> contacts;
+  final List<UserModel> searchList;
+  final List<UserModel> list;
   final Function(UserModel) onUserSelected;
   final Function(bool)? onSelectionModeChanged;
 
@@ -34,7 +34,7 @@ class UserList extends StatefulWidget {
     this.showContacts = false,
     this.contacts = const [],
     this.onSelectionModeChanged,
-    this.selectedUser,
+    required this.selectedUserIds,
   });
 
   @override
@@ -43,8 +43,8 @@ class UserList extends StatefulWidget {
 
 class _UserListState extends State<UserList> {
   final ColorsController colorsController = Get.put(ColorsController());
-  List<UserModel> cachedUsers = [];
   bool isLoading = true;
+  List<UserModel> cachedUsers = [];
 
   @override
   void initState() {
@@ -95,10 +95,7 @@ class _UserListState extends State<UserList> {
           return const SizedBox.shrink();
         }
 
-        final userIds = snapshot.data?.docs
-            .map((e) => e.id)
-            .toList() ??
-            [];
+        final userIds = snapshot.data?.docs.map((e) => e.id).toList() ?? [];
 
         if (userIds.isEmpty) {
           return _buildUserList([]);
@@ -115,14 +112,9 @@ class _UserListState extends State<UserList> {
               return const SizedBox.shrink();
             }
 
-            final users = snapshot.data?.docs
-                .map((e) => UserModel.fromJson(e.data()))
-                .toList() ??
-                [];
+            final users = snapshot.data?.docs.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
 
-            return _buildUserList(
-              widget.isSearching ? widget.searchList : users,
-            );
+            return _buildUserList(widget.isSearching ? widget.searchList : users);
           },
         );
       },
@@ -137,11 +129,8 @@ class _UserListState extends State<UserList> {
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           final contact = widget.contacts[index];
-          return InviteUserCard(
-            contact: contact,
-            onContactSelected: (Contact selectedContact) {},
-            onInvite: () {},
-          );
+
+          return InviteUserCard(contact: contact, onContactSelected: (Contact selectedContact) {}, onInvite: () {});
         },
       ),
     );
@@ -157,40 +146,23 @@ class _UserListState extends State<UserList> {
         itemCount: users.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.only(top: 6),
+        padding: const EdgeInsets.only(top: 6),
         itemBuilder: (context, index) {
           final user = users[index];
-          Widget userCard;
 
           if (widget.isInviting && !widget.useApp) {
-            userCard = InviteUserCard(
-              contact: Contact(),
-              onContactSelected: (Contact selectedContact) {},
-              onInvite: () {},
-            );
-          } else if (widget.isSharing && !widget.useApp) {
-            userCard = ShareUserCard(user: user, onUserSelected: widget.onUserSelected);
-          } else if (widget.useApp) {
-            userCard = UseAppUserCard(user: user, onUserSelected: widget.onUserSelected);
-          } else {
-            userCard = ChatUserCard(
-              user: user,
-              onUserSelected: (selectedUser) {
-                widget.onUserSelected(selectedUser);
-              },
-              isSelected: widget.selectedUser?.id == user.id,
-            );
+            return InviteUserCard(contact: Contact(), onContactSelected: (Contact selectedContact) {}, onInvite: () {});
           }
 
-          return GestureDetector(
-            onTap: () {
-              widget.onUserSelected(user);
-              if (widget.onSelectionModeChanged != null) {
-                widget.onSelectionModeChanged!(true);
-              }
-            },
-            child: userCard,
-          );
+          if (widget.isSharing && !widget.useApp) {
+            return ShareUserCard(user: user, onUserSelected: widget.onUserSelected);
+          }
+
+          if (widget.useApp) {
+            return UseAppUserCard(user: user, onUserSelected: widget.onUserSelected);
+          }
+
+          return ChatUserCard(user: user, isSelected: widget.selectedUserIds.contains(user.id), onUserSelected: widget.onUserSelected);
         },
       ),
     );

@@ -156,6 +156,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkInternet": MessageLookupByLibrary.simpleMessage(
       "Algo salió mal (¡Revisa Internet!)",
     ),
+    "checkInternetSettings": MessageLookupByLibrary.simpleMessage(
+      "Por favor, compruebe su configuración de Internet e inténtelo de nuevo.",
+    ),
     "checkOutOur": MessageLookupByLibrary.simpleMessage(
       "Por favor, lee nuestra política de privacidad",
     ),
@@ -431,7 +434,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "installYourComputer": MessageLookupByLibrary.simpleMessage(
       "Para instalar Chatify en tu computadora:",
     ),
-    "intelligence": MessageLookupByLibrary.simpleMessage("Información"),
     "invalidCountryCodeLength": MessageLookupByLibrary.simpleMessage(
       "Longitud del código de país no válida (máximo 1-3 caracteres).",
     ),
@@ -479,6 +481,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Seleccione un país de la lista de países sugeridos. Esto completará automáticamente el código de país.",
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Listas"),
+    "loadMore": MessageLookupByLibrary.simpleMessage("Cargar más"),
     "loading": MessageLookupByLibrary.simpleMessage("Cargando..."),
     "locationSharing": MessageLookupByLibrary.simpleMessage(
       "Compartir ubicación",
@@ -519,9 +522,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "myStatus": MessageLookupByLibrary.simpleMessage("Mi estado"),
     "name": MessageLookupByLibrary.simpleMessage("Nombre"),
-    "nameEmail": MessageLookupByLibrary.simpleMessage(
-      "Nombre, correo electrónico, ...",
-    ),
     "newCall": MessageLookupByLibrary.simpleMessage(
       "Nueva llamada (Ctrl+Mayús+C)",
     ),
@@ -551,6 +551,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noImagesFound": MessageLookupByLibrary.simpleMessage(
       "No se encontraron imágenes",
+    ),
+    "noInternetConnection": MessageLookupByLibrary.simpleMessage(
+      "Sin conexión a Internet",
     ),
     "noMembers": MessageLookupByLibrary.simpleMessage("Sin miembros"),
     "noNewStatus": MessageLookupByLibrary.simpleMessage("Sin nuevos estados"),
@@ -758,7 +761,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "¿Quién puede ver mis actualizaciones de estado?",
     ),
     "seeStatusUpdates": MessageLookupByLibrary.simpleMessage(
-      "¿Quién puede ver mis actualizaciones de estado?",
+      "La audiencia que ve mi estado",
     ),
     "selectAudio": MessageLookupByLibrary.simpleMessage("Seleccionar audio"),
     "selectAvailable": MessageLookupByLibrary.simpleMessage(
@@ -819,7 +822,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Actualización de estado",
     ),
     "statusUpdatesEncryption": MessageLookupByLibrary.simpleMessage(
-      "Sus actualizaciones de estado están protegidas por",
+      "Tus estados están protegidos ",
     ),
     "statusUpdatesProtectedEncryption": MessageLookupByLibrary.simpleMessage(
       "Las actualizaciones de estado están protegidas con cifrado de extremo a extremo",

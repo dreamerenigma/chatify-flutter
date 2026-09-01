@@ -5,7 +5,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 
-void showDeleteChatDialog(BuildContext context, List<UserModel> users, List<int> userIndices, UserModel currentUser) {
+void showDeleteChatDialog(BuildContext context, List<UserModel> users, UserModel currentUser) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -26,15 +26,20 @@ void showDeleteChatDialog(BuildContext context, List<UserModel> users, List<int>
             child: Text(S.of(context).cancel),
           ),
           TextButton(
-            onPressed: () {
-              for (int index in userIndices) {
-                final user = users[index];
-                APIs.deleteChat(user.id).then((value) {
-                }).catchError((error) {
+            onPressed: () async {
+              try {
+                for (final user in users) {
+                  await APIs.deleteChat(user.id);
+                }
+
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              } catch (error) {
+                if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).failedDeleteChat)));
-                });
+                }
               }
-              Navigator.pop(context);
             },
             style: TextButton.styleFrom(
               foregroundColor: Colors.blue,

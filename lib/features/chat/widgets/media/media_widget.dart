@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helper/gif_loading_indicator.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../data/file_extensions_data.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -52,6 +53,7 @@ class MediaWidgetState extends State<MediaWidget> {
   void onOpenDocument() async {
     try {
       final url = widget.message.msg;
+
       await launchUrl(Uri.parse(url));
     } catch (e) {
       logger.e('Ошибка при открытии документа: $e');
@@ -74,6 +76,7 @@ class MediaWidgetState extends State<MediaWidget> {
         if (kIsWeb) {
           final blob = html.Blob([response.bodyBytes]);
           final url = html.Url.createObjectUrlFromBlob(blob);
+
           html.AnchorElement(href: url)..download = widget.message.documentName ?? 'document'..click();
           html.Url.revokeObjectUrl(url);
 
@@ -82,6 +85,7 @@ class MediaWidgetState extends State<MediaWidget> {
           final directory = await getExternalStorageDirectory();
           final filePath = '${directory!.path}/${widget.message.documentName ?? 'document'}';
           final file = File(filePath);
+
           await file.writeAsBytes(response.bodyBytes);
           logger.d('File saved to $filePath');
           Dialogs.showSnackbar(context, S.of(context).documentSuccessfullySaved);
@@ -109,6 +113,7 @@ class MediaWidgetState extends State<MediaWidget> {
         return _buildGifWidget(context);
       case MessageType.video:
         final urls = widget.message.msg.split(',').map((e) => e.trim()).toList();
+
         return VideoPlayerWidget(videoUrls: urls, message: widget.message);
       case MessageType.audio:
         return AudioWidget(audioUrl: widget.message.msg, documentName: widget.message.documentName ?? 'Unknown', fileSize: widget.message.fileSize ?? 'Unknown size', isSender: widget.isSender);

@@ -1,4 +1,4 @@
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -11,7 +11,7 @@ import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../buttons/custom_radio_button.dart';
 
 void showLanguageDialog(BuildContext context) {
-  final LanguageController languageController = Get.find<LanguageController>();
+  final LanguagesController languageController = Get.find<LanguagesController>();
   final ScrollController scrollController = ScrollController();
   final List<Map<String, String>> languages = [
     {'code': 'af', 'image': ChatifyVectors.zaf, 'title': S.of(context).africanLanguage},

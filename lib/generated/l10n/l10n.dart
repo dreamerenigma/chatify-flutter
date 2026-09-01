@@ -114,14 +114,9 @@ class S {
     );
   }
 
-  /// `Name, Email, ...`
-  String get nameEmail {
-    return Intl.message(
-      'Name, Email, ...',
-      name: 'nameEmail',
-      desc: '',
-      args: [],
-    );
+  /// `Search`
+  String get search {
+    return Intl.message('Search', name: 'search', desc: '', args: []);
   }
 
   /// `  Add User`
@@ -1704,10 +1699,10 @@ class S {
     );
   }
 
-  /// `Your status updates are protected by `
+  /// `Your statuses are protected `
   String get statusUpdatesEncryption {
     return Intl.message(
-      'Your status updates are protected by ',
+      'Your statuses are protected ',
       name: 'statusUpdatesEncryption',
       desc: '',
       args: [],
@@ -1724,10 +1719,10 @@ class S {
     );
   }
 
-  /// `Who can see my status updates`
+  /// `The audience that sees my status`
   String get seeStatusUpdates {
     return Intl.message(
-      'Who can see my status updates',
+      'The audience that sees my status',
       name: 'seeStatusUpdates',
       desc: '',
       args: [],
@@ -2805,13 +2800,8 @@ class S {
   }
 
   /// `Information`
-  String get intelligence {
-    return Intl.message(
-      'Information',
-      name: 'intelligence',
-      desc: '',
-      args: [],
-    );
+  String get info {
+    return Intl.message('Information', name: 'info', desc: '', args: []);
   }
 
   /// `Adding to groups`
@@ -3127,11 +3117,6 @@ class S {
       desc: '',
       args: [],
     );
-  }
-
-  /// `Search`
-  String get search {
-    return Intl.message('Search', name: 'search', desc: '', args: []);
   }
 
   /// `Didn't receive your confirmation code?`
@@ -4364,16 +4349,6 @@ class S {
     return Intl.message(
       'To call contacts who have Chatify, ',
       name: 'toCallContactsWhoHaveApp',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `click the call icon at the bottom of the screen`
-  String get clickOnCallIconBottomScreen {
-    return Intl.message(
-      'click the call icon at the bottom of the screen',
-      name: 'clickOnCallIconBottomScreen',
       desc: '',
       args: [],
     );
@@ -9379,10 +9354,10 @@ class S {
     );
   }
 
-  /// `Personal Data Visibility`
+  /// `Who sees my personal information`
   String get visibilityPersonalData {
     return Intl.message(
-      'Personal Data Visibility',
+      'Who sees my personal information',
       name: 'visibilityPersonalData',
       desc: '',
       args: [],
@@ -11087,6 +11062,31 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `No Internet Connection`
+  String get noInternetConnection {
+    return Intl.message(
+      'No Internet Connection',
+      name: 'noInternetConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please check your internet settings and try again.`
+  String get checkInternetSettings {
+    return Intl.message(
+      'Please check your internet settings and try again.',
+      name: 'checkInternetSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Перезагрузить`
+  String get loadMore {
+    return Intl.message('Перезагрузить', name: 'loadMore', desc: '', args: []);
   }
 }
 

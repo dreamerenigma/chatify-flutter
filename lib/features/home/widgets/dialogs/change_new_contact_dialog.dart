@@ -16,7 +16,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../bot/models/support_model.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/dialog_controller.dart';
 import '../input/search_text_input.dart';
 

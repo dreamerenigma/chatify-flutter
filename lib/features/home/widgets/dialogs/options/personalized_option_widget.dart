@@ -10,7 +10,7 @@ import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../personalization/controllers/colors_controller.dart';
 import '../../../../personalization/controllers/fonts_controller.dart';
 import '../../../../personalization/controllers/themes_controller.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../../controllers/overlay_color_controller.dart';
 import '../../checkboxes/custom_checkbox.dart';
 import '../size_font_dialog.dart';

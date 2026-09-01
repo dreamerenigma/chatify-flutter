@@ -13,7 +13,7 @@ import '../../personalization/controllers/user_controller.dart';
 import '../../personalization/screens/account/select_country_screen.dart';
 import '../../personalization/screens/help/help_center_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../welcome/screen/problem_detected_screen.dart';
 import '../models/country.dart';
 import '../widgets/bars/auth_app_bar.dart';

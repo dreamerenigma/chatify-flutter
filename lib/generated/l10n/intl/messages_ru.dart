@@ -486,6 +486,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkInternet": MessageLookupByLibrary.simpleMessage(
       "Что-то пошло не так (проверьте Интернет!)",
     ),
+    "checkInternetSettings": MessageLookupByLibrary.simpleMessage(
+      "Пожалуйста, проверьте настройки Интернета и повторите попытку.",
+    ),
     "checkOutOur": MessageLookupByLibrary.simpleMessage(
       "Ознакомьтесь с нашей ",
     ),
@@ -520,9 +523,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "clickContactNameStatus": MessageLookupByLibrary.simpleMessage(
       "Нажмите на имя контакта, чтобы увидеть статус",
-    ),
-    "clickOnCallIconBottomScreen": MessageLookupByLibrary.simpleMessage(
-      " нажмите на иконку звонка в нижней части экрана",
     ),
     "clickOnIcon": MessageLookupByLibrary.simpleMessage("Нажмите на значок "),
     "clickOnLinkToLogIn": MessageLookupByLibrary.simpleMessage(
@@ -930,7 +930,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Благодаря сквозному шифрованию содержимое ваших личных сообщений и звонков остается только между вами и людьми, с которыми вы общаетесь. Никто не может прочитать, прослушать или переслать их, даже сотрудники Chatify. Под защитой находятся:",
     ),
     "endToEndEncryptionPrivateMessages": MessageLookupByLibrary.simpleMessage(
-      "Благодаря сквозному шифрованию ваши личные сообщения остаются только между вами и людьми, с которыми вы общаетесь. Даже Chatify не может получить к ним доступ. К ним относятся:",
+      "Благодаря сквозному шифрованию содержимое ваших личных сообщений и звонков остается только между вами и людьми, с которыми вы общаетесь. Никто не может прочитать, прослушать или переслать их, даже сотрудники Chatify. \nПод защитой находятся:",
     ),
     "englishLanguage": MessageLookupByLibrary.simpleMessage("Английский"),
     "enlargeToDesiredSize": MessageLookupByLibrary.simpleMessage(
@@ -1353,6 +1353,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "increaseOrDecreaseFontSize": MessageLookupByLibrary.simpleMessage(
       "Увеличить или уменьшить размер шрифта можно с помощью клавиш Ctrl +/-",
     ),
+    "info": MessageLookupByLibrary.simpleMessage("Информация"),
     "informationCannotEmpty": MessageLookupByLibrary.simpleMessage(
       "Сведения не могут быть пустыми",
     ),
@@ -1360,7 +1361,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "installYourComputer": MessageLookupByLibrary.simpleMessage(
       "Чтобы установить Chatify на компьютере:",
     ),
-    "intelligence": MessageLookupByLibrary.simpleMessage("Сведения"),
     "invalidCountryCode": MessageLookupByLibrary.simpleMessage(
       "Неверный код страны",
     ),
@@ -1414,7 +1414,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "lastSeenTime": MessageLookupByLibrary.simpleMessage("в "),
     "lastSeenTimeOnlineStatus": MessageLookupByLibrary.simpleMessage(
-      "Время последнего посещения в статус \"в сети\"",
+      "Посл. посещ. и статус \"в сети\"",
     ),
     "lastSeenToday": MessageLookupByLibrary.simpleMessage("был(-а) сегодня в"),
     "lastSeenWeek": MessageLookupByLibrary.simpleMessage("был(-а) в"),
@@ -1473,6 +1473,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Этот список обновляется дял вас автоматически, отображая все групповые чаты.",
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Списки"),
+    "loadMore": MessageLookupByLibrary.simpleMessage("Перезагрузить"),
     "loading": MessageLookupByLibrary.simpleMessage("Загрузка..."),
     "location": MessageLookupByLibrary.simpleMessage("Местоположение..."),
     "locationSharing": MessageLookupByLibrary.simpleMessage(
@@ -1544,7 +1545,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ваше сообщение и прикреплённые медиафайлы не будут отправлены, если вы закроете этот экран.",
     ),
     "messageHasBeenRemoved": MessageLookupByLibrary.simpleMessage(
-      "Это сообщение удалено.",
+      "Вы удалили данное сообщение",
     ),
     "messageHistoryWillBeDeleted": MessageLookupByLibrary.simpleMessage(
       "Будет удалена история ваших сообщений.",
@@ -1597,7 +1598,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
       "Имя не может быть пустым.",
     ),
-    "nameEmail": MessageLookupByLibrary.simpleMessage("Имя, Email, ..."),
     "nearestPlaces": MessageLookupByLibrary.simpleMessage("Ближайшие места"),
     "never": MessageLookupByLibrary.simpleMessage("Никогда"),
     "newCall": MessageLookupByLibrary.simpleMessage(
@@ -1682,6 +1682,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noImagesFound": MessageLookupByLibrary.simpleMessage(
       "Изображения не найдены.",
     ),
+    "noInternetConnection": MessageLookupByLibrary.simpleMessage(
+      "Нет соединения с интернетом",
+    ),
     "noLinks": MessageLookupByLibrary.simpleMessage("Нет ссылок"),
     "noMediaFiles": MessageLookupByLibrary.simpleMessage("Нет медиафайлов"),
     "noMembers": MessageLookupByLibrary.simpleMessage("Нет участников"),
@@ -1720,7 +1723,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Уведомления"),
     "notifySecurityCodeEndToEndEncrypted": MessageLookupByLibrary.simpleMessage(
-      "Получайте уведомления в случае \n изменений кода безопасности \n на вашем телефоне и телефоне \n контакта в чате со сквозным \n шифрованием. Если у вас несколько \n устройств, этот параметр необходимо \n включить отдельно на каждом \n устройстве, на котором вы хотите \n получать уведомления. ",
+      "Получайте уведомления в случае изменений кода безопасности на вашем телефоне и телефоне контакта в чате со сквозным шифрованием. Если у вас несколько устройств, этот параметр необходимо включить отдельно на каждом устройстве, на котором вы хотите получать уведомления. ",
     ),
     "notifySounds": MessageLookupByLibrary.simpleMessage("Звуки уведомлений"),
     "nov": MessageLookupByLibrary.simpleMessage("Ноя."),
@@ -2163,7 +2166,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Уведомления безопасности",
     ),
     "securityNotificationsDevice": MessageLookupByLibrary.simpleMessage(
-      "Показывать уведомления \n безопасности на этом \n устройстве",
+      "Показывать уведомления безопасности на этом устройстве",
     ),
     "securityNotifyComputer": MessageLookupByLibrary.simpleMessage(
       "Показывать уведомления безопасности на этом компьютере",
@@ -2175,7 +2178,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Кто может видеть обновления моего статуса",
     ),
     "seeStatusUpdates": MessageLookupByLibrary.simpleMessage(
-      "Кто может видеть обновления моего статуса",
+      "Аудитория, которая видит мой статус",
     ),
     "seesMyProfilePicture": MessageLookupByLibrary.simpleMessage(
       "Кто видит моё фото профиля",
@@ -2370,7 +2373,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Обновление статуса и личные сообщения, которыми вы обмениваетесь с выбранными вами контактами, защищены сквозным шифрованием. Даже Chatify не может получить к ним доступ. К ним относятся:",
     ),
     "statusUpdatesEncryption": MessageLookupByLibrary.simpleMessage(
-      "Обновления вашего статуса защищены ",
+      "Ваши статусы защищены ",
     ),
     "statusUpdatesProtectedEncryption": MessageLookupByLibrary.simpleMessage(
       "Обновления статуса защищены сквозным шифрованием",
@@ -2496,7 +2499,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "to": MessageLookupByLibrary.simpleMessage("Чтобы "),
     "toCallContactsWhoHaveApp": MessageLookupByLibrary.simpleMessage(
-      "Чтобы позвонить контактам, у которых есть Chatify, ",
+      "Оставайтесь на связи с помощью защищенных видео- и аудиозвонков на любое устройство.",
     ),
     "today": MessageLookupByLibrary.simpleMessage("Сегодня"),
     "toggle": MessageLookupByLibrary.simpleMessage("Переключить"),
@@ -2639,7 +2642,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "viewed": MessageLookupByLibrary.simpleMessage("Просмотренные"),
     "visibilityPersonalData": MessageLookupByLibrary.simpleMessage(
-      "Видимость персональных данных",
+      "Кто видит мою личную информацию",
     ),
     "visibleYourAppProfile": MessageLookupByLibrary.simpleMessage(
       "будет видно в вашем профиле Chatify. ",

@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/user_model.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/forms/profile_form.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,8 +20,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
-  String? _image;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String? _image;
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +34,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: ChatifyColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
             ),
             child: AppBar(
               title: Text(S.of(context).profile, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -68,34 +64,34 @@ class ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            //   child: Column(
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: [
-            //       ElevatedButton.icon(
-            //         style: ElevatedButton.styleFrom(
-            //           padding: EdgeInsets.zero,
-            //           shape: const StadiumBorder(),
-            //           minimumSize: Size(double.infinity, mq.height * .055),
-            //           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            //           foregroundColor: ChatifyColors.white,
-            //           side: BorderSide.none,
-            //         ),
-            //         onPressed: () {
-            //           if (formKey.currentState!.validate()) {
-            //             formKey.currentState!.save();
-            //             APIs.updateUserInfo().then((value) {
-            //               CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).profileUpdated, icon: const Icon(BootstrapIcons.check_circle), iconColor: ChatifyColors.success);
-            //             });
-            //           }
-            //         },
-            //         icon: const Icon(Icons.edit, size: 20, color: ChatifyColors.white),
-            //         label: Text(S.of(context).update, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      shape: const StadiumBorder(),
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      foregroundColor: ChatifyColors.white,
+                      side: BorderSide.none,
+                    ),
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        APIs.updateUserInfo().then((value) {
+                          CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).profileUpdated, icon: const Icon(BootstrapIcons.check_circle), iconColor: ChatifyColors.success);
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.edit, size: 20, color: ChatifyColors.white),
+                    label: Text('Сохранить изменения', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

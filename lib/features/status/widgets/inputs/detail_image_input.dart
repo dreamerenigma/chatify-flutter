@@ -10,6 +10,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
@@ -32,15 +33,15 @@ class DetailImageInput extends StatefulWidget {
 }
 
 class DetailImageInputState extends State<DetailImageInput> {
-  late final UserModel user;
-  List<MessageModel> list = [];
   final TextEditingController textController = TextEditingController();
   final focusNode = FocusNode();
   final AudioPlayer audioPlayer = AudioPlayer();
-  bool showEmoji = false, isUploading = false;
+  late final UserModel user;
   late final ValueChanged<bool> setUploading;
   bool isTyping = false;
   bool sendWithEnter = false;
+  bool showEmoji = false, isUploading = false;
+  List<MessageModel> list = [];
 
   @override
   void initState() {

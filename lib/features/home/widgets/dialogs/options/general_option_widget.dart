@@ -1,4 +1,4 @@
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/popups/custom_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -209,12 +209,12 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                         children: [
                           Row(
                             children: [
-                              SvgPicture.asset(ChatifyVectors.language, width: 17, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                              SvgPicture.asset(ChatifyVectors.language, width: 17, height: 17, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                               const SizedBox(width: 10),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Obx(() {
-                                  return Text(LanguageController.instance.getLanguageLabel(context), style: TextStyle(fontWeight: FontWeight.w400));
+                                  return Text(LanguagesController.instance.getLanguageLabel(context), style: TextStyle(fontWeight: FontWeight.w400));
                                 }),
                               ),
                             ],
@@ -223,7 +223,7 @@ class GeneralOptionWidgetState extends State<GeneralOptionWidget> {
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             transform: Matrix4.translationValues(0, isPressed ? 2.0 : 0, 0),
-                            child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 15, height: 15),
+                            child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                           ),
                         ],
                       ),

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -84,7 +83,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
-            title: Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).info, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             elevation: 1,
             actions: [
               IconButton(

@@ -7,6 +7,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
@@ -65,7 +66,13 @@ class InviteUserCardState extends State<InviteUserCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(ChatifyVectors.profile, width: 42, height: 42),
+                  Container(
+                    width: DeviceUtils.getScreenHeight(context) * .055,
+                    height: DeviceUtils.getScreenHeight(context) * .055,
+                    decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03)),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(ChatifyVectors.person, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                  ),
                   SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -132,51 +139,5 @@ class InviteUserCardState extends State<InviteUserCard> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).contactContainPhoneNumber)));
     }
-  }
-}
-
-class ContactsList extends StatelessWidget {
-  final List<Contact> contacts;
-
-  const ContactsList({super.key, required this.contacts});
-
-  List<Contact> _filterAndSortContacts(List<Contact> contacts) {
-    bool isRussian(String name) {
-      final cyrillicRegex = RegExp(r'[А-Яа-я]');
-      return cyrillicRegex.hasMatch(name);
-    }
-
-    List<Contact> filteredContacts = contacts.where((contact) {
-      return contact.phones.isNotEmpty && contact.phones.first.number.isNotEmpty;
-    }).toList();
-
-    filteredContacts.sort((a, b) {
-      final aName = a.displayName;
-      final bName = b.displayName;
-
-      final aIsRussian = isRussian(aName);
-      final bIsRussian = isRussian(bName);
-
-      if (aIsRussian != bIsRussian) {
-        return aIsRussian ? -1 : 1;
-      }
-
-      return aName.toLowerCase().compareTo(bName.toLowerCase());
-    });
-
-    return filteredContacts;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final sortedContacts = _filterAndSortContacts(contacts);
-
-    return ListView.builder(
-      itemCount: sortedContacts.length,
-      itemBuilder: (context, index) {
-        final contact = sortedContacts[index];
-        return InviteUserCard(contact: contact, onContactSelected: (selectedContact) {}, onInvite: () {});
-      },
-    );
   }
 }

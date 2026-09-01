@@ -13,10 +13,10 @@ import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/message_model.dart';
 import '../widgets/bars/chat_app_bar.dart';
-import '../widgets/bars/sections/selection_chat_app_bar.dart';
+import '../widgets/bars/selection_chat_app_bar.dart';
 import '../widgets/cards/message_card.dart';
 import '../widgets/dialogs/delete_recipient_message_dialog.dart';
 import '../widgets/dialogs/delete_sender_message_dialog.dart';
@@ -46,6 +46,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   bool isIconVisible = false;
   bool showEmoji = false;
   bool isUploading = false;
+  bool isEmojiToolbarVisible = true;
   List<MessageModel> list = [];
   List<MessageModel> messages = [];
   Set<int> selectedMessages = <int>{};
@@ -77,6 +78,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     inputFocusNode.dispose();
     scrollController.dispose();
     animationController.dispose();
+    _closeChat();
     super.dispose();
   }
 
@@ -105,6 +107,8 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
 
   void _toggleMessageSelection(int index) {
     setState(() {
+      isEmojiToolbarVisible = true;
+
       if (isSelecting) {
         if (selectedMessages.contains(index)) {
           selectedMessages.remove(index);
@@ -141,7 +145,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
       bool allFromCurrentUser = selectedMessages.every((index) => list[index].fromId == APIs.user.uid);
 
       if (allFromCurrentUser) {
-        showDeleteSenderMessageDialog(context, selectedMessages.toList(), list, widget.user);
+        showDeleteSenderMessageDialog(context, selectedMessages.toList(), list, widget.user, onDeleted: _clearSelection);
       } else if (selectedMessages.every((index) => list[index].fromId != APIs.user.uid)) {
         showDeleteRecipientMessageDialog(context, selectedMessages.toList(), list, widget.user);
       } else {
@@ -161,21 +165,50 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     });
   }
 
-  void _handleReaction(MessageModel message, String reaction) {
-    APIs.updateMessageReaction(message, reaction);
+  Future<void> _handleReaction(MessageModel message, String reaction) async {
+    await APIs.updateMessageReaction(message, reaction);
+  }
+
+  void _closeChat() {
+    APIs.updateTypingStatus(false);
+    inputFocusNode.unfocus();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+
+  void _hideEmojiToolbarOnScroll() {
+    if (!mounted || !isEmojiToolbarVisible) return;
+
+    setState(() {
+      isEmojiToolbarVisible = false;
+    });
+  }
+
+  Future<void> _handleReactionForSelectedMessages(String reaction) async {
+    final selected = selectedMessages.toList();
+
+    setState(() {
+      isSelecting = false;
+      isEmojiToolbarVisible = false;
+      selectedMessages.clear();
+    });
+
+    for (final index in selected) {
+      final message = list[index];
+      await _handleReaction(message, reaction);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final Set<String> selectedReactions = selectedMessages.map((index) => list[index].reactions).whereType<String>().where((reaction) => reaction.isNotEmpty).toSet();
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
-                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
-              ),
+              decoration: BoxDecoration(boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))]),
               child: AppBar(
                 automaticallyImplyLeading: false,
                 flexibleSpace: isSelecting ? const SizedBox.shrink() : ChatAppBar(user: widget.user),
@@ -203,124 +236,135 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
       backgroundColor: context.isDarkMode  ? ChatifyColors.black : ChatifyColors.white,
       body: ScrollConfiguration(
         behavior: NoGlowScrollBehavior(),
-        child: ScrollbarTheme(
-          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
-          child: Scrollbar(
-            thickness: 5,
-            thumbVisibility: false,
-            child: Stack(
+        child: Stack(
+          children: [
+            Consumer<WallpaperProvider>(
+              builder: (context, wallpaperProvider, child) {
+                final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty
+                  ? wallpaperProvider.backgroundImage
+                  : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+
+                return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
+              },
+            ),
+            Column(
               children: [
-                Consumer<WallpaperProvider>(
-                  builder: (context, wallpaperProvider, child) {
-                    final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty
-                      ? wallpaperProvider.backgroundImage
-                      : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+                Expanded(
+                  child: Stack(
+                    children: [
+                      StreamBuilder(
+                        stream: messagesStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
+                            return const SizedBox();
+                          }
 
-                    return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
-                  },
-                ),
-                Column(
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          StreamBuilder(
-                            stream: messagesStream,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-                                return const SizedBox();
-                              }
+                          final data = snapshot.data?.docs;
+                          final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
 
-                              final data = snapshot.data?.docs;
-                              final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+                          list = newList;
 
-                              list = newList;
+                          if (list.isEmpty) {
+                            return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
+                          }
 
-                              if (list.isEmpty) {
-                                return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
-                              }
-
-                              return ListView.builder(
-                                controller: scrollController,
-                                reverse: true,
-                                itemCount: list.length,
-                                padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
-                                physics: const ClampingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  final message = list[index];
-
-                                  return MessageCard(
-                                    key: ValueKey(message.sent),
-                                    message: message,
-                                    isSelected: selectedMessages.contains(index),
-                                    onLongPress: () {
-                                      _startSelection();
-                                      _toggleMessageSelection(index);
-                                    },
-                                    onTap: () => _toggleMessageSelection(index),
-                                    messages: list,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          if (isSelecting && selectedMessages.isNotEmpty)
-                          Positioned(
-                            bottom: 90,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: EmojiToolbar(
-                                emojis: const ['👍', '❤️', '😂', '😮', '😥', '🙏'],
-                                onAddPressed: toggleEmojiKeyboard,
-                                onToggleKeyboard: toggleEmojiKeyboard,
-                                onReactionPressed: (emoji) {
-                                  for (int index in selectedMessages) {
-                                    final message = list[index];
-                                    _handleReaction(message, emoji);
+                          return ScrollbarTheme(
+                            data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+                            child: Scrollbar(
+                              controller: scrollController,
+                              thickness: 5,
+                              thumbVisibility: false,
+                              child: NotificationListener<ScrollNotification>(
+                                onNotification: (notification) {
+                                  if (notification is ScrollStartNotification) {
+                                    _hideEmojiToolbarOnScroll();
                                   }
+
+                                  return false;
                                 },
+                                child: ListView.builder(
+                                  controller: scrollController,
+                                  reverse: true,
+                                  itemCount: list.length,
+                                  padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
+                                  physics: const ClampingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    final message = list[index];
+
+                                    return MessageCard(
+                                      key: ValueKey(message.sent),
+                                      message: message,
+                                      isSelected: selectedMessages.contains(index),
+                                      onLongPress: () {
+                                        _startSelection();
+                                        _toggleMessageSelection(index);
+                                      },
+                                      onTap: () => _toggleMessageSelection(index),
+                                      messages: list,
+                                    );
+                                  },
+                                ),
                               ),
                             ),
+                          );
+                        },
+                      ),
+                      if (isSelecting && selectedMessages.isNotEmpty && isEmojiToolbarVisible)
+                        Positioned(
+                          bottom: 100,
+                          left: -5,
+                          right: -5,
+                          child: Center(
+                            child: EmojiToolbar(
+                              emojis: const ['👍', '❤️', '😂', '😮', '😥', '🙏', '👏', '🥰', '😴', '😭', '🔥', '🤣'],
+                              selectedReactions: selectedReactions,
+                              onAddPressed: toggleEmojiKeyboard,
+                              onToggleKeyboard: toggleEmojiKeyboard,
+                              onReactionPressed: (emoji) {
+                                _handleReactionForSelectedMessages(emoji);
+                              },
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                    if (isUploading)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-                      ),
-                    ),
-                    ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard),
-                  ],
-                ),
-                Positioned(
-                  bottom: 65,
-                  right: 10,
-                  child: IgnorePointer(
-                    ignoring: !isIconVisible,
-                    child: FadeTransition(
-                      opacity: opacityAnimation,
-                      child: SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: FloatingActionButton(
-                          onPressed: scrollToBottom,
-                          backgroundColor: ChatifyColors.blackGrey,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          mini: true,
-                          child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
                         ),
-                      ),
-                    ),
+                    ],
                   ),
+                ),
+                if (isUploading)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+                  child: ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard),
                 ),
               ],
             ),
-          ),
+            Positioned(
+              bottom: 75 + MediaQuery.of(context).viewPadding.bottom,
+              right: 15,
+              child: IgnorePointer(
+                ignoring: !isIconVisible,
+                child: FadeTransition(
+                  opacity: opacityAnimation,
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: FloatingActionButton(
+                      onPressed: scrollToBottom,
+                      backgroundColor: ChatifyColors.blackGrey,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      mini: true,
+                      child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

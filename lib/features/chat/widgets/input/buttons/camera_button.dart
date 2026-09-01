@@ -23,7 +23,7 @@ class CameraButtonState extends State<CameraButton> {
         Navigator.push(context, createPageRoute(const CameraScreen()));
       },
       icon: Icon(
-        Icons.camera_alt_rounded,
+        Icons.camera_alt_outlined,
         color: colorsController.getColor(colorsController.selectedColorScheme.value),
         size: 26,
       ),

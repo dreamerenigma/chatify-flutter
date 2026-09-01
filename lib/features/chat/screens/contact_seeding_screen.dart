@@ -15,7 +15,7 @@ import '../../../utils/devices/device_utility.dart';
 import '../../chat/models/user_model.dart';
 import '../../newsletter/models/newsletter_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../widgets/cards/contacts_send_card.dart';
 
 class ContactsSendingScreen extends StatefulWidget {

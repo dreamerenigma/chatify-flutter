@@ -16,7 +16,7 @@ import '../features/status/controllers/expanded_controller.dart';
 class GeneralBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put<LanguageController>(LanguageController());
+    Get.put<LanguagesController>(LanguagesController());
     Get.put<ThemesController>(ThemesController());
     Get.put<SeasonsController>(SeasonsController());
     Get.put<ColorsController>(ColorsController());

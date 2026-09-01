@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,10 +16,12 @@ import '../dialogs/light_dialog.dart';
 class UseAppUserCard extends StatefulWidget {
   final UserModel user;
   final bool isSelected;
+  final EdgeInsetsGeometry? margin;
+  final Color? avatarBackgroundColor;
+  final Color? avatarIconColor;
   final Function(UserModel)? onUserSelected;
   final Function()? onTap;
   final Function(UserModel)? onLongPress;
-  final EdgeInsetsGeometry? margin;
 
   const UseAppUserCard({
     super.key,
@@ -28,6 +31,8 @@ class UseAppUserCard extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.margin,
+    this.avatarBackgroundColor,
+    this.avatarIconColor,
   });
 
   @override
@@ -35,6 +40,18 @@ class UseAppUserCard extends StatefulWidget {
 }
 
 class UseAppUserCardState extends State<UseAppUserCard> {
+  ({Color background, Color icon}) _getAvatarColors() {
+    const colors = [
+      (background: Color(0xFF4F6FAD), icon: Color(0xFFAEC4F2)),
+      (background: Color(0xFF4D8A70), icon: Color(0xFFA8E0C5)),
+      (background: Color(0xFFB56A4F), icon: Color(0xFFF2B9A2)),
+      (background: Color(0xFF7956A8), icon: Color(0xFFD0B7F5)),
+      (background: Color(0xFF43839A), icon: Color(0xFFA8DFED)),
+      (background: Color(0xFFA8506A), icon: Color(0xFFF0B2C5)),
+    ];
+
+    return colors[widget.user.id.hashCode.abs() % colors.length];
+  }
 
   void _handleTap() {
     if (widget.onTap != null) {
@@ -54,9 +71,10 @@ class UseAppUserCardState extends State<UseAppUserCard> {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = widget.user.image.isNotEmpty && widget.user.image != 'null';
 
     return Card(
-      margin: widget.margin ?? EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8, top: 8, bottom: 8),
+      margin: widget.margin ?? EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8, top: 8),
       elevation: widget.isSelected ? 4 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: widget.isSelected ? Colors.blue.withAlpha((0.1 * 255).toInt()) : null,
@@ -69,9 +87,7 @@ class UseAppUserCardState extends State<UseAppUserCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : context.isDarkMode
-              ? ChatifyColors.cardColor
-              : ChatifyColors.grey,
+            color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : context.isDarkMode ? ChatifyColors.cardColor : ChatifyColors.grey,
           ),
           child: ListTile(
             leading: Stack(
@@ -80,28 +96,24 @@ class UseAppUserCardState extends State<UseAppUserCard> {
               children: [
                 InkWell(
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => ProfileDialog(user: widget.user),
-                    );
+                    showDialog(context: context, builder: (_) => ProfileDialog(user: widget.user));
                   },
                   borderRadius: BorderRadius.circular(30),
                   splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                   highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03),
-                    child: CachedNetworkImage(
-                      width: DeviceUtils.getScreenHeight(context) * .055,
-                      height: DeviceUtils.getScreenHeight(context) * .055,
-                      imageUrl: widget.user.image,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) =>
-                      CircleAvatar(
-                        backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
-                      ),
-                    ),
+                    child: hasImage
+                      ? CachedNetworkImage(
+                          width: DeviceUtils.getScreenHeight(context) * .055,
+                          height: DeviceUtils.getScreenHeight(context) * .055,
+                          imageUrl: widget.user.image,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) {
+                            return _buildAvatarPlaceholder(context);
+                          },
+                        )
+                      : _buildAvatarPlaceholder(context),
                   ),
                 ),
                 if (widget.isSelected)
@@ -121,11 +133,23 @@ class UseAppUserCardState extends State<UseAppUserCard> {
                 ),
               ],
             ),
-            title: Text(widget.user.name),
+            title: Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
             subtitle: Text(S.of(context).aboutText),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAvatarPlaceholder(BuildContext context) {
+    final colors = _getAvatarColors();
+
+    return Container(
+      width: DeviceUtils.getScreenHeight(context) * .055,
+      height: DeviceUtils.getScreenHeight(context) * .055,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: colors.background, shape: BoxShape.circle),
+      child: SvgPicture.asset(ChatifyVectors.person, width: 21, height: 21, fit: BoxFit.contain, colorFilter: ColorFilter.mode(colors.icon, BlendMode.srcIn)),
     );
   }
 }

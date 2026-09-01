@@ -12,6 +12,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helper/date_util.dart';
 import '../../../../common/enums/date_format_type.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
@@ -39,14 +40,13 @@ class ChatUserCard extends StatefulWidget {
 
 class ChatUserCardState extends State<ChatUserCard> {
   MessageModel? message;
-  bool isSelected = false;
   bool isLongPressed = false;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8, bottom: 6),
-      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : isSelected ? 2 : 0.5,
+      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: GestureDetector(
         onSecondaryTapDown: (details) {
@@ -62,9 +62,7 @@ class ChatUserCardState extends State<ChatUserCard> {
               isLongPressed = true;
             });
           } else {
-            setState(() {
-              isSelected = !isSelected;
-            });
+            widget.onUserSelected(widget.user);
           }
         },
         onLongPressUp: () {
@@ -81,7 +79,7 @@ class ChatUserCardState extends State<ChatUserCard> {
               ? isLongPressed || widget.isSelected
                 ? context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt())
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground
-              : isSelected
+              : widget.isSelected
                 ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt())
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
           ),
@@ -134,12 +132,12 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 errorWidget: (context, url, error) => CircleAvatar(
                                   backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                                   foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                                  child: SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn), width: 28, height: 28),
+                                  child: SvgPicture.asset(ChatifyVectors.person, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                                 ),
                               ),
                             ),
                           ),
-                          if (!isWindows && isSelected)
+                          if (!isWindows && widget.isSelected)
                           Positioned(
                             bottom: -3,
                             right: -2,
@@ -174,11 +172,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 SizedBox(width: 16),
                                 if (message != null) ...[
                                   Text(
-                                    DateUtil.getLastMessageTime(
-                                      context: context,
-                                      time: DateTime.fromMillisecondsSinceEpoch(int.parse(message!.sent)),
-                                      formatType: DateFormatType.numeric
-                                    ),
+                                    DateUtil.getLastMessageTime(context: context, time: DateTime.fromMillisecondsSinceEpoch(int.parse(message!.sent)), formatType: DateFormatType.numeric),
                                     style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                                   ),
                                 ],
@@ -218,10 +212,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       S.of(context).video,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-                                        fontSize: ChatifySizes.fontSizeSm,
-                                      ),
+                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                                     ),
                                   ),
                                 ] else if (message!.type == MessageType.audio) ...[
@@ -257,7 +248,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                             alignment: PlaceholderAlignment.middle,
                                             child: SvgPicture.asset(
                                               ChatifyVectors.doubleCheck,
-                                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                              colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                                               width: 18,
                                               height: 18,
                                             ),

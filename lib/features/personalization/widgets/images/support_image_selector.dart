@@ -1,5 +1,5 @@
 import 'package:chatify/features/personalization/screens/images/select_images_screen.dart';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';

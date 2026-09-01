@@ -13,6 +13,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/user_model.dart';
@@ -40,8 +41,10 @@ class ChatInputState extends State<ChatInput> {
   final AudioPlayer audioPlayer = AudioPlayer();
   late final ValueChanged<bool> setUploading;
   late final UserModel user;
-  bool showEmoji = false, isUploading = false;
+  bool showEmoji = false;
+  bool isUploading = false;
   bool sendWithEnter = false;
+  bool isTyping = false;
   Timer? typingTimer;
   List<MessageModel> list = [];
 
@@ -51,24 +54,29 @@ class ChatInputState extends State<ChatInput> {
   void initState() {
     super.initState();
     user = widget.user;
-    textController.addListener(() {
-      setState(() {});
-      _handleTyping();
-    });
-
-    widget.focusNode.addListener(() {
-      if (!widget.focusNode.hasFocus) {
-        APIs.updateTypingStatus(user.id, false);
-      }
-    });
+    textController.addListener(_handleTyping);
+    widget.focusNode.addListener(_onFocusChanged);
   }
 
   @override
   void dispose() {
+    textController.removeListener(_handleTyping);
+    widget.focusNode.removeListener(_onFocusChanged);
+    typingTimer?.cancel();
     textController.dispose();
     audioPlayer.dispose();
-    typingTimer?.cancel();
     super.dispose();
+  }
+
+  void _onFocusChanged() {
+    if (!widget.focusNode.hasFocus) {
+      typingTimer?.cancel();
+
+      if (isTyping) {
+        isTyping = false;
+        APIs.updateTypingStatus(false);
+      }
+    }
   }
 
   void toggleEmojiKeyboard() {
@@ -109,56 +117,91 @@ class ChatInputState extends State<ChatInput> {
   }
 
   void sendMessage() {
-    if (hasText) {
-      if (list.isEmpty) {
-        APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
-      } else {
-        APIs.sendMessage(widget.user, textController.text, MessageType.text);
-      }
-
-      textController.clear();
-      playSendSound();
-
-      setState(() {});
-      APIs.updateTypingStatus(user.id, false);
-    } else {
+    if (!hasText) {
       Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
+      return;
+    }
+
+    if (list.isEmpty) {
+      APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
+    } else {
+      APIs.sendMessage(widget.user, textController.text, MessageType.text);
+    }
+
+    textController.clear();
+    playSendSound();
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
   void _handleTyping() {
-  setState(() {});
+    final hasTextNow = hasText;
 
-  APIs.updateTypingStatus(user.id, hasText);
+    if (!hasTextNow) {
+      typingTimer?.cancel();
 
-  typingTimer?.cancel();
-  typingTimer = Timer(const Duration(seconds: 3), () {
-    if (mounted && !hasText) {
-      APIs.updateTypingStatus(user.id, false);
+      if (isTyping) {
+        isTyping = false;
+        APIs.updateTypingStatus(false);
+      }
+
+      if (mounted) {
+        setState(() {});
+      }
+
+      return;
     }
-  });
-}
+
+    if (!isTyping) {
+      isTyping = true;
+      APIs.updateTypingStatus(true);
+    }
+
+    typingTimer?.cancel();
+
+    typingTimer = Timer(
+      const Duration(seconds: 3), () {
+        if (!isTyping) return;
+
+        isTyping = false;
+        APIs.updateTypingStatus(false);
+
+        if (mounted) {
+          setState(() {});
+        }
+      },
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: DeviceUtils.getScreenWidth(context) * .015, right: DeviceUtils.getScreenWidth(context) * .015, top: DeviceUtils.getScreenHeight(context) * .005, bottom: DeviceUtils.getScreenHeight(context) * .005),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Card(
-                    color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: toggleEmojiKeyboard,
-                          icon: Icon(Icons.emoji_emotions_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
-                        ),
-                        Expanded(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: DeviceUtils.getScreenWidth(context) * .015, right: DeviceUtils.getScreenWidth(context) * .015, top: DeviceUtils.getScreenHeight(context) * .005, bottom: DeviceUtils.getScreenHeight(context) * .005),
+          child: Row(
+            children: [
+              Expanded(
+                child: Card(
+                  elevation: 0,
+                  color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: toggleEmojiKeyboard,
+                        icon: Icon(Icons.emoji_emotions_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
+                      ),
+                      Expanded(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 50, maxHeight: 120),
                           child: TextSelectionTheme(
                             data: TextSelectionThemeData(
                               cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -179,7 +222,7 @@ class ChatInputState extends State<ChatInput> {
                                 focusedBorder: InputBorder.none,
                               ),
                               textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                              style: TextStyle(color: ChatifyColors.grey, fontSize: 17, fontWeight: FontWeight.w400),
                               onTap: () {
                                 if (showEmoji) {
                                   setState(() {
@@ -191,58 +234,56 @@ class ChatInputState extends State<ChatInput> {
                                 if (sendWithEnter) {
                                   sendMessage();
                                 }
-
-                                APIs.updateTypingStatus(user.id, false);
                               },
                             ),
                           ),
                         ),
-                        ChatInputAttachments(
-                          chatTarget: user,
-                          isUploading: isUploading,
-                          setUploading: (value) {
-                            setState(() {
-                              isUploading = value;
-                            });
-                          },
-                        ),
-                        CameraButton(onImagePicked: handleImagePicked),
-                      ],
-                    ),
+                      ),
+                      ChatInputAttachments(
+                        chatTarget: user,
+                        isUploading: isUploading,
+                        setUploading: (value) {
+                          setState(() {
+                            isUploading = value;
+                          });
+                        },
+                      ),
+                      CameraButton(onImagePicked: handleImagePicked),
+                    ],
                   ),
                 ),
-                SizedBox(width: DeviceUtils.getScreenWidth(context) * .005),
-                GestureDetector(
-                  onTapUp: (_) async {
-                    if (hasText) {
-                      sendMessage();
-                    } else {
-                      Dialogs.showSnackbarMargin(context, S.of(context).holdRecord, fontSize: ChatifySizes.fontSizeLm, margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10));
-                    }
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    radius: 20,
-                    child: Icon(hasText ? Icons.send : Icons.mic, color: ChatifyColors.white, size: 28),
-                  ),
+              ),
+              SizedBox(width: DeviceUtils.getScreenWidth(context) * .009),
+              GestureDetector(
+                onTapUp: (_) async {
+                  if (hasText) {
+                    sendMessage();
+                  } else {
+                    Dialogs.showSnackbarMargin(context, S.of(context).holdRecord, fontSize: ChatifySizes.fontSizeLm, margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10));
+                  }
+                },
+                child: CircleAvatar(
+                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  radius: 24,
+                  child: hasText ? const Icon(Icons.send, color: ChatifyColors.black, size: 21) : const Icon(Icons.mic, color: ChatifyColors.black, size: 25),
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        if (showEmoji)
+          EmojiPicker(
+            textEditingController: textController,
+            config: Config(
+              height: DeviceUtils.getScreenHeight(context) * 0.35,
+              checkPlatformCompatibility: true,
+              emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
+              categoryViewConfig: const CategoryViewConfig(),
+              bottomActionBarConfig: const BottomActionBarConfig(),
+              skinToneConfig: const SkinToneConfig(),
             ),
           ),
-          if (showEmoji)
-            EmojiPicker(
-              textEditingController: textController,
-              config: Config(
-                height: DeviceUtils.getScreenHeight(context) * 0.35,
-                checkPlatformCompatibility: true,
-                emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
-                categoryViewConfig: const CategoryViewConfig(),
-                bottomActionBarConfig: const BottomActionBarConfig(),
-                skinToneConfig: const SkinToneConfig(),
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

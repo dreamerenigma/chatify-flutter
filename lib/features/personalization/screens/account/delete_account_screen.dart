@@ -11,7 +11,7 @@ import '../../../authentication/models/country.dart';
 import '../../../authentication/widgets/fields/custom_text_field.dart';
 import '../../../authentication/widgets/inputs/phone_input_formatter.dart';
 import '../../../authentication/widgets/lists/country_list.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'edit_phone_screen.dart';

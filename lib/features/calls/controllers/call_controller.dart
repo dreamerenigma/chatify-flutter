@@ -11,6 +11,7 @@ class CallController extends GetxController {
     phoneNumber: '',
     name: '',
     surname: '',
+    username: '',
     createdAt: DateTime.now(),
     isOnline: false,
     lastActive: DateTime.now(),

@@ -17,6 +17,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
   late String name;
   @override
   late String surname;
+  late String username;
   @override
   late DateTime createdAt;
   late bool isOnline;
@@ -34,6 +35,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
     required this.phoneNumber,
     required this.name,
     required this.surname,
+    required this.username,
     required this.createdAt,
     required this.isOnline,
     required this.lastActive,
@@ -51,6 +53,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
     String? phoneNumber,
     String? name,
     String? surname,
+    String? username,
     DateTime? createdAt,
     bool? isOnline,
     DateTime? lastActive,
@@ -67,6 +70,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       name: name ?? this.name,
       surname: surname ?? this.surname,
+      username: username ?? this.username,
       createdAt: createdAt ?? this.createdAt,
       isOnline: isOnline ?? this.isOnline,
       lastActive: lastActive ?? this.lastActive,
@@ -87,6 +91,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
       status: data['status'] ?? '',
       name: data['name'] ?? '',
       surname: data['surname'] ?? '',
+      username: data['username'] ?? '',
       createdAt: (data['created_at'] as Timestamp).toDate(),
       isOnline: data['is_online'] ?? false,
       lastActive: (data['last_active'] as Timestamp).toDate(),
@@ -104,6 +109,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
     status = json['status'] ?? '';
     name = json['name'] ?? '';
     surname = json['surname'] ?? '';
+    username = json['username'] ?? '';
     createdAt = DateUtil.parseDateTime(json['created_at']);
     lastActive = DateUtil.parseDateTime(json['last_active']);
     isOnline = json['is_online'] ?? false;
@@ -122,6 +128,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
       'phone_number': phoneNumber,
       'name': name,
       'surname': surname,
+      'username': username,
       'created_at': createdAt.toIso8601String(),
       'is_online': isOnline,
       'last_active': lastActive.toIso8601String(),

@@ -458,6 +458,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkInternet": MessageLookupByLibrary.simpleMessage(
       "Something Went Wrong (Check Internet!)",
     ),
+    "checkInternetSettings": MessageLookupByLibrary.simpleMessage(
+      "Please check your internet settings and try again.",
+    ),
     "checkOutOur": MessageLookupByLibrary.simpleMessage("Please read our "),
     "choose": MessageLookupByLibrary.simpleMessage("Choose"),
     "chooseAction": MessageLookupByLibrary.simpleMessage("Choose an action"),
@@ -490,9 +493,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "clickContactNameStatus": MessageLookupByLibrary.simpleMessage(
       "Tap a contact\'s name to see their status",
-    ),
-    "clickOnCallIconBottomScreen": MessageLookupByLibrary.simpleMessage(
-      "click the call icon at the bottom of the screen",
     ),
     "clickOnIcon": MessageLookupByLibrary.simpleMessage("Click the icon"),
     "clickOnLinkToLogIn": MessageLookupByLibrary.simpleMessage(
@@ -1310,6 +1310,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "increaseOrDecreaseFontSize": MessageLookupByLibrary.simpleMessage(
       "Increase or decrease font size with Ctrl +/-",
     ),
+    "info": MessageLookupByLibrary.simpleMessage("Information"),
     "informationCannotEmpty": MessageLookupByLibrary.simpleMessage(
       "Details cannot be empty",
     ),
@@ -1317,7 +1318,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "installYourComputer": MessageLookupByLibrary.simpleMessage(
       "To install Chatify on your computer:",
     ),
-    "intelligence": MessageLookupByLibrary.simpleMessage("Information"),
     "invalidCountryCode": MessageLookupByLibrary.simpleMessage(
       "Invalid country code",
     ),
@@ -1422,6 +1422,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "This list is updated automatically for you to display all group chats.",
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Lists"),
+    "loadMore": MessageLookupByLibrary.simpleMessage("Перезагрузить"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "location": MessageLookupByLibrary.simpleMessage("Location..."),
     "locationSharing": MessageLookupByLibrary.simpleMessage("Location sharing"),
@@ -1542,7 +1543,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
       "Name can\'t be empty.",
     ),
-    "nameEmail": MessageLookupByLibrary.simpleMessage("Name, Email, ..."),
     "nearestPlaces": MessageLookupByLibrary.simpleMessage("Nearest places"),
     "never": MessageLookupByLibrary.simpleMessage("Never"),
     "newCall": MessageLookupByLibrary.simpleMessage("New call (Ctrl+Shift+C)"),
@@ -1618,6 +1618,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "No Images Available",
     ),
     "noImagesFound": MessageLookupByLibrary.simpleMessage("No images found."),
+    "noInternetConnection": MessageLookupByLibrary.simpleMessage(
+      "No Internet Connection",
+    ),
     "noLinks": MessageLookupByLibrary.simpleMessage("No links"),
     "noMediaFiles": MessageLookupByLibrary.simpleMessage("No media files"),
     "noMembers": MessageLookupByLibrary.simpleMessage("No members"),
@@ -2090,7 +2093,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Who can see my status updates",
     ),
     "seeStatusUpdates": MessageLookupByLibrary.simpleMessage(
-      "Who can see my status updates",
+      "The audience that sees my status",
     ),
     "seesMyProfilePicture": MessageLookupByLibrary.simpleMessage(
       "Who sees my profile picture",
@@ -2261,7 +2264,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "The status updates and private messages you exchange with the contacts you choose are end-to-end encrypted. Not even Chatify can access them. These include:",
     ),
     "statusUpdatesEncryption": MessageLookupByLibrary.simpleMessage(
-      "Your status updates are protected by ",
+      "Your statuses are protected ",
     ),
     "statusUpdatesProtectedEncryption": MessageLookupByLibrary.simpleMessage(
       "Status updates are protected with end-to-end encryption",
@@ -2514,7 +2517,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "viewed": MessageLookupByLibrary.simpleMessage("Viewed"),
     "visibilityPersonalData": MessageLookupByLibrary.simpleMessage(
-      "Personal Data Visibility",
+      "Who sees my personal information",
     ),
     "visibleYourAppProfile": MessageLookupByLibrary.simpleMessage(
       "will be visible on your Chatify profile.",

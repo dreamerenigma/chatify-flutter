@@ -111,7 +111,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
                           _saveSwitchState('isEditSettingsGroup', value);
                         });
                       },
-                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                       activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
                     ),
                   ],
@@ -144,7 +144,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
                       _saveSwitchState('isSendMessages', value);
                     });
                   },
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
                 ),
               ),
@@ -171,7 +171,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
                       _saveSwitchState('isAddOtherParticipant', value);
                     });
                   },
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
                 ),
               ),
@@ -205,7 +205,7 @@ class _GroupPermissionsScreenState extends State<GroupPermissionsScreen> {
                       _saveSwitchState('isVerifyNewParticipant', value);
                     });
                   },
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                   activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
                 ),
                 subtitle: RichText(

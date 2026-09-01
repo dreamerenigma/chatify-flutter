@@ -172,6 +172,7 @@ class SendFileScreenState extends State<SendFileScreen> {
             list: list,
             isSharing: true,
             onUserSelected: _onUserSelected,
+            selectedUserIds: {},
           ),
           if (selectedUser != null)
           Align(

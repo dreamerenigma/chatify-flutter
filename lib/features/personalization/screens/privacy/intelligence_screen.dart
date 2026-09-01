@@ -55,7 +55,7 @@ class IntelligenceScreenState extends State<IntelligenceScreen> {
             ],
           ),
           child: AppBar(
-            title: Text(S.of(context).intelligence, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            title: Text(S.of(context).info, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
@@ -68,28 +68,37 @@ class IntelligenceScreenState extends State<IntelligenceScreen> {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(S.of(context).whoSeesMyInformation, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
-          ),
-          ...options.map((option) {
-            return RadioListTile(
-              value: option['value'],
-              groupValue: _selectedOption,
-              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-              activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 26),
-              onChanged: (value) {
-                _saveSelection(value as String);
-              },
-              visualDensity: const VisualDensity(vertical: -2),
-              title: Text(option['label']!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
-            );
-          }),
-        ],
+      body: RadioGroup<String>(
+        groupValue: _selectedOption,
+        onChanged: (value) {
+          if (value != null) {
+            _saveSelection(value);
+          }
+        },
+        child: Column(
+          children: [
+            ...options.map((option) {
+              return RadioListTile<String>(
+                value: option['value']!,
+                hoverColor: context.isDarkMode
+                    ? ChatifyColors.darkerGrey
+                    : ChatifyColors.grey,
+                activeColor: colorsController.getColor(
+                  colorsController.selectedColorScheme.value,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 26),
+                visualDensity: const VisualDensity(vertical: -2),
+                title: Text(
+                  option['label']!,
+                  style: TextStyle(
+                    fontSize: ChatifySizes.fontSizeMd,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../personalization/controllers/fonts_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 OverlayEntry createFontOverlayEntry({
   required BuildContext context,

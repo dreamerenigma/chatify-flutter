@@ -21,7 +21,7 @@ import '../../../utils/popups/dialogs.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/screens/add_user_screen.dart';
 import '../models/group_model.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../personalization/widgets/dialogs/add_new_contact_bottom_dialog.dart';
 import '../../personalization/widgets/dialogs/exit_group_dialog.dart';
 import '../../personalization/widgets/dialogs/image_group_bottom_dialog.dart';

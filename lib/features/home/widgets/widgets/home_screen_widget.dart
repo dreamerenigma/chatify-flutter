@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chatify/features/home/widgets/panels/side_panel_widget.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/foundation.dart';
@@ -27,7 +29,7 @@ import '../../../personalization/screens/favorite/add_favorite_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../personalization/widgets/dialogs/new_list_bottom_dialog.dart';
 import '../../../status/screens/status_screen.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../../newsletter/models/newsletter_model.dart';
 import '../dialogs/contexts/edit_tab_context_menu.dart';
 import '../lists/main_home_content_list.dart';
@@ -48,6 +50,7 @@ class HomeScreenWidget extends StatefulWidget {
   final List<UserModel> searchList;
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
+  final Set<String> selectedChats;
   final Function(int) onPageChanged;
   final Function(int) onItemTapped;
   final Function(GroupModel) onGroupSelected;
@@ -67,6 +70,7 @@ class HomeScreenWidget extends StatefulWidget {
     required this.searchList,
     required this.supports,
     required this.infosApp,
+    required this.selectedChats,
     required this.onPageChanged,
     required this.onItemTapped,
     required this.onGroupSelected,
@@ -78,6 +82,9 @@ class HomeScreenWidget extends StatefulWidget {
 }
 
 class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerProviderStateMixin {
+  final ScrollController _scrollController = ScrollController();
+  final dialogManager = DialogManager();
+  late TabController _tabController;
   double sidePanelWidth = 350.0;
   double minSidePanelWidth = 350.0;
   double maxSidePanelWidth = 700.0;
@@ -86,9 +93,6 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
   bool isMenuExpanded = false;
   bool _showTabBar = true;
   bool isCalling = false;
-  final ScrollController _scrollController = ScrollController();
-  final dialogManager = DialogManager();
-  late TabController _tabController;
 
   String capitalize(String text) {
     if (text.isEmpty) return text;
@@ -195,14 +199,14 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
         return Row(
           children: [
             if (defaultTargetPlatform == TargetPlatform.windows)
-            SideNavBar(
-              selectedIndex: widget.selectedIndex,
-              onItemTapped: widget.onItemTapped,
-              isMenuExpanded: isMenuExpanded,
-              toggleMenu: toggleMenu,
-              user: widget.user,
-              isCalling: isCalling,
-            ),
+              SideNavBar(
+                selectedIndex: widget.selectedIndex,
+                onItemTapped: widget.onItemTapped,
+                isMenuExpanded: isMenuExpanded,
+                toggleMenu: toggleMenu,
+                user: widget.user,
+                isCalling: isCalling,
+              ),
             Expanded(
               child: Stack(
                 children: [
@@ -211,98 +215,110 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
                     child:  defaultTargetPlatform == TargetPlatform.windows
                       ? const SizedBox.shrink()
                       : PageView(
-                      controller: widget.pageController,
-                      onPageChanged: widget.onPageChanged,
-                      children: <Widget>[
-                        ScrollbarTheme(
-                          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
-                          child: IndexedStack(
-                            index: widget.selectedIndex,
-                            children: <Widget>[
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  _buildCategoryMessages(),
-                                  Expanded(
-                                    child: TabBarView(
-                                      controller: _tabController,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                                          children: [
-                                            MainHomeContentList(
-                                              groups: widget.groups,
-                                              newsletters: widget.newsletters,
-                                              communities: widget.communities,
-                                              users: widget.users,
-                                              supports: widget.supports,
-                                              infosApp: widget.infosApp,
-                                              isSearching: widget.isSearching,
-                                              searchList: widget.searchList,
-                                              onUserSelected: widget.onUserSelected,
-                                            ),
-                                            ArchivePrivacySection(),
-                                          ],
-                                        ),
-                                        Center(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                          controller: widget.pageController,
+                          onPageChanged: widget.onPageChanged,
+                          children: <Widget>[
+                            ScrollbarTheme(
+                              data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+                              child: IndexedStack(
+                                index: widget.selectedIndex,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      Expanded(
+                                        child: NestedScrollView(
+                                          controller: _scrollController,
+                                          headerSliverBuilder: (context, innerBoxIsScrolled) {
+                                            return [
+                                              SliverToBoxAdapter(child: _buildCategoryMessages()),
+                                            ];
+                                          },
+                                          body: TabBarView(
+                                            controller: _tabController,
+                                            physics: const NeverScrollableScrollPhysics(),
                                             children: [
-                                              Text(S.of(context).noUnreadChats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm)),
-                                              SizedBox(height: 20),
-                                              PressableText(
-                                                text: S.of(context).viewAllChats,
-                                                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w400),
-                                                onTap: () {
-                                                  _tabController.animateTo(0);
-                                                },
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                children: [
+                                                  MainHomeContentList(
+                                                    groups: widget.groups,
+                                                    newsletters: widget.newsletters,
+                                                    communities: widget.communities,
+                                                    users: widget.users,
+                                                    supports: widget.supports,
+                                                    infosApp: widget.infosApp,
+                                                    isSearching: widget.isSearching,
+                                                    searchList: widget.searchList,
+                                                    onUserSelected: (user) {
+                                                      log('🔥 HomeScreen: received ${user.name}');
+
+                                                      widget.onUserSelected(user);
+                                                    },
+                                                    selectedUserIds: widget.selectedChats,
+                                                  ),
+                                                  ArchivePrivacySection(),
+                                                ],
                                               ),
+                                              Center(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(S.of(context).noUnreadChats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm)),
+                                                    SizedBox(height: 20),
+                                                    PressableText(
+                                                      text: S.of(context).viewAllChats,
+                                                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w400),
+                                                      onTap: () {
+                                                        _tabController.animateTo(0);
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    SvgPicture.asset(ChatifyVectors.addFavorite, width: 100, height: 100),
+                                                    const SizedBox(height: 20),
+                                                    Text(S.of(context).topUpYourFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+                                                    const SizedBox(height: 10),
+                                                    Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                                                      child: Text(S.of(context).viewFavoritesChatsAndCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    PressableText(
+                                                      text: S.of(context).addUsersOrGroups,
+                                                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
+                                                      onTap: () {
+                                                        Navigator.push(context, createPageRoute(AddFavoriteScreen(selectedUserIds: widget.selectedChats)));
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Center(child: Text(capitalize(S.of(context).groups))),
+                                              Container(),
                                             ],
                                           ),
                                         ),
-                                        Center(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              SvgPicture.asset(ChatifyVectors.addFavorite, width: 100, height: 100),
-                                              const SizedBox(height: 20),
-                                              Text(S.of(context).topUpYourFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
-                                              const SizedBox(height: 10),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 30),
-                                                child: Text(S.of(context).viewFavoritesChatsAndCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              PressableText(
-                                                text: S.of(context).addUsersOrGroups,
-                                                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
-                                                onTap: () {
-                                                  Navigator.push(context, createPageRoute(const AddFavoriteScreen()));
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Center(child: Text(capitalize(S.of(context).groups))),
-                                        Container(),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
+                                  StatusScreen(user: userController.currentUser),
+                                  CommunityScreen(user: userController.currentUser),
+                                  CallsScreen(user: userController.currentUser),
                                 ],
                               ),
-                              StatusScreen(user: userController.currentUser),
-                              CommunityScreen(user: userController.currentUser),
-                              CallsScreen(user: userController.currentUser),
-                            ],
-                          ),
+                            ),
+                            StatusScreen(user: userController.currentUser),
+                            CommunityScreen(user: userController.currentUser),
+                            CallsScreen(user: userController.currentUser),
+                          ],
                         ),
-                        StatusScreen(user: userController.currentUser),
-                        CommunityScreen(user: userController.currentUser),
-                        CallsScreen(user: userController.currentUser),
-                      ],
-                    ),
                   ),
                   Positioned(
                     top: widget.isHomeScreen ? 0 : 85,
@@ -353,6 +369,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
                     searchList: widget.searchList,
                     selectedIndex: widget.selectedIndex,
                     user: widget.user,
+                    selectedUserIds: widget.selectedChats,
                   ),
                 ],
               ),
@@ -416,29 +433,16 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with SingleTickerPr
         borderRadius: BorderRadius.circular(30),
         child: Container(
           height: 34,
+          padding: const EdgeInsets.symmetric(horizontal: 18),
           decoration: BoxDecoration(
             color: _tabController.index == index ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt()) : ChatifyColors.transparent,
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: _tabController.index == index ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey),
-              width: 1,
-            ),
+            border: Border.all(color: _tabController.index == index ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey), width: 1),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Tab(
+          child: Center(
             child: _tabController.index == index && index == 4
-                ? Icon(
-              Icons.add,
-              color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.steelGrey,
-              size: 20,
-            )
-                : Text(
-              text,
-              style: TextStyle(
-                fontSize: index == 4 ? ChatifySizes.fontSizeMg : ChatifySizes.fontSizeSm,
-                fontWeight: FontWeight.w400,
-                color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.darkGrey,
-              ),
+              ? Icon(Icons.add, color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.steelGrey, size: 20)
+              : Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: index == 4 ? ChatifySizes.fontSizeMg : ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.darkGrey),
             ),
           ),
         ),

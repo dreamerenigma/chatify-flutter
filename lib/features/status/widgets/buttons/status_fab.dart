@@ -107,7 +107,7 @@ class _StatusFABState extends State<StatusFAB> with SingleTickerProviderStateMix
             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
             foregroundColor: ChatifyColors.white,
             elevation: 2,
-            child: SvgPicture.asset(ChatifyVectors.cameraAdd, color: ChatifyColors.black, width: 26, height: 26),
+            child: SvgPicture.asset(ChatifyVectors.cameraAdd, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
           ),
         ),
       ],

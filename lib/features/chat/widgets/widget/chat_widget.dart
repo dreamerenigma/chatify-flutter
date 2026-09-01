@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
@@ -193,8 +194,15 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
     });
   }
 
-  void _handleReaction(MessageModel message, String reaction) {
-    APIs.updateMessageReaction(message, reaction);
+  Future<void> _handleReaction(MessageModel message, String reaction) async {
+    await APIs.updateMessageReaction(message, reaction);
+
+    if (!mounted) return;
+
+    setState(() {
+      isSelecting = false;
+      selectedMessages.clear();
+    });
   }
 
   void sendMessage() {
@@ -209,7 +217,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
       setState(() {
         isTyping = false;
       });
-      APIs.updateTypingStatus(widget.user.id, false);
+      APIs.updateTypingStatus(false);
     } else {
       Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
     }
@@ -272,6 +280,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
 
   Widget _buildBody() {
     final backgroundImage = context.isDarkMode ? ChatifyImages.groupBackgroundDark : ChatifyImages.groupBackgroundLight;
+    final Set<String> selectedReactions = selectedMessages.map((index) => list[index].reactions).whereType<String>().where((reaction) => reaction.isNotEmpty).toSet();
 
     return Stack(
       children: [
@@ -303,24 +312,30 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
                       children: [
                         _buildMessages(),
                         if (isSelecting && selectedMessages.isNotEmpty)
-                        Positioned(
-                          bottom: 90,
-                          left: 0,
-                          right: 0,
-                          child: Center(
-                            child: EmojiToolbar(
-                              emojis: const ['👍', '❤️', '😂', '😮', '😥', '🙏'],
-                              onAddPressed: toggleEmojiKeyboard,
-                              onToggleKeyboard: toggleEmojiKeyboard,
-                              onReactionPressed: (emoji) {
-                                for (int index in selectedMessages) {
-                                  final message = list[index];
-                                  _handleReaction(message, emoji);
-                                }
-                              },
+                          Positioned(
+                            bottom: 90,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: EmojiToolbar(
+                                emojis: const ['👍', '❤️', '😂', '😮', '😥', '🙏', '👏', '🥰', '😴', '😭', '🔥', '🤣'],
+                                selectedReactions: selectedReactions,
+                                onAddPressed: toggleEmojiKeyboard,
+                                onToggleKeyboard: toggleEmojiKeyboard,
+                                onReactionPressed: (emoji) {
+                                  setState(() {
+                                    selectedReactions.add(emoji);
+                                  });
+
+                                  for (final index in selectedMessages) {
+                                    final message = list[index];
+
+                                    _handleReaction(message, emoji);
+                                  }
+                                },
+                              ),
                             ),
                           ),
-                        ),
                         Positioned(
                           bottom: 25,
                           right: 20,

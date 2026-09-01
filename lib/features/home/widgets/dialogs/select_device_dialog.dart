@@ -8,7 +8,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 enum DeviceType { camera, microphone, speaker }

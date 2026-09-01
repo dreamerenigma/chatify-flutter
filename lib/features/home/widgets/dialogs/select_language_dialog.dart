@@ -4,7 +4,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../personalization/controllers/language_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 void showSelectedLanguageDialog(BuildContext context) {
   final RenderBox button = context.findRenderObject() as RenderBox;
@@ -13,8 +13,8 @@ void showSelectedLanguageDialog(BuildContext context) {
   final overlay = Overlay.of(context);
   late OverlayEntry languageMenuOverlayEntry;
   final ScrollController scrollController = ScrollController();
-  final selectedLanguage = LanguageController.instance.selectedLanguage;
-  final isDefaultSelected = LanguageController.instance.isUsingDefault;
+  final selectedLanguage = LanguagesController.instance.selectedLanguage;
+  final isDefaultSelected = LanguagesController.instance.isUsingDefault;
 
   Map<String, Map<String, String>> languages = {
     "Африкаанс": {"name": "Afrikaans", "code": "af"},
@@ -58,14 +58,7 @@ void showSelectedLanguageDialog(BuildContext context) {
                     color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 3))],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2, top: 5, bottom: 5),
@@ -93,7 +86,7 @@ void showSelectedLanguageDialog(BuildContext context) {
                                           color: ChatifyColors.transparent,
                                           child: InkWell(
                                             onTap: () {
-                                              LanguageController.instance.resetToDefaultLanguage();
+                                              LanguagesController.instance.resetToDefaultLanguage();
                                               languageMenuOverlayEntry.remove();
                                             },
                                             splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
@@ -142,7 +135,7 @@ void showSelectedLanguageDialog(BuildContext context) {
                                             child: InkWell(
                                               onTap: () {
                                                 String languageCode = entry.value["code"]!;
-                                                LanguageController.instance.setLanguage(languageCode);
+                                                LanguagesController.instance.setLanguage(languageCode);
                                                 languageMenuOverlayEntry.remove();
                                                 Get.updateLocale(Locale(languageCode));
                                               },

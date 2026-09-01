@@ -35,7 +35,7 @@ class FavoriteScreenState extends State<FavoriteScreen> {
           IconButton(
             icon: _isEditing
               ? const Icon(Icons.check)
-              : SvgPicture.asset(ChatifyVectors.pencilOutline, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
+              : SvgPicture.asset(ChatifyVectors.pencilOutline, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
             ),
             onPressed: _toggleEdit,
           ),
@@ -67,7 +67,7 @@ class FavoriteScreenState extends State<FavoriteScreen> {
           const SizedBox(height: 5),
           InkWell(
             onTap: () {
-              Navigator.push(context, createPageRoute(const AddFavoriteScreen()));
+              Navigator.push(context, createPageRoute(AddFavoriteScreen(selectedUserIds: {})));
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

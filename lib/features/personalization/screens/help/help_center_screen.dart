@@ -16,7 +16,7 @@ import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../../utils/urls/url_utils.dart';
 import '../../../authentication/widgets/bars/auth_app_bar.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'all_popular_articles_screen.dart';
 import 'all_reference_sections_screen.dart';

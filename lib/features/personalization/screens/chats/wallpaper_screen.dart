@@ -60,7 +60,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () async {
-                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen(imagePath: imagePath)));
+                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen()));
 
                     if (selectedImagePath != null) {
                       setState(() {
@@ -178,7 +178,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(context, createPageRoute(const SelectWallpaperScreen(imagePath: '')));
+                    Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen()));
                   },
                   child: Center(
                     child: Text(S.of(context).change,

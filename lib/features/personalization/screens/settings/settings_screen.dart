@@ -18,7 +18,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/user_model.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/language_controller.dart';
 import '../../widgets/dialogs/add_user_bottom_dialog.dart';
 import '../../widgets/dialogs/center_accounts_bottom_dialog.dart';
@@ -38,7 +38,7 @@ class SettingsScreen extends StatefulWidget {
 class SettingsScreenState extends State<SettingsScreen> {
   final box = GetStorage();
   final TextEditingController searchController = TextEditingController();
-  final LanguageController languageController = Get.put(LanguageController());
+  final LanguagesController languageController = Get.put(LanguagesController());
   FocusNode searchFocusNode = FocusNode();
   bool isSearching = false;
   bool showFirst = true;
@@ -160,20 +160,11 @@ class SettingsScreenState extends State<SettingsScreen> {
               thumbVisibility: false,
               radius: Radius.circular(12),
               child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom + 12),
                 child: Column(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                            spreadRadius: 1,
-                            blurRadius: 3,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                      ),
+                      decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))]),
                     ),
                     ...[
                       if (showFirst)
@@ -309,10 +300,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       padding: EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Container(
         padding: EdgeInsets.only(left: 2, right: 8, top: 10, bottom: 10),
-        decoration: BoxDecoration(
-          color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -322,22 +310,14 @@ class SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold, height: 1.2),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
+                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold, height: 1.2)),
                   SizedBox(height: 4),
                   RichText(
                     text: TextSpan(
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.2, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                       children: [
                         TextSpan(text: subtitle),
-                        TextSpan(
-                          text: actionText,
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          recognizer: TapGestureRecognizer()..onTap = onActionTap,
-                        ),
+                        TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
                       ],
                     ),
                   ),

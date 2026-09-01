@@ -8,7 +8,7 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../community/controllers/country_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../models/country.dart';
 import '../lists/country_list.dart';
 

@@ -103,8 +103,8 @@ class SplashScreenState extends State<SplashScreen> {
             ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              minimum: const EdgeInsets.only(bottom: ChatifySizes.defaultSpace),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom + ChatifySizes.defaultSpace),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

@@ -5,7 +5,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/urls/url_utils.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class AddDataAboutScreen extends StatefulWidget {

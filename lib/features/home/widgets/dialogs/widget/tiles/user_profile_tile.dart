@@ -48,24 +48,13 @@ class UserProfileTile extends StatelessWidget {
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
-                  color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white,
-                  border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.transparent, width: 1),
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.transparent, width: 1), shape: BoxShape.circle),
                 child: ClipOval(
                   child: CachedNetworkImage(
                     imageUrl: user.image,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
-                    errorWidget: (context, url, error) => Center(
-                      child: SvgPicture.asset(
-                        ChatifyVectors.newUser,
-                        color: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey,
-                        width: 28,
-                        height: 28,
-                      ),
-                    ),
+                    errorWidget: (context, url, error) => Center(child: SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey, BlendMode.srcIn) , width: 28, height: 28)),
                   ),
                 ),
               ),

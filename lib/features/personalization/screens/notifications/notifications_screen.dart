@@ -4,7 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/reset_notification_settings_dialog.dart';
 import '../../widgets/dialogs/vibration_dialog.dart';

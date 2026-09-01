@@ -1,4 +1,5 @@
 import '../../../api/apis.dart';
+import '../../../core/enums/message_type.dart';
 
 class MessageModel {
   late final String toId;
@@ -10,7 +11,7 @@ class MessageModel {
   late final String? documentName;
   late final String? fileSize;
   late final List<String> deletedBy;
-  late final String? reaction;
+  late final Map<String, List<String>> reactions;
   late final DateTime? deletedAt;
 
   MessageModel({
@@ -23,7 +24,7 @@ class MessageModel {
     this.documentName,
     this.fileSize,
     required this.deletedBy,
-    required this.reaction,
+    required this.reactions,
     required this.deletedAt,
   });
 
@@ -38,7 +39,16 @@ class MessageModel {
     documentName = json['documentName'] as String?;
     fileSize = json['fileSize'] as String?;
     deletedBy = List<String>.from(json['deletedBy'] ?? []);
-    reaction = json['reaction'] as String?;
+    final reactionsJson = json['reactions'];
+
+    if (reactionsJson is Map) {
+      reactions = reactionsJson.map((key, value) {
+        return MapEntry(key.toString(), List<String>.from(value ?? []));
+      });
+    } else {
+      reactions = {};
+    }
+
     deletedAt = json['deletedAt'] != null ? DateTime.tryParse(json['deletedAt'].toString()) : null;
 
     switch (json['type'].toString()) {
@@ -70,21 +80,25 @@ class MessageModel {
     data['type'] = type.name;
     data['fromId'] = fromId;
     data['sent'] = sent;
+
     if (documentName != null) {
       data['documentName'] = documentName;
     }
+
     if (fileSize != null) {
       data['fileSize'] = fileSize;
     }
+
     data['deletedBy'] = deletedBy;
-    if (reaction != null) {
-      data['reaction'] = reaction;
+
+    if (reactions.isNotEmpty) {
+      data['reactions'] = reactions;
     }
+
     if (deletedAt != null) {
       data['deletedAt'] = deletedAt!.toIso8601String();
     }
+
     return data;
   }
 }
-
-enum MessageType { text, image, gif, video, audio, document, emoji }

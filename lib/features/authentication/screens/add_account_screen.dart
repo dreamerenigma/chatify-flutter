@@ -17,6 +17,7 @@ import '../../../utils/urls/url_utils.dart';
 import '../../../version.dart';
 import '../../personalization/controllers/language_controller.dart';
 import '../../personalization/screens/help/support/support_screen.dart';
+import '../../personalization/widgets/dialogs/language_bottom_sheet_dialog.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/dialogs/select_language_dialog.dart';
 import 'enter_phone_number.dart';
@@ -33,7 +34,7 @@ class AddAccountScreen extends StatefulWidget {
 }
 
 class AddAccountScreenState extends State<AddAccountScreen> {
-  final LanguageController languageController = Get.put(LanguageController());
+  final LanguagesController languageController = Get.put(LanguagesController());
   final GlobalKey _newSignOutKey = GlobalKey();
   bool isHoveredPrivacy = false;
   bool isHoveredTermsOfUse = false;
@@ -118,12 +119,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                     showMenu(
                       context: context,
                       color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
-                      position: RelativeRect.fromLTRB(
-                        position.dx,
-                        isWebOrWindows ? position.dy : position.dy + renderBox.size.height,
-                        position.dx + renderBox.size.width,
-                        0,
-                      ),
+                      position: RelativeRect.fromLTRB(position.dx, isWebOrWindows ? position.dy : position.dy + renderBox.size.height, position.dx + renderBox.size.width, 0),
                       items: [
                         PopupMenuItem(
                           value: 1,
@@ -318,7 +314,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
                     if (isWebOrWindows ) {
                       showLanguageDialog(context);
                     } else {
-                      languageController.selectLanguage(context);
+                      showLanguageBottomSheetDialog(context, languageController);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -397,7 +393,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
               left: 0,
               right: 0,
               child: Container(
-                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 8),
+                padding: EdgeInsets.only(left: 25, right: 25, bottom: MediaQuery.of(context).padding.bottom + 8),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: SizedBox(

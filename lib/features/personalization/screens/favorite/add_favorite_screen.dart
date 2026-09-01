@@ -12,7 +12,12 @@ import '../../../home/widgets/lists/user_list.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class AddFavoriteScreen extends StatefulWidget {
-  const AddFavoriteScreen({super.key});
+  final Set<String> selectedUserIds;
+
+  const AddFavoriteScreen({
+    super.key,
+    required this.selectedUserIds,
+  });
 
   @override
   State<AddFavoriteScreen> createState() => AddFavoriteScreenState();
@@ -207,6 +212,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                   list: list,
                   isSharing: true,
                   onUserSelected: _onUserSelected,
+                  selectedUserIds: widget.selectedUserIds,
                 ),
               ],
             ),

@@ -13,7 +13,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../authentication/models/country.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../widgets/dialog/save_contact_dialog.dart';
 
 class NewContactScreen extends StatefulWidget {

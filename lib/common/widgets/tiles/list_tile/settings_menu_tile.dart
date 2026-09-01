@@ -55,7 +55,7 @@ class SettingsMenuTile extends StatelessWidget {
             child: Row(
               children: [
                 CustomIcon(icon: icon, color: iconColor, size: 28),
-                const SizedBox(width: 12),
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

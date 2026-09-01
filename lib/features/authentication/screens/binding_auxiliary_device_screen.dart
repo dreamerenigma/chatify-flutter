@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';

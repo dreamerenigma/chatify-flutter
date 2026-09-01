@@ -10,7 +10,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../home/screens/home_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../welcome/screen/problem_detected_screen.dart';
 import '../widgets/bars/auth_app_bar.dart';
 import 'binding_auxiliary_device_screen.dart';

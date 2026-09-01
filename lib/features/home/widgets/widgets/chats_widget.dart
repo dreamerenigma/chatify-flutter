@@ -1,5 +1,5 @@
 import 'package:chatify/features/bot/models/support_model.dart';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,14 +34,15 @@ class ChatsWidget extends StatefulWidget {
   final List<UserModel> searchList;
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
-  final Function(GroupModel) onGroupSelected;
   final ValueChanged<NewsletterModel> onNewsletterSelected;
   final ValueChanged<CommunityModel> onCommunitySelected;
+  final UserModel? selectedUser;
+  final Set<String> selectedUserIds;
+  final CommunityModel? selectedCommunity;
   final Function(UserModel) onUserSelected;
   final Function(SupportAppModel) onSupportSelected;
   final Function(InfoAppModel) onInfoAppSelected;
-  final UserModel? selectedUser;
-  final CommunityModel? selectedCommunity;
+  final Function(GroupModel) onGroupSelected;
 
   const ChatsWidget({
     super.key,
@@ -57,6 +58,7 @@ class ChatsWidget extends StatefulWidget {
     required this.onGroupSelected,
     required this.onNewsletterSelected,
     required this.onCommunitySelected,
+    required this.selectedUserIds,
     required this.onUserSelected,
     required this.onSupportSelected,
     required this.onInfoAppSelected,
@@ -354,7 +356,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                             searchList: widget.searchList,
                             list: widget.users,
                             isSharing: false,
-                            selectedUser: widget.selectedUser,
+                            selectedUserIds: widget.selectedUserIds,
                             onUserSelected: (user) {
                               setState(() {
                                 selectedUser = user;

@@ -82,6 +82,7 @@ class ChatifyColors {
   static const Color yellow = Color(0xFFF7CC76);
   static const Color ascentRed = Color(0xFFC42B1C);
   static const Color red = Color(0xFFFF0000);
+  static const Color danger = Color(0xFFFB5061);
 
   // Circle button
   static const Color violet = Color(0xFF7F66FE);

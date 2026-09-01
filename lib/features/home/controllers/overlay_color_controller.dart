@@ -47,7 +47,7 @@ class OverlayColorController extends GetxController {
   void updateOverlayColor(Color color) {
     overlayColor.value = color;
     overlayGradient.value = null;
-    box.write(_colorKey, color.value);
+    box.write(_colorKey, color.toARGB32());
     box.remove(_gradientKey);
   }
 
@@ -66,7 +66,7 @@ class OverlayColorController extends GetxController {
 
   Map<String, dynamic> _serializeGradient(LinearGradient gradient) {
     return {
-      'colors': gradient.colors.map((c) => c.value).toList(),
+      'colors': gradient.colors.map((c) => c.toARGB32()).toList(),
       'begin': gradient.begin.toString(),
       'end': gradient.end.toString(),
     };

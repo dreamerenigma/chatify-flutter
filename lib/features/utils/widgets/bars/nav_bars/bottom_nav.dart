@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../generated/l10n/l10n.dart';
-import '../../../utils/constants/app_colors.dart';
-import '../../../utils/constants/app_sizes.dart';
-import '../../../utils/constants/app_vectors.dart';
-import '../../personalization/controllers/colors_controller.dart';
-import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../../../generated/l10n/l10n.dart';
+import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/constants/app_vectors.dart';
+import '../../../../personalization/controllers/colors_controller.dart';
+import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class BottomNav extends StatelessWidget {
   final int selectedIndex;
@@ -22,14 +22,7 @@ class BottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: context.isDarkMode ? ChatifyColors.white.withAlpha((0.2 * 255).toInt()) : ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-            blurRadius: 4,
-            spreadRadius: 2,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: context.isDarkMode ? ChatifyColors.white.withAlpha((0.2 * 255).toInt()) : ChatifyColors.black.withAlpha((0.2 * 255).toInt()), blurRadius: 4, spreadRadius: 2, offset: Offset(0, 4),)],
       ),
       child: Theme(
         data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
@@ -44,7 +37,7 @@ class BottomNav extends StatelessWidget {
                 selectedIndex == 0 ? ChatifyVectors.chats : ChatifyVectors.chatsRegular,
                 width: 24,
                 height: 24,
-                color: selectedIndex == 0 ? colorsController.getColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                colorFilter: ColorFilter.mode(selectedIndex == 0 ? colorsController.getColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black), BlendMode.srcIn),
               ),
               label: S.of(context).chats,
               index: 0,
@@ -56,7 +49,7 @@ class BottomNav extends StatelessWidget {
                 ChatifyVectors.status,
                 width: 24,
                 height: 24,
-                color: selectedIndex == 1 ? colorsController.getColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                colorFilter: ColorFilter.mode(selectedIndex == 1 ? colorsController.getColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black), BlendMode.srcIn),
               ),
               label: S.of(context).status,
               index: 1,
@@ -64,10 +57,7 @@ class BottomNav extends StatelessWidget {
             _buildBottomNavigationBarItem(
               context,
               colorsController: colorsController,
-              iconWidget: Icon(
-                selectedIndex == 2 ? Icons.groups : Icons.groups_outlined,
-                size: 28,
-              ),
+              iconWidget: Icon(selectedIndex == 2 ? Icons.groups : Icons.groups_outlined, size: 28),
               label: S.of(context).community,
               index: 2,
             ),
@@ -105,14 +95,17 @@ class BottomNav extends StatelessWidget {
       : (isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt()) : ChatifyColors.grey);
 
     return BottomNavigationBarItem(
-      icon: Tooltip(
-        message: label,
-        decoration: BoxDecoration(color: tooltipColor, borderRadius: BorderRadius.circular(4)),
-        textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-        child: Container(
-          decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(15)),
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-          child: iconWidget,
+      icon: Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Tooltip(
+          message: label,
+          decoration: BoxDecoration(color: tooltipColor, borderRadius: BorderRadius.circular(4)),
+          textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          child: Container(
+            decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(30)),
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+            child: iconWidget,
+          ),
         ),
       ),
       label: label,

@@ -106,14 +106,7 @@ class LoginScreenState extends State<LoginScreen> {
             height: (isWebOrWindows && !isMobile) ? 55 : 75,
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
-              boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 2))],
             ),
             clipBehavior: Clip.none,
             child: Padding(
@@ -310,7 +303,7 @@ class LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: isWebOrWindows ? mq.width <= 500 ? mq.width * 0.5 : mq.width > 750 && mq.width <= 900 ? mq.width * 0.45 : mq.width > 900 ? mq.width * 0.3 : mq.width * 0.4 : double.infinity,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
                           S.of(context).confirmTerms,
                           textAlign: TextAlign.center,

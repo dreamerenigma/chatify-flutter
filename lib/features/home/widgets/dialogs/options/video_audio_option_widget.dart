@@ -17,7 +17,7 @@ import '../../../../../utils/formatters/formatter.dart';
 import '../../../../../utils/helper/file_util.dart';
 import '../../../../../utils/popups/custom_tooltip.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../confirmation_dialog.dart';
 import '../select_device_dialog.dart';
 import '../windows_settings_dialog.dart';

@@ -7,6 +7,7 @@ import 'package:chatify/features/personalization/screens/privacy/privacy_photo_p
 import 'package:chatify/features/personalization/screens/privacy/status_privacy_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
@@ -14,8 +15,10 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../api/apis.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/constants/app_vectors.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
+import '../profile/links_screen.dart';
 import 'automatic_timer_screen.dart';
 import 'blocked_users_screen.dart';
 import 'closing_chat_screen.dart';
@@ -31,6 +34,8 @@ class PrivacyScreen extends StatefulWidget {
 }
 
 class PrivacyScreenState extends State<PrivacyScreen> {
+  final storage = GetStorage();
+  bool showPrivacyCheck = true;
   bool isReadingReportsEnabled = false;
   bool isEffectCameraEnabled = false;
   bool isLoading = false;
@@ -39,17 +44,23 @@ class PrivacyScreenState extends State<PrivacyScreen> {
   String selectedIntelligenceOption = '';
   String selectedTimerOption = '';
   String selectedGroupsOption = '';
-  final storage = GetStorage();
+  String selectedLinksOption = '';
 
   @override
   void initState() {
     super.initState();
     _loadSwitchState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     privacySubtitleOption = storage.read('selected_last_visit_option_label') ?? S.of(context).myContactsAll;
     selectedPrivacyOption = storage.read('selected_photo_privacy_label') ?? S.of(context).myContacts;
     selectedIntelligenceOption = storage.read('selected_intelligence_privacy_label') ?? S.of(context).myContacts;
     selectedTimerOption = storage.read('selected_automatic_timer_label') ?? S.of(context).off;
     selectedGroupsOption = storage.read('selected_groups_privacy_label') ?? S.of(context).myContacts;
+    selectedLinksOption = storage.read('selected_links_option_label') ?? S.of(context).myContacts;
   }
 
   Future<void> _loadSwitchState() async {
@@ -93,14 +104,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).privacy, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
@@ -129,11 +133,27 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader(S.of(context).visibilityPersonalData, padding: const EdgeInsets.only(left: 25, right: 20, top: 25)),
-                      const SizedBox(height: 10),
+                      if (showPrivacyCheck)
+                        _buildPrivacyCheck(
+                          context,
+                          title: 'Проверка конфиденциальности',
+                          subtitle: 'Настройте параметры конфиденциальности. ',
+                          actionText: 'Начать проверку',
+                          onActionTap: () async {
+                            await Navigator.push(context, createPageRoute(PrivacyCheckScreen()));
+                          },
+                          onClose: () {
+                            setState(() {
+                              showPrivacyCheck = true;
+                            });
+                          },
+                        ),
+                      _buildSectionHeader(S.of(context).visibilityPersonalData, padding: const EdgeInsets.only(left: 25, right: 20, top: 20)),
+                      const SizedBox(height: 6),
                       _buildPrivacyItem(S.of(context).lastSeenOnlineStatus, privacySubtitleOption,
                         onTap: () async {
                           final result = await Navigator.push(context, createPageRoute(const LastVisitedTimeScreen()));
+
                           if (result != null && mounted) {
                             setState(() {
                               privacySubtitleOption = result;
@@ -145,6 +165,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                       _buildPrivacyItem(S.of(context).profilePhoto, selectedPrivacyOption,
                         onTap: () async {
                           final result = await Navigator.push(context, createPageRoute(const PrivacyPhotoProfileScreen()));
+
                           if (result != null && result is String) {
                             setState(() {
                               selectedPrivacyOption = result;
@@ -153,13 +174,26 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                           }
                         },
                       ),
-                      _buildPrivacyItem(S.of(context).intelligence, selectedIntelligenceOption,
+                      _buildPrivacyItem(S.of(context).info, selectedIntelligenceOption,
                         onTap: () async {
                           final result = await Navigator.push(context, createPageRoute(const IntelligenceScreen()));
+
                           if (result != null && result is String) {
                             setState(() {
                               selectedIntelligenceOption = result;
                               storage.write('selected_intelligence_privacy_label', result);
+                            });
+                          }
+                        },
+                      ),
+                      _buildPrivacyItem(S.of(context).links, selectedLinksOption,
+                        onTap: () async {
+                          final result = await Navigator.push(context, createPageRoute(const LinksScreen()));
+
+                          if (result != null && result is String) {
+                            setState(() {
+                              selectedLinksOption = result;
+                              storage.write('selected_links_option_label', result);
                             });
                           }
                         },
@@ -196,22 +230,23 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                               ),
                               Container(
                                 alignment: Alignment.topRight,
-                                child: isLoading ? SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                    strokeWidth: 3,
-                                  ),
-                                )
-                                    : Switch(
-                                  value: isReadingReportsEnabled,
-                                  onChanged: (value) {
-                                    _toggleSwitch(value);
-                                  },
-                                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
-                                ),
+                                child: isLoading
+                                  ? SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                        strokeWidth: 3,
+                                      ),
+                                    )
+                                  : Switch(
+                                      value: isReadingReportsEnabled,
+                                      onChanged: (value) {
+                                        _toggleSwitch(value);
+                                      },
+                                      activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                      activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
+                                    ),
                               ),
                             ],
                           ),
@@ -221,10 +256,8 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                       _buildSectionHeader(S.of(context).disappearingMessages, padding: const EdgeInsets.only(left: 25, right: 25, top: 20)),
                       InkWell(
                         onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            createPageRoute(const AutomaticTimerScreen()),
-                          );
+                          final result = await Navigator.push(context, createPageRoute(const AutomaticTimerScreen()));
+
                           if (result != null && result is String) {
                             setState(() {
                               selectedTimerOption = result;
@@ -239,22 +272,13 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Expanded(
-                                    child: Text(S.of(context).automaticMessageTimer,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
+                                  Expanded(child: Text(S.of(context).automaticMessageTimer, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis)),
                                 ],
                               ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      S.of(context).newChatsMessagesDisappearAccording,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-                                    ),
-                                  ),
+                                  Expanded(child: Text(S.of(context).newChatsMessagesDisappearAccording, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey))),
                                   Text(selectedTimerOption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                                 ],
                               ),
@@ -265,10 +289,8 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                       const Divider(height: 0, thickness: 1),
                       _buildPrivacyItem(S.of(context).groups[0].toUpperCase(), selectedGroupsOption,
                         onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            createPageRoute(const PrivacyGroupsScreen()),
-                          );
+                          final result = await Navigator.push(context, createPageRoute(const PrivacyGroupsScreen()));
+
                           if (result != null && result is String) {
                             setState(() {
                               selectedGroupsOption = result;
@@ -344,7 +366,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                                 alignment: Alignment.topRight,
                                 child: Switch(
                                   value: isEffectCameraEnabled,
-                                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                  activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
                                   onChanged: (value) {
                                     _toggleEffectCamera(value);
@@ -388,19 +410,70 @@ class PrivacyScreenState extends State<PrivacyScreen> {
   }
 
   Widget _buildPrivacyItem(String title, String subtitle, {void Function()? onTap}) {
-    return InkWell(
-      onTap: onTap,
-      splashColor: context.isDarkMode ? ChatifyColors.darkSlate.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkSlate.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: context.isDarkMode ? ChatifyColors.darkSlate.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkSlate.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.only(left: 25, right: 40, top: 16, bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              Text(subtitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrivacyCheck(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String actionText,
+    required VoidCallback onActionTap,
+    required VoidCallback onClose,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(left: 25, right: 40, top: 16, bottom: 16),
-        child: Column(
+        padding: EdgeInsets.only(left: 10, right: 8, top: 10, bottom: 10),
+        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            const SizedBox(height: 4.0),
-            Text(subtitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
+            SvgPicture.asset(ChatifyVectors.lockCheck, width: 40, height: 40, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold, height: 1.2, overflow: TextOverflow.ellipsis)),
+                  SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.2, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                        children: [
+                          TextSpan(text: subtitle),
+                          TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: onClose,
+              child: Icon(Icons.close, color: ChatifyColors.grey, size: 22),
+            ),
           ],
         ),
       ),

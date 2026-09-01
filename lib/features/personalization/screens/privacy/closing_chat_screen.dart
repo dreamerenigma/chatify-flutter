@@ -8,7 +8,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../widgets/dialogs/closed_chats_cleared_opened_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class ClosingChatScreen extends StatefulWidget {
   const ClosingChatScreen({super.key});

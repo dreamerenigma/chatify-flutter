@@ -14,7 +14,7 @@ import '../../../../../utils/constants/app_images.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'overlays/banner_overlay_entry.dart';
 import 'overlays/sounds_overlay_entry.dart';
 

@@ -23,7 +23,7 @@ import '../../community/screens/created_community_screen.dart';
 import '../../community/widgets/cards/invite_user_card.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'new_newsletter_screen.dart';
 
 class HomeSelectUserScreen extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/qr_code/qr_code_screen.dart';
-import 'package:chatify/features/utils/widgets/no_glow_scroll_behavior.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -238,11 +238,8 @@ class SelectContactScreenState extends State<SelectContactScreen> {
                         if (index > 1 && index <= _chatUsers.length + 1) {
                           final adjustedIndex = index - 2;
                           final chatUser = _chatUsers[adjustedIndex];
-                          return UseAppUserCard(
-                            user: chatUser,
-                            isSelected: selectedUsers.contains(chatUser),
-                            onUserSelected: _toggleUserSelection,
-                          );
+
+                          return UseAppUserCard(user: chatUser, isSelected: selectedUsers.contains(chatUser), onUserSelected: _toggleUserSelection);
                         }
                         if (index == _chatUsers.length + 2) {
                           return Padding(
@@ -251,13 +248,11 @@ class SelectContactScreenState extends State<SelectContactScreen> {
                           );
                         }
                         final filteredIndex = index - _chatUsers.length - 3;
+
                         if (filteredIndex >= 0 && filteredIndex < _filteredContacts.length) {
                           final contact = _filteredContacts[filteredIndex];
-                          return InviteUserCard(
-                            contact: contact,
-                            onInvite: () {},
-                            onContactSelected: (_) {},
-                          );
+
+                          return InviteUserCard(contact: contact, onInvite: () {}, onContactSelected: (_) {});
                         }
 
                         return const SizedBox();
@@ -333,11 +328,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
                     backgroundImage: null,
                     child: CachedNetworkImage(
                       imageUrl: user.image,
-                      placeholder: (context, url) => Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
-                        child: CircleAvatar(radius: 25, backgroundColor: Colors.grey.shade300),
-                      ),
+                      placeholder: (context, url) => Shimmer.fromColors(baseColor: Colors.grey.shade300, highlightColor: Colors.grey.shade100, child: CircleAvatar(radius: 25, backgroundColor: Colors.grey.shade300)),
                       errorWidget: (context, url, error) => SvgPicture.asset(ChatifyVectors.profile, width: 50, height: 50),
                       imageBuilder: (context, imageProvider) => CircleAvatar(radius: 25, backgroundImage: imageProvider),
                     ),
@@ -411,7 +402,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
             final selectedOption = SaveContactController.instance.getOption();
             Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
           },
-          icon: SvgPicture.asset(ChatifyVectors.userAdd, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 23, height: 23),
+          icon: SvgPicture.asset(ChatifyVectors.userAdd, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn), width: 23, height: 23),
           label: S.of(context).newContact,
           trailing: InkWell(
             onTap: () {
@@ -439,12 +430,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         child: Row(
           children: [
-            CircleAvatar(
-              backgroundColor:
-              colorsController.getColor(colorsController.selectedColorScheme.value),
-              radius: 21,
-              child: icon,
-            ),
+            CircleAvatar(backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value), radius: 21, child: icon),
             const SizedBox(width: 16),
             Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
             if (trailing != null) ...[

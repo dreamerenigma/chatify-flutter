@@ -23,6 +23,7 @@ class MainHomeContentList extends StatelessWidget {
   final List<InfoAppModel> infosApp;
   final bool isSearching;
   final List<UserModel> searchList;
+  final Set<String> selectedUserIds;
   final Function(UserModel) onUserSelected;
 
   const MainHomeContentList({
@@ -35,6 +36,7 @@ class MainHomeContentList extends StatelessWidget {
     required this.infosApp,
     required this.isSearching,
     required this.searchList,
+    required this.selectedUserIds,
     required this.onUserSelected,
   });
 
@@ -53,14 +55,7 @@ class MainHomeContentList extends StatelessWidget {
         if (communities.isNotEmpty)
           CommunityList(communities: communities, isHomeScreen: true, onCommunitySelected: (community) {}),
         if (users.isEmpty)
-          UserList(
-            isSearching: isSearching,
-            searchList: searchList,
-            list: users,
-            isSharing: false,
-            onUserSelected: onUserSelected,
-            onSelectionModeChanged: (bool selecting) {},
-          ),
+          UserList(isSearching: isSearching, searchList: searchList, list: users, isSharing: false, onUserSelected: onUserSelected, selectedUserIds: selectedUserIds),
         if (supports.isEmpty)
           SupportList(supports: supports, onSupportSelected: (support) {}),
         if (infosApp.isEmpty)

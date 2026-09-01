@@ -9,7 +9,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'blocked_users_screen.dart';
 

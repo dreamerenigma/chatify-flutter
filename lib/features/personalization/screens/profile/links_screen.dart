@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class LinksScreen extends StatelessWidget {
   const LinksScreen({super.key});
@@ -16,14 +16,7 @@ class LinksScreen extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).links, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -66,8 +59,6 @@ class LinksScreen extends StatelessWidget {
   }
 
   Widget _buildLinksSettings() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16),
-
-    );
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16));
   }
 }

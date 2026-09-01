@@ -25,7 +25,6 @@ Future<void> showEditMessageDialog(
   final containerOffset = renderBox.localToGlobal(Offset.zero);
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
-
   final overlayHeight = 250.0;
   final windowWidth = 240.0;
 

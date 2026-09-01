@@ -33,7 +33,7 @@ import '../../../../home/widgets/dialogs/options/overlays/sounds_overlay_entry.d
 import '../../../../home/widgets/dialogs/overlays/no_sound_overlay.dart';
 import '../../../../home/widgets/dialogs/overlays/select_country_overlay.dart';
 import '../../../../home/widgets/input/search_text_input.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../light_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../overlays/info_chat_support_app_overlay.dart';
@@ -55,9 +55,9 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
   final LayerLink _noSoundLink = LayerLink();
   final LayerLink _soundDefaultLink = LayerLink();
   final audioPlayer = AudioPlayer();
-  late TextEditingController _phoneController;
   final ValueNotifier<String> selectedFlagNotifier = ValueNotifier(ChatifyVectors.rus);
   final ValueNotifier<String> selectedCountryCodeNotifier = ValueNotifier('+7');
+  late TextEditingController _phoneController;
   bool _isInside = false;
   bool _isTappedNoSound = false;
   bool _isTappedSoundDefault = false;
@@ -426,7 +426,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                         children: [
                           if (widget.user != null) ...[
                             _buildInfoBlock(S.of(context).was, lastSeen),
-                            _buildInfoBlock(S.of(context).intelligence, widget.user!.about),
+                            _buildInfoBlock(S.of(context).info, widget.user!.about),
                             if (widget.community == null) _buildInfoBlock(S.of(context).phoneNumber, widget.user!.phoneNumber),
                             _buildInfoBlock(S.of(context).disappearingMessages, S.of(context).off),
                           ]
@@ -1070,11 +1070,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
       if (isUserInteraction) return;
 
       final input = controller.text;
-
-      final matchedCountry = countries.firstWhere(
-            (country) => input.startsWith(country.code),
-        orElse: () => Country('', '', '', '', flagAssetPath),
-      );
+      final matchedCountry = countries.firstWhere((country) => input.startsWith(country.code), orElse: () => Country('', '', '', '', flagAssetPath));
 
       if (matchedCountry.code.isNotEmpty && selectedCountryNotifier.value?.code != matchedCountry.code) {
         selectedCountryNotifier.value = matchedCountry;

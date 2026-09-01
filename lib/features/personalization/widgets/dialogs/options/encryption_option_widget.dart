@@ -11,7 +11,7 @@ import '../../../../chat/models/user_model.dart';
 import '../../../../community/models/community_model.dart';
 import '../../../../community/widgets/info/encryption_info_block.dart';
 import '../../../../home/widgets/dialogs/overlays/contacting_support_overlay.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../light_dialog.dart';
 
 class EncryptionOptionWidget extends StatefulWidget {

@@ -5,8 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:media_kit/media_kit.dart';
-import 'app.dart';
-import 'bindings/general_bindings.dart';
+import 'app/app.dart';
 import 'core/services/notifications/notification_service.dart';
 import 'firebase_options.dart';
 
@@ -27,9 +26,6 @@ Future<void> main() async {
 
   /// -- Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((FirebaseApp value) {});
-
-  /// -- Initialize bindings here to ensure they're ready
-  GeneralBindings().dependencies();
 
   /// -- Initialize application services
   await initApp();

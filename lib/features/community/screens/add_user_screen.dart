@@ -15,7 +15,7 @@ import '../../group/screens/add_new_group_screen.dart';
 import '../../personalization/widgets/cards/invite_user_card.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class AddUserScreen extends StatefulWidget {
   const AddUserScreen({super.key});

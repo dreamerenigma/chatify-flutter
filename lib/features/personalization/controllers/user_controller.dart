@@ -10,6 +10,7 @@ class UserController extends GetxController {
   Rx<UserModel> user = Rx<UserModel>(UserModel(
     name: '',
     surname: '',
+    username: '',
     image: '',
     id: '',
     about: '',
@@ -61,6 +62,7 @@ class UserController extends GetxController {
           id: snapshot.id,
           name: data['name'] ?? '',
           surname: data['surname'] ?? '',
+          username: data['username'] ?? '',
           image: data['image'] ?? '',
           about: data['about'] ?? '',
           status: data['status'] ?? '',

@@ -42,10 +42,7 @@ class EmptyScreenState extends State<EmptyScreen> {
                   child: Container(
                     width: 50,
                     height: 50,
-                    decoration: BoxDecoration(
-                      color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey,
-                      shape: BoxShape.circle,
-                    ),
+                    decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey, shape: BoxShape.circle),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -63,10 +60,7 @@ class EmptyScreenState extends State<EmptyScreen> {
                               child: Container(
                                 width: 20,
                                 height: 22,
-                                decoration: BoxDecoration(
-                                  color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
+                                decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey, borderRadius: BorderRadius.circular(8.0)),
                               ),
                             ),
                           ),
@@ -78,10 +72,7 @@ class EmptyScreenState extends State<EmptyScreen> {
                             child: Container(
                               width: 35,
                               height: 10,
-                              decoration: BoxDecoration(
-                                color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                              decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey, borderRadius: BorderRadius.circular(8)),
                             ),
                           ),
                         ],
@@ -94,10 +85,7 @@ class EmptyScreenState extends State<EmptyScreen> {
                         child: Container(
                           width: 220,
                           height: 18,
-                          decoration: BoxDecoration(
-                            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                          decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightGrey, borderRadius: BorderRadius.circular(8)),
                         ),
                       ),
                     ],

@@ -8,7 +8,7 @@ import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../version.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../../utils/widgets/no_glow_scroll_behavior.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../overlays/contacting_support_overlay.dart';
 import '../overlays/license_overlay.dart';
 

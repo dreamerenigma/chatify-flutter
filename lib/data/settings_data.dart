@@ -7,17 +7,17 @@ import '../features/personalization/screens/chats/chats_screen.dart';
 import '../features/personalization/screens/data_storage/data_storage_screen.dart';
 import '../features/personalization/screens/favorite/favorite_screen.dart';
 import '../features/personalization/screens/help/help_screen.dart';
-import '../features/personalization/screens/help/support/support_screen.dart';
 import '../features/personalization/screens/invite_friend/invite_friend_screen.dart';
 import '../features/personalization/screens/lists/lists_screen.dart';
 import '../features/personalization/screens/notifications/notifications_screen.dart';
 import '../features/personalization/screens/privacy/privacy_screen.dart';
 import '../features/personalization/screens/special_features/special_features_screen.dart';
+import '../features/personalization/widgets/dialogs/language_bottom_sheet_dialog.dart';
 import '../generated/l10n/l10n.dart';
 import '../routes/custom_page_route.dart';
 import '../utils/constants/app_vectors.dart';
 
-Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsOptions(LanguageController languageController) {
+Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsOptions(LanguagesController languageController) {
   return {
     'Account': (context, iconColor) => SettingsMenuTile(
       icon: Icons.key_outlined,
@@ -89,7 +89,7 @@ Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsO
       iconColor: iconColor,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      onTap: () => languageController.selectLanguage(context),
+      onTap: () => showLanguageBottomSheetDialog(context, languageController),
     ),
     'Special features': (context, iconColor) => SettingsMenuTile(
       icon: ChatifyVectors.specialFeatures,
@@ -108,20 +108,6 @@ Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsO
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       onTap: () => Navigator.push(context, createPageRoute(const HelpScreen())),
-    ),
-    'Report a bug': (context, iconColor) => SettingsMenuTile(
-      icon: Icons.bug_report,
-      title: S.of(context).reportBug,
-      subTitle: S.of(context).subtitleReportBug,
-      iconColor: iconColor,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      onTap: () => Navigator.push(context, createPageRoute(const SupportScreen(
-        title: 'Сообщить об ошибке',
-        showText: false,
-        showReadMoreText: true,
-        showCompactButtonOnly: true,
-      ))),
     ),
     'Invite friend': (context, iconColor) => SettingsMenuTile(
       icon: Icons.group_rounded,
