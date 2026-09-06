@@ -38,14 +38,7 @@ void showDeleteMessageDialog(BuildContext context, {String? title, String? descr
                   decoration: BoxDecoration(
                     border: Border.all(color: ChatifyColors.buttonDarkGrey, width: 1),
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1),)],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

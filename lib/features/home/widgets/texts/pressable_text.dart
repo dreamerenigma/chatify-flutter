@@ -26,7 +26,7 @@ class PressableTextState extends State<PressableText> {
     final Color highlightColor = colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt());
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 38),
       child: InkWell(
         onTap: widget.onTap,
         borderRadius: BorderRadius.circular(30),
@@ -53,4 +53,3 @@ class PressableTextState extends State<PressableText> {
     );
   }
 }
-

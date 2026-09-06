@@ -63,13 +63,11 @@ void showUpdateStatusSheetDialog(BuildContext context) {
 
 Widget _buildRadioOption({required BuildContext context, required String title, required int value, String? trailingText}) {
   return Padding(
-    padding: const EdgeInsets.only(left: 20, right: 20),
+    padding: const EdgeInsets.only(left: 20, right: 20,),
     child: RadioListTile<int>(
       value: value,
-      groupValue: 1,
       activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-      onChanged: (int? newValue) {},
-      title: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+      title: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd,)),
       secondary: trailingText != null ? Text(trailingText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))) : null,
       contentPadding: EdgeInsets.zero,
     ),

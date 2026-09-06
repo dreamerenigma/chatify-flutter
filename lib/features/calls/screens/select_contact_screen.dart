@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/features/calls/screens/schedule_call_screen.dart';
 import 'package:chatify/features/personalization/screens/qr_code/qr_code_screen.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +22,6 @@ import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/buttons/animated_icon_button.dart';
 import '../widgets/dialog/save_contact_dialog.dart';
-import '../widgets/dialog/shedule_call_bottom_dialog.dart';
 import 'call_phone_number.dart';
 import 'create_link_call_screen.dart';
 import 'new_contact_screen.dart';
@@ -37,11 +37,6 @@ class SelectContactScreen extends StatefulWidget {
 class SelectContactScreenState extends State<SelectContactScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  List<Contact> _contacts = [];
-  List<Contact> _filteredContacts = [];
-  List<UserModel> _chatUsers = [];
-  List<UserModel> list = [];
-  List<UserModel> searchList = [];
   bool isFetchingContacts = true;
   bool isFetchingChatUsers = true;
   bool isSearching = false;
@@ -49,6 +44,11 @@ class SelectContactScreenState extends State<SelectContactScreen> {
   bool _visibleFirst = false;
   bool _visibleSecond = false;
   Key textFieldKey = UniqueKey();
+  List<Contact> _contacts = [];
+  List<Contact> _filteredContacts = [];
+  List<UserModel> _chatUsers = [];
+  List<UserModel> list = [];
+  List<UserModel> searchList = [];
   Set<UserModel> selectedUsers = {};
 
   @override
@@ -103,6 +103,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
     setState(() {
       _filteredContacts = _contacts.where((contact) {
         final contactName = contact.displayName.toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -413,7 +414,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
         ),
         const SizedBox(height: 6),
         _buildActionTile(
-          onTap: () => showSheduleCallBottomDialog(context, username: widget.user.name),
+          onTap: () => ScheduleCallScreen(user: widget.user),
           icon: const Icon(UniconsLine.calendar_alt, color: ChatifyColors.black, size: 23),
           label: S.of(context).scheduleCall,
         ),
@@ -422,23 +423,26 @@ class SelectContactScreenState extends State<SelectContactScreen> {
   }
 
   Widget _buildActionTile({required VoidCallback onTap, required Widget icon, required String label, Widget? trailing}) {
-    return InkWell(
-      onTap: onTap,
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-        child: Row(
-          children: [
-            CircleAvatar(backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value), radius: 21, child: icon),
-            const SizedBox(width: 16),
-            Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            if (trailing != null) ...[
-              const SizedBox(width: 8),
-              const Spacer(),
-              trailing,
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          child: Row(
+            children: [
+              CircleAvatar(backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value), radius: 21, child: icon),
+              const SizedBox(width: 16),
+              Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+              if (trailing != null) ...[
+                const SizedBox(width: 8),
+                const Spacer(),
+                trailing,
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

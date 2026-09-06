@@ -65,7 +65,7 @@ class ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8 + MediaQuery.of(context).viewPadding.bottom),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

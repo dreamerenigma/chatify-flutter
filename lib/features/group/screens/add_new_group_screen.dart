@@ -77,11 +77,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
   }
 
   void _showDisappearMessagesDialog() {
-    DisappearMessageDialog.showDisappearMessagesDialog(
-      context,
-      selectedDuration,
-      _updateDuration,
-    );
+    DisappearMessageDialog.showDisappearMessagesDialog(context, selectedDuration, _updateDuration);
   }
 
   void updateImagePath(String? path) {
@@ -97,6 +93,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
       setState(() {
         groups = querySnapshot.docs.map((doc) {
           final data = doc.data();
+
           return GroupModel.fromJson(data);
         }).toList();
       });

@@ -1,6 +1,7 @@
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -24,6 +25,7 @@ class MessageCard extends StatefulWidget {
   final VoidCallback onTap;
   final MessageModel? previousMessage;
   final List<MessageModel> messages;
+  final void Function(MessageModel message)? onReply;
 
   const MessageCard({
     super.key,
@@ -33,18 +35,51 @@ class MessageCard extends StatefulWidget {
     required this.messages,
     this.previousMessage,
     this.isSelected = false,
+    this.onReply,
   });
 
   @override
   State<MessageCard> createState() => _MessageCardState();
 }
 
-class _MessageCardState extends State<MessageCard> {
+class _MessageCardState extends State<MessageCard> with SingleTickerProviderStateMixin {
+  late final AnimationController _swipeController;
+  Animation<double>? _swipeAnimation;
   bool isPressed = false;
+  double _swipeOffset = 0;
+
+  static const double _replyIconDistance = 50;
+  static const double _replyTriggerDistance = 70;
+  static const double _maxSwipeDistance = 90;
 
   bool isDifferentMessageType() {
     if (widget.previousMessage == null) return true;
+
     return widget.message.isMe != widget.previousMessage!.isMe;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _swipeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 350));
+    _swipeController.addListener(() {
+      if (_swipeAnimation == null) return;
+
+      setState(() {
+        _swipeOffset = _swipeAnimation!.value;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _swipeController.dispose();
+    super.dispose();
+  }
+
+  void _animateSwipeBack() {
+    _swipeAnimation = Tween<double>(begin: _swipeOffset, end: 0).animate(CurvedAnimation(parent: _swipeController, curve: Curves.easeOutBack));
+    _swipeController..reset()..forward();
   }
 
   @override
@@ -63,6 +98,8 @@ class _MessageCardState extends State<MessageCard> {
       final borderColor = isMe ? (context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder);
 
       return GestureDetector(
+        onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
         onSecondaryTapDown: (TapDownDetails details) {
           final tapPosition = details.globalPosition;
 
@@ -145,28 +182,51 @@ class _MessageCardState extends State<MessageCard> {
           ],
         );
       },
+      onHorizontalDragUpdate: (details) {
+        setState(() {
+          _swipeOffset = (_swipeOffset + details.delta.dx).clamp(0.0, _maxSwipeDistance);
+        });
+      },
+      onHorizontalDragEnd: (_) {
+        final shouldReply = _swipeOffset >= _replyTriggerDistance;
+
+        if (shouldReply) {
+          widget.onReply?.call(widget.message);
+        }
+
+        _animateSwipeBack();
+      },
+      onHorizontalDragCancel: _animateSwipeBack,
       child: InkWell(
         onTap: widget.onTap,
         onLongPress: widget.onLongPress,
         mouseCursor: SystemMouseCursors.basic,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+        child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 2),
           decoration: BoxDecoration(color: isSelected ? selectionColor : ChatifyColors.transparent),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0),
-                child: Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: IntrinsicWidth(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
-                      child: isMe
-                        ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
-                        : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction,
+              Positioned(
+                left: 8,
+                top: 0,
+                bottom: 0,
+                child: _buildReplyIcon(),
+              ),
+              Transform.translate(
+                offset: Offset(_swipeOffset, 0),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0),
+                  child: Align(
+                    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                    child: IntrinsicWidth(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+                        child: isMe
+                          ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
+                          : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction,
+                        ),
                       ),
                     ),
                   ),
@@ -174,45 +234,70 @@ class _MessageCardState extends State<MessageCard> {
               ),
               if (hasReaction)
                 Positioned(
-                  bottom: 5,
+                  bottom: 3,
                   left: isMe ? null : 28,
-                  right: isMe ? 30 : null,
-                  child: InkWell(
-                    onTap: () {
-                      showReactionBottomSheetDialog(context, reactions: reactions);
-                    },
-                    borderRadius: BorderRadius.circular(14),
-                    child: Container(
-                      constraints: const BoxConstraints(minWidth: 32, minHeight: 26),
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight,
-                        border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightBlue, width: 1),
+                  right: isMe ? 23 : null,
+                  child: Transform.translate(
+                    offset: Offset(_swipeOffset, 0),
+                    child: Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          showReactionBottomSheetDialog(context, message: widget.message);
+                        },
                         borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: reactions.entries.map((entry) {
-                          final emoji = entry.key;
-                          final count = entry.value.length;
-
-                          return Row(
+                        child: Container(
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 26),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight,
+                            border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightBlue, width: 1),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(emoji, style: const TextStyle(fontSize: 15)),
-                              if (count > 1) ...[
-                                const SizedBox(width: 4),
-                                Text(count.toString(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
-                              ],
-                            ],
-                          );
-                        }).toList(),
+                            children: reactions.entries.map((entry) {
+                              final emoji = entry.key;
+                              final count = entry.value.length;
+
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(emoji, style: const TextStyle(fontSize: 15)),
+                                  if (count > 1) ...[
+                                    const SizedBox(width: 4),
+                                    Text(count.toString(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+                                  ],
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReplyIcon() {
+    final double progress = (_swipeOffset / _replyIconDistance).clamp(0.0, 1.0);
+
+    return Center(
+      child: Opacity(
+        opacity: progress,
+        child: Transform.scale(
+          scale: 0.6 + (progress * 0.4),
+          child: Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
+              alignment: Alignment.center,
+            child: SvgPicture.asset(ChatifyVectors.arrowBendLeft, width: 26, height: 26, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
         ),
       ),
     );

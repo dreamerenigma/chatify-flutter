@@ -7,9 +7,9 @@ import 'package:heroicons/heroicons.dart';
 import '../../../../../common/widgets/buttons/custom_search_button.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
-import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../../utils/devices/device_utility.dart';
+import '../../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../../utils/dialogs/no_internet_connection_dialog.dart';
 
 class AppBarActions extends StatefulWidget {
@@ -143,11 +143,23 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
             height: 44,
             child: PopupMenuButton<int>(
               tooltip: S.of(context).more,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
               position: PopupMenuPosition.under,
-              color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-              icon: const Icon(Icons.more_vert, size: 24),
+              offset: const Offset(-8, 0),
+              menuPadding: EdgeInsets.symmetric(vertical: 4),
+              constraints: const BoxConstraints(minWidth: 0, maxWidth: 235),
+              icon: const Icon(Icons.more_vert),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                  }
+                  return ChatifyColors.transparent;
+                }),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+              ),
               onSelected: widget.onPopupItemSelected,
               itemBuilder: (context) => [
                 _popupItem(context, 1, S.of(context).groupData),
@@ -159,7 +171,6 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
                 _popupItem(context, 7, S.of(context).addToList),
                 _popupItem(context, 8, S.of(context).more),
               ],
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
           ),
         if (Platform.isWindows)
@@ -176,7 +187,13 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
   PopupMenuItem<int> _popupItem(BuildContext context, int value, String title) {
     return PopupMenuItem<int>(
       value: value,
-      child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: AppPopupMenuItem(
+        text: title,
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 

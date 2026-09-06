@@ -38,14 +38,7 @@ OverlayEntry createFontOverlayEntry({
                     color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 3))],
                   ),
                   child: ScrollConfiguration(
                     behavior: NoGlowScrollBehavior(),
@@ -55,12 +48,12 @@ OverlayEntry createFontOverlayEntry({
                       itemCount: fontScales.length,
                       itemBuilder: (context, index) {
                         final scale = fontScales[index];
-                        final isSelected = scale == fontsController.selectedFont.value;
+                        final isSelected = scale == fontsController.getFontScale(fontsController.selectedFont.value);
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: Material(
-                            color: Colors.transparent,
+                            color: ChatifyColors.transparent,
                             child: InkWell(
                               onTap: () {
                                 onThemeSelected(scale);
@@ -75,24 +68,24 @@ OverlayEntry createFontOverlayEntry({
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: isSelected ? (context.isDarkMode ? ChatifyColors.textPrimary : ChatifyColors.grey) : Colors.transparent,
+                                      color: isSelected ? (context.isDarkMode ? ChatifyColors.textPrimary : ChatifyColors.grey) : ChatifyColors.transparent,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text("${(scale * 100).toInt()}%", style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                                   ),
                                   if (isSelected)
-                                  Positioned(
-                                    left: 0,
-                                    top: 8,
-                                    bottom: 8,
-                                    child: Container(
-                                      width: 2.5,
-                                      decoration: BoxDecoration(
-                                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                        borderRadius: BorderRadius.circular(2),
+                                    Positioned(
+                                      left: 0,
+                                      top: 8,
+                                      bottom: 8,
+                                      child: Container(
+                                        width: 2.5,
+                                        decoration: BoxDecoration(
+                                          color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),

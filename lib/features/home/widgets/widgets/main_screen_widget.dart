@@ -34,7 +34,7 @@ class MainScreenWidget extends StatelessWidget {
                         width: 80,
                         height: 80,
                         ChatifyVectors.logoApp,
-                        color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey, BlendMode.srcIn),
                       ),
                       SizedBox(height: 25),
                       Text(

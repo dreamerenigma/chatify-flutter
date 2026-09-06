@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../utils/helper/date_util.dart';
-import '../../../../api/apis.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -110,10 +109,6 @@ class RecipientMessageState extends State<RecipientMessage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.message.read.isEmpty) {
-      APIs.updateMessageReadStatus(widget.message);
-    }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -122,9 +117,7 @@ class RecipientMessageState extends State<RecipientMessage> {
             SizedBox(width: DeviceUtils.getScreenWidth(context) * .04),
           ],
         ),
-        Flexible(
-          child: _buildMessageContent(),
-        ),
+        Flexible(child: _buildMessageContent()),
       ],
     );
   }
@@ -346,26 +339,23 @@ class RecipientMessageState extends State<RecipientMessage> {
               right: 7,
               child: CustomPaint(
                 size: const Size(10, 10),
-                painter: TrianglePainter(
-                  fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight,
-                  borderColor: ChatifyColors.greenMessageBorderDark,
-                ),
+                painter: TrianglePainter(fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight, borderColor: ChatifyColors.greenMessageBorderDark),
               ),
             ),
             if (isVideo)
-            Positioned(
-              left: 30,
-              bottom: 12,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  HeroIcon(HeroIcons.videoCamera, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, size: 13),
-                  const SizedBox(width: 4),
-                  Text(Formatter.formatDurationVideo(videoDuration), style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1)),
-                ],
+              Positioned(
+                left: 30,
+                bottom: 12,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    HeroIcon(HeroIcons.videoCamera, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, size: 13),
+                    const SizedBox(width: 4),
+                    Text(Formatter.formatDurationVideo(videoDuration), style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1)),
+                  ],
+                ),
               ),
-            ),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
               Positioned(
                 left: -35,

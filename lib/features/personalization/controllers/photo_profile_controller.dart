@@ -69,7 +69,7 @@ class PhotoProfileController extends GetxController {
 
   void shareImage(BuildContext context) async {
     if (kIsWeb) {
-      if (image.isNotEmpty) Share.share(image.value);
+      if (image.isNotEmpty) SharePlus.instance.share(ShareParams(text: image.value));
       return;
     }
 
@@ -82,11 +82,7 @@ class PhotoProfileController extends GetxController {
     file.writeAsBytesSync(response.bodyBytes);
 
     final box = context.findRenderObject() as RenderBox?;
-    final params = ShareParams(
-      text: S.of(context).herePicture,
-      files: [XFile(file.path)],
-      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-    );
+    final params = ShareParams(text: S.of(context).herePicture, files: [XFile(file.path)], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
 
     final result = await SharePlus.instance.share(params);
 

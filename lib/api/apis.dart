@@ -24,6 +24,7 @@ import '../features/authentication/widgets/dialogs/consent_dialog.dart';
 import '../features/bot/models/info_app_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/chat/models/message_model.dart';
+import '../features/chat/models/user_status_model.dart';
 import '../features/community/models/community_model.dart';
 import '../features/group/models/group_model.dart';
 import '../features/home/screens/home_screen.dart';
@@ -60,7 +61,6 @@ class APIs {
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
 
   ///******************* User Related APIs *******************
-
   /// -- Getting Firebase Messaging token.
   static Future<void> getFirebaseMessagingToken() async {
     try {
@@ -189,6 +189,7 @@ class APIs {
   /// -- Getting current user info.
   static Future<void> getSelfInfo() async {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user == null) {
       log("No user is logged in");
       return;
@@ -564,52 +565,46 @@ class APIs {
   }
 
   /// -- Add new user status.
-  static Future<void> addStatus(String imageUrl, String text, DateTime date) async {
+  static Future<void> addStatus({required String mediaUrl, required String type}) async {
     try {
-      User? currentUser = FirebaseAuth.instance.currentUser;
+      final currentUser = FirebaseAuth.instance.currentUser;
 
-      if (currentUser != null) {
-        DocumentReference userDoc = FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
-
-        await userDoc.update({
-          'my_status': FieldValue.arrayUnion([
-            {
-              'imageUrl': imageUrl,
-              'text': text,
-              'date': date,
-            }
-          ])
-        });
-
-        log('Статус успешно добавлен.');
-      } else {
+      if (currentUser == null) {
         log('Пользователь не авторизован.');
+        return;
       }
+
+      final doc = FirebaseFirestore.instance.collection('Statuses').doc();
+      final now = DateTime.now();
+      final status = UserStatusModel(id: doc.id, userId: currentUser.uid, mediaUrl: mediaUrl, type: type, createdAt: now, expiresAt: now.add(const Duration(hours: 24)));
+
+      await doc.set(status.toMap());
+
+      log('Статус успешно добавлен.');
     } catch (e) {
       log('Ошибка при добавлении статуса: $e');
+      rethrow;
     }
   }
 
-  /// Upload image status to Firestore.
-  static Future<String> uploadImage(File imageFile) async {
+  /// -- Upload status image to Firebase Storage.
+  static Future<String> uploadStatusImage(File imageFile) async {
     try {
-      User? user = FirebaseAuth.instance.currentUser;
+      final user = FirebaseAuth.instance.currentUser;
+
       if (user == null) {
         throw Exception('User is not logged in');
       }
 
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      String fileExtension = imageFile.path.split('.').last;
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${user.uid}';
+      final fileExtension = imageFile.path.split('.').last;
+      final storageReference = FirebaseStorage.instance.ref().child('status_images').child('$fileName.$fileExtension');
+      final uploadTask = storageReference.putFile(imageFile);
+      final taskSnapshot = await uploadTask;
 
-      Reference storageReference = FirebaseStorage.instance.ref().child('status_images').child('${user.uid}_$fileName.$fileExtension');
-
-      UploadTask uploadTask = storageReference.putFile(imageFile);
-      TaskSnapshot taskSnapshot = await uploadTask;
-
-      String imageUrl = await taskSnapshot.ref.getDownloadURL();
-      return imageUrl;
+      return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
-      log('Error uploading image: $e');
+      log('Ошибка загрузки изображения статуса: $e');
       rethrow;
     }
   }
@@ -710,6 +705,7 @@ class APIs {
   /// -- Checks the contact list and returns those registered in Firestore.
   static Future<List<Map<String, dynamic>>> getRegisteredUsers(List<Map<String, dynamic>> contacts) async {
     final firestore = FirebaseFirestore.instance;
+
     List<Map<String, dynamic>> registeredUsers = [];
 
     for (var contact in contacts) {
@@ -736,8 +732,9 @@ class APIs {
   /// -- Sending message.
   static Future<void> sendMessage(UserModel chatUser, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final conversationId = getConversationId(chatUser.id);
 
-    final MessageModel message = MessageModel(
+    final message = MessageModel(
       toId: chatUser.id,
       msg: msg,
       read: '',
@@ -751,25 +748,56 @@ class APIs {
       deletedAt: null,
     );
 
-    final ref = firestore.collection('Chats/${getConversationId(chatUser.id)}/messages/');
-    await ref.doc(time).set(message.toJson()).then((value) => sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
+    final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(time);
+
+    await ref.set(message.toJson());
+    await sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
   }
 
-  /// -- Update read status of message.
+  /// -- Update read status of incoming message.
   static Future<void> updateMessageReadStatus(MessageModel message) async {
-    firestore
-      .collection('Chats/${getConversationId(message.fromId)}/messages/')
-      .doc(message.sent)
-      .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+    if (message.toId != user.uid) {
+      return;
+    }
+
+    if (message.read.isNotEmpty) {
+      return;
+    }
+
+    final conversationId = getConversationId(message.fromId);
+    final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(message.sent);
+
+    await ref.update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
   }
 
   /// -- Get only last message of a specific chat.
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(UserModel user) {
-   return firestore
-     .collection('Chats/${getConversationId(user.id)}/messages/')
-     .orderBy('sent', descending: true)
-     .limit(1)
-     .snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(UserModel chatUser) {
+    final conversationId = getConversationId(chatUser.id);
+    final ref = firestore.collection('Chats').doc(conversationId).collection('messages').orderBy('sent', descending: true).limit(1);
+
+    return ref.snapshots();
+  }
+
+  /// -- Test
+  static Future<void> markMessagesAsRead(List<MessageModel> messages) async {
+    final unreadMessages = messages.where((message) => message.toId == user.uid && message.fromId != user.uid && message.read.isEmpty).toList();
+
+    if (unreadMessages.isEmpty) {
+      return;
+    }
+
+    final conversationId = getConversationId(unreadMessages.first.fromId);
+
+    final batch = firestore.batch();
+    final readTime = DateTime.now().millisecondsSinceEpoch.toString();
+
+    for (final message in unreadMessages) {
+      final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(message.sent);
+
+      batch.update(ref, {'read': readTime});
+    }
+
+    await batch.commit();
   }
 
   /// -- Send chat image.
@@ -857,10 +885,7 @@ class APIs {
 
   /// -- Update message.
   static Future<void> updateMessage(MessageModel message, String updateMsg) async {
-    await firestore
-      .collection('Chats/${getConversationId(message.toId)}/messages/')
-      .doc(message.sent)
-      .update({'msg': updateMsg});
+    await firestore.collection('Chats/${getConversationId(message.toId)}/messages/').doc(message.sent).update({'msg': updateMsg});
   }
 
   /// -- Delete message.
@@ -901,6 +926,22 @@ class APIs {
     }
   }
 
+  /// -- Delete message document.
+  static Future<void> deleteMessageDocument(MessageModel message) async {
+    final docRef = firestore.collection('Chats').doc(getConversationId(message.toId)).collection('messages').doc(message.sent);
+
+    try {
+      log('Deleting message document: ${message.sent}');
+
+      await docRef.delete();
+
+      log('Message document deleted successfully.');
+    } catch (e, stackTrace) {
+      log('Error deleting message document ${message.sent}: $e');
+      log('$stackTrace');
+    }
+  }
+
   /// -- Delete profile photo.
   static Future<void> deleteProfilePhoto(String userId, String imageUrl) async {
     try {
@@ -913,39 +954,58 @@ class APIs {
   }
 
   /// -- Update message reaction.
-  static Future<void> updateMessageReaction(
-      MessageModel message,
-      String reaction,
-      ) async {
+  static Future<void> updateMessageReaction(MessageModel message, String reaction) async {
     try {
-      final messageRef = FirebaseFirestore.instance
-          .collection('Chats/${getConversationId(message.toId)}/messages')
-          .doc(message.sent);
+      final chatUserId = message.fromId == user.uid ? message.toId : message.fromId;
+      final conversationId = getConversationId(chatUserId);
+      final messageRef = FirebaseFirestore.instance.collection('Chats').doc(conversationId).collection('messages').doc(message.sent);
 
       final reactions = <String, List<String>>{
-        for (final entry in message.reactions.entries)
-          entry.key: List<String>.from(entry.value),
+        for (final entry in message.reactions.entries) entry.key: List<String>.from(entry.value),
       };
 
       final currentUserId = user.uid;
 
-      // Удаляем предыдущую реакцию текущего пользователя.
       for (final users in reactions.values) {
         users.remove(currentUserId);
       }
 
-      // Удаляем реакции, в которых больше не осталось пользователей.
       reactions.removeWhere((_, users) => users.isEmpty);
-
-      // Добавляем новую реакцию.
       reactions.putIfAbsent(reaction, () => []);
       reactions[reaction]!.add(currentUserId);
 
-      await messageRef.update({
-        'reactions': reactions,
-      });
+      await messageRef.update({'reactions': reactions});
     } catch (e) {
       log('Error updating message reaction: $e');
+    }
+  }
+
+  /// -- Delete reaction.
+  static Future<void> deleteReactions(MessageModel message, String reaction) async {
+    try {
+      final messageRef = FirebaseFirestore.instance.collection('Chats/${getConversationId(message.toId)}/messages').doc(message.sent);
+
+      final reactions = <String, List<String>>{
+        for (final entry in message.reactions.entries)entry.key: List<String>.from(entry.value),
+      };
+
+      final currentUserId = user.uid;
+
+      if (!reactions.containsKey(reaction)) {
+        return;
+      }
+
+      reactions[reaction]?.remove(currentUserId);
+
+      if (reactions[reaction]?.isEmpty ?? false) {
+        reactions.remove(reaction);
+      }
+
+      await messageRef.update({'reactions': reactions});
+
+      log('Reaction deleted successfully');
+    } catch (e) {
+      log('Error deleting reaction: $e');
     }
   }
 
@@ -1025,6 +1085,7 @@ class APIs {
     }
     final conversationId = user.uid.hashCode <= id.hashCode ? '${user.uid}_$id' : '${id}_${user.uid}';
     log('Generated conversationId: $conversationId');
+
     return conversationId;
   }
 
@@ -1049,6 +1110,7 @@ class APIs {
     try {
       final user = auth.currentUser!;
       final groupId = firestore.collection('Groups').doc().id;
+
       group.groupId = groupId;
       group.createdAt = DateTime.now();
 
@@ -1344,13 +1406,7 @@ class APIs {
       }
 
       await firestore.collection('Communities').doc(communityId).set(community.toMap());
-
-      await firestore
-        .collection('Users')
-        .doc(user.uid)
-        .collection('my_community')
-        .doc(communityId)
-        .set({'communityId': communityId});
+      await firestore.collection('Users').doc(user.uid).collection('my_community').doc(communityId).set({'communityId': communityId});
 
       Dialogs.showSnackbar(context, S.of(context).communityCreatedSuccessfully);
       return true;
@@ -1365,6 +1421,7 @@ class APIs {
     try {
       final ext = file.path.split('.').last;
       final ref = storage.ref().child('community_pictures/$communityId.$ext');
+
       await ref.putFile(file, SettableMetadata(contentType: 'image/$ext'));
       return await ref.getDownloadURL();
     } catch (e) {
@@ -1393,9 +1450,7 @@ class APIs {
 
     final ref = storage.ref().child('community_pictures/$communityId.$ext');
 
-    await ref
-      .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-      .then((p0) {
+    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
       log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
     });
 

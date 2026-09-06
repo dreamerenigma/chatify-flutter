@@ -25,11 +25,11 @@ class AddFavoriteScreen extends StatefulWidget {
 
 class AddFavoriteScreenState extends State<AddFavoriteScreen> {
   final TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
+  bool isNumericMode = false;
   List<UserModel> list = [];
   List<UserModel> searchList = [];
   List<UserModel> selectedUsers = [];
-  bool isSearching = false;
-  bool isNumericMode = false;
   FocusNode searchFocusNode = FocusNode();
   Key textFieldKey = UniqueKey();
 
@@ -58,11 +58,8 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
   void _onSearchChanged() {
     final query = searchController.text.toLowerCase();
     setState(() {
-      searchList = list
-          .where((user) =>
-      user.name.toLowerCase().contains(query) ||
-          user.email.toLowerCase().contains(query))
-          .toList();
+      searchList = list.where((user) =>
+      user.name.toLowerCase().contains(query) || user.email.toLowerCase().contains(query)).toList();
     });
   }
 
@@ -89,14 +86,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: shadowColor,
-                spreadRadius: 0,
-                blurRadius: 0.5,
-                offset: const Offset(0, 0.5),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: shadowColor, spreadRadius: 0, blurRadius: 0.5, offset: const Offset(0, 0.5))],
           ),
           child: AppBar(
             titleSpacing: 0,
@@ -122,16 +112,15 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                 )
               : Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
             leading: isSearching
-                ? IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                _toggleSearch();
-              },
-            )
-                : null,
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    _toggleSearch();
+                  },
+                )
+              : null,
             actions: [
-              if (!isSearching)
-                IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
+              if (!isSearching) IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
             ],
           ),
         ),
@@ -160,11 +149,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                                 radius: 30,
                                 child: CachedNetworkImage(
                                   imageUrl: user.image,
-                                  placeholder: (context, url) => Shimmer.fromColors(
-                                    baseColor: Colors.grey.shade300,
-                                    highlightColor: Colors.grey.shade100,
-                                    child: CircleAvatar(radius: 30, backgroundColor: Colors.grey.shade300),
-                                  ),
+                                  placeholder: (context, url) => Shimmer.fromColors(baseColor: Colors.grey.shade300, highlightColor: Colors.grey.shade100, child: CircleAvatar(radius: 30, backgroundColor: Colors.grey.shade300)),
                                   errorWidget: (context, url, error) => SvgPicture.asset(ChatifyVectors.profile, width: 60, height: 60),
                                   imageBuilder: (context, imageProvider) => CircleAvatar(radius: 30, backgroundImage: imageProvider),
                                 ),

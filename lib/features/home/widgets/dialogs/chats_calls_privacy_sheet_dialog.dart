@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../utils/constants/app_color_assets.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/urls/url_utils.dart';
@@ -31,7 +32,7 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
                 },
               ),
             ),
-            Center(child: SvgPicture.asset(colorsController.getImagePath(), width: 100, height: 100)),
+            Center(child: SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.scheduledCalls), width: 100, height: 100)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
               child: Center(child: Text(headerText, style: TextStyle(fontSize: ChatifySizes.fontSizeBg), textAlign: TextAlign.center)),
@@ -82,7 +83,7 @@ Widget _buildIconTextRow({required IconData icon, required String text, bool isS
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         isSvg
-          ? SvgPicture.asset(ChatifyVectors.status, width: 24, height: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value))
+          ? SvgPicture.asset(ChatifyVectors.status, width: 24, height: 24, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn))
           : Icon(icon, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 24),
         const SizedBox(width: 16),
         Expanded(

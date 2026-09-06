@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/helper/date_util.dart';
+import '../../../personalization/controllers/colors_controller.dart';
 import '../../models/message_model.dart';
 
 class MessageMeta extends StatelessWidget {
@@ -19,6 +22,10 @@ class MessageMeta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorsController = Get.find<ColorsController>();
+    final bool isRead = message.read.isNotEmpty;
+    final Color checkColor = isRead ? colorsController.getColor( colorsController.selectedColorScheme.value) : context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey;
+
     return Align(
       alignment: Alignment.centerRight,
       child: Tooltip(
@@ -39,7 +46,7 @@ class MessageMeta extends StatelessWidget {
               ChatifyVectors.doubleCheck,
               width: isWebOrWindows ? 13 : 19,
               height: isWebOrWindows ? 13 : 19,
-              colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(checkColor, BlendMode.srcIn),
             ),
           ],
         ),

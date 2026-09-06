@@ -19,74 +19,49 @@ class DisappearMessageDialog {
           contentPadding: EdgeInsets.zero,
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
-                    child: Text(
-                      S.of(context).allNewMessagesDisappearSelected,
-                      style: TextStyle(color: ChatifyColors.darkGrey),
+              return RadioGroup<int>(
+                groupValue: selectedDuration,
+                onChanged: (value) {
+                  if (value == null) return;
+
+                  setState(() {
+                    selectedDuration = value;
+                  });
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 22),
+                      child: Text(S.of(context).allNewMessagesDisappearSelected, style: TextStyle(color: ChatifyColors.darkGrey)),
                     ),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).duration24h),
-                    value: 1,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                      });
-                      onUpdate(selectedDuration);
-                      Navigator.of(context).pop();
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).duration7d),
-                    value: 5,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                      });
-                      onUpdate(selectedDuration);
-                      Navigator.of(context).pop();
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).duration90d),
-                    value: 60,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                      });
-                      onUpdate(selectedDuration);
-                      Navigator.of(context).pop();
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).off),
-                    value: 1440,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                      });
-                      onUpdate(selectedDuration);
-                      Navigator.of(context).pop();
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
-                  ),
-                  const SizedBox(height: 14),
-                ],
+                    RadioListTile<int>(
+                      title: Text(S.of(context).duration24h),
+                      value: 1,
+                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      contentPadding: const EdgeInsets.only(left: 12),
+                    ),
+                    RadioListTile<int>(
+                      title: Text(S.of(context).duration7d),
+                      value: 5,
+                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      contentPadding: const EdgeInsets.only(left: 12),
+                    ),
+                    RadioListTile<int>(
+                      title: Text(S.of(context).duration90d),
+                      value: 60,
+                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      contentPadding: const EdgeInsets.only(left: 12),
+                    ),
+                    RadioListTile<int>(
+                      title: Text(S.of(context).off),
+                      value: 1440,
+                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      contentPadding: const EdgeInsets.only(left: 12),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                ),
               );
             },
           ),

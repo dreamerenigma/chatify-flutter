@@ -21,7 +21,6 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
   final LayerLink layerLink = LayerLink();
   final ValueNotifier<bool> isDisabledNotifier = ValueNotifier(false);
   OverlayEntry? overlayEntry;
-
   String? callLink;
   bool isGeneratingLink = true;
   bool isLinkGenerationStarted = false;
@@ -89,14 +88,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                             color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: context.isDarkMode ? ChatifyColors.cardColor.withAlpha(102) : ChatifyColors.grey),
-                            boxShadow: [
-                              BoxShadow(
-                                color: ChatifyColors.black.withAlpha(26),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
+                            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha(26), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 3))],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -168,10 +160,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                 const SizedBox(height: 10),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    S.of(context).anyAppUserJoinCallUsingLink,
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, height: 1.3),
-                                  ),
+                                  child: Text(S.of(context).anyAppUserJoinCallUsingLink, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, height: 1.3)),
                                 ),
                                 const SizedBox(height: 10),
                                 Padding(
@@ -236,7 +225,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                                   AnimatedContainer(
                                                     duration: const Duration(milliseconds: 50),
                                                     transform: Matrix4.translationValues(0, (isTapped || isTypeCallDropdown) ? 2.0 : 0, 0),
-                                                    child: SvgPicture.asset(ChatifyVectors.arrowDown, color: isDisabled ? ChatifyColors.darkGrey : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                                                    child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(isDisabled ? ChatifyColors.darkGrey : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                                   ),
                                                 ],
                                               ),
@@ -281,7 +270,7 @@ Future<void> showNewCallLinkOverlay(BuildContext context, Offset position) async
                                             width: double.infinity,
                                             child: ElevatedButton.icon(
                                               onPressed: isDisabled ? null : () {},
-                                              icon: SvgPicture.asset(ChatifyVectors.arrowRight, width: 21, height: 21, color: isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black,),
+                                              icon: SvgPicture.asset(ChatifyVectors.arrowRight, width: 21, height: 21, colorFilter: ColorFilter.mode(isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black, BlendMode.srcIn)),
                                               label: Text(
                                                 S.of(context).sendLinkViaApp,
                                                 style: TextStyle(color: isDisabled ? ChatifyColors.darkGrey : ChatifyColors.black, fontWeight: FontWeight.w300),

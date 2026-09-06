@@ -24,12 +24,14 @@ class ChatInput extends StatefulWidget {
   final UserModel user;
   final FocusNode focusNode;
   final VoidCallback onToggleEmojiKeyboard;
+  final bool isReplyVisible;
 
   const ChatInput({
     super.key,
     required this.user,
     required this.focusNode,
     required this.onToggleEmojiKeyboard,
+    required this.isReplyVisible,
   });
 
   @override
@@ -185,14 +187,22 @@ class ChatInputState extends State<ChatInput> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: DeviceUtils.getScreenWidth(context) * .015, right: DeviceUtils.getScreenWidth(context) * .015, top: DeviceUtils.getScreenHeight(context) * .005, bottom: DeviceUtils.getScreenHeight(context) * .005),
+          padding: EdgeInsets.only(left: DeviceUtils.getScreenWidth(context) * .015, right: DeviceUtils.getScreenWidth(context) * .015, top: widget.isReplyVisible ? 0 : DeviceUtils.getScreenHeight(context) * .005, bottom: DeviceUtils.getScreenHeight(context) * .005),
           child: Row(
             children: [
               Expanded(
                 child: Card(
                   elevation: 0,
+                  margin: EdgeInsets.only(left: 4, right: 4, top: 0, bottom: 4),
                   color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(widget.isReplyVisible ? 0 : 25),
+                      topRight: Radius.circular(widget.isReplyVisible ? 0 : 25),
+                      bottomLeft: const Radius.circular(25),
+                      bottomRight: const Radius.circular(25),
+                    ),
+                  ),
                   child: Row(
                     children: [
                       IconButton(

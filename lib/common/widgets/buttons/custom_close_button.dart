@@ -53,11 +53,11 @@ class CustomCloseButtonState extends State<CustomCloseButton> {
           child: Material(
             color: ChatifyColors.transparent,
             child: InkWell(
-              onTap: () => windowManager.close(),
               mouseCursor: SystemMouseCursors.basic,
               splashColor: ChatifyColors.transparent,
               highlightColor: widget.highlightColor,
               hoverColor: widget.hoverColor,
+              onTap: () => windowManager.close(),
               child: Padding(
                 padding: const EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 10),
                 child: SvgPicture.asset(

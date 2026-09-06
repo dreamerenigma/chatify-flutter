@@ -27,7 +27,7 @@ class AppPopupMenuItem extends StatelessWidget {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
-          child: Text(text, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 17, fontWeight: FontWeight.w400)),
+          child: Text(text, textAlign: TextAlign.left, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 17, fontWeight: FontWeight.w400)),
         ),
       ),
     );

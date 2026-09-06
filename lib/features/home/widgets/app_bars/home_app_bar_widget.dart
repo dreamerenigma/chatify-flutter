@@ -7,6 +7,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
 import '../../../personalization/controllers/seasons_controller.dart';
@@ -106,66 +107,109 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
             ],
           );
         }),
-        popupMenuButton: PopupMenuButton<int>(
-          color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey,
-          position: PopupMenuPosition.under,
-          offset: const Offset(0, 10),
-          icon: const Icon(Icons.more_vert),
-          onSelected: (value) {
-            if (value == 1) {
-              Navigator.push(context, createPageRoute(const NewGroupScreen()));
-            } else if (value == 2) {
-              Navigator.push(context, createPageRoute(NewCommunityScreen(onCommunitySelected: (CommunityModel value) {})));
-            } else if (value == 3) {
-              Navigator.push(context, createPageRoute(const NewNewsletterScreen(selectedUsers: [])));
-            } else if (value == 4) {
-              Navigator.push(context, createPageRoute(const RelatedDevicesScreen()));
-            } else if (value == 5) {
-              Navigator.push(context, createPageRoute(const FavoriteMessageScreen()));
-            } else if (value == 6) {
-
-            } else if (value == 7) {
-              Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
-            }
-          },
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 1,
-              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-              child: Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+        popupMenuButton: TooltipTheme(
+          data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+          child: Theme(
+            data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+            child: PopupMenuButton<int>(
+              tooltip: 'Ещё',
+              position: PopupMenuPosition.under,
+              offset: const Offset(-8, 0),
+              menuPadding: EdgeInsets.symmetric(vertical: 4),
+              constraints: const BoxConstraints(minWidth: 0, maxWidth: 250),
+              icon: const Icon(Icons.more_vert),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                  }
+                  return ChatifyColors.transparent;
+                }),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+              ),
+              color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).newGroup,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).newCommunity,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(NewCommunityScreen(onCommunitySelected: (CommunityModel value) {})));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 3,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).newNewsletters,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(const NewNewsletterScreen(selectedUsers: [])));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 4,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).appRelatedDevices,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(const RelatedDevicesScreen()));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 5,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).favorites,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(const FavoriteMessageScreen()));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 6,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).readAll,
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 7,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).settings,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
+                    },
+                  ),
+                ),
+              ],
             ),
-            PopupMenuItem(
-              value: 2,
-              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-              child: Text(S.of(context).newCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-            PopupMenuItem(
-              value: 3,
-              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-              child: Text(S.of(context).newNewsletters, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-            PopupMenuItem(
-              value: 4,
-              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-              child: Text(S.of(context).appRelatedDevices, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-            PopupMenuItem(
-              value: 5,
-              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-              child: Text(S.of(context).favorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-            PopupMenuItem(
-              value: 6,
-              padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
-              child: Text(S.of(context).readAll, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-            PopupMenuItem(
-              value: 7,
-              padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-              child: Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-          ],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          ),
         ),
       ),
     );

@@ -359,7 +359,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "callEnded": MessageLookupByLibrary.simpleMessage("Call Ended"),
     "callFrom": MessageLookupByLibrary.simpleMessage("Call from"),
-    "callFromUser": MessageLookupByLibrary.simpleMessage("Call from user"),
     "callLink": MessageLookupByLibrary.simpleMessage("Call Link"),
     "callMe": MessageLookupByLibrary.simpleMessage("Call me"),
     "callName": MessageLookupByLibrary.simpleMessage("Call name"),
@@ -794,7 +793,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Disable link \npreviews",
     ),
     "disableReadReceiptsSendReceiveNotify": MessageLookupByLibrary.simpleMessage(
-      "If you disable read receipts, you will not be able to send or receive these reports. \n These notifications cannot be \n disabled for group chats.",
+      "If you disable read receipts, you will not be able to send or receive these reports. These notifications cannot be disabled for group chats.",
     ),
     "disabled": MessageLookupByLibrary.simpleMessage("Disabled"),
     "disappearingMessages": MessageLookupByLibrary.simpleMessage(
@@ -1223,10 +1222,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Group photo removed",
     ),
     "groupPicture": MessageLookupByLibrary.simpleMessage("Group picture"),
-    "groups": MessageLookupByLibrary.simpleMessage("groups"),
+    "groups": MessageLookupByLibrary.simpleMessage("Groups"),
     "groupsAddedCommunityDisplayed": MessageLookupByLibrary.simpleMessage(
       "Other groups added to the community will be displayed here. Community members can join these groups",
     ),
+    "groupsCount": MessageLookupByLibrary.simpleMessage("groups"),
     "groupsInCommunity": MessageLookupByLibrary.simpleMessage(
       "Groups in this community",
     ),
@@ -1552,7 +1552,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "New chat (Ctrl+N) \nNew group (Ctrl+Shift+N)",
     ),
     "newChatsMessagesDisappearAccording": MessageLookupByLibrary.simpleMessage(
-      "Start new chats \n with messages that will disappear according to the specified \n timer.",
+      "Start new chats with messages that will disappear according to the specified timer.",
     ),
     "newChatsMessagesDisappearSetTimer": MessageLookupByLibrary.simpleMessage(
       "Start new chats with messages that will disappear according to the timer you set.",
@@ -2167,10 +2167,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "settingApplyCommunityAdSets": MessageLookupByLibrary.simpleMessage(
       "This setting does not apply to community ad sets. When you add yourself to a community, you are automatically added to the community ad set.",
     ),
-    "settings": MessageLookupByLibrary.simpleMessage(" Settings "),
+    "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "settingsArchive": MessageLookupByLibrary.simpleMessage(
       "Archiving settings",
     ),
+    "settingsPhone": MessageLookupByLibrary.simpleMessage(" Settings "),
     "settingsSaved": MessageLookupByLibrary.simpleMessage(
       "Your settings have been saved",
     ),
@@ -2455,10 +2456,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unread": MessageLookupByLibrary.simpleMessage("Unread"),
     "unreadChats": MessageLookupByLibrary.simpleMessage("Unread chats"),
-    "update": MessageLookupByLibrary.simpleMessage("Updating..."),
+    "update": MessageLookupByLibrary.simpleMessage("Update"),
     "updateMessage": MessageLookupByLibrary.simpleMessage("Update message"),
     "useEffectsDuringVideoCalls": MessageLookupByLibrary.simpleMessage(
-      "Use effects during video calls and \n recordings.",
+      "Use effects during video calls and recordings.",
     ),
     "useFingerprintFaceRecognition": MessageLookupByLibrary.simpleMessage(
       "Use your fingerprint or face recognition to open Chatify on your device.",

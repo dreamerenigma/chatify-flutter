@@ -92,7 +92,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                 Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
                 Future.delayed(const Duration(milliseconds: 200), () {
                   Navigator.pop(context);
-                  Share.share(shareLink);
+                  SharePlus.instance.share(ShareParams(text: shareLink));
                 });
               },
             ),

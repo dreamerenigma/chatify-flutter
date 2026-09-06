@@ -173,11 +173,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Text(
-                    S.of(context).addNewGroups,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text(S.of(context).addNewGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 ),
               ),
               Center(
@@ -233,13 +229,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
     );
   }
 
-  Widget _buildRadioOption(
-    BuildContext context, {
-      required String title,
-      required String description,
-      required String groupValue,
-      required ValueChanged<String?> onChanged,
-    }) {
+  Widget _buildRadioOption(BuildContext context, {required String title, required String description, required String groupValue, required ValueChanged<String?> onChanged}) {
     return InkWell(
       onTap: () {
         onChanged(title);
@@ -247,12 +237,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Radio<String>(
-            value: title,
-            groupValue: groupValue,
-            activeColor: ChatifyColors.blue,
-            onChanged: onChanged,
-          ),
+          Radio<String>(value: title, activeColor: ChatifyColors.blue),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

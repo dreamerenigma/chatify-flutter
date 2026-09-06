@@ -143,7 +143,7 @@ Widget _buildIconTextRow({
 
   Widget leadingIcon;
   if (svgAsset != null) {
-    leadingIcon = SvgPicture.asset(svgAsset, width: iconSize, height: iconSize, color: isDark ? ChatifyColors.white : ChatifyColors.black);
+    leadingIcon = SvgPicture.asset(svgAsset, width: iconSize, height: iconSize, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn));
   } else if (icon != null) {
     leadingIcon = Icon(icon, size: iconSize, color: isDark ? ChatifyColors.white : ChatifyColors.black);
   } else {

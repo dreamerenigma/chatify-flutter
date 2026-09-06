@@ -132,7 +132,7 @@ Widget _buildInfoRow(BuildContext context, String icon, String title, String sub
     children: [
       Padding(
         padding: const EdgeInsets.only(top: 22),
-        child: SvgPicture.asset(icon, color: ChatifyColors.primary, width: 20, height: 20),
+        child: SvgPicture.asset(icon, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.primary, BlendMode.srcIn)),
       ),
       SizedBox(width: 10),
       Expanded(
@@ -148,7 +148,7 @@ Widget _buildInfoRow(BuildContext context, String icon, String title, String sub
                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: Get.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.darkGrey),
                     children: [
                       TextSpan(text: S.of(context).aiGeneratedMessagesMarkedSymbol),
-                      WidgetSpan(alignment: PlaceholderAlignment.middle, child: SvgPicture.asset(ChatifyVectors.ai, width: 16, height: 16, color: Get.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                      WidgetSpan(alignment: PlaceholderAlignment.middle, child: SvgPicture.asset(ChatifyVectors.ai, width: 16, height: 16, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
                       TextSpan(text: S.of(context).feedbackAiGeneratedMessagesAppQuality),
                     ],
                   ),

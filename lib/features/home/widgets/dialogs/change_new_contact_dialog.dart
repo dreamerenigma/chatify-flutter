@@ -149,16 +149,19 @@ Future<void> showChangeNewContactDialog(
                                                       ChatifyVectors.newUser,
                                                       width: 50,
                                                       height: 50,
-                                                      color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey,
+                                                      colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
                                                     ),
                                                     imageBuilder: (context, imageProvider) => CircleAvatar(radius: 50, backgroundImage: imageProvider),
                                                   )
                                                 : SvgPicture.asset((entity is SupportAppModel) ? ChatifyVectors.logoApp : ChatifyVectors.newUser,
                                                     width: 50,
                                                     height: 50,
-                                                    color: (entity is SupportAppModel)
-                                                      ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)
-                                                      : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey),
+                                                    colorFilter: ColorFilter.mode(
+                                                      entity is SupportAppModel
+                                                        ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)
+                                                        : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey),
+                                                      BlendMode.srcIn,
+                                                    ),
                                                   ),
                                             ),
                                           ),

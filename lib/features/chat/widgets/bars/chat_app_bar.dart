@@ -15,6 +15,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helper/date_util.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/helper/avatar_color_util.dart';
 import '../../../calls/widgets/widget/outgoing_audio_call_widget.dart';
 import '../../../calls/widgets/widget/outgoing_video_call_widget.dart';
 import '../../../home/widgets/dialogs/no_sound_dialog.dart';
@@ -169,7 +170,21 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
             Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user)));
           },
           onPopupItemSelected: (value) {
-            if (value == 1) {}
+            if (value == 1) {
+
+            } else if (value == 2) {
+
+            } else if (value == 3) {
+
+            } else if (value == 4) {
+
+            } else if (value == 5) {
+
+            } else if (value == 6) {
+
+            } else if (value == 3) {
+
+            }
           },
         ),
       ],
@@ -177,7 +192,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   }
 
   Widget _buildUserInfo(BuildContext context, UserModel user) {
-    double imageSize = Platform.isWindows ? 40.0 : 35.0;
+    final avatarColors = AvatarColorUtil.get(user.id);
 
     return InkWell(
       mouseCursor: SystemMouseCursors.basic,
@@ -203,18 +218,20 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
             ClipRRect(
               borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .04),
               child: CachedNetworkImage(
-                width: imageSize,
-                height: imageSize,
+                width: 40,
+                height: 40,
                 imageUrl: user.image,
                 fit: BoxFit.cover,
                 placeholder: (context, url) {
-                  return Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey);
+                  return Container(width: 40, height: 40, color: ChatifyColors.blackGrey);
                 },
                 errorWidget: (context, url, error) {
-                  return CircleAvatar(
-                    backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    child: SvgPicture.asset(ChatifyVectors.newUser, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn), width: 28, height: 28),
+                  return Container(
+                    width: 40,
+                    height: 40,
+                    color: avatarColors.background,
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(ChatifyVectors.person, width: 19, height: 19, colorFilter: ColorFilter.mode(avatarColors.icon, BlendMode.srcIn,)),
                   );
                 },
               ),

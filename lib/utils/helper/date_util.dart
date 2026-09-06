@@ -27,9 +27,7 @@ class DateUtil {
       return formattedTime;
     }
 
-    return now.year == sent.year
-      ? '$formattedTime - ${sent.day} ${getMonth(sent, context)}'
-      : '$formattedTime - ${sent.day} ${getMonth(sent, context)} ${sent.year}';
+    return now.year == sent.year ? '$formattedTime - ${sent.day} ${getMonth(sent, context)}' : '$formattedTime - ${sent.day} ${getMonth(sent, context)} ${sent.year}';
   }
 
   /// -- Get last message time (used in chat user card).
@@ -53,6 +51,29 @@ class DateUtil {
     }
   }
 
+  static String getCallDateTime({required BuildContext context, required DateTime time}) {
+    const months = [
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря',
+    ];
+
+    final day = time.day;
+    final month = months[time.month - 1];
+    final formattedTime = TimeOfDay.fromDateTime(time).format(context);
+
+    return '$day $month, $formattedTime';
+  }
+
   static String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
   /// -- Get formatted creation date of the community.
@@ -71,9 +92,7 @@ class DateUtil {
       return DateFormat('dd.MM.yyyy').format(creationDate);
     }
 
-    return now.year == creationDate.year
-      ? '${creationDate.day} ${getMonth(creationDate, context)}'
-      : '${creationDate.day} ${getMonth(creationDate, context)} ${creationDate.year} г.';
+    return now.year == creationDate.year ? '${creationDate.day} ${getMonth(creationDate, context)}' : '${creationDate.day} ${getMonth(creationDate, context)} ${creationDate.year} г.';
   }
 
   /// -- Converts a DateTime to a timestamp string.
@@ -114,12 +133,7 @@ class DateUtil {
       DateTime dateTime = DateTime.parse(dateStr);
       return DateFormat('dd.MM.yyyy').format(dateTime);
     } catch (e) {
-      List<String> dateFormats = [
-        'dd/MM/yyyy',
-        'yyyy-MM-dd',
-        'MM/dd/yyyy',
-        'dd.MM.yyyy',
-      ];
+      List<String> dateFormats = ['dd/MM/yyyy', 'yyyy-MM-dd', 'MM/dd/yyyy', 'dd.MM.yyyy'];
 
       for (var format in dateFormats) {
         try {
@@ -246,6 +260,7 @@ class DateUtil {
     try {
       final date = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
       final locale = Localizations.localeOf(context).toLanguageTag();
+
       return DateFormat.yMMMMd(locale).format(date);
     } catch (e) {
       log('Error in getFullFormattedDate: $e');
@@ -263,6 +278,7 @@ class DateUtil {
       } catch (_) {
         try {
           final millis = int.parse(value);
+
           return DateTime.fromMillisecondsSinceEpoch(millis);
         } catch (_) {}
       }

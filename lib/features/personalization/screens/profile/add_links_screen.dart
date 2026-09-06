@@ -154,11 +154,9 @@ class AddLinksScreenState extends State<AddLinksScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SvgPicture.asset(iconAsset, height: 22, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+            SvgPicture.asset(iconAsset, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
             const SizedBox(width: 28),
-            Expanded(
-              child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
-            ),
+            Expanded(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500))),
             Icon(Icons.add, size: 22, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
           ],
         ),

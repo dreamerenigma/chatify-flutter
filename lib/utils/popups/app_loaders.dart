@@ -3,6 +3,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../features/personalization/widgets/dialogs/light_dialog.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 import 'animated_snackbar.dart';
@@ -118,6 +119,12 @@ class AppLoaders {
       icon: const Icon(Icons.warning, color: ChatifyColors.white),
     );
   }
+
+  static Widget buildLoadingIndicator() {
+    return Center(
+      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+    );
+  }
 }
 
 class CustomIconSnackBar {
@@ -133,12 +140,31 @@ class CustomIconSnackBar {
 
     overlayEntry = OverlayEntry(
       builder: (context) {
+        final topPadding = MediaQuery.of(context).padding.top;
+        final appBarHeight = kToolbarHeight;
 
         return Positioned(
-          left: 16,
-          right: 16,
-          bottom: 20,
-          child: AnimatedSnackBar(key: snackBarKey, message: message, icon: icon, iconColor: iconColor),
+          left: 0,
+          right: 0,
+          top: topPadding + appBarHeight,
+          bottom: 0,
+          child: ClipRect(
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  top: 8,
+                  child: AnimatedSnackBar(
+                    key: snackBarKey,
+                    message: message,
+                    icon: icon,
+                    iconColor: iconColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

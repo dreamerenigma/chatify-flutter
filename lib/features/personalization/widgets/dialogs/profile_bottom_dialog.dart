@@ -18,7 +18,7 @@ void showProfileBottomSheet(BuildContext context, void Function(String?) onImage
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
           child: Row(
             children: [
               IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
@@ -34,11 +34,7 @@ void showProfileBottomSheet(BuildContext context, void Function(String?) onImage
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 40,
-              mainAxisSpacing: 18,
-            ),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 40, mainAxisSpacing: 18),
             itemCount: 3,
             itemBuilder: (context, index) {
               Widget iconWidget;
@@ -51,7 +47,7 @@ void showProfileBottomSheet(BuildContext context, void Function(String?) onImage
                   ChatifyVectors.avatar,
                   width: 24,
                   height: 24,
-                  color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                 );
               }
 

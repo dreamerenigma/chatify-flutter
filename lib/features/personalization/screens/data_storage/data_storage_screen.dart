@@ -150,7 +150,7 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                                 isDataSavings = value;
                               });
                             },
-                            activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
                           ),
                         ],

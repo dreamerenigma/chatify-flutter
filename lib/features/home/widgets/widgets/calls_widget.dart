@@ -111,7 +111,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                                   highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: SvgPicture.asset(ChatifyVectors.callsAdd, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                    child: SvgPicture.asset(ChatifyVectors.callsAdd, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                   ),
                                 ),
                               ),
@@ -203,7 +203,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                     color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey,
                     border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1),
                   ),
-                  child: SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, fit: BoxFit.scaleDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  child: SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, fit: BoxFit.scaleDown, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -253,7 +253,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                       errorWidget: (context, url, error) => CircleAvatar(
                         backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                         foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.communityUsers, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.communityUsers, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                       ),
                     ),
                   ),
@@ -280,7 +280,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                           hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                           child: Padding(
                             padding: const EdgeInsets.all(11),
-                            child: SvgPicture.asset(ChatifyVectors.calls, width: 21, height: 21, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                            child: SvgPicture.asset(ChatifyVectors.calls, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                           ),
                         ),
                       ),
@@ -392,7 +392,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                       errorWidget: (context, url, error) => CircleAvatar(
                         backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                         foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.newUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                       ),
                     ),
                   ),

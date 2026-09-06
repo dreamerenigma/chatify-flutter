@@ -26,49 +26,41 @@ class NoSoundDialog {
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
-                    child: Text(
-                      S.of(context).participantsNotifyMentioned,
-                      style: TextStyle(color: ChatifyColors.darkGrey),
+                    child: Text(S.of(context).participantsNotifyMentioned, style: TextStyle(color: ChatifyColors.darkGrey)),
+                  ),
+                  RadioGroup<int>(
+                    groupValue: selectedDuration,
+                    onChanged: (value) {
+                      if (value == null) return;
+
+                      setState(() {
+                        selectedDuration = value;
+                        isOptionSelected = true;
+                      });
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RadioListTile<int>(
+                          title: Text(S.of(context).nineHours),
+                          value: 1,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          contentPadding: const EdgeInsets.only(left: 12),
+                        ),
+                        RadioListTile<int>(
+                          title: Text(S.of(context).oneWeek),
+                          value: 5,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          contentPadding: const EdgeInsets.only(left: 12),
+                        ),
+                        RadioListTile<int>(
+                          title: Text(S.of(context).always),
+                          value: 60,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          contentPadding: const EdgeInsets.only(left: 12),
+                        ),
+                      ],
                     ),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).nineHours),
-                    value: 1,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                        isOptionSelected = true;
-                      });
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).oneWeek),
-                    value: 5,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                        isOptionSelected = true;
-                      });
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
-                  ),
-                  RadioListTile<int>(
-                    title: Text(S.of(context).always),
-                    value: 60,
-                    groupValue: selectedDuration,
-                    activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                        isOptionSelected = true;
-                      });
-                    },
-                    contentPadding: const EdgeInsets.only(left: 12),
                   ),
                 ],
               ),

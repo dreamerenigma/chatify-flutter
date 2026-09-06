@@ -61,7 +61,7 @@ void showImageMoreDialog(BuildContext context, Offset position) {
                         buildMenuItem(
                           context: context,
                           onTap: () {},
-                          icon: SvgPicture.asset(ChatifyVectors.save,width: 15, height: 15, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                          icon: SvgPicture.asset(ChatifyVectors.save,width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                           text: S.of(context).saveAs,
                           padding: const EdgeInsets.only(left: 13, right: 12, top: 6, bottom: 6),
                         ),

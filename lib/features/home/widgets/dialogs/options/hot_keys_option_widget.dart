@@ -149,7 +149,7 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
                     child: Text(':${S.of(context).cat.toLowerCase()}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                   ),
                   SizedBox(width: 10),
-                  SvgPicture.asset(ChatifyVectors.twoLineHorizontal, width: 21, height: 21, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  SvgPicture.asset(ChatifyVectors.twoLineHorizontal, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                   SizedBox(width: 10),
                   Container(
                     width: 38,
@@ -191,7 +191,7 @@ class _HotKeysOptionWidgetState extends State<HotKeysOptionWidget> {
                     child: Text(':${S.of(context).hat.toLowerCase()}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                   ),
                   SizedBox(width: 10),
-                  SvgPicture.asset(ChatifyVectors.twoLineHorizontal, width: 21, height: 21, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  SvgPicture.asset(ChatifyVectors.twoLineHorizontal, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                   SizedBox(width: 10),
                   Container(
                     width: 38,

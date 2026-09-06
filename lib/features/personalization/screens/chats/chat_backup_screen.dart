@@ -104,7 +104,7 @@ class ChatBackupScreenState extends State<ChatBackupScreen> {
                 Switch(
                   value: true,
                   onChanged: (bool value) {},
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 ),
               ],
             ),
@@ -119,7 +119,7 @@ class ChatBackupScreenState extends State<ChatBackupScreen> {
                 Switch(
                   value: false,
                   onChanged: (bool value) {},
-                  activeColor: ChatifyColors.blue,
+                  activeThumbColor: ChatifyColors.blue,
                 ),
               ],
             ),

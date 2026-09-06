@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class CountrySelectorButton extends StatefulWidget {
@@ -54,7 +55,7 @@ class _CountrySelectorButtonState extends State<CountrySelectorButton> {
             AnimatedSlide(
               offset: isPressed ? const Offset(0, 0.1) : Offset.zero,
               duration: const Duration(milliseconds: 150),
-              child: SvgPicture.asset(widget.iconAssetPath, width: 15, height: 15, color: ChatifyColors.grey),
+              child: SvgPicture.asset(widget.iconAssetPath, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, BlendMode.srcIn))
             ),
           ],
         ),

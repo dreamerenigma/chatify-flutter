@@ -90,7 +90,7 @@ class SplashScreenState extends State<SplashScreen> {
     final logoAsset = context.isDarkMode ? ChatifyImages.appLogoLight : ChatifyImages.appLogoDark;
 
     return Scaffold(
-      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
+      backgroundColor: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
       body: Stack(
         children: [
           if (isWebOrWindows) Center(child: Image.asset(logoAsset, width: mq.size.width * .15))
@@ -109,6 +109,7 @@ class SplashScreenState extends State<SplashScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(S.of(context).createIn, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey)),
+                  SizedBox(height: 8),
                   Image.asset(ChatifyImages.logoIS, width: 150),
                 ],
               ),

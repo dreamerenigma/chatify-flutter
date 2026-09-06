@@ -48,14 +48,7 @@ void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingC
                         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()),
-                            spreadRadius: 4,
-                            blurRadius: 8,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()), spreadRadius: 4, blurRadius: 8, offset: const Offset(0, 8))],
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -67,9 +60,7 @@ void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingC
                               key: ValueKey(showBottomBarNotifier.value),
                               width: double.infinity,
                               decoration: BoxDecoration(border: Border(
-                                bottom: showBottomBarNotifier.value
-                                  ? BorderSide(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, width: 1)
-                                  : BorderSide.none,
+                                bottom: showBottomBarNotifier.value ? BorderSide(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, width: 1) : BorderSide.none,
                               )),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
@@ -158,7 +149,7 @@ void showEditTextDialog(BuildContext context, Offset localPosition, TextEditingC
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 const SizedBox(width: 8),
-                                                SvgPicture.asset(ChatifyVectors.clipboard, width: 18, height: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                                SvgPicture.asset(ChatifyVectors.clipboard, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                                 const SizedBox(width: 10),
                                                 Text(S.of(context).insert, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                                               ],

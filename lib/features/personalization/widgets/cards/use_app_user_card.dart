@@ -9,6 +9,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/helper/avatar_color_util.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../home/widgets/dialogs/profile_dialog.dart';
 import '../dialogs/light_dialog.dart';
@@ -40,18 +41,7 @@ class UseAppUserCard extends StatefulWidget {
 }
 
 class UseAppUserCardState extends State<UseAppUserCard> {
-  ({Color background, Color icon}) _getAvatarColors() {
-    const colors = [
-      (background: Color(0xFF4F6FAD), icon: Color(0xFFAEC4F2)),
-      (background: Color(0xFF4D8A70), icon: Color(0xFFA8E0C5)),
-      (background: Color(0xFFB56A4F), icon: Color(0xFFF2B9A2)),
-      (background: Color(0xFF7956A8), icon: Color(0xFFD0B7F5)),
-      (background: Color(0xFF43839A), icon: Color(0xFFA8DFED)),
-      (background: Color(0xFFA8506A), icon: Color(0xFFF0B2C5)),
-    ];
 
-    return colors[widget.user.id.hashCode.abs() % colors.length];
-  }
 
   void _handleTap() {
     if (widget.onTap != null) {
@@ -87,7 +77,7 @@ class UseAppUserCardState extends State<UseAppUserCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : context.isDarkMode ? ChatifyColors.cardColor : ChatifyColors.grey,
+            color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey,
           ),
           child: ListTile(
             leading: Stack(
@@ -142,14 +132,14 @@ class UseAppUserCardState extends State<UseAppUserCard> {
   }
 
   Widget _buildAvatarPlaceholder(BuildContext context) {
-    final colors = _getAvatarColors();
+    final avatarColors = AvatarColorUtil.get(widget.user.id);
 
     return Container(
       width: DeviceUtils.getScreenHeight(context) * .055,
       height: DeviceUtils.getScreenHeight(context) * .055,
       alignment: Alignment.center,
-      decoration: BoxDecoration(color: colors.background, shape: BoxShape.circle),
-      child: SvgPicture.asset(ChatifyVectors.person, width: 21, height: 21, fit: BoxFit.contain, colorFilter: ColorFilter.mode(colors.icon, BlendMode.srcIn)),
+      decoration: BoxDecoration(color: avatarColors.background, shape: BoxShape.circle),
+      child: SvgPicture.asset(ChatifyVectors.person, width: 21, height: 21, fit: BoxFit.contain, colorFilter: ColorFilter.mode(avatarColors.icon, BlendMode.srcIn)),
     );
   }
 }

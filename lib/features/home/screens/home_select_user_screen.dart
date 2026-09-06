@@ -17,6 +17,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../calls/widgets/dialog/save_contact_dialog.dart';
+import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../chat/models/user_model.dart';
 import '../../chat/screens/chat_screen.dart';
 import '../../community/screens/created_community_screen.dart';
@@ -24,6 +25,8 @@ import '../../community/widgets/cards/invite_user_card.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import '../widgets/items/app_action_menu_item.dart';
+import 'contacts_screen.dart';
 import 'new_newsletter_screen.dart';
 
 class HomeSelectUserScreen extends StatefulWidget {
@@ -34,22 +37,21 @@ class HomeSelectUserScreen extends StatefulWidget {
 }
 
 class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
-  List<Contact> _contacts = [];
-  List<Contact> filteredContacts = [];
-  List<UserModel> chatUsers = [];
-  List<UserModel> searchList = [];
-  List<UserModel> list = [];
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   bool isSearching = false;
   bool isNumericMode = false;
   bool isLoading = false;
   bool isFetchingContacts = true;
   bool isFetchingChatUsers = true;
-  Key textFieldKey = UniqueKey();
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
-
-  Set<UserModel> selectedUsers = {};
   bool isSelectionMode = false;
+  Key textFieldKey = UniqueKey();
+  List<Contact> _contacts = [];
+  List<Contact> filteredContacts = [];
+  List<UserModel> chatUsers = [];
+  List<UserModel> searchList = [];
+  List<UserModel> list = [];
+  Set<UserModel> selectedUsers = {};
 
   @override
   void initState() {
@@ -96,6 +98,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
     setState(() {
       filteredContacts = _contacts.where((contact) {
         final contactName = contact.displayName.toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -118,7 +121,9 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
       isNumericMode = !isNumericMode;
       textFieldKey = UniqueKey();
     });
+
     _searchFocusNode.unfocus();
+
     Future.delayed(const Duration(milliseconds: 100), () {
       _searchFocusNode.requestFocus();
     });
@@ -196,123 +201,165 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
         ),
         titleSpacing: 0,
         title: isSelectionMode
-            ? Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('${selectedUsers.length}'),
-            TextButton(
-              child: Text(S.of(context).newMailing, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.white)),
-              onPressed: () {
-                Navigator.push(context, createPageRoute(const NewNewsletterScreen(selectedUsers: [])));
-              },
-            ),
-            TextButton(
-              child: Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.white)),
-              onPressed: () {
-                Navigator.push(context, createPageRoute(const NewGroupScreen()));
-              },
-            ),
-          ],
-        )
-        : isSearching
-          ? TextSelectionTheme(
-            data: TextSelectionThemeData(
-              cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-              selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            ),
-            child: TextField(
-            key: textFieldKey,
-            focusNode: _searchFocusNode,
-            controller: _searchController,
-            style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-            keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
-            decoration: InputDecoration(
-              hintText: S.of(context).searchContacts,
-              hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              suffixIcon: isSearching
-                ? IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode,
-              )
-                : null,
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('${selectedUsers.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
+                TextButton(
+                  child: Text(S.of(context).newMailing, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.white)),
+                  onPressed: () {
+                    Navigator.push(context, createPageRoute(const NewNewsletterScreen(selectedUsers: [])));
+                  },
+                ),
+                TextButton(
+                  child: Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.white)),
+                  onPressed: () {
+                    Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                  },
+                ),
+              ],
+            )
+          : isSearching
+            ? TextSelectionTheme(
+              data: TextSelectionThemeData(
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               ),
+              child: TextField(
+              key: textFieldKey,
+              focusNode: _searchFocusNode,
+              controller: _searchController,
+              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+              keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
+              decoration: InputDecoration(
+                hintText: S.of(context).searchContacts,
+                hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                suffixIcon: isSearching
+                  ? IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode,
+                )
+                  : null,
+                ),
+              ),
+              )
+            : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).choose, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                SizedBox(height: 3),
+                Text('$totalItemsCount ${S.of(context).totalCountContacts}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400)),
+              ],
             ),
-          )
-          : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(S.of(context).choose, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              Text('$totalItemsCount ${S.of(context).totalCountContacts}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
-            ],
-          ),
-          actions: isSearching || isSelectionMode ? []
+            actions: isSearching || isSelectionMode ? []
           : [
-          Row(
-            children: [
-              if (isLoading)
-                Padding(
-                  padding: const EdgeInsets.only(right: 14),
-                  child: SizedBox(
-                    width: 24.0,
-                    height: 24.0,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)),
-                      strokeWidth: 2.5,
+            Row(
+              children: [
+                if (isLoading)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 14),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 2.5),
                     ),
                   ),
+                IconButton(
+                  icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                  onPressed: _toggleSearch,
                 ),
-              IconButton(
-                icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
-                onPressed: _toggleSearch,
+              ],
+            ),
+          TooltipTheme(
+            data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+            child: Theme(
+              data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+              child: PopupMenuButton<int>(
+                tooltip: S.of(context).more,
+                position: PopupMenuPosition.under,
+                offset: const Offset(-8, 0),
+                menuPadding: EdgeInsets.symmetric(vertical: 4),
+                constraints: const BoxConstraints(minWidth: 0, maxWidth: 200),
+                icon: const Icon(Icons.more_vert),
+                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                    }
+
+                    return ChatifyColors.transparent;
+                  }),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                ),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 1,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: 'Настройки контакта',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(const ContactsScreen()));
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 2,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).inviteFriend,
+                      onTap: () {
+                        Navigator.pop(context);
+                        SharePlus.instance.share(ShareParams(text: S.of(context).letsChatInApp));
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 3,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).contacts,
+                      onTap: () async {
+                        Navigator.pop(context);
+                        const intent = AndroidIntent(action: 'android.intent.action.VIEW', data: 'content://contacts/people', package: 'com.android.contacts', flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK]);
+                        try {
+                          await intent.launch();
+                        } catch (e) {
+                          Dialogs.showSnackbar(context, S.of(context).failedOpenContacts);
+                        }
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 4,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).update,
+                      onTap: () {
+                        Navigator.pop(context);
+                        _updateContacts();
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 5,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).help,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(const HelpCenterScreen()));
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          PopupMenuButton<int>(
-            position: PopupMenuPosition.under,
-            color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) async {
-              if (value == 1) {
-                Share.share(S.of(context).letsChatInApp);
-              } else if (value == 2) {
-                const intent = AndroidIntent(
-                  action: 'android.intent.action.VIEW',
-                  data: 'content://contacts/people',
-                  package: 'com.android.contacts',
-                  flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-                );
-                try {
-                  await intent.launch();
-                } catch (e) {
-                  Dialogs.showSnackbar(context, S.of(context).failedOpenContacts);
-                }
-              } else if (value == 3) {
-                _updateContacts();
-              } else if (value == 4) {
-                Navigator.push(context, createPageRoute(const HelpCenterScreen()));
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 1,
-                child: Text(S.of(context).inviteFriend, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              ),
-              PopupMenuItem(
-                value: 2,
-                child: Text(S.of(context).contacts, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              ),
-              PopupMenuItem(
-                value: 3,
-                child: Text(S.of(context).update, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              ),
-              PopupMenuItem(
-                value: 4,
-                child: Text(S.of(context).help, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              ),
-            ],
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            ),
           ),
         ],
       ),
@@ -327,54 +374,41 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
               children: [
                 Column(
                   children: [
-                    InkWell(
+                    SizedBox(height: 8),
+                    AppActionMenuItem(
+                      icon: _buildIconContainer(Icons.group_add, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      title: S.of(context).newGroup,
                       onTap: () {
                         Navigator.push(context, createPageRoute(const NewGroupScreen()));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: ListTile(
-                          leading: _buildIconContainer(Icons.group_add, colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          title: Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
-                        ),
-                      ),
                     ),
-                    InkWell(
+                    AppActionMenuItem(
+                      icon: _buildIconContainer(Icons.person_add_alt_1_rounded, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      title: S.of(context).newContact,
                       onTap: () {
                         final saveContactController = SaveContactController.instance;
                         final selectedOption = saveContactController.getOption();
+
                         Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: ListTile(
-                          leading: _buildIconContainer(Icons.person_add_alt_1_rounded, colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          title: Text(S.of(context).newContact, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
-                          trailing: GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, createPageRoute(QrCodeScreen(user: APIs.me, initialIndex: 1)));
-                            },
-                            child: const Icon(Icons.qr_code, color: ChatifyColors.grey),
-                          ),
-                        ),
+                      trailing: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, createPageRoute(QrCodeScreen(user: APIs.me, initialIndex: 1)));
+                        },
+                        child: const Icon(Icons.qr_code, color: ChatifyColors.grey),
                       ),
                     ),
-                    InkWell(
+                    AppActionMenuItem(
+                      icon: _buildIconContainer(Icons.groups, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      title: S.of(context).newCommunity,
                       onTap: () {
                         Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: ListTile(
-                          leading: _buildIconContainer(Icons.groups, colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          title: Text(S.of(context).newCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
-                        ),
-                      ),
                     ),
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                 ),
                 ...chatUsers.map((chatUser) =>
@@ -387,7 +421,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                   child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                 ),
                 ...filteredContacts.map((contact) =>
@@ -407,10 +441,10 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
 
   Widget _buildIconContainer(IconData icon, Color color) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-      child: Icon(icon, color: ChatifyColors.white, size: 24),
+      child: Icon(icon, color: ChatifyColors.black, size: 24),
     );
   }
 }

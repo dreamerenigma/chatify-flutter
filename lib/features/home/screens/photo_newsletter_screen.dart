@@ -58,7 +58,7 @@ class PhotoNewsletterScreenState extends State<PhotoNewsletterScreen> {
       final x = -position.dx * (scale - 1);
       final y = -position.dy * (scale - 1);
 
-      transformationController.value = Matrix4.identity()..translate(x, y)..scale(scale);
+      transformationController.value = Matrix4.identity()..translateByDouble(x, y, 0, 1)..scaleByDouble(scale, scale, 1, 1);
       setState(() {
         _isAppBarVisible = false;
       });

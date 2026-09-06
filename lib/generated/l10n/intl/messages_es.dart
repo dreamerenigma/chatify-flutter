@@ -387,7 +387,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupPhotoRemoved": MessageLookupByLibrary.simpleMessage(
       "Foto de grupo eliminada",
     ),
-    "groups": MessageLookupByLibrary.simpleMessage("grupos"),
+    "groups": MessageLookupByLibrary.simpleMessage("Grupos"),
+    "groupsCount": MessageLookupByLibrary.simpleMessage("grupos"),
     "hello": MessageLookupByLibrary.simpleMessage("¡Saludos!"),
     "help": MessageLookupByLibrary.simpleMessage("Ayuda"),
     "helpCenter": MessageLookupByLibrary.simpleMessage("Centro de ayuda"),
@@ -796,10 +797,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "sentAt": MessageLookupByLibrary.simpleMessage("Enviado a:"),
     "sep": MessageLookupByLibrary.simpleMessage("Sep."),
-    "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
+    "settings": MessageLookupByLibrary.simpleMessage("Configuración"),
     "settingsArchive": MessageLookupByLibrary.simpleMessage(
       "Configuración de archivado",
     ),
+    "settingsPhone": MessageLookupByLibrary.simpleMessage("Ajustes"),
     "settingsSaved": MessageLookupByLibrary.simpleMessage(
       "Tu configuración se ha guardado",
     ),

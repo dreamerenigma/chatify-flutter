@@ -164,7 +164,7 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                             radius: 24,
                             backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                             foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                            child: userController.currentUser.image.isEmpty ? SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 30, height: 30) : null,
+                            child: userController.currentUser.image.isEmpty ? SvgPicture.asset(ChatifyVectors.newUser, width: 30, height: 30, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)) : null,
                           ),
                           SizedBox(width: 16),
                           Column(

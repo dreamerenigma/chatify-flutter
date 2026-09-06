@@ -44,17 +44,16 @@ void showDeleteRecipientMessageDialog(BuildContext context, List<int> messageInd
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextButton(
-                    onPressed: () {
-                      final currentContext = dialogContext;
+                    onPressed: () async {
+                      Navigator.of(dialogContext).pop();
 
-                      for (int index in messageIndices) {
-                        APIs.deleteMessage(list[index]).catchError((error) {
-                          if (currentContext.mounted) {
-                            ScaffoldMessenger.of(currentContext).showSnackBar(SnackBar(content: Text(S.of(context).failedToDeleteMessage)));
-                          }
-                        });
+                      try {
+                        await Future.wait(messageIndices.map((index) => APIs.deleteMessage(list[index])));
+                      } catch (error) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).failedToDeleteMessage)));
+                        }
                       }
-                      Navigator.of(currentContext).pop();
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: ChatifyColors.blue,

@@ -1,4 +1,4 @@
-import '../../features/personalization/controllers/fonts_controller.dart';
+import '../../core/enums/font_mode_type.dart';
 
 class ChatifySizes {
   // Padding and margin sizes
@@ -26,9 +26,9 @@ class ChatifySizes {
   static double fontSizeUn = 34.0;
   static double fontSizeXxl = 38.0;
 
-  static void updateFontSizes(FontMode fontMode) {
+  static void updateFontSizes(FontModeType fontMode) {
     switch (fontMode) {
-      case FontMode.small:
+      case FontModeType.small:
         fontSizeLm = 10.0;
         fontSizeSm = 12.0;
         fontSizeMd = 14.0;
@@ -37,7 +37,7 @@ class ChatifySizes {
         fontSizeMg = 20.0;
         fontSizeGl = 24.0;
         break;
-      case FontMode.big:
+      case FontModeType.big:
         fontSizeLm = 14.0;
         fontSizeSm = 16.0;
         fontSizeMd = 18.0;

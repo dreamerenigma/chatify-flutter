@@ -238,13 +238,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                           style: TextStyle(
                             fontSize: ChatifySizes.fontSizeMd,
                             color: ChatifyColors.white,
-                            shadows: const [
-                              Shadow(
-                                offset: Offset(1.0, 1.0),
-                                blurRadius: 2.0,
-                                color: Color.fromARGB(128, 0, 0, 0),
-                              ),
-                            ],
+                            shadows: const [Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Color.fromARGB(128, 0, 0, 0))],
                           ),
                         ),
                         Row(

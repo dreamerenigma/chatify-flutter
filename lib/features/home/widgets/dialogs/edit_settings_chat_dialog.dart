@@ -83,7 +83,7 @@ Future<void> showEditSettingsChatDialog(BuildContext context, Offset position) a
                               text: S.of(context).noSound,
                               iconSize: 20,
                               icon: null,
-                              trailingIcon: Transform.rotate(angle: -90 * 3.1416 / 180, child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 15, height: 15, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)), onTap: () {
+                              trailingIcon: Transform.rotate(angle: -90 * 3.1416 / 180, child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))), onTap: () {
                                 overlayEntry.remove();
                               },
                             ),
@@ -148,15 +148,16 @@ Widget _buildFilterChats({
                   iconPath,
                   width: iconSize,
                   height: iconSize,
-                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
                   placeholderBuilder: (context) => Icon(icon ?? Icons.image_not_supported, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                 )
               else
                 Icon(icon ?? Icons.image_not_supported, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
               SizedBox(width: 10),
               Expanded(child: Text(text, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300))),
-              if (trailingIcon != null)
-              trailingIcon,
+              if (trailingIcon != null) ...[
+                trailingIcon,
+              ],
             ],
           ),
         ),

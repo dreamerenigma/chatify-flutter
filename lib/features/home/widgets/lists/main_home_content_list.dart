@@ -22,6 +22,8 @@ class MainHomeContentList extends StatelessWidget {
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
   final bool isSearching;
+  final bool isTabsVisible;
+  final bool isAccessKeyVisible;
   final List<UserModel> searchList;
   final Set<String> selectedUserIds;
   final Function(UserModel) onUserSelected;
@@ -35,6 +37,8 @@ class MainHomeContentList extends StatelessWidget {
     required this.supports,
     required this.infosApp,
     required this.isSearching,
+    required this.isTabsVisible,
+    required this.isAccessKeyVisible,
     required this.searchList,
     required this.selectedUserIds,
     required this.onUserSelected,
@@ -47,7 +51,8 @@ class MainHomeContentList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (groups.isEmpty) const SizedBox(height: 6),
+        if (!isTabsVisible && !isAccessKeyVisible)
+          const SizedBox(height: 6),
         if (groups.isNotEmpty)
           GroupList(groups: groups, currentUser: currentUserName, onGroupSelected: (group) {}),
         if (newsletters.isNotEmpty)

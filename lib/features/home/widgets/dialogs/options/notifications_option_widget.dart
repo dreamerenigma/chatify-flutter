@@ -455,7 +455,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                                             transform: Matrix4.translationValues(0, (_isTappedBanner || isBannerNotifyDropdown) ? 2.0 : 0, 0),
                                             child: Padding(
                                               padding: const EdgeInsets.only(top: 4),
-                                              child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                                              child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                             ),
                                           ),
                                         ],
@@ -559,7 +559,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                                           AnimatedContainer(
                                             duration: const Duration(milliseconds: 50),
                                             transform: Matrix4.translationValues(0, (_isTappedIcon || isIconNotifyDropdown) ? 2.0 : 0, 0),
-                                            child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                                            child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                           ),
                                         ],
                                       ),
@@ -1015,7 +1015,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                         transform: Matrix4.translationValues(0, (_isTappedMessage || isDropdownVisible) ? 2 : 0, 0),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 4),
-                          child: SvgPicture.asset(ChatifyVectors.arrowDown, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, width: 14, height: 14),
+                          child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                         ),
                       ),
                     ],

@@ -1,3 +1,4 @@
+import 'package:chatify/utils/popups/app_loaders.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
@@ -88,7 +89,7 @@ class _UserListState extends State<UserList> {
       stream: APIs.getMyUsersId(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingIndicator();
+          return AppLoaders.buildLoadingIndicator();
         }
 
         if (snapshot.hasError) {
@@ -105,7 +106,7 @@ class _UserListState extends State<UserList> {
           stream: APIs.getAllUsers(userIds),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingIndicator();
+              return AppLoaders.buildLoadingIndicator();
             }
 
             if (snapshot.hasError) {
@@ -122,49 +123,39 @@ class _UserListState extends State<UserList> {
   }
 
   Widget _buildContactsList() {
-    return SingleChildScrollView(
-      child: ListView.builder(
-        itemCount: widget.contacts.length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          final contact = widget.contacts[index];
-
-          return InviteUserCard(contact: contact, onContactSelected: (Contact selectedContact) {}, onInvite: () {});
-        },
-      ),
+    return Column(
+      children: [
+        for (final contact in widget.contacts)
+          InviteUserCard(contact: contact, onContactSelected: (_) {}, onInvite: () {}),
+      ],
     );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))));
   }
 
   Widget _buildUserList(List<UserModel> users) {
-    return SingleChildScrollView(
-      child: ListView.builder(
-        itemCount: users.length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(top: 6),
-        itemBuilder: (context, index) {
-          final user = users[index];
-
-          if (widget.isInviting && !widget.useApp) {
-            return InviteUserCard(contact: Contact(), onContactSelected: (Contact selectedContact) {}, onInvite: () {});
-          }
-
-          if (widget.isSharing && !widget.useApp) {
-            return ShareUserCard(user: user, onUserSelected: widget.onUserSelected);
-          }
-
-          if (widget.useApp) {
-            return UseAppUserCard(user: user, onUserSelected: widget.onUserSelected);
-          }
-
-          return ChatUserCard(user: user, isSelected: widget.selectedUserIds.contains(user.id), onUserSelected: widget.onUserSelected);
-        },
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Column(
+        children: [
+          for (final user in users)
+            _buildUserItem(user),
+        ],
       ),
     );
+  }
+
+  Widget _buildUserItem(UserModel user) {
+    if (widget.isInviting && !widget.useApp) {
+      return InviteUserCard(contact: Contact(), onContactSelected: (_) {}, onInvite: () {});
+    }
+
+    if (widget.isSharing && !widget.useApp) {
+      return ShareUserCard(user: user, onUserSelected: widget.onUserSelected);
+    }
+
+    if (widget.useApp) {
+      return UseAppUserCard(user: user, onUserSelected: widget.onUserSelected);
+    }
+
+    return ChatUserCard(user: user, isSelected: widget.selectedUserIds.contains(user.id), onUserSelected: widget.onUserSelected);
   }
 }

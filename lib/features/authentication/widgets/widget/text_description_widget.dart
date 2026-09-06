@@ -119,7 +119,7 @@ class TextDescriptionWidget extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text:  S.of(context).settings,
+                  text:  S.of(context).settingsPhone,
                   style: TextStyle(
                     fontSize: ChatifySizes.fontSizeSm,
                     fontWeight: FontWeight.bold,

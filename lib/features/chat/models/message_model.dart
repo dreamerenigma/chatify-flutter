@@ -43,7 +43,15 @@ class MessageModel {
 
     if (reactionsJson is Map) {
       reactions = reactionsJson.map((key, value) {
-        return MapEntry(key.toString(), List<String>.from(value ?? []));
+        if (value is List) {
+          return MapEntry(key.toString(), value.map((e) => e.toString()).toList());
+        }
+
+        if (value is String) {
+          return MapEntry(key.toString(), [value]);
+        }
+
+        return MapEntry(key.toString(), <String>[]);
       });
     } else {
       reactions = {};

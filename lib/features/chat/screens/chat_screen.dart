@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
+import '../../../core/enums/selection_action_mode_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/devices/device_utility.dart';
+import '../../../utils/popups/app_loaders.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/message_model.dart';
@@ -50,6 +53,39 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   List<MessageModel> list = [];
   List<MessageModel> messages = [];
   Set<int> selectedMessages = <int>{};
+  MessageModel? replyMessage;
+  UserModel? replyUser;
+
+  SelectionActionModeType get selectionActionMode {
+    if (selectedMessages.isEmpty) {
+      return SelectionActionModeType.normal;
+    }
+
+    final hasDeleted = selectedMessages.any((index) => list[index].deletedBy.contains(APIs.user.uid));
+    final hasNormal = selectedMessages.any((index) => !list[index].deletedBy.contains(APIs.user.uid));
+
+    if (hasDeleted && hasNormal) {
+      return SelectionActionModeType.mixed;
+    }
+
+    if (hasDeleted) {
+      return SelectionActionModeType.deleted;
+    }
+
+    return SelectionActionModeType.normal;
+  }
+
+  double _getInputCardWidth(BuildContext context) {
+    final screenWidth = DeviceUtils.getScreenWidth(context);
+
+    const buttonRadius = 24.0;
+    final buttonWidth = buttonRadius * 2;
+
+    final horizontalPadding = screenWidth * .015;
+    final spacing = screenWidth * .009;
+
+    return screenWidth - horizontalPadding * 2 - 4 * 2 - spacing - buttonWidth;
+  }
 
   @override
   void initState() {
@@ -154,6 +190,25 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     }
   }
 
+  Future<void> _handleDeleteSelectedDeletedMessages() async {
+    if (selectedMessages.isEmpty) return;
+
+    final selected = selectedMessages.map((index) => list[index]).where((message) => message.deletedBy.contains(APIs.user.uid)).toList();
+
+    if (selected.isEmpty) return;
+
+    try {
+      for (final message in selected) {
+        await APIs.deleteMessageDocument(message);
+      }
+
+      _clearSelection();
+    } catch (e, stackTrace) {
+      debugPrint('❌ Ошибка полного удаления сообщения: $e');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+  }
+
   void toggleEmojiKeyboard() {
     setState(() {
       showEmoji = !showEmoji;
@@ -198,9 +253,48 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     }
   }
 
+  void _startReply() {
+    if (selectedMessages.isEmpty) return;
+
+    final index = selectedMessages.first;
+
+    if (index < 0 || index >= list.length) return;
+
+    final message = list[index];
+    final UserModel user = message.fromId == APIs.user.uid ? APIs.me : widget.user;
+
+    setState(() {
+      replyMessage = message;
+      replyUser = user;
+
+      selectedMessages.clear();
+      isSelecting = false;
+    });
+  }
+
+  void _copySelectedMessage() {
+    if (selectedMessages.isEmpty) return;
+
+    final index = selectedMessages.first;
+
+    if (index < 0 || index >= list.length) return;
+
+    final message = list[index];
+
+    Clipboard.setData(ClipboardData(text: message.msg));
+
+    setState(() {
+      selectedMessages.clear();
+      isSelecting = false;
+    });
+
+    CustomIconSnackBar.showAnimatedSnackBar(context, 'Сообщение скопировано!', icon: const Icon(BootstrapIcons.check_circle), iconColor: ChatifyColors.success);
+  }
+
   @override
   Widget build(BuildContext context) {
     final Set<String> selectedReactions = selectedMessages.map((index) => list[index].reactions).whereType<String>().where((reaction) => reaction.isNotEmpty).toSet();
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -215,21 +309,26 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               ),
             ),
             if (isSelecting && selectedMessages.isNotEmpty)
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  color: context.isDarkMode  ? ChatifyColors.blackGrey : ChatifyColors.white,
-                  child: SelectionChatAppBar(
-                    selectedMessages: selectedMessages,
-                    list: list,
-                    clearSelection: _clearSelection,
-                    handleDeleteSelectedMessages: _handleDeleteSelectedMessages,
-                    handleUpdateMessage: _handleUpdateMessage,
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    color: context.isDarkMode  ? ChatifyColors.blackGrey : ChatifyColors.white,
+                    child: SelectionChatAppBar(
+                      selectedMessages: selectedMessages,
+                      list: list,
+                      clearSelection: _clearSelection,
+                      handleDeleteSelectedMessages: _handleDeleteSelectedMessages,
+                      handleUpdateMessage: _handleUpdateMessage,
+                      selectionActionMode: selectionActionMode,
+                      handleDeleteDeletedMessages: _handleDeleteSelectedDeletedMessages,
+                      onReply: _startReply,
+                      onCopyMessage: _copySelectedMessage,
+                      user: widget.user,
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -260,9 +359,14 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                           }
 
                           final data = snapshot.data?.docs;
+
                           final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
 
                           list = newList;
+
+                          if (list.isNotEmpty) {
+                            APIs.markMessagesAsRead(list);
+                          }
 
                           if (list.isEmpty) {
                             return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
@@ -301,6 +405,12 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                                       },
                                       onTap: () => _toggleMessageSelection(index),
                                       messages: list,
+                                      onReply: (message) {
+                                        setState(() {
+                                          replyMessage = message;
+                                          replyUser = widget.user;
+                                        });
+                                      },
                                     );
                                   },
                                 ),
@@ -330,16 +440,18 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                   ),
                 ),
                 if (isUploading)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                    ),
                   ),
-                ),
+                if (replyMessage != null)
+                  _buildReplyPreview(replyMessage!, widget.user),
                 Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
-                  child: ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard),
+                  padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
+                  child: ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard, isReplyVisible: replyMessage != null),
                 ),
               ],
             ),
@@ -361,6 +473,87 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                       child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
                     ),
                   ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReplyPreview(MessageModel message, UserModel user) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        width: _getInputCardWidth(context),
+        margin: const EdgeInsets.only(left: 10, right: 10, top: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border(left: BorderSide(color: context.isDarkMode ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.blue, width: 5)),
+                ),
+                child: Stack(
+                  children: [
+                    Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(30),
+                        splashFactory: NoSplash.splashFactory,
+                        highlightColor: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey,
+                        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey,
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${user.name}${user.surname.isNotEmpty ? ' ${user.surname}' : ''}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: ChatifyColors.blueAccent.withValues(alpha: 0.8), fontSize: 15, fontWeight: FontWeight.w400),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                message.msg,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, height: 1.3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: -8,
+                      right: -4,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            replyMessage = null;
+                            replyUser = null;
+                          });
+                        },
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          alignment: Alignment.center,
+                          child: Icon(Icons.close, size: 17, color: ChatifyColors.darkGrey),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -29,68 +29,62 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(S.of(context).vibration, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-                    ),
+                    child: Align(alignment: Alignment.centerLeft, child: Text(S.of(context).vibration, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400))),
                   ),
                   const SizedBox(height: 12),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RadioListTile<int>(
-                        value: 1,
-                        groupValue: vibrationController.selectedVibrationOption.value,
-                        activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        onChanged: (value) {
-                          setState(() {
-                            vibrationController.selectedVibrationOption.value = value!;
+                  RadioGroup<int>(
+                    groupValue: vibrationController.selectedVibrationOption.value,
+                    onChanged: (value) {
+                      if (value == null) return;
+
+                      setState(() {
+                        vibrationController.selectedVibrationOption.value = value;
+                        switch (value) {
+                          case 1:
                             selectedText = S.of(context).off;
-                          });
-                        },
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: Text(S.of(context).off),
-                      ),
-                      RadioListTile<int>(
-                        value: 2,
-                        groupValue: vibrationController.selectedVibrationOption.value,
-                        activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        onChanged: (value) {
-                          setState(() {
-                            vibrationController.selectedVibrationOption.value = value!;
+                            break;
+                          case 2:
                             selectedText = S.of(context).byDefault;
-                          });
-                        },
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: Text(S.of(context).byDefault),
-                      ),
-                      RadioListTile<int>(
-                        value: 3,
-                        groupValue: vibrationController.selectedVibrationOption.value,
-                        activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        onChanged: (value) {
-                          setState(() {
-                            vibrationController.selectedVibrationOption.value = value!;
+                            break;
+                          case 3:
                             selectedText = S.of(context).short;
-                          });
-                        },
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: Text(S.of(context).short),
-                      ),
-                      RadioListTile<int>(
-                        value: 4,
-                        groupValue: vibrationController.selectedVibrationOption.value,
-                        activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        onChanged: (value) {
-                          setState(() {
-                            vibrationController.selectedVibrationOption.value = value!;
+                            break;
+                          case 4:
                             selectedText = S.of(context).long;
-                          });
-                        },
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        title: Text(S.of(context).long),
-                      ),
-                    ],
+                            break;
+                        }
+                      });
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RadioListTile<int>(
+                          value: 1,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          title: Text(S.of(context).off),
+                        ),
+                        RadioListTile<int>(
+                          value: 2,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value,),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          title: Text(S.of(context).byDefault),
+                        ),
+
+                        RadioListTile<int>(
+                          value: 3,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          title: Text(S.of(context).short),
+                        ),
+                        RadioListTile<int>(
+                          value: 4,
+                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          title: Text(S.of(context).long),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Padding(

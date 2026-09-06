@@ -225,6 +225,7 @@ class _GalleryScreenState extends State<GalleryScreen> with SingleTickerProvider
           onTap: () async {
             final image = images[index];
             final file = await image.originFile;
+
             if (file != null) {
               Navigator.push(context, createPageRoute(AddDetailImageScreen(imageFile: file, user: APIs.me)));
             }

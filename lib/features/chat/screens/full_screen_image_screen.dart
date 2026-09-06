@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:vector_math/vector_math_64.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/bars/image_app_bar.dart';
@@ -16,7 +15,6 @@ class FullScreenImageScreen extends StatefulWidget {
 }
 
 class FullScreenImageScreenState extends State<FullScreenImageScreen> with SingleTickerProviderStateMixin {
-
   late int _activeIndex;
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -66,11 +64,17 @@ class FullScreenImageScreenState extends State<FullScreenImageScreen> with Singl
   void _handleDoubleTap(TapDownDetails details) {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final localPosition = renderBox.globalToLocal(details.globalPosition);
+
     final scale = _zoomedIn ? 1.0 : 2.0;
 
-    _transformationController.value = Matrix4.identity()
-      ..translateByVector3(Vector3(-localPosition.dx * (scale - 1), -localPosition.dy * (scale - 1), 0))
-      ..scaleByVector3(Vector3(scale, scale, 1));
+    if (_zoomedIn) {
+      _transformationController.value = Matrix4.identity();
+    } else {
+      final dx = -localPosition.dx * (scale - 1);
+      final dy = -localPosition.dy * (scale - 1);
+
+      _transformationController.value = Matrix4.translationValues(dx, dy, 0) * Matrix4.diagonal3Values(scale, scale, 1);
+    }
 
     setState(() {
       _zoomedIn = !_zoomedIn;

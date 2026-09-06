@@ -2,45 +2,44 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../core/enums/font_mode_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../widgets/dialogs/custom_radio_list_tile.dart';
 import '../widgets/dialogs/light_dialog.dart';
 
-enum FontMode { small, average, big, extraSmall, extraLarge, larger, extraLarger }
-
 class FontsController extends GetxController {
-  static FontsController get instance => Get.find();
-  var selectedFont = FontMode.average.obs;
-  var tempSelectedFont = FontMode.average.obs;
   final box = GetStorage();
+  static FontsController get instance => Get.find();
+  var selectedFont = FontModeType.average.obs;
+  var tempSelectedFont = FontModeType.average.obs;
 
-  double getFontScale(FontMode fontMode) {
+  double getFontScale(FontModeType fontMode) {
     if (Platform.isAndroid || Platform.isIOS) {
       switch (fontMode) {
-      case FontMode.small:
+      case FontModeType.small:
         return 0.8;
-      case FontMode.big:
+      case FontModeType.big:
         return 1.5;
       default:
         return 1.0;
     }
     } else {
       switch (fontMode) {
-        case FontMode.small:
+        case FontModeType.small:
           return 0.8;
-        case FontMode.extraSmall:
+        case FontModeType.extraSmall:
           return 0.9;
-        case FontMode.big:
+        case FontModeType.big:
           return 1.1;
-        case FontMode.extraLarge:
+        case FontModeType.extraLarge:
           return 1.25;
-        case FontMode.larger:
+        case FontModeType.larger:
           return 1.35;
-        case FontMode.extraLarger:
+        case FontModeType.extraLarger:
           return 1.5;
-        case FontMode.average:
+        case FontModeType.average:
         return 1.0;
       }
     }
@@ -54,32 +53,32 @@ class FontsController extends GetxController {
     applyFont(selectedFont.value);
   }
 
-  FontMode getFontModeFromScale(double scale) {
+  FontModeType getFontModeFromScale(double scale) {
     if (scale <= 0.9) {
-      return FontMode.small;
+      return FontModeType.small;
     } else if (scale >= 1.35) {
-      return FontMode.big;
+      return FontModeType.big;
     } else {
-      return FontMode.average;
+      return FontModeType.average;
     }
   }
 
-  FontMode getFontModeFromString(String font) {
+  FontModeType getFontModeFromString(String font) {
     switch (font) {
       case 'small':
-        return FontMode.small;
+        return FontModeType.small;
       case 'big':
-        return FontMode.big;
+        return FontModeType.big;
       default:
-        return FontMode.average;
+        return FontModeType.average;
     }
   }
 
-  String _getStringFromFontMode(FontMode fontMode) {
+  String _getStringFromFontMode(FontModeType fontMode) {
     switch (fontMode) {
-      case FontMode.small:
+      case FontModeType.small:
         return 'small';
-      case FontMode.big:
+      case FontModeType.big:
         return 'big';
       default:
         return 'average';
@@ -93,18 +92,18 @@ class FontsController extends GetxController {
     return null;
   }
 
-  void setTempFont(FontMode font) {
+  void setTempFont(FontModeType font) {
     tempSelectedFont.value = font;
   }
 
   void setFont(double scale) {
-    FontMode fontMode = getFontModeFromScale(scale);
+    FontModeType fontMode = getFontModeFromScale(scale);
     selectedFont.value = fontMode;
     box.write('selectedFont', _getStringFromFontMode(fontMode));
     applyFont(fontMode);
   }
 
-  void applyFont(FontMode fontMode) {
+  void applyFont(FontModeType fontMode) {
     ChatifySizes.updateFontSizes(fontMode);
 
     final context = Get.context;
@@ -115,23 +114,21 @@ class FontsController extends GetxController {
 
     ThemeData theme = Theme.of(context);
 
-    Get.changeTheme(
-      theme.copyWith(),
-    );
+    Get.changeTheme(theme.copyWith());
 
     Get.forceAppUpdate();
   }
 
-  String getFontDescription(BuildContext context, FontMode fontMode) {
+  String getFontDescription(BuildContext context, FontModeType fontMode) {
     if (Platform.isWindows) {
       final fontScale = FontsController.instance.getFontScale(fontMode);
       final fontScalePercentage = (fontScale * 100).toInt();
       return "$fontScalePercentage%";
     } else {
       switch (fontMode) {
-        case FontMode.small:
+        case FontModeType.small:
           return S.of(context).small;
-        case FontMode.big:
+        case FontModeType.big:
           return S.of(context).big;
         default:
           return S.of(context).average;
@@ -144,7 +141,7 @@ class FontsController extends GetxController {
   }
 
   void saveSelectedFont(double fontScale) {
-    FontMode fontMode = getFontModeFromScale(fontScale);
+    FontModeType fontMode = getFontModeFromScale(fontScale);
     box.write('selectedFont', _getStringFromFontMode(fontMode));
   }
 

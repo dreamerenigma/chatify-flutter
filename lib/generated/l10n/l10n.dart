@@ -314,9 +314,9 @@ class S {
     return Intl.message('Profile', name: 'profile', desc: '', args: []);
   }
 
-  /// ` Settings `
+  /// `Settings`
   String get settings {
-    return Intl.message(' Settings ', name: 'settings', desc: '', args: []);
+    return Intl.message('Settings', name: 'settings', desc: '', args: []);
   }
 
   /// `New Group`
@@ -779,9 +779,9 @@ class S {
     );
   }
 
-  /// `Updating...`
+  /// `Update`
   String get update {
-    return Intl.message('Updating...', name: 'update', desc: '', args: []);
+    return Intl.message('Update', name: 'update', desc: '', args: []);
   }
 
   /// `Logout`
@@ -2499,6 +2499,16 @@ class S {
     return Intl.message('on Android or', name: 'onAndroid', desc: '', args: []);
   }
 
+  /// ` Settings `
+  String get settingsPhone {
+    return Intl.message(
+      ' Settings ',
+      name: 'settingsPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// ` on iPhone`
   String get oniPhone {
     return Intl.message(' on iPhone', name: 'oniPhone', desc: '', args: []);
@@ -3369,9 +3379,14 @@ class S {
     );
   }
 
-  /// `groups`
+  /// `Groups`
   String get groups {
-    return Intl.message('groups', name: 'groups', desc: '', args: []);
+    return Intl.message('Groups', name: 'groups', desc: '', args: []);
+  }
+
+  /// `groups`
+  String get groupsCount {
+    return Intl.message('groups', name: 'groupsCount', desc: '', args: []);
   }
 
   /// `This includes the group name, picture, and description, the disappearing message timer, and the settings for saving and pinning messages.`
@@ -5869,16 +5884,6 @@ class S {
     return Intl.message(
       'Could not launch',
       name: 'couldNotLaunch',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Call from user`
-  String get callFromUser {
-    return Intl.message(
-      'Call from user',
-      name: 'callFromUser',
       desc: '',
       args: [],
     );
@@ -9364,10 +9369,10 @@ class S {
     );
   }
 
-  /// `If you disable read receipts, you will not be able to send or receive these reports. \n These notifications cannot be \n disabled for group chats.`
+  /// `If you disable read receipts, you will not be able to send or receive these reports. These notifications cannot be disabled for group chats.`
   String get disableReadReceiptsSendReceiveNotify {
     return Intl.message(
-      'If you disable read receipts, you will not be able to send or receive these reports. \n These notifications cannot be \n disabled for group chats.',
+      'If you disable read receipts, you will not be able to send or receive these reports. These notifications cannot be disabled for group chats.',
       name: 'disableReadReceiptsSendReceiveNotify',
       desc: '',
       args: [],
@@ -9384,10 +9389,10 @@ class S {
     );
   }
 
-  /// `Start new chats \n with messages that will disappear according to the specified \n timer.`
+  /// `Start new chats with messages that will disappear according to the specified timer.`
   String get newChatsMessagesDisappearAccording {
     return Intl.message(
-      'Start new chats \n with messages that will disappear according to the specified \n timer.',
+      'Start new chats with messages that will disappear according to the specified timer.',
       name: 'newChatsMessagesDisappearAccording',
       desc: '',
       args: [],
@@ -9419,10 +9424,10 @@ class S {
     );
   }
 
-  /// `Use effects during video calls and \n recordings.`
+  /// `Use effects during video calls and recordings.`
   String get useEffectsDuringVideoCalls {
     return Intl.message(
-      'Use effects during video calls and \n recordings.',
+      'Use effects during video calls and recordings.',
       name: 'useEffectsDuringVideoCalls',
       desc: '',
       args: [],

@@ -1,8 +1,8 @@
-import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../generated/l10n/l10n.dart';
+import '../../../utils/constants/app_color_assets.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../widgets/dialogs/custom_radio_list_tile.dart';
@@ -50,16 +50,8 @@ class ColorsController extends GetxController {
     }
   }
 
-  final Map<String, String> imagePaths = {
-    'blue': ChatifyVectors.strongboxBlue,
-    'red': ChatifyVectors.strongboxRed,
-    'green': ChatifyVectors.strongboxGreen,
-    'orange': ChatifyVectors.strongboxOrange,
-  };
-
-  String getImagePath() {
-    final scheme = selectedColorScheme.value;
-    return imagePaths[scheme] ?? imagePaths['blue']!;
+  String getAsset(ChatifyColorAssets assets) {
+    return assets.get(selectedColorScheme.value);
   }
 
   void setColorScheme(String colorScheme) {
@@ -99,7 +91,7 @@ class ColorsController extends GetxController {
       );
     }
 
-    return MaterialColor(color.value, swatch);
+    return MaterialColor(color.toARGB32(), swatch);
   }
 
   Future<void> showColorSchemeSelectionDialog(BuildContext context) async {

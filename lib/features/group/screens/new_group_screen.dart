@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -23,18 +24,18 @@ class NewGroupScreen extends StatefulWidget {
 }
 
 class NewGroupScreenState extends State<NewGroupScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  bool isFetchingContacts = true;
+  bool isFetchingChatUsers = true;
+  bool isSearching = false;
+  bool isNumericMode = false;
+  Key textFieldKey = UniqueKey();
   List<Contact> _contacts = [];
   List<Contact> _filteredContacts = [];
   List<UserModel> _chatUsers = [];
   List<UserModel> list = [];
   List<UserModel> searchList = [];
-  bool isFetchingContacts = true;
-  bool isFetchingChatUsers = true;
-  bool isSearching = false;
-  bool isNumericMode = false;
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
-  Key textFieldKey = UniqueKey();
   Set<UserModel> selectedUsers = {};
   Set<Contact> selectedContacts = {};
 
@@ -43,7 +44,6 @@ class NewGroupScreenState extends State<NewGroupScreen> {
     super.initState();
     _fetchContacts();
     _fetchChatUsers();
-
     _searchController.addListener(() {
       _filterContacts();
     });
@@ -68,6 +68,7 @@ class NewGroupScreenState extends State<NewGroupScreen> {
     final userIds = (await APIs.getMyUsersId().first).docs.map((e) => e.id).toList();
     if (userIds.isNotEmpty) {
       final chatUserDocs = (await APIs.getAllUsers(userIds).first).docs;
+
       setState(() {
         _chatUsers = chatUserDocs.map((e) => UserModel.fromJson(e.data())).toList();
         isFetchingChatUsers = false;
@@ -84,6 +85,7 @@ class NewGroupScreenState extends State<NewGroupScreen> {
     setState(() {
       _filteredContacts = _contacts.where((contact) {
         final contactName = contact.displayName.toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -107,6 +109,7 @@ class NewGroupScreenState extends State<NewGroupScreen> {
       isNumericMode = !isNumericMode;
       textFieldKey = UniqueKey();
     });
+
     Future.delayed(const Duration(milliseconds: 100), () {
       _searchFocusNode.requestFocus();
     });
@@ -177,113 +180,112 @@ class NewGroupScreenState extends State<NewGroupScreen> {
             ],
       ),
       body: isLoading
-        ? Center(
-            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-          )
-        : ListView.builder(
-        itemCount: _chatUsers.length + _filteredContacts.length + 2 + (selectedUsers.isEmpty ? 0 : 2),
-        itemBuilder: (context, index) {
-          int adjustedIndex = index;
+        ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))
+        : ScrollConfiguration(
+            behavior: NoGlowScrollBehavior(),
+            child: ListView.builder(
+              itemCount: _chatUsers.length + _filteredContacts.length + 2 + (selectedUsers.isEmpty ? 0 : 2),
+              itemBuilder: (context, index) {
+                int adjustedIndex = index;
 
-          if (selectedUsers.isNotEmpty) {
-            if (index == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: selectedUsers.map((user) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Stack(
-                              clipBehavior: Clip.none,
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                Column(
-                                  children: [
-                                    user.image.isNotEmpty
-                                    ? CachedNetworkImage(
-                                      imageUrl: user.image,
-                                        placeholder: (context, url) => const CircleAvatar(
-                                          backgroundColor: ChatifyColors.grey,
-                                          radius: 30,
-                                          child: Icon(Icons.person, color: ChatifyColors.white, size: 24),
+                if (selectedUsers.isNotEmpty) {
+                  if (index == 0) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: Wrap(
+                            spacing: 16,
+                            runSpacing: 16,
+                            children: selectedUsers.map((user) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    alignment: Alignment.bottomRight,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          user.image.isNotEmpty
+                                          ? CachedNetworkImage(
+                                            imageUrl: user.image,
+                                              placeholder: (context, url) => const CircleAvatar(
+                                                backgroundColor: ChatifyColors.grey,
+                                                radius: 30,
+                                                child: Icon(Icons.person, color: ChatifyColors.white, size: 24),
+                                              ),
+                                              errorWidget: (context, url, error) => const CircleAvatar(
+                                                backgroundColor: ChatifyColors.blackGrey,
+                                                radius: 30,
+                                                child: Icon(Icons.error, color: ChatifyColors.red, size: 24),
+                                              ),
+                                              imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider, radius: 30),
+                                            )
+                                          : const CircleAvatar(backgroundColor: ChatifyColors.blackGrey, radius: 30, child: Icon(Icons.person, color: ChatifyColors.white, size: 24)),
+                                        ],
+                                      ),
+                                      Positioned(
+                                        bottom: -3,
+                                        right: -5,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _toggleUserSelection(user);
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                                            child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
+                                          ),
                                         ),
-                                        errorWidget: (context, url, error) => const CircleAvatar(
-                                          backgroundColor: ChatifyColors.blackGrey,
-                                          radius: 30,
-                                          child: Icon(Icons.error, color: ChatifyColors.red, size: 24),
-                                        ),
-                                        imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider, radius: 30),
-                                      )
-                                    : const CircleAvatar(backgroundColor: ChatifyColors.blackGrey, radius: 30, child: Icon(Icons.person, color: ChatifyColors.white, size: 24)),
-                                  ],
-                                ),
-                                Positioned(
-                                  bottom: -3,
-                                  right: -5,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _toggleUserSelection(user);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
-                                      child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const Divider(),
-                ],
-              );
-            } else {
-              adjustedIndex = index - 1;
-            }
-          }
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const Divider(),
+                      ],
+                    );
+                  } else {
+                    adjustedIndex = index - 1;
+                  }
+                }
 
-          if (adjustedIndex == 0) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
-            );
-          } else if (adjustedIndex <= _chatUsers.length) {
-            final chatUser = _chatUsers[adjustedIndex - 1];
-            return UseAppUserCard(
-              user: chatUser,
-              onUserSelected: (UserModel selectedUser) {
-                _toggleUserSelection(selectedUser);
+                if (adjustedIndex == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
+                  );
+                } else if (adjustedIndex <= _chatUsers.length) {
+                  final chatUser = _chatUsers[adjustedIndex - 1];
+
+                  return UseAppUserCard(
+                    user: chatUser,
+                    onUserSelected: (UserModel selectedUser) {
+                      _toggleUserSelection(selectedUser);
+                    },
+                  );
+                } else if (adjustedIndex == _chatUsers.length + 1) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
+                  );
+                } else {
+                  final filteredIndex = adjustedIndex - _chatUsers.length - 2;
+                  if (filteredIndex >= 0 && filteredIndex < _filteredContacts.length) {
+                    final contact = _filteredContacts[filteredIndex];
+
+                    return InviteUserCard(contact: contact, onInvite: () {}, onContactSelected: (Contact selectedContact) {});
+                  } else {
+                    return const SizedBox();
+                  }
+                }
               },
-            );
-          } else if (adjustedIndex == _chatUsers.length + 1) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
-            );
-          } else {
-            final filteredIndex = adjustedIndex - _chatUsers.length - 2;
-            if (filteredIndex >= 0 && filteredIndex < _filteredContacts.length) {
-              final contact = _filteredContacts[filteredIndex];
-              return InviteUserCard(
-                contact: contact,
-                onInvite: () {},
-                onContactSelected: (Contact selectedContact) {},
-              );
-            } else {
-              return const SizedBox();
-            }
-          }
-        },
-      ),
+            ),
+          ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(

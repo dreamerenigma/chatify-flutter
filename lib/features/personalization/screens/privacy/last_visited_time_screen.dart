@@ -108,10 +108,7 @@ class LastVisitedTimeScreenState extends State<LastVisitedTimeScreen> {
           Divider(color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Text(
-              S.of(context).whoSeesOnline,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
-            ),
+            child: Text(S.of(context).whoSeesOnline, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
           ),
           ...onlineStatusOptions.map((option) {
             return RadioListTile(

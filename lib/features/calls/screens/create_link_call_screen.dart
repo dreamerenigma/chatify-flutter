@@ -37,6 +37,7 @@ class CallTypeController extends GetxController {
   String _generateUniqueId({int length = 16}) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     Random random = Random();
+
     return List.generate(length, (index) => chars[random.nextInt(chars.length)]).join();
   }
 }
@@ -51,17 +52,14 @@ class CreateLinkCallScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text(S.of(context).createCallLink, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+        title: Text(S.of(context).createCallLink, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-            child: Text(
-              S.of(context).anyAppUserJoinCallUsingLink,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-            ),
+            child: Text(S.of(context).anyAppUserJoinCallUsingLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
           ),
           InkWell(
             onTap: () {
@@ -82,13 +80,11 @@ class CreateLinkCallScreen extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         child: Obx(() {
                           IconData icon = callTypeController.selectedCallType.value == 'Видео' ? Icons.videocam_outlined : Icons.call_outlined;
-                          return Icon(icon, size: 32.0);
+
+                          return Icon(icon, size: 32);
                         }),
                       ),
                       const SizedBox(width: 20),
@@ -128,36 +124,40 @@ class CreateLinkCallScreen extends StatelessWidget {
                 children: [
                   Text(S.of(context).callType, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
-                  Obx(() => Text(
-                    callTypeController.selectedCallType.value,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey),
-                  )),
+                  Obx(() => Text(callTypeController.selectedCallType.value, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd))),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 25),
           const Divider(height: 0, thickness: 1),
-          InkWell(
-            onTap: () {
-              String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
+          Material(
+            color: ChatifyColors.transparent,
+            child: InkWell(
+              splashFactory: NoSplash.splashFactory,
+              splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+              highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+              hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+              onTap: () {
+                String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
 
-              Navigator.push(context, createPageRoute(SendFileScreen(linkToSend: invitationLink, fileToSend: '')));
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
-                    onPressed: () {},
-                  ),
-                  const SizedBox(width: 20),
-                  SizedBox(
-                    width: 200,
-                    child: Text(S.of(context).sendLinkViaApp, style: TextStyle(fontSize: ChatifySizes.fontSizeLg), softWrap: true),
-                  )
-                ],
+                Navigator.push(context, createPageRoute(SendFileScreen(linkToSend: invitationLink, fileToSend: '')));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 20),
+                    SizedBox(
+                      width: 200,
+                      child: Text(S.of(context).sendLinkViaApp, style: TextStyle(fontSize: ChatifySizes.fontSizeLg), softWrap: true),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -172,10 +172,7 @@ class CreateLinkCallScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: ChatifyColors.darkGrey),
-                    onPressed: () {},
-                  ),
+                  IconButton(icon: const Icon(Icons.copy, color: ChatifyColors.darkGrey), onPressed: () {}),
                   const SizedBox(width: 20),
                   Text(S.of(context).copyLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                 ],
@@ -184,20 +181,14 @@ class CreateLinkCallScreen extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              String invitationLink = _buildInvitationLink(
-                callTypeController.selectedCallType.value,
-                callTypeController.invitationId.value,
-              );
+              String invitationLink = _buildInvitationLink(callTypeController.selectedCallType.value, callTypeController.invitationId.value);
               SharePlus.instance.share(ShareParams(text: invitationLink));
             },
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.share_outlined, color: ChatifyColors.darkGrey),
-                    onPressed: () {},
-                  ),
+                  IconButton(icon: const Icon(Icons.share_outlined, color: ChatifyColors.darkGrey), onPressed: () {}),
                   const SizedBox(width: 20),
                   Text(S.of(context).shareLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
                 ],

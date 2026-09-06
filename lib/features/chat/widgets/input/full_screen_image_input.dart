@@ -149,7 +149,7 @@ class _FullScreenImageInputState extends State<FullScreenImageInput> {
                               transform: Matrix4.translationValues(0, isZoomAppDropdown ? 2.0 : 0, 0),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 15, height: 15, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.white),
+                                child: SvgPicture.asset(ChatifyVectors.arrowDown, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.grey : ChatifyColors.white, BlendMode.srcIn)),
                               ),
                             ),
                           ),

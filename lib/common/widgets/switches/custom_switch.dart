@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../features/personalization/widgets/dialogs/light_dialog.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_vectors.dart';
 
 class CustomSwitch extends StatefulWidget {
   final bool value;
@@ -97,14 +99,12 @@ class CustomSwitchState extends State<CustomSwitch> {
                         height: widget.thumbSize,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isOn ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.white : ChatifyColors.darkGrey,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                            ),
-                          ],
+                          color: isOn ? context.isDarkMode ? ChatifyColors.black : ChatifyColors.white : ChatifyColors.darkerGrey,
+                        ),
+                        alignment: Alignment.center,
+                        child: isOn
+                          ? SvgPicture.asset(ChatifyVectors.check, width: 15, height: 15, colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn))
+                          : SvgPicture.asset(ChatifyVectors.minus, width: 13, height: 13, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
                         ),
                       ),
                     ),

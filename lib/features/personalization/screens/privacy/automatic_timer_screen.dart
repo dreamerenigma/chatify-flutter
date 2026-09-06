@@ -45,14 +45,7 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).automaticTimer, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -62,6 +55,7 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? S.of(context).off;
+
                 Navigator.pop(context, result);
               },
             ),
@@ -78,22 +72,26 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
             ),
           ),
-          ..._options.map((option) {
-            return RadioListTile(
-              value: option['value'],
-              groupValue: _selectedOption,
-              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-              activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              onChanged: (value) {
-                _saveSelection(value as String);
-              },
-              visualDensity: const VisualDensity(vertical: -2),
-              title: Text(
-                  option['label']!,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
-            );
-          }),
+          RadioGroup<String>(
+            groupValue: _selectedOption,
+            onChanged: (value) {
+              if (value != null) {
+                _saveSelection(value);
+              }
+            },
+            child: Column(
+              children: _options.map((option) {
+                return RadioListTile<String>(
+                  value: option['value']!,
+                  hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  visualDensity: const VisualDensity(vertical: -2),
+                  title: Text(option['label']!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                );
+              }).toList(),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: RichText(
@@ -109,7 +107,7 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
                     ),
                   ]
                   : [
-                      TextSpan(text: S.of(context).notAffectApplyMessageTimerExistingChats),
+                    TextSpan(text: S.of(context).notAffectApplyMessageTimerExistingChats),
                   TextSpan(
                     text: S.of(context).selectThem,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),

@@ -48,18 +48,19 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
   void _handleDoubleTap() {
     if (transformationController.value != Matrix4.identity()) {
       transformationController.value = Matrix4.identity();
+
       setState(() {
         _isAppBarVisible = true;
       });
     } else {
       final position = _doubleTapDetails.localPosition;
       const scale = 2.0;
+
       final x = -position.dx * (scale - 1);
       final y = -position.dy * (scale - 1);
 
-      transformationController.value = Matrix4.identity()
-        ..translate(x, y)
-        ..scale(scale);
+      transformationController.value = Matrix4.identity()..translateByDouble(x, y, 0, 1)..scaleByDouble(scale, scale, 1, 1);
+
       setState(() {
         _isAppBarVisible = false;
       });

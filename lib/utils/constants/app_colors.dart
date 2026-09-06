@@ -80,6 +80,7 @@ class ChatifyColors {
   static const Color greenColor = Color(0xFF4CA173);
   static const Color ascentBlue = Color(0xFF155E93);
   static const Color yellow = Color(0xFFF7CC76);
+  static const Color brown = Color(0xFF7C645B);
   static const Color ascentRed = Color(0xFFC42B1C);
   static const Color red = Color(0xFFFF0000);
   static const Color danger = Color(0xFFFB5061);

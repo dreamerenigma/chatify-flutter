@@ -143,7 +143,7 @@ Widget _buildFilterChats({
                   iconPath,
                   width: iconSize,
                   height: iconSize,
-                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
                   placeholderBuilder: (context) => Icon(
                     icon ?? Icons.image_not_supported,
                     size: iconSize,

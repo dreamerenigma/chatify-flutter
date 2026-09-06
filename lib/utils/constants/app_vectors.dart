@@ -137,6 +137,7 @@ class ChatifyVectors {
   static const String questionSupport = "assets/vectors/question_support.svg";
   static const String addFavorite = "assets/vectors/add_favorite.svg";
   static const String specialFeatures = "assets/vectors/special_features.svg";
+  static const String createGroup = "assets/vectors/create_group.svg";
   static const String vk = "assets/vectors/vk.svg";
   static const String ok = "assets/vectors/ok.svg";
   static const String megaphone = "assets/vectors/megaphone.svg";
@@ -164,6 +165,7 @@ class ChatifyVectors {
   static const String pauseFilled = "assets/vectors/pause_filled.svg";
   static const String pauseOutline = "assets/vectors/pause_outline.svg";
   static const String sticker = "assets/vectors/sticker.svg";
+  static const String textFormat = "assets/vectors/text_format.svg";
   static const String arrowBendDoubleUpRight = "assets/vectors/arrow_bend_double_up_right.svg";
   static const String star = "assets/vectors/star.svg";
   static const String starFilled = "assets/vectors/star_filled.svg";
@@ -176,6 +178,8 @@ class ChatifyVectors {
   static const String leaf = "assets/vectors/leaf.svg";
   static const String timeOutline = "assets/vectors/time_outline.svg";
   static const String remove = "assets/vectors/remove.svg";
+  static const String minus = "assets/vectors/minus.svg";
+  static const String check = "assets/vectors/check.svg";
   static const String searchOutline = "assets/vectors/search_outline.svg";
   static const String imageOutline = "assets/vectors/image_outline.svg";
   static const String cropOutline = "assets/vectors/crop_outline.svg";
@@ -184,9 +188,15 @@ class ChatifyVectors {
   static const String settingsOutline = "assets/vectors/settings_outline.svg";
   static const String folder = "assets/vectors/folder.svg";
   static const String person = "assets/vectors/person.svg";
+  static const String personTime = "assets/vectors/person_time.svg";
   static const String storage = "assets/vectors/storage.svg";
   static const String privateCalls = "assets/vectors/private_calls.svg";
   static const String lockCheck = "assets/vectors/lock_check.svg";
+  static const String arrowBendLeft = "assets/vectors/arrow_bend_left.svg";
+  static const String scheduledCallsBlue = "assets/vectors/scheduled_calls_blue.svg";
+  static const String scheduledCallsGreen = "assets/vectors/scheduled_calls_green.svg";
+  static const String scheduledCallsRed = "assets/vectors/scheduled_calls_red.svg";
+  static const String scheduledCallsOrange = "assets/vectors/scheduled_calls_orange.svg";
 
   /// -- Flags country
   static const String abw = '${pathFlags}abw$format';

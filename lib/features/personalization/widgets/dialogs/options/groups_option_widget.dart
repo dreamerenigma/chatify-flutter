@@ -116,7 +116,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
                 foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                 child: SvgPicture.asset(
                   ChatifyVectors.communityUsers,
-                  color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey,
+                  colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
                   width: 28,
                   height: 28,
                 ),

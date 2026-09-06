@@ -376,10 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "callBack": MessageLookupByLibrary.simpleMessage("Перезвонить"),
     "callBackLater": MessageLookupByLibrary.simpleMessage("Я перезвоню позже."),
     "callEnded": MessageLookupByLibrary.simpleMessage("Звонок завершен"),
-    "callFrom": MessageLookupByLibrary.simpleMessage("Звонок с"),
-    "callFromUser": MessageLookupByLibrary.simpleMessage(
-      "Звонок от пользователя",
-    ),
+    "callFrom": MessageLookupByLibrary.simpleMessage("Звонок от"),
     "callLink": MessageLookupByLibrary.simpleMessage("Ссылка на звонок"),
     "callMe": MessageLookupByLibrary.simpleMessage("Позвонить мне"),
     "callName": MessageLookupByLibrary.simpleMessage("Название звонка"),
@@ -833,7 +830,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Отключить предпросмотр \nссылок",
     ),
     "disableReadReceiptsSendReceiveNotify": MessageLookupByLibrary.simpleMessage(
-      "Если вы отключите отчёты \n о прочтении, то не сможете \n отправлять и получать эти отчёты. \n Данные уведомления нельзя \n отключить для групповых чатов.",
+      "Если вы отключите отчёты о прочтении, то не сможете отправлять и получать эти отчёты. Данные уведомления нельзя отключить для групповых чатов.",
     ),
     "disabled": MessageLookupByLibrary.simpleMessage("Отключено"),
     "disappearingMessages": MessageLookupByLibrary.simpleMessage(
@@ -1268,10 +1265,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Групповое фото удалено",
     ),
     "groupPicture": MessageLookupByLibrary.simpleMessage("Картинка группы"),
-    "groups": MessageLookupByLibrary.simpleMessage("группы"),
+    "groups": MessageLookupByLibrary.simpleMessage("Группы"),
     "groupsAddedCommunityDisplayed": MessageLookupByLibrary.simpleMessage(
       "Здесь будут отображаться другие группы, добавленные в сообщество. Участники сообщества могут вступить в эти группы",
     ),
+    "groupsCount": MessageLookupByLibrary.simpleMessage("группы"),
     "groupsInCommunity": MessageLookupByLibrary.simpleMessage(
       "Группы в этом сообществе",
     ),
@@ -1609,7 +1607,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Новый чат (Ctrl+N) \nНовая группа (Ctrl+Shift+N)",
     ),
     "newChatsMessagesDisappearAccording": MessageLookupByLibrary.simpleMessage(
-      "Начинайте новые чаты \n с сообщениями, которые будут \n исчезать в соответствии с заданным \n таймером.",
+      "Начинайте новые чаты с сообщениями, которые будут исчезать в соответствии с заданным таймером.",
     ),
     "newChatsMessagesDisappearSetTimer": MessageLookupByLibrary.simpleMessage(
       "Начинайте новые чаты с сообщениями, которые будут исчезать в соответствии с заданным таймером.",
@@ -2266,10 +2264,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "settingApplyCommunityAdSets": MessageLookupByLibrary.simpleMessage(
       "Эта настройка не применяется к группам объявлений сообщества. При добавлении в сообщество вы автоматически добавляетесь в группу объявлений сообщества.",
     ),
-    "settings": MessageLookupByLibrary.simpleMessage(" Настройки "),
+    "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
     "settingsArchive": MessageLookupByLibrary.simpleMessage(
       "Настройки архивации",
     ),
+    "settingsPhone": MessageLookupByLibrary.simpleMessage(" Настройки "),
     "settingsSaved": MessageLookupByLibrary.simpleMessage(
       "Ваши настройки сохранены",
     ),
@@ -2574,12 +2573,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unread": MessageLookupByLibrary.simpleMessage("Непрочитанное"),
     "unreadChats": MessageLookupByLibrary.simpleMessage("Непрочитанные чаты"),
-    "update": MessageLookupByLibrary.simpleMessage("Обновление..."),
+    "update": MessageLookupByLibrary.simpleMessage("Обновить"),
     "updateMessage": MessageLookupByLibrary.simpleMessage(
       "Редактировать сообщение",
     ),
     "useEffectsDuringVideoCalls": MessageLookupByLibrary.simpleMessage(
-      "Используйте эффекты во время \n съемки и видеозвонков. ",
+      "Используйте эффекты во время съемки и видеозвонков. ",
     ),
     "useFingerprintFaceRecognition": MessageLookupByLibrary.simpleMessage(
       "Используйте отпечаток пальца или функцию распознавания лица дял открытия Chatify на своем устройстве.",

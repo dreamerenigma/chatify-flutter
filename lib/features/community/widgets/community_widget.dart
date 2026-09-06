@@ -63,7 +63,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(14)),
-                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.megaphone, color: ChatifyColors.white, width: 24, height: 24))),
+                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.megaphone, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)))),
                     ),
                     const SizedBox(width: 16),
                     _buildAds(context),
@@ -79,11 +79,11 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
           Material(
             color: ChatifyColors.transparent,
             child: InkWell(
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
               onTap: () {
                 Navigator.push(context, createPageRoute(const GeneralChatScreen()));
               },
-              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -173,11 +173,11 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {
           Navigator.push(context, createPageRoute(CommunityInfoScreen(community: widget.community, isValidDate: widget.isValidDate, fileToSend: '')));
         },
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         child: Container(
           padding: const EdgeInsets.only(left: 28, top: 16, bottom: 16),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),

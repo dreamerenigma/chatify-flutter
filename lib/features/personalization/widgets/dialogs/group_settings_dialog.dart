@@ -227,7 +227,7 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
                       options[index]['icon'],
                       width: options[index]['iconSize']?.toDouble() ?? 24.0,
                       height: options[index]['iconSize']?.toDouble() ?? 24.0,
-                      color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                     )
                     : Icon(
                       options[index]['icon'],

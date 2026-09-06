@@ -266,7 +266,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Switch(
               value: value,
               onChanged: onChanged,
-              activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
             ),
           ],
@@ -339,7 +339,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   onChanged(newValue);
                   _saveState(title, newValue);
                 },
-                activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
               ),
             ],

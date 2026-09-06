@@ -28,12 +28,12 @@ class EncryptionInfoBlock extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _buildInfoRow(
-          SvgPicture.asset(ChatifyVectors.text, width: 16, height: 16, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          SvgPicture.asset(ChatifyVectors.text, width: 16, height: 16, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
           S.of(context).textVoiceMessages,
           width: 13,
         ),
         _buildInfoRow(
-          SvgPicture.asset(ChatifyVectors.calls, width: 20, height: 20, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          SvgPicture.asset(ChatifyVectors.calls, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
           S.of(context).audioVideoCalls,
           width: 10,
         ),
@@ -43,12 +43,12 @@ class EncryptionInfoBlock extends StatelessWidget {
           width: 12,
         ),
         _buildInfoRow(
-          SvgPicture.asset(ChatifyVectors.locationPin, width: 19, height: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          SvgPicture.asset(ChatifyVectors.locationPin, width: 19, height: 19, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
           S.of(context).yourLocation,
           width: 12,
         ),
         _buildInfoRow(
-          SvgPicture.asset(ChatifyVectors.status, width: 19, height: 19, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          SvgPicture.asset(ChatifyVectors.status, width: 19, height: 19, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
           S.of(context).statusUpdates,
           width: 12,
         ),

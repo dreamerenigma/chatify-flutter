@@ -1,4 +1,3 @@
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/gestures.dart';
@@ -9,12 +8,12 @@ import 'package:get_storage/get_storage.dart';
 import '../../../api/apis.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
-import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../calls/screens/calls_screen.dart';
 import '../../chat/models/user_model.dart';
+import '../../chat/models/user_status_model.dart';
 import '../../community/screens/community_screen.dart';
 import '../../home/screens/home_screen.dart';
 import '../../home/widgets/app_bars/home_app_bar.dart';
@@ -24,6 +23,7 @@ import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../controllers/expanded_controller.dart';
 import '../widgets/buttons/status_fab.dart';
 import '../widgets/dialogs/add_status_bottom_dialog.dart';
+import '../widgets/widgets/viewed_status_widget.dart';
 import 'confidentiality_status_screen.dart';
 
 class StatusScreen extends StatefulWidget {
@@ -42,8 +42,9 @@ class StatusScreenState extends State<StatusScreen> {
   final isExpanded = false.obs;
   final RxList<String> viewedUserIds = <String>[].obs;
   bool isSearching = false;
-  List<UserModel> list = [];
   int selectedIndex = 1;
+  List<UserModel> list = [];
+  UserStatusModel? userStatus;
 
   void markStatusAsViewed(String userId) {
     if (!viewedUserIds.contains(userId)) {
@@ -209,11 +210,20 @@ class StatusScreenState extends State<StatusScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(S.of(context).addStatus, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w600)),
-                          Text(
-                            S.of(context).addNewStatus,
-                            style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                          if (userStatus != null)
+                            Row(
+                              children: [
+                                ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network(userStatus!.mediaUrl, width: 32, height: 32, fit: BoxFit.cover)),
+                                const SizedBox(width: 8),
+                                Text('Фото', style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey)),
+                              ],
+                            )
+                          else
+                            Text(
+                              widget.user.status.isNotEmpty ? widget.user.status : S.of(context).addNewStatus,
+                              style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                           ),
                         ],
                       ),
@@ -222,7 +232,7 @@ class StatusScreenState extends State<StatusScreen> {
                 ),
               ),
             ),
-            Obx(() => viewedUserIds.isNotEmpty ? _buildViewedStatus() : const SizedBox.shrink()),
+            Obx(() => viewedUserIds.isNotEmpty ? ViewedStatusWidget(expandController: expandController, colorsController: colorsController) : const SizedBox.shrink()),
             if (!expandController.isExpanded.value) const SizedBox(height: 8),
             const Divider(height: 0, thickness: 1),
             const SizedBox(height: 16),
@@ -230,97 +240,6 @@ class StatusScreenState extends State<StatusScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildViewedStatus() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, right: 12),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                expandController.isExpanded.value = !expandController.isExpanded.value;
-              });
-            },
-            child: Row(
-              children: [
-                Text(S.of(context).viewed, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-                const Spacer(),
-                AnimatedRotation(
-                  duration: const Duration(milliseconds: 200),
-                  turns: expandController.isExpanded.value ? 0.5 : 0.0,
-                  child: Icon(Icons.keyboard_arrow_down_rounded, size: 24, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
-                ),
-              ],
-            ),
-          ),
-        ),
-        expandController.isExpanded.value
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                children: [
-                  Stack(
-                    alignment: Alignment.centerRight,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, width: 2.2)),
-                        child: Container(
-                          width: DeviceUtils.getScreenHeight(context) * .07,
-                          height: DeviceUtils.getScreenHeight(context) * .07,
-                          decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
-                          child: Center(child: Image.asset(ChatifyImages.appLogoLight, width: 34, height: 34, fit: BoxFit.contain)),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(S.of(context).appName, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
-                            const SizedBox(width: 4),
-                            Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    SvgPicture.asset(ChatifyVectors.starburst, width: 16, height: 16, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
-                                    SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-                                  ],
-                                ),
-                                const Positioned(
-                                  top: 3,
-                                  right: 3,
-                                  child: Icon(BootstrapIcons.check, size: 13, color: ChatifyColors.white),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Сегодня, 14:56',
-                          style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : const SizedBox.shrink(),
-      ],
     );
   }
 

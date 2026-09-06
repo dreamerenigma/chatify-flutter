@@ -39,14 +39,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-              spreadRadius: 1,
-              blurRadius: 3,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
         ),
         child: AppBar(
           automaticallyImplyLeading: false,
@@ -76,7 +69,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             : title,
           actions: [
             if (onCameraPressed != null)
-              IconButton(icon: const Icon(Icons.camera_alt_outlined), onPressed: onCameraPressed),
+              IconButton(icon: const Icon(Icons.camera_alt_outlined, size: 26), onPressed: onCameraPressed),
             SizedBox(width: 4),
             if (showSearch)
               IconButton(onPressed: onToggleSearch, icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search)),

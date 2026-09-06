@@ -145,7 +145,7 @@ Widget _buildTopPanel(BuildContext context, List<ImageProvider> frames) {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 14),
           decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.grey, borderRadius: BorderRadius.circular(8)),
-          child: SvgPicture.asset(ChatifyVectors.arrowLeftWide, width: 27, height: 27, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          child: SvgPicture.asset(ChatifyVectors.arrowLeftWide, width: 27, height: 27, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
         ),
         const SizedBox(width: 2),
         Expanded(
@@ -180,7 +180,7 @@ Widget _buildTopPanel(BuildContext context, List<ImageProvider> frames) {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 14),
           decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.grey, borderRadius: BorderRadius.circular(8)),
-          child: SvgPicture.asset(ChatifyVectors.arrowRightWide, width: 27, height: 27, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          child: SvgPicture.asset(ChatifyVectors.arrowRightWide, width: 27, height: 27, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
         ),
       ],
     ),

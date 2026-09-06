@@ -99,7 +99,7 @@ class _AllPopularArticlesScreenState extends State<AllPopularArticlesScreen> {
                   ));
                 }
               },
-              icon: SvgPicture.asset(ChatifyVectors.questionSupport, width: 20, height: 20, color: ChatifyColors.black),
+              icon: SvgPicture.asset(ChatifyVectors.questionSupport, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
               label: Text(S.of(context).connectWithUs, style: TextStyle(color: ChatifyColors.black, fontWeight: FontWeight.w300)),
               style: ElevatedButton.styleFrom(
                 foregroundColor: ChatifyColors.white,
@@ -132,12 +132,7 @@ class _AllPopularArticlesScreenState extends State<AllPopularArticlesScreen> {
   }
 
   Widget _buildArticleTile(BuildContext context, String title, VoidCallback? onTap) {
-    return _buildSettingsTile(
-      context: context,
-      icon: FluentIcons.document_one_page_20_regular,
-      title: title,
-      onTap: onTap,
-    );
+    return _buildSettingsTile(context: context, icon: FluentIcons.document_one_page_20_regular, title: title, onTap: onTap);
   }
 
   Widget _buildAllPopularArticlesSection(BuildContext context, List<String> articles) {
@@ -150,9 +145,7 @@ class _AllPopularArticlesScreenState extends State<AllPopularArticlesScreen> {
           child: Text(S.of(context).allPopularArticles, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
         ),
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .01),
-        Column(
-          children: _buildArticleListWithDividers(context, articles),
-        ),
+        Column(children: _buildArticleListWithDividers(context, articles)),
       ],
     );
 

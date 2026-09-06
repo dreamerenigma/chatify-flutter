@@ -62,25 +62,26 @@ class ShowMessageUpdateDialog {
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(S.of(context).cancel,
-              style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
-            ),
+            child: Text(S.of(context).cancel, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              APIs.updateMessage(message, updateMsg).then((_) {
+
+              try {
+                await APIs.updateMessage(message, updateMsg);
                 onUpdate();
-              });
+              } catch (e, stackTrace) {
+                debugPrint('❌ Ошибка обновления сообщения: $e');
+                debugPrintStack(stackTrace: stackTrace);
+              }
             },
             style: TextButton.styleFrom(
               foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            child: Text(S.of(context).update,
-              style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
-            ),
+            child: Text(S.of(context).update, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd)),
           ),
         ],
       ),

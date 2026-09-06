@@ -1,7 +1,9 @@
+import 'package:chatify/features/calls/screens/schedule_call_screen.dart';
 import 'package:chatify/features/calls/screens/scheduled_calls_screen.dart';
 import 'package:chatify/features/calls/screens/select_contact_screen.dart';
 import 'package:chatify/features/calls/widgets/dialog/clear_calls_dialog.dart';
 import 'package:chatify/features/community/screens/community_screen.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -18,8 +20,12 @@ import '../../personalization/screens/favorite/favorite_screen.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../status/screens/status_screen.dart';
+import '../models/recent_call_model.dart';
+import '../widgets/actions/calls_quick_action.dart';
+import '../widgets/lists/recent_calls_list.dart';
 import '../widgets/popups/items/app_popup_menu_item.dart';
-import 'add_calls_favorite_screen.dart';
+import '../widgets/test_recent_calls.dart';
+import 'call_phone_number.dart';
 
 class CallsScreen extends StatefulWidget {
   final UserModel user;
@@ -32,6 +38,7 @@ class CallsScreen extends StatefulWidget {
 
 class CallsScreenState extends State<CallsScreen> {
   final List<UserModel> searchList = [];
+  final List<RecentCallModel> recentCalls = testRecentCalls;
   bool isSearching = false;
   int selectedIndex = 3;
   List<UserModel> list = [];
@@ -99,6 +106,7 @@ class CallsScreenState extends State<CallsScreen> {
                 menuPadding: EdgeInsets.symmetric(vertical: 4),
                 constraints: const BoxConstraints(minWidth: 0, maxWidth: 250),
                 icon: const Icon(Icons.more_vert),
+                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith((states) {
@@ -110,16 +118,6 @@ class CallsScreenState extends State<CallsScreen> {
                   shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
                 ),
-                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
-                onSelected: (value) {
-                  if (value == 1) {
-                    const ClearCallsDialog().showClearCallsDialog(context, (String? image) {}, () {});
-                  } else if (value == 2) {
-                    Navigator.push(context, createPageRoute(ScheduledCallsScreen()));
-                  } else if (value == 3) {
-                    Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
-                  }
-                },
                 itemBuilder: (context) => [
                   if (list.isNotEmpty)
                     PopupMenuItem(
@@ -130,6 +128,7 @@ class CallsScreenState extends State<CallsScreen> {
                         text: S.of(context).clearList,
                         onTap: () {
                           Navigator.pop(context);
+                          const ClearCallsDialog().showClearCallsDialog(context, (String? image) {}, () {});
                         },
                       ),
                     ),
@@ -141,6 +140,7 @@ class CallsScreenState extends State<CallsScreen> {
                       text: 'Запланированные звонки',
                       onTap: () {
                         Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(ScheduledCallsScreen(user: widget.user)));
                       },
                     ),
                   ),
@@ -152,6 +152,7 @@ class CallsScreenState extends State<CallsScreen> {
                       text: S.of(context).settings,
                       onTap: () {
                         Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
                       },
                     ),
                   ),
@@ -190,7 +191,7 @@ class CallsScreenState extends State<CallsScreen> {
                   ),
                 )
           : null,
-        body: list.isEmpty ? _buildEmptyCallsState() : _buildCallsContent(),
+        body: recentCalls.isEmpty ? _buildEmptyCallsState() : _buildCallsContent(),
       ),
     );
   }
@@ -215,56 +216,33 @@ class CallsScreenState extends State<CallsScreen> {
   }
 
   Widget _buildCallsContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
-              Material(
-                color: ChatifyColors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(context, createPageRoute(const FavoriteScreen()));
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightBackground, borderRadius: BorderRadius.circular(20)),
-                    child: Icon(Icons.keyboard_arrow_right_rounded, size: 22),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.push(context, createPageRoute(const AddCallsFavoriteScreen()));
-          },
-          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  radius: 21,
-                  child: const Icon(Icons.favorite, color: ChatifyColors.black, size: 20),
-                ),
-                const SizedBox(width: 16),
-                Expanded(child: Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500))),
-              ],
+    return ScrollConfiguration(
+      behavior: NoGlowScrollBehavior(),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CallsQuickActions(
+              onNewCall: () {
+                Navigator.push(context, createPageRoute(SelectContactScreen(user: widget.user)));
+              },
+              onScheduled: () {
+                Navigator.push(context, createPageRoute(ScheduleCallScreen(user: widget.user)));
+              },
+              onKeyboard: () {
+                Navigator.push(context, createPageRoute(const CallPhoneNumber()));
+              },
+              onFavorites: () {
+                Navigator.push(context, createPageRoute(FavoriteScreen()));
+              },
             ),
-          ),
+            RecentCallsList(
+              calls: recentCalls,
+              onCallTap: (call) {},
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

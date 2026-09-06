@@ -111,11 +111,11 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                       errorWidget: (context, error, stackTrace) => CircleAvatar(
                         backgroundColor: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
                         foregroundColor:  context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.communityUsers, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.communityUsers, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

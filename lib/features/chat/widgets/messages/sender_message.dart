@@ -133,8 +133,8 @@ class SenderMessageState extends State<SenderMessage> {
               decoration: BoxDecoration(
                 color: isPressed
                   ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey)
-                  : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder),
+                  : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight),
+                border: Border.all(color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.blueMessageBorder),
                 borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                 boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 2))],
               ),
@@ -219,67 +219,67 @@ class SenderMessageState extends State<SenderMessage> {
                 child: CustomPaint(
                   size: const Size(10, 10),
                   painter: TrianglePainter(
-                    fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
-                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder,
+                    fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight),
+                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageBorder),
                   ),
                 ),
               ),
             ),
             if (widget.message.type == MessageType.emoji)
-            Positioned(
-              left: 0,
-              top: 0,
-              child: EmojiMessage(
-                emoji: widget.message.msg,
-                isHovered: isHovered,
-                isPressed: isPressed,
-                borderColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              Positioned(
+                left: 0,
+                top: 0,
+                child: EmojiMessage(
+                  emoji: widget.message.msg,
+                  isHovered: isHovered,
+                  isPressed: isPressed,
+                  borderColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                ),
               ),
-            ),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
-            Positioned(
-              right: -35,
-              top: 0,
-              bottom: 0,
-              child: AnimatedSlide(
-                offset: isHovered ? Offset.zero : const Offset(-1.0, 0),
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOut,
-                child: AnimatedOpacity(
-                  opacity: isHovered ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 300),
+              Positioned(
+                right: -35,
+                top: 0,
+                bottom: 0,
+                child: AnimatedSlide(
+                  offset: isHovered ? Offset.zero : const Offset(-1.0, 0),
+                  duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOut,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOutBack,
-                    width: isHovered ? null : 0,
-                    constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
-                    clipBehavior: Clip.hardEdge,
-                    decoration: const BoxDecoration(),
-                    child: MouseRegion(
-                      onEnter: (_) {
-                        setState(() {
-                          hoveredMessage = widget.message;
-                        });
-                      },
-                      onExit: (_) {
-                        setState(() {
-                          if (hoveredMessage == widget.message) {
-                            hoveredMessage = null;
-                          }
-                        });
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          EmojiHoverButton(containerKey: _containerKey),
-                        ],
+                  child: AnimatedOpacity(
+                    opacity: isHovered ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOutBack,
+                      width: isHovered ? null : 0,
+                      constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(),
+                      child: MouseRegion(
+                        onEnter: (_) {
+                          setState(() {
+                            hoveredMessage = widget.message;
+                          });
+                        },
+                        onExit: (_) {
+                          setState(() {
+                            if (hoveredMessage == widget.message) {
+                              hoveredMessage = null;
+                            }
+                          });
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            EmojiHoverButton(containerKey: _containerKey),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

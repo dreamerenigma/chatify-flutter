@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
+import '../../../../utils/constants/app_color_assets.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -65,7 +67,7 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 40),
-                  Center(child: SvgPicture.asset(colorsController.getImagePath(), width: 70, height: 70)),
+                  Center(child: SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.strongbox), width: 70, height: 70)),
                   const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -108,11 +110,13 @@ class _NotificationsSecurityScreenState extends State<NotificationsSecurityScree
                                 child: Text(S.of(context).securityNotificationsDevice, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                               ),
                               const SizedBox(width: 12),
-                              Switch(
+                              CustomSwitch(
                                 value: isNotifySecurityEnabled,
                                 onChanged: toggleSwitch,
-                                activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                                switchWidth: 58,
+                                switchHeight: 35,
+                                thumbSize: 27,
+                                thumbPadding: 3,
                               ),
                             ],
                           ),

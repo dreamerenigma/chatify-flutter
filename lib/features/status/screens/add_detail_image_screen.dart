@@ -12,7 +12,6 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/icons/custom_icon.dart';
 import '../widgets/dialogs/update_status_bottom_dialog.dart';
 import '../widgets/inputs/detail_image_input.dart';
 
@@ -72,27 +71,45 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
     return Scaffold(
       body: Stack(
         children: [
-          Center(
-            child: Image.file(widget.imageFile),
+          Center(child: Image.file(widget.imageFile)),
+          Positioned(
+            top: 40,
+            left: 16,
+            child: _buildIcon(icon: Icon(Icons.close), color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () => Navigator.pop(context)),
           ),
           Positioned(
             top: 40,
-            left: 16.0,
-            child: _buildIcon(icon: Icons.close, color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () => Navigator.pop(context)),
-          ),
-          Positioned(
-            top: 40,
-            right: 16.0,
+            right: 16,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildIcon(icon: Icon(Icons.crop_rotate_outlined), color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () {}),
+                _buildIcon(
+                  icon: const Icon(Icons.crop_rotate_outlined, color: ChatifyColors.white),
+                  color: ChatifyColors.blackGrey,
+                  iconSize: 25,
+                  onPressed: () {},
+                ),
                 const SizedBox(width: 16),
-                _buildIcon(icon: ChatifyVectors.sticker, color: ChatifyColors.blackGrey, iconSize: 27, onPressed: () {}),
+                _buildIcon(
+                  icon: SvgPicture.asset(ChatifyVectors.sticker, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+                  color: ChatifyColors.blackGrey,
+                  iconSize: 27,
+                  onPressed: () {},
+                ),
                 const SizedBox(width: 16),
-                _buildIcon(icon: Icons.text_fields, color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () {}),
+                _buildIcon(
+                  icon: SvgPicture.asset(ChatifyVectors.textFormat, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+                  color: ChatifyColors.blackGrey,
+                  iconSize: 25,
+                  onPressed: () {},
+                ),
                 const SizedBox(width: 16),
-                _buildIcon(icon: Icons.mode_edit_outlined, color: ChatifyColors.blackGrey, iconSize: 25, onPressed: () {}),
+                _buildIcon(
+                  icon: const Icon(Icons.mode_edit_outlined, color: ChatifyColors.white),
+                  color: ChatifyColors.blackGrey,
+                  iconSize: 25,
+                  onPressed: () {},
+                ),
               ],
             ),
           ),
@@ -138,22 +155,25 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
         padding: const EdgeInsets.only(left: 10, top: 8, bottom: 8),
         child: Row(
           children: [
-            InkWell(
-              onTap: () {
-                showUpdateStatusSheetDialog(context);
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: ChatifyColors.darkSlate,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Row(
-                  children: [
-                    SvgPicture.asset(ChatifyVectors.status, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn) , width: 16),
-                    const SizedBox(width: 8),
-                    Text(S.of(context).statusContacts, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
-                  ],
+            Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                onTap: () {
+                  showUpdateStatusSheetDialog(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: ChatifyColors.darkSlate,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(ChatifyVectors.status, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn) , width: 16),
+                      const SizedBox(width: 8),
+                      Text(S.of(context).statusContacts, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -164,12 +184,14 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                 radius: 25,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 child: IconButton(
-                  icon: const Icon(Icons.send, color: ChatifyColors.white, size: 25),
+                  icon: Padding(padding: const EdgeInsets.only(left: 3), child: const Icon(Icons.send, color: ChatifyColors.black, size: 23)),
                   onPressed: () async {
                     try {
-                      String imageUrl = await APIs.uploadImage(widget.imageFile);
+                      final imageUrl = await APIs.uploadStatusImage(widget.imageFile);
 
-                      await APIs.addStatus(imageUrl, '', DateTime.now());
+                      await APIs.addStatus(mediaUrl: imageUrl, type: 'image');
+
+                      if (!mounted) return;
 
                       Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
                     } catch (e) {
@@ -185,11 +207,16 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
     );
   }
 
-  Widget _buildIcon({required dynamic icon, required Color color, required double iconSize, required VoidCallback onPressed}) {
-    return CircleAvatar(
-      backgroundColor: color,
-      radius: 22,
-      child: Center(child: IconButton(icon: CustomIcon(icon: icon, color: ChatifyColors.white, size: iconSize), onPressed: onPressed)),
+  Widget _buildIcon({required Widget icon, required Color color, required double iconSize, required VoidCallback onPressed}) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 45,
+        height: 45,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        alignment: Alignment.center,
+        child: SizedBox(width: iconSize, height: iconSize, child: icon),
+      ),
     );
   }
 }

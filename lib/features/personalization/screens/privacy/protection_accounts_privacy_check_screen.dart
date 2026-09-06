@@ -141,12 +141,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
           children: [
             if (icon != null) Icon(icon, color: ChatifyColors.darkGrey, size: 26)
             else if (svgIconPath != null)
-              SvgPicture.asset(
-                svgIconPath,
-                color: ChatifyColors.darkGrey,
-                width: 26,
-                height: 26,
-              )
+              SvgPicture.asset(svgIconPath, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 26, height: 26)
             else
               const SizedBox(width: 26, height: 26),
             const SizedBox(width: 25),

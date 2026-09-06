@@ -158,7 +158,7 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
             Switch(
               value: switchValue,
               onChanged: onChanged,
-              activeColor: color,
+              activeThumbColor: color,
               activeTrackColor: color.withAlpha((0.5 * 255).toInt()),
             ),
           ],

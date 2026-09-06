@@ -15,8 +15,8 @@ class OverlayColorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     final savedColor = box.read(_colorKey);
+
     if (savedColor != null && savedColor is int) {
       overlayColor.value = Color(savedColor);
     }
@@ -60,7 +60,7 @@ class OverlayColorController extends GetxController {
 
     overlayColor.value = resetColor;
     overlayGradient.value = null;
-    box.write(_colorKey, resetColor.value);
+    box.write(_colorKey, resetColor.toARGB32());
     box.remove(_gradientKey);
   }
 
@@ -78,11 +78,7 @@ class OverlayColorController extends GetxController {
     Alignment begin = _parseAlignment(data['begin']);
     Alignment end = _parseAlignment(data['end']);
 
-    return LinearGradient(
-      colors: colors,
-      begin: begin,
-      end: end,
-    );
+    return LinearGradient(colors: colors, begin: begin, end: end);
   }
 
   Alignment _parseAlignment(String alignmentStr) {

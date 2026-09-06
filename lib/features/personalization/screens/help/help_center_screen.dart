@@ -119,7 +119,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
                   ));
                 }
               },
-              icon: SvgPicture.asset(ChatifyVectors.questionSupport, width: 20, height: 20, color: ChatifyColors.black),
+              icon: SvgPicture.asset(ChatifyVectors.questionSupport, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
               label: Text(S.of(context).connectWithUs, style: TextStyle(color: ChatifyColors.black, fontWeight: FontWeight.w300)),
               style: ElevatedButton.styleFrom(
                 foregroundColor: ChatifyColors.white,
@@ -151,18 +151,11 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
   }
 
   Widget _buildArticleTile(String title, VoidCallback? onTap) {
-    return _buildSettingsTile(
-      icon: FluentIcons.document_one_page_20_regular,
-      title: title,
-      onTap: onTap,
-    );
+    return _buildSettingsTile(icon: FluentIcons.document_one_page_20_regular, title: title, onTap: onTap);
   }
 
   Widget _buildLogo(String logoAsset) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Center(child: Image.asset(logoAsset, width: 100, height: 100)),
-    );
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: Center(child: Image.asset(logoAsset, width: 100, height: 100)));
   }
 
   Widget _buildSearchBar(BuildContext context) {

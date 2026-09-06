@@ -187,7 +187,7 @@ Widget _buildCommunicateOften(BuildContext context, UserController userControlle
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
                   errorWidget: (context, url, error) => Center(
-                    child: SvgPicture.asset(ChatifyVectors.newUser, color: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, width: 28, height: 28),
+                    child: SvgPicture.asset(ChatifyVectors.newUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, BlendMode.srcIn)),
                   ),
                 ),
               ),

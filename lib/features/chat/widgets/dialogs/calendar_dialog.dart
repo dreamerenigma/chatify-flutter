@@ -15,10 +15,9 @@ void showCalendarDialog(BuildContext context, Offset position, DateTime currentD
   final dialogController = Get.find<DialogController>();
   final overlay = Overlay.of(context);
   late OverlayEntry overlayEntry;
-  late Animation<double> animation;
   final AnimationController animationController = AnimationController(vsync: Navigator.of(context), duration: Duration(milliseconds: 300));
   final Animation<Offset> slideAnimation = Tween<Offset>(begin: Offset(0, -0.05), end: Offset(0, 0)).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic));
-  animation = Tween<double>(begin: position.dy - 50, end: position.dy).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutQuad));
+  Tween<double>(begin: position.dy - 50, end: position.dy).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutQuad));
   String capitalize(String text) => text.isNotEmpty ? text[0].toUpperCase() + text.substring(1) : text;
   bool isWindowsDialogOpen = dialogController.isWindowsDialogOpen.value;
   CalendarView currentView = CalendarView.day;
@@ -214,6 +213,7 @@ Widget _buildDayView(BuildContext context, DateTime displayedDate, DateTime? hov
                         child: InkWell(
                           onTap: () {
                             final selectedDate = DateTime(displayedDate.year, displayedDate.month, dayNumber);
+
                             overlayEntry.remove();
                           },
                           borderRadius: BorderRadius.circular(30),
@@ -333,7 +333,7 @@ Widget buildArrowButton({
             color: isEnabled && isHovered ? (context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.2 * 255).toInt())) : ChatifyColors.transparent,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: SvgPicture.asset(iconAsset, width: 14, height: 14, color: isEnabled ? (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey) : ChatifyColors.grey.withAlpha(100)),
+          child: SvgPicture.asset(iconAsset, width: 14, height: 14, colorFilter: ColorFilter.mode(isEnabled ? (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey) : ChatifyColors.grey.withAlpha(100), BlendMode.srcIn)),
         ),
       ),
     ),

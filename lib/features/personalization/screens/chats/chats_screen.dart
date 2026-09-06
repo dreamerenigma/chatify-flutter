@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
+import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -44,20 +45,11 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             automaticallyImplyLeading: false,
-            title: Text(S.of(context).chats, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400,
-              color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-            ),
+            title: Text(S.of(context).chats, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
             titleSpacing: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -81,7 +73,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20, top: 16, bottom: 16),
-                    child: Text(S.of(context).screen, style: const TextStyle(fontSize: 14)),
+                    child: Text(S.of(context).screen, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                   InkWell(
                     onTap: () {
@@ -117,7 +109,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                       child: Row(
                         children: [
                           Obx(() {
-                            return SvgPicture.asset(ChatifyVectors.seasons, color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 32);
+                            return SvgPicture.asset(ChatifyVectors.seasons, width: 32, height: 32, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn));
                           }),
                           const SizedBox(width: 16),
                           Column(
@@ -186,7 +178,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8, right: 12),
-                        child: Text(S.of(context).chatSettings, style: const TextStyle(fontSize: 14)),
+                        child: Text(S.of(context).chatSettings, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       ),
                       Obx(() {
                         return InkWell(
@@ -201,18 +193,20 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(S.of(context).sendEnterKey, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                                      Text(S.of(context).subtitleSendEnterKey, style: const TextStyle(color: ChatifyColors.darkGrey)),
+                                      Text(S.of(context).sendEnterKey, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      Text(S.of(context).subtitleSendEnterKey, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
                                     ],
                                   ),
                                 ),
-                                Switch(
+                                CustomSwitch(
                                   value: settingsController.sendWithEnter.value,
                                   onChanged: (bool value) {
                                     settingsController.toggleSendWithEnter(value);
                                   },
-                                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                                  switchWidth: 58,
+                                  switchHeight: 35,
+                                  thumbSize: 27,
+                                  thumbPadding: 3,
                                 ),
                               ],
                             ),
@@ -238,20 +232,22 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                                    Text(S.of(context).subtitleMediaVisibility, style: const TextStyle(color: ChatifyColors.darkGrey)),
+                                    Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                    Text(S.of(context).subtitleMediaVisibility, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
                                   ],
                                 ),
                               ),
-                              Switch(
+                              CustomSwitch(
                                 value: isVisibilityMedia,
                                 onChanged: (bool value) {
                                   setState(() {
                                     isVisibilityMedia = value;
                                   });
                                 },
-                                activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                                switchWidth: 58,
+                                switchHeight: 35,
+                                thumbSize: 27,
+                                thumbPadding: 3,
                               ),
                             ],
                           ),
@@ -269,11 +265,11 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(S.of(context).fontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                                    Text(S.of(context).fontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                     Obx(() {
                                       return Text(
                                         fontsController.getFontDescription(context, FontsController.instance.selectedFont.value),
-                                        style: const TextStyle(color: ChatifyColors.darkGrey),
+                                        style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
                                       );
                                     }),
                                   ],
@@ -300,25 +296,27 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                   children: [
                                     Text(
                                       S.of(context).decodingVoiceMessages,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold),
+                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(S.of(context).readNewVoiceMessages, style: TextStyle(color: ChatifyColors.darkGrey)),
+                                    Text(S.of(context).readNewVoiceMessages, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
                                   ],
                                 ),
                               ),
                               Container(
                                 alignment: Alignment.centerRight,
-                                child: Switch(
+                                child: CustomSwitch(
                                   value: isTranscriptVoiceMsg,
                                   onChanged: (bool value) {
                                     setState(() {
                                       isTranscriptVoiceMsg = value;
                                     });
                                   },
-                                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                                  switchWidth: 58,
+                                  switchHeight: 35,
+                                  thumbSize: 27,
+                                  thumbPadding: 3,
                                 ),
                               ),
                             ],
@@ -334,7 +332,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8, right: 12),
-                        child: Text(S.of(context).archivedChats, style: const TextStyle(fontSize: 14)),
+                        child: Text(S.of(context).archivedChats, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       ),
                       InkWell(
                         onTap: () {
@@ -351,19 +349,21 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(S.of(context).subtitleArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                                    Text(S.of(context).archivedChatsUnarchived, style: const TextStyle(color: Colors.grey)),
+                                    Text(S.of(context).archivedChatsUnarchived, style: const TextStyle(color: ChatifyColors.grey)),
                                   ],
                                 ),
                               ),
-                              Switch(
+                              CustomSwitch(
                                 value: isArchiveChats,
                                 onChanged: (bool value) {
                                   setState(() {
                                     isArchiveChats = value;
                                   });
                                 },
-                                activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                                switchWidth: 58,
+                                switchHeight: 35,
+                                thumbSize: 27,
+                                thumbPadding: 3,
                               ),
                             ],
                           ),
@@ -374,6 +374,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   const SizedBox(height: 8),
                   const Divider(height: 0, thickness: 1),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                     onTap: () {
                       Navigator.push(context, createPageRoute(const ChatBackupScreen()));
                     },

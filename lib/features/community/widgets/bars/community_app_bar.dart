@@ -140,7 +140,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
                   return CircleAvatar(
                     backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                     foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    child: SvgPicture.asset(ChatifyVectors.communityUsers, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, width: 28, height: 28),
+                    child: SvgPicture.asset(ChatifyVectors.communityUsers, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                   );
                 },
               ),
@@ -158,11 +158,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
                       community.name,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                      style: TextStyle(
-                        fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg,
-                        fontFamily: 'Roboto',
-                        fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400,
-                      ),
+                      style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
                     ),
                   ),
                 ),

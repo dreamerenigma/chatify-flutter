@@ -3,15 +3,15 @@ import '../../../bot/models/support_model.dart';
 import '../../../bot/widgets/cards/support_card.dart';
 
 class SupportList extends StatefulWidget {
+  final SupportAppModel? selectedSupport;
   final List<SupportAppModel> supports;
   final Function(SupportAppModel) onSupportSelected;
-  final SupportAppModel? selectedSupport;
 
   const SupportList({
     super.key,
+    this.selectedSupport,
     required this.supports,
     required this.onSupportSelected,
-    this.selectedSupport,
   });
 
   @override
