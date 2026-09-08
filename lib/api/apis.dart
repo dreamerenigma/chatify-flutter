@@ -172,18 +172,37 @@ class APIs {
 
       log('user exists ${data.docs.first.data()}');
 
-      firestore
-        .collection('Users')
-        .doc(user.uid)
-        .collection('my_users')
-        .doc(data.docs.first.id)
-        .set({});
+      await firestore.collection('Users').doc(user.uid).collection('my_users').doc(data.docs.first.id).set({'archived': false}, SetOptions(merge: true));
 
       return true;
     } else {
 
       return false;
     }
+  }
+
+  /// -- Archive / unarchive a chat user.
+  static Future<void> setChatArchived({required String userId, required bool archived}) async {
+    await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).set({'archived': archived}, SetOptions(merge: true));
+  }
+
+  /// -- Pin / unpin a chat user.
+  static Future<void> setChatPinned({required String userId, required bool pinned}) async {
+    await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).set({'pinned': pinned}, SetOptions(merge: true));
+  }
+
+  /// -- Muted / unmuted a chat user.
+  static Future<void> setChatMuted({required String userId, required bool muted, int duration = 0}) async {
+    final mutedUntil = muted && duration > 0 ? Timestamp.fromDate(DateTime.now().add(Duration(hours: duration))) : null;
+
+    await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).set({'muted': muted, 'mutedDuration': muted ? duration : 0, 'mutedUntil': mutedUntil}, SetOptions(merge: true));
+  }
+
+  static Future<int> getChatMutedDuration(String userId) async {
+    final snapshot = await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).get();
+    final data = snapshot.data();
+
+    return data?['mutedDuration'] as int? ?? 8;
   }
 
   /// -- Getting current user info.
@@ -233,6 +252,7 @@ class APIs {
   static Future<bool> checkIfUserExists(String id) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('Users').doc(id).get();
+
       return doc.exists;
     } catch (e) {
       log('Error checking if user exists: $e');
@@ -889,56 +909,117 @@ class APIs {
   }
 
   /// -- Delete message.
-  static Future<void> deleteMessage(MessageModel message, {bool deleteForEveryone = false}) async {
-    final docRef = firestore.collection('Chats').doc(getConversationId(message.toId)).collection('messages').doc(message.sent);
+  static Future<void> deleteMessage(
+      MessageModel message, {
+        bool deleteForEveryone = false,
+      }) async {
+    final otherUserId = message.fromId == user.uid
+        ? message.toId
+        : message.fromId;
+
+    final conversationId = getConversationId(otherUserId);
+
+    final docRef = firestore
+        .collection('Chats')
+        .doc(conversationId)
+        .collection('messages')
+        .doc(message.sent);
 
     try {
-      log('Deleting message with ID: ${message.sent}, ''deleteForEveryone: $deleteForEveryone');
+      log('========== DELETE ==========');
+      log('message.sent: ${message.sent}');
+      log('message.fromId: ${message.fromId}');
+      log('message.toId: ${message.toId}');
+      log('current uid: ${user.uid}');
+      log('otherUserId: $otherUserId');
+      log('conversationId: $conversationId');
+      log('FULL PATH: ${docRef.path}');
 
       final snapshot = await docRef.get();
 
       if (!snapshot.exists) {
-        log('Message ${message.sent} no longer exists.');
+        log('❌ NOT FOUND: ${docRef.path}');
         return;
       }
 
       if (deleteForEveryone) {
+        if (message.fromId != user.uid) {
+          throw Exception('Only sender can delete message for everyone');
+        }
+
         await docRef.update({'deletedForEveryone': true});
 
-        log('Message marked as deleted for everyone.');
-
-        if (message.type == MessageType.image) {
-          try {
-            await storage.refFromURL(message.msg).delete();
-            log('Image deleted from storage.');
-          } catch (e) {
-            log('Failed to delete image from storage: $e');
-          }
-        }
+        log('✅ Deleted for everyone');
       } else {
-        await docRef.update({'deletedBy': FieldValue.arrayUnion([APIs.user.uid])});
+        await docRef.update({'deletedBy': FieldValue.arrayUnion([user.uid])});
 
-        log('Message marked as deleted by user: ${APIs.user.uid}');
+        log('✅ Deleted for me');
       }
     } catch (e, stackTrace) {
-      log('Error deleting message with ID ${message.sent}: $e');
+      log('❌ DELETE ERROR: $e');
       log('$stackTrace');
+
+      rethrow;
     }
   }
 
   /// -- Delete message document.
-  static Future<void> deleteMessageDocument(MessageModel message) async {
-    final docRef = firestore.collection('Chats').doc(getConversationId(message.toId)).collection('messages').doc(message.sent);
+  static Future<bool> deleteMessageDocument(MessageModel message) async {
+    final currentUid = APIs.user.uid;
+
+    // Определяем собеседника независимо от того,
+    // отправил сообщение текущий пользователь или получил его.
+    final otherUserId =
+    message.fromId == currentUid
+        ? message.toId
+        : message.fromId;
+
+    final conversationId = getConversationId(otherUserId);
+
+    final docRef = firestore
+        .collection('Chats')
+        .doc(conversationId)
+        .collection('messages')
+        .doc(message.sent);
 
     try {
-      log('Deleting message document: ${message.sent}');
+      log('🔥 DELETE DOCUMENT');
+      log('currentUid: $currentUid');
+      log('fromId: ${message.fromId}');
+      log('toId: ${message.toId}');
+      log('otherUserId: $otherUserId');
+      log('conversationId: $conversationId');
+      log('message.sent: ${message.sent}');
+      log('FULL PATH: ${docRef.path}');
+
+      final before = await docRef.get();
+
+      log('📄 EXISTS BEFORE DELETE: ${before.exists}');
+
+      if (!before.exists) {
+        log('❌ DOCUMENT NOT FOUND: ${docRef.path}');
+        return false;
+      }
 
       await docRef.delete();
 
-      log('Message document deleted successfully.');
+      final after = await docRef.get();
+
+      log('📄 EXISTS AFTER DELETE: ${after.exists}');
+
+      if (!after.exists) {
+        log('✅ DOCUMENT REALLY DELETED');
+        return true;
+      }
+
+      log('❌ DOCUMENT STILL EXISTS');
+      return false;
     } catch (e, stackTrace) {
-      log('Error deleting message document ${message.sent}: $e');
+      log('❌ ERROR DELETING DOCUMENT: ${docRef.path}');
+      log('$e');
       log('$stackTrace');
+
+      return false;
     }
   }
 
@@ -1051,30 +1132,29 @@ class APIs {
   /// -- Audio recordings message.
   static Future<void> audioRecording() async {}
 
-  /// -- Adding a user to the archive.
-  static Future<void> archiveUser(String userId, UserModel user) async {
-    try {
-      await FirebaseFirestore.instance.collection('Users').doc(userId).collection('my_archived_users').doc(user.id).set({
-        'id': user.id,
-        'name': user.name,
-        'image': user.image,
-        'archivedAt': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log("Error archiving user: $e");
-    }
+  /// -- Get archived chat users.
+  static Stream<List<UserModel>> getArchivedUsers(String userId) {
+    return firestore.collection('Users').doc(userId).collection('my_users').where('archived', isEqualTo: true).snapshots().asyncMap((snapshot) async {
+      final users = <UserModel>[];
+
+      for (final doc in snapshot.docs) {
+        final userSnapshot = await firestore.collection('Users').doc(doc.id).get();
+
+        if (!userSnapshot.exists) continue;
+
+        final data = userSnapshot.data();
+
+        if (data != null) {
+          users.add(UserModel.fromJson(data));
+        }
+      }
+
+      return users;
+    });
   }
 
-  /// -- Get all archived users.
-  static Future<List<UserModel>> getArchivedUsers(String userId) async {
-    try {
-      final snapshot = await FirebaseFirestore.instance.collection('Users').doc(userId).collection('my_archived_users').get();
-
-      return snapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
-    } catch (e) {
-      log("Error getting archived users: $e");
-      return [];
-    }
+  static Stream<int> getArchivedUsersCount(String userId) {
+    return firestore.collection('Users').doc(userId).collection('my_users').where('archived', isEqualTo: true).snapshots().map((snapshot) => snapshot.docs.length);
   }
 
   ///******************* Group Screen Related APIs *******************

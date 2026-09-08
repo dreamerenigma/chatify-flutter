@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../chat/models/user_model.dart';
 import '../../screens/archive/archive_screen.dart';
-import '../infos/private_messages_protected_notice.dart';
 
 class ArchivePrivacySection extends StatelessWidget {
-  const ArchivePrivacySection({super.key});
+  final UserModel user;
+
+  const ArchivePrivacySection({
+    super.key,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +24,13 @@ class ArchivePrivacySection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         InkWell(
+          splashFactory: NoSplash.splashFactory,
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {
             Navigator.push(context, createPageRoute(ArchiveScreen()));
           },
-          splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-          highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
           child: Padding(
             padding: const EdgeInsets.only(left: 36, right: 22, top: 14, bottom: 14),
             child: Row(
@@ -31,13 +39,25 @@ class ArchivePrivacySection extends StatelessWidget {
                 const SizedBox(width: 22),
                 Text(S.of(context).inArchive, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: color)),
                 const Spacer(),
-                Text('3', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: color)),
+                StreamBuilder<int>(
+                  stream: APIs.getArchivedUsersCount(user.id),
+                  builder: (context, snapshot) {
+                    final count = snapshot.data ?? 0;
+
+                    if (count == 0) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: Text(count.toString(), style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: color)),
+                    );
+                  },
+                ),
               ],
             ),
           ),
         ),
-        Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-        PrivateMessagesProtectedNotice(),
       ],
     );
   }

@@ -44,11 +44,12 @@ class SettingsMenuTile extends StatelessWidget {
         color: ChatifyColors.transparent,
         borderRadius: borderRadius,
         child: InkWell(
-          onTap: onTap,
+          splashFactory: NoSplash.splashFactory,
           mouseCursor: SystemMouseCursors.basic,
           borderRadius: borderRadius,
           splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
           highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+          onTap: onTap,
           child: Container(
             padding: contentPadding,
             decoration: BoxDecoration(borderRadius: borderRadius),

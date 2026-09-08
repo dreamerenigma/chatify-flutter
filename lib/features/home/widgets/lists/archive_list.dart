@@ -7,19 +7,21 @@ import '../../../chat/widgets/cards/chat_user_card.dart';
 import '../../../personalization/controllers/colors_controller.dart';
 
 class ArchiveList extends StatefulWidget {
+  final UserModel user;
   final bool isSearching;
   final List<UserModel> searchList;
   final List<UserModel> archivedUsers;
+  final Set<String> selectedUserIds;
   final Function(UserModel) onUserSelected;
-  final UserModel user;
 
   const ArchiveList({
     super.key,
+    required this.user,
     required this.isSearching,
     required this.searchList,
     required this.archivedUsers,
+    required this.selectedUserIds,
     required this.onUserSelected,
-    required this.user,
   });
 
   @override
@@ -30,12 +32,11 @@ class _ArchiveListState extends State<ArchiveList> {
   final ColorsController colorsController = Get.put(ColorsController());
   List<UserModel> cachedArchivedUsers = [];
   bool isLoading = true;
-  UserModel? _selectedUser;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<UserModel>>(
-      future: APIs.getArchivedUsers(widget.user.id),
+    return StreamBuilder<List<UserModel>>(
+      stream: APIs.getArchivedUsers(widget.user.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingIndicator();
@@ -67,14 +68,13 @@ class _ArchiveListState extends State<ArchiveList> {
         padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .008),
         itemBuilder: (context, index) {
           final user = users[index];
+          final isSelected = widget.selectedUserIds.contains(user.id);
+
           return GestureDetector(
             onTap: () {
-              setState(() {
-                _selectedUser = user;
-              });
               widget.onUserSelected(user);
             },
-            child: ChatUserCard(user: user, onUserSelected: widget.onUserSelected, isSelected: _selectedUser?.id == user.id),
+            child: ChatUserCard(user: user, onUserSelected: widget.onUserSelected, isSelected: isSelected),
           );
         },
       ),

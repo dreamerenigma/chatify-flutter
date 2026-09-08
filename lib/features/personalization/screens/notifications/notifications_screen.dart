@@ -4,10 +4,14 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/reset_notification_settings_dialog.dart';
 import '../../widgets/dialogs/vibration_dialog.dart';
+import '../../widgets/items/settings_item.dart';
+import '../../widgets/items/settings_switch_item.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -17,6 +21,7 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  final storage = GetStorage();
   bool isSoundEnabled = false;
   bool isRemindersEnabled = false;
   bool isPriorityMessageEnabled = false;
@@ -24,8 +29,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   bool isReactionsMessagesEnabled = false;
   bool isReactionsGroupEnabled = false;
   bool isReactionsEnabled = false;
-  final storage = GetStorage();
-  String vibrationOption = 'По умолчанию';
+  String? vibrationOption;
 
   @override
   void initState() {
@@ -37,7 +41,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     isReactionsMessagesEnabled = storage.read('isReactionsMessagesEnabled') ?? false;
     isReactionsGroupEnabled = storage.read('isReactionsGroupEnabled') ?? false;
     isReactionsEnabled = storage.read('isReactions') ?? false;
-    vibrationOption = storage.read('vibrationOption') ?? S.of(context).system;
+    vibrationOption = storage.read('vibrationOption') ?? '';
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    vibrationOption ??= S.of(context).system;
   }
 
   void _saveState(String key, bool value) {
@@ -52,14 +62,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -72,28 +75,44 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               },
             ),
             actions: [
-              PopupMenuButton<int>(
-                position: PopupMenuPosition.under,
-                color: context.isDarkMode ? ChatifyColors.popupColor : ChatifyColors.white,
-                icon: const Icon(Icons.more_vert),
-                onSelected: (value) {
-                  if (value == 1) {
-                    showResetNotificationSettingsDialog(context);
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 1,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      S.of(context).resetNotifySettings,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+              TooltipTheme(
+                data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+                child: Theme(
+                  data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+                  child: PopupMenuButton<int>(
+                    tooltip: S.of(context).more,
+                    position: PopupMenuPosition.under,
+                    offset: const Offset(-8, 0),
+                    menuPadding: EdgeInsets.symmetric(vertical: 4),
+                    constraints: const BoxConstraints(minWidth: 0, maxWidth: 320),
+                    icon: const Icon(Icons.more_vert),
+                    color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith((states) {
+                        if (states.contains(WidgetState.pressed)) {
+                          return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                        }
+                        return ChatifyColors.transparent;
+                      }),
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                      overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
                     ),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 1,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AppPopupMenuItem(
+                          text: S.of(context).resetNotifySettings,
+                          onTap: () {
+                            Navigator.pop(context);
+                            showResetNotificationSettingsDialog(context);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
               ),
             ],
           ),
@@ -113,36 +132,42 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSwitchWithLabel(
-                        S.of(context).soundsInChat,
-                        S.of(context).playSoundsIncomingOutgoing,
-                        isSoundEnabled,
-                            (value) {
+                      SizedBox(height: 6),
+                      SettingsSwitchItem(
+                        label: S.of(context).soundsInChat,
+                        description: S.of(context).playSoundsIncomingOutgoing,
+                        value: isSoundEnabled,
+                        onChanged: (value) {
                           setState(() {
                             isSoundEnabled = value;
                           });
+
                           _saveState('isSoundEnabled', value);
                         },
                       ),
-                      _buildSwitchWithLabel(
-                        S.of(context).reminders,
-                        S.of(context).periodicRemindersStatusUpdates,
-                        isRemindersEnabled,
-                            (value) {
+                      SizedBox(height: 12),
+                      SettingsSwitchItem(
+                        label: S.of(context).reminders,
+                        description: S.of(context).periodicRemindersStatusUpdates,
+                        value: isRemindersEnabled,
+                        onChanged: (value) {
                           setState(() {
                             isRemindersEnabled = value;
                           });
+
                           _saveState('isRemindersEnabled', value);
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Divider(),
-                  _buildSectionHeader(S.of(context).messages, padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
+                  _buildSectionHeader(S.of(context).messages, padding: const EdgeInsets.only(left: 20, right: 10, top: 20)),
                   const SizedBox(height: 8),
-                  _buildSettingsItem(S.of(context).notificationSound, S.of(context).defaultBongo, onTap: () {}),
-                  _buildSettingsItem(S.of(context).vibration, vibrationOption,
+                  SettingsItem(title: S.of(context).notificationSound, subtitle: S.of(context).defaultBongo, onTap: () {}),
+                  SettingsItem(
+                    title: S.of(context).vibration,
+                    subtitle: vibrationOption ?? S.of(context).system,
                     onTap: () {
                       showVibrationDialog(context, (selectedText) {
                         setState(() {
@@ -152,12 +177,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       });
                     },
                   ),
-                  _buildSettingsItem(S.of(context).popPopNotify, S.of(context).notAvailable, onTap: () {}),
-                  _buildSettingsItem(S.of(context).lightNotify, S.of(context).whiteNotify, onTap: () {
-                    showLightDialog(context);
-                  }),
-                  _buildNotificationItem(
-                    title: S.of(context).priorityNotifications,
+                  SettingsItem(title: S.of(context).popPopNotify, subtitle: S.of(context).notAvailable, onTap: () {}),
+                  SettingsItem(title: S.of(context).lightNotify, subtitle: S.of(context).whiteNotify, onTap: () => showLightDialog(context)),
+                  SettingsSwitchItem(
+                    label: S.of(context).priorityNotifications,
                     description: S.of(context).showPopUpNotify,
                     value: isPriorityMessageEnabled,
                     onChanged: (value) {
@@ -167,8 +190,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       _saveState('isPriorityMessageEnabled', value);
                     },
                   ),
-                  _buildNotificationItem(
-                    title: S.of(context).reactionNotify,
+                  SettingsSwitchItem(
+                    label: S.of(context).reactionNotify,
                     description: S.of(context).showNotifyReactionsMessagesSend,
                     value: isReactionsMessagesEnabled,
                     onChanged: (value) {
@@ -182,13 +205,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   const Divider(height: 0, thickness: 1),
                   _buildSectionHeader('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
                   const SizedBox(height: 8),
-                  _buildSettingsItem(S.of(context).notificationSound, S.of(context).defaultBongo),
-                  _buildSettingsItem(S.of(context).vibration, S.of(context).system, onTap: () {
-
-                  }),
-                  _buildSettingsItem(S.of(context).lightNotify, S.of(context).whiteNotify),
-                  _buildNotificationItem(
-                    title: S.of(context).priorityNotifications,
+                  SettingsItem(title: S.of(context).notificationSound, subtitle: S.of(context).defaultBongo),
+                  SettingsItem(title: S.of(context).vibration, subtitle: S.of(context).system, onTap: () {}),
+                  SettingsItem(title: S.of(context).lightNotify, subtitle: S.of(context).whiteNotify),
+                  SettingsSwitchItem(
+                    label: S.of(context).priorityNotifications,
                     description: S.of(context).showPopUpNotificationsScreen,
                     value: isPriorityGroupEnabled,
                     onChanged: (value) {
@@ -198,8 +219,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       _saveState('isPriorityGroupEnabled', value);
                     },
                   ),
-                  _buildNotificationItem(
-                    title: S.of(context).reactionNotify,
+                  SettingsSwitchItem(
+                    label: S.of(context).reactionNotify,
                     description: S.of(context).showNotifyAboutReactionsSend,
                     value: isReactionsGroupEnabled,
                     onChanged: (value) {
@@ -213,14 +234,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   const Divider(height: 0, thickness: 1),
                   _buildSectionHeader(S.of(context).calls, padding: const EdgeInsets.only(left: 20, right: 10, top: 20)),
                   const SizedBox(height: 8),
-                  _buildSettingsItem(S.of(context).melody, S.of(context).defaultNotify),
+                  SettingsItem(title: S.of(context).melody, subtitle: S.of(context).defaultNotify),
                   const SizedBox(height: 8),
-                  _buildSettingsItem(S.of(context).vibration, S.of(context).system),
+                  SettingsItem(title: S.of(context).vibration, subtitle: S.of(context).system),
                   const SizedBox(height: 8),
                   const Divider(height: 0, thickness: 1),
                   _buildSectionHeader(S.of(context).status, padding: const EdgeInsets.only(left: 20, right: 10, top: 20, bottom: 10)),
-                  _buildNotificationItem(
-                    title: S.of(context).reactions,
+                  SettingsSwitchItem(
+                    label: S.of(context).reactions,
                     description: S.of(context).showNotifyStatusLiked,
                     value: isReactionsEnabled,
                     onChanged: (value) {
@@ -240,112 +261,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildSwitchWithLabel(String label, String description, bool value, ValueChanged<bool> onChanged) {
-    return InkWell(
-      onTap: () {
-        onChanged(!value);
-      },
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-      child: Container(
-        padding: const EdgeInsets.only(left: 20, right: 10, top: 16, bottom: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                  Text(description, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                ],
-              ),
-            ),
-            Switch(
-              value: value,
-              onChanged: onChanged,
-              activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingsItem(String title, String subtitle, {void Function()? onTap}) {
-    return Material(
-      type: MaterialType.transparency,
-      child: InkWell(
-        onTap: onTap,
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              const SizedBox(height: 4.0),
-              Text(subtitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSectionHeader(String title, {EdgeInsetsGeometry padding = EdgeInsets.zero}) {
     return Padding(
       padding: padding,
-      child: Text(
-        title,
-        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-      ),
-    );
-  }
-
-  Widget _buildNotificationItem({required String title, required String description, required bool value, required ValueChanged<bool> onChanged}) {
-    return Material(
-      type: MaterialType.transparency,
-      child: InkWell(
-        onTap: () {
-          onChanged(!value);
-          _saveState(title, !value);
-        },
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-        child: Container(
-          padding: const EdgeInsets.only(left: 20, right: 10, top: 12, bottom: 16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                    Text(description, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.grey)),
-                  ],
-                ),
-              ),
-              Switch(
-                value: value,
-                onChanged: (newValue) {
-                  onChanged(newValue);
-                  _saveState(title, newValue);
-                },
-                activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
-              ),
-            ],
-          ),
-        ),
-      ),
+      child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
     );
   }
 }

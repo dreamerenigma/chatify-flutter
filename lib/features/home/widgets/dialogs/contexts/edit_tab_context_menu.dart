@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../controllers/chat_lists_controller.dart';
 import '../changing_list_order_bottom_dialog.dart';
+import '../delete_tab_confirmation_dialog.dart';
 
-Future<void> showEditTabContextMenu(BuildContext context, VoidCallback onDelete, {bool isFavorite = false}) async {
+Future<void> showEditTabContextMenu(BuildContext context, int index, String title, ChatListsController controller, {bool isFavorite = false}) async {
   await showMenu(
     context: context,
     position: RelativeRect.fromLTRB(80, 155, 100, 0),
@@ -40,9 +42,10 @@ Future<void> showEditTabContextMenu(BuildContext context, VoidCallback onDelete,
                 context,
                 FluentIcons.delete_16_regular,
                 S.of(context).delete,
-                () {
+                () async {
                   Navigator.pop(context);
-                  onDelete();
+
+                  await showDeleteTabConfirmationDialog(context, index, title, controller);
                 },
                 isDestructive: true,
               ),

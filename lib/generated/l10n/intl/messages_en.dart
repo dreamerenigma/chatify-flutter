@@ -1158,7 +1158,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Generate a report of your Chatify account \n information and settings that you can \n view or export to another app. This report does not \n include your messages. ",
     ),
     "generateReportsAuto": MessageLookupByLibrary.simpleMessage(
-      "Generate reports \n automatically",
+      "Generate reports automatically",
     ),
     "geodata": MessageLookupByLibrary.simpleMessage("Geodata"),
     "geodataRequiresBackgroundLocationAccess": MessageLookupByLibrary.simpleMessage(
@@ -1705,7 +1705,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Only when the app is open",
     ),
     "onlyYouSeeWhoLists": MessageLookupByLibrary.simpleMessage(
-      "Only you can see who is in your lists",
+      "You can add an unlimited number of people and groups. Only you can see who is included in your lists.",
     ),
     "open": MessageLookupByLibrary.simpleMessage("Open"),
     "openAddressBook": MessageLookupByLibrary.simpleMessage(
@@ -1749,7 +1749,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "passkeyCreated": MessageLookupByLibrary.simpleMessage("Password created"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "periodicRemindersStatusUpdates": MessageLookupByLibrary.simpleMessage(
-      "Get periodic \nreminders for status updates you \nmissed seen",
+      "Get periodic reminders for status updates you missed seen",
     ),
     "permissionNotGranted": MessageLookupByLibrary.simpleMessage(
       "Permission not granted",
@@ -1783,7 +1783,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Play a sound to test",
     ),
     "playSoundsIncomingOutgoing": MessageLookupByLibrary.simpleMessage(
-      "Play sounds for \nincoming and \noutgoing messages",
+      "Play sounds for incoming and outgoing messages",
     ),
     "pleaseCheckSpellingDifferentKeywords":
         MessageLookupByLibrary.simpleMessage(
@@ -2205,22 +2205,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Show notifications about reactions to messages you\'ve sent",
     ),
     "showNotifyAboutReactionsSend": MessageLookupByLibrary.simpleMessage(
-      "Show notifications \n about reactions to messages you send",
+      "Show notifications about reactions to messages you send",
     ),
     "showNotifyIconTaskbar": MessageLookupByLibrary.simpleMessage(
       "Show notification icon on taskbar",
     ),
     "showNotifyReactionsMessagesSend": MessageLookupByLibrary.simpleMessage(
-      "Show notifications \nabout reactions to messages you \nsent",
+      "Show notifications about reactions to messages you sent",
     ),
     "showNotifyStatusLiked": MessageLookupByLibrary.simpleMessage(
-      "Show notifications when a status is \nliked",
+      "Show notifications when a status is liked",
     ),
     "showPopUpNotificationsScreen": MessageLookupByLibrary.simpleMessage(
-      "Show pop-up \nnotifications at the top of the \nscreen",
+      "Show pop-up notifications at the top of the screen",
     ),
     "showPopUpNotify": MessageLookupByLibrary.simpleMessage(
-      "Show pop-up \nnotifications at the top of the \nscreen",
+      "Show pop-up notifications at the top of the screen",
     ),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
     "signInFaceRecognitionFingerprint": MessageLookupByLibrary.simpleMessage(

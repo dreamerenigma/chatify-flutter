@@ -5,8 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -18,6 +18,7 @@ import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialog/protected_enctyption_sheet_dialog.dart';
+import '../../widgets/panels/call_control_panel.dart';
 import '../add_participants_screen.dart';
 
 class OutgoingAudioCallScreen extends StatefulWidget {
@@ -30,15 +31,16 @@ class OutgoingAudioCallScreen extends StatefulWidget {
 }
 
 class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
+  late AudioPlayer audioPlayer = AudioPlayer();
   bool isMuted = false;
   bool showNewContent = false;
   bool isExternalSpeaker = false;
-  late AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
+    _setEarpiece();
     _startRingingTone();
   }
 
@@ -86,15 +88,33 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
     }
   }
 
-  void _toggleSpeaker() {
-    setState(() {
-      isExternalSpeaker = !isExternalSpeaker;
-    });
+  Future<void> _toggleSpeaker() async {
+    final newValue = !isExternalSpeaker;
 
-    if (isExternalSpeaker) {
-      audioPlayer.setVolume(1);
-    } else {
-      audioPlayer.setVolume(0);
+    try {
+      await Helper.setSpeakerphoneOn(newValue);
+
+      if (!mounted) return;
+
+      setState(() {
+        isExternalSpeaker = newValue;
+      });
+    } catch (e) {
+      log('Error switching speaker: $e');
+    }
+  }
+
+  Future<void> _setEarpiece() async {
+    try {
+      await Helper.setSpeakerphoneOn(false);
+
+      if (mounted) {
+        setState(() {
+          isExternalSpeaker = false;
+        });
+      }
+    } catch (e) {
+      log('Error setting earpiece: $e');
     }
   }
 
@@ -131,21 +151,17 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.lock_outline, color: ChatifyColors.darkGrey, size: 16),
-                            const SizedBox(width: 4),
-                            SizedBox(
-                              width: 220,
-                              child: Text(S.of(context).protectedWithEndToEndEncryption,
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                        Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                        const SizedBox(height: 4),
+                        SizedBox(
+                          width: 220,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.lock_outline, color: ChatifyColors.darkGrey, size: 16),
+                              Expanded(child: Text(S.of(context).protectedWithEndToEndEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center)),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -161,136 +177,85 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .2),
                   child: CachedNetworkImage(
-                    width: DeviceUtils.getScreenHeight(context) * .25,
-                    height: DeviceUtils.getScreenHeight(context) * .25,
+                    width: DeviceUtils.getScreenHeight(context) * .27,
+                    height: DeviceUtils.getScreenHeight(context) * .27,
                     imageUrl: widget.user.image,
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) => CircleAvatar(
                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                       foregroundColor: ChatifyColors.white,
-                      child: SvgPicture.asset(ChatifyVectors.profile),
+                      child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .27, height: DeviceUtils.getScreenHeight(context) * .27),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                      spreadRadius: 5,
-                      blurRadius: 10,
-                      offset: const Offset(0, -3),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: ChatifyColors.darkSlate,
-                        radius: 25,
-                        child: IconButton(
-                          icon: const Icon(Icons.more_horiz_rounded, color: ChatifyColors.white, size: 30),
-                          onPressed: () => showProtectedEncryptionBottomSheet(context),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          bool? shouldNavigate = await showDialog<bool>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                                title: Text(S.of(context).switchToVideoCall, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                                content: SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.8,
-                                  height: MediaQuery.of(context).size.width * 0.005,
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                    },
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                    ),
-                                    child: Text(
-                                      S.of(context).cancel,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                    ),
-                                    child: Text(
-                                      S.of(context).toggle,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+          CallControlPanel(
+            isExternalSpeaker: isExternalSpeaker,
+            isMuted: isMuted,
 
-                          if (shouldNavigate == true) {
-                            Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: APIs.me)));
-                          }
+            onMore: () {
+              showProtectedEncryptionBottomSheet(context);
+            },
+
+            onVideo: () async {
+              final bool? shouldNavigate = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+                    title: Text(S.of(context).switchToVideoCall, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                    content: SizedBox(width: MediaQuery.of(context).size.width * 0.8, height: MediaQuery.of(context).size.width * 0.005),
+                    actions: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          splashFactory: NoSplash.splashFactory,
+                          foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        ).copyWith(
+                          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          splashFactory: NoSplash.splashFactory,
+                          foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        ).copyWith(
+                          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
                         },
-                        child: const CircleAvatar(
-                          backgroundColor: ChatifyColors.darkSlate,
-                          radius: 25,
-                          child: Icon(Icons.videocam_rounded, color: ChatifyColors.white, size: 30),
-                        ),
-                      ),
-                      CircleAvatar(
-                        backgroundColor: isExternalSpeaker ? ChatifyColors.white : ChatifyColors.darkSlate,
-                        radius: 25,
-                        child: IconButton(
-                          icon: Icon(Icons.volume_up, color: isExternalSpeaker ? ChatifyColors.black : ChatifyColors.white, size: 30),
-                          onPressed: _toggleSpeaker,
-                        ),
-                      ),
-                      CircleAvatar(
-                        backgroundColor: ChatifyColors.darkSlate,
-                        radius: 25,
-                        child: IconButton(
-                          icon: Icon(isMuted ? Icons.mic : Icons.mic_off, color: ChatifyColors.white, size: 30),
-                          onPressed: _toggleMicrophone,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          await playClickButton(audioPlayer);
-                          _stopRingingTone();
-                          Navigator.pop(context);
-                        },
-                        child: const CircleAvatar(backgroundColor: ChatifyColors.error, radius: 25, child: Icon(Icons.call_end, color: ChatifyColors.white, size: 30)),
+                        child: Text(S.of(context).toggle, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ),
+                  );
+                },
+              );
+              if (shouldNavigate == true && context.mounted) {
+                Navigator.of(context).pushReplacement(createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
+              }
+            },
+            onSpeaker: _toggleSpeaker,
+            onMicrophone: _toggleMicrophone,
+            onShare: () {},
+            onEndCall: () async {
+              final navigator = Navigator.of(context);
+
+              await playClickButton(audioPlayer);
+              await _stopRingingTone();
+
+              if (!mounted) return;
+
+              navigator.pop();
+            },
           ),
         ],
       ),

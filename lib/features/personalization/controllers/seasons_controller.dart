@@ -126,70 +126,48 @@ class SeasonsController extends GetxController {
             title: const Text('Выбрать сезон'),
             content: SizedBox(
               width: 300,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomRadioListTile(
-                    icon: Icons.settings,
-                    title: const Text('По умолчанию'),
-                    value: 'default',
-                    groupValue: selectedSeason.value,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSeason.value = value as String;
-                      });
-                    },
-                    iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
-                  ),
-                  CustomRadioListTile(
-                    icon: Icons.ac_unit,
-                    title: const Text('Зима'),
-                    value: 'winter',
-                    groupValue: selectedSeason.value,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSeason.value = value as String;
-                      });
-                    },
-                    iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
-                  ),
-                  CustomRadioListTile(
-                    icon: Icons.grain,
-                    title: const Text('Весна'),
-                    value: 'spring',
-                    groupValue: selectedSeason.value,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSeason.value = value as String;
-                      });
-                    },
-                    iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
-                  ),
-                  CustomRadioListTile(
-                    icon: Icons.wb_sunny,
-                    title: const Text('Лето'),
-                    value: 'summer',
-                    groupValue: selectedSeason.value,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSeason.value = value as String;
-                      });
-                    },
-                    iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
-                  ),
-                  CustomRadioListTile(
-                    icon: ChatifyVectors.leaf,
-                    title: const Text('Осень'),
-                    value: 'autumn',
-                    groupValue: selectedSeason.value,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSeason.value = value as String;
-                      });
-                    },
-                    iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
-                  ),
-                ],
+              child: RadioGroup<String>(
+                groupValue: selectedSeason.value,
+                onChanged: (value) {
+                  setState(() {
+                    selectedSeason.value = value as String;
+                  });
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomRadioListTile(
+                      icon: Icons.settings,
+                      title: const Text('По умолчанию'),
+                      value: 'default',
+                      iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
+                    ),
+                    CustomRadioListTile(
+                      icon: Icons.ac_unit,
+                      title: const Text('Зима'),
+                      value: 'winter',
+                      iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
+                    ),
+                    CustomRadioListTile(
+                      icon: Icons.grain,
+                      title: const Text('Весна'),
+                      value: 'spring',
+                      iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
+                    ),
+                    CustomRadioListTile(
+                      icon: Icons.wb_sunny,
+                      title: const Text('Лето'),
+                      value: 'summer',
+                      iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
+                    ),
+                    CustomRadioListTile(
+                      icon: ChatifyVectors.leaf,
+                      title: const Text('Осень'),
+                      value: 'autumn',
+                      iconColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black,
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: [

@@ -7,7 +7,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/edit_lists_favorite_bottom_dialog.dart';
-import 'add_list_screen.dart';
+import 'add_to_list_screen.dart';
 
 class FavoriteListScreen extends StatefulWidget {
   const FavoriteListScreen({super.key});
@@ -25,14 +25,7 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -63,11 +56,7 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-                  child: Text(
-                    S.of(context).usePencilChangeOrderLists,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
-                  ),
+                  child: Text(S.of(context).usePencilChangeOrderLists, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal)),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -76,7 +65,7 @@ class FavoriteListScreenState extends State<FavoriteListScreen> {
                 const SizedBox(height: 4),
                 InkWell(
                   onTap: () {
-                    Navigator.push(context, createPageRoute(AddListScreen(user: APIs.me)));
+                    Navigator.push(context, createPageRoute(AddToListScreen(user: APIs.me)));
                   },
                   hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
                   highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,

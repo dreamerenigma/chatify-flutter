@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../api/apis.dart';
 import '../../../../core/enums/chat_list_type.dart';
 import '../../../../core/services/dialogs/dialog_manager.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -18,6 +19,7 @@ import '../../../../utils/theme/seasons/effects/rain_effect.dart';
 import '../../../../utils/theme/seasons/effects/snow_effect.dart';
 import '../../../bot/models/info_app_model.dart';
 import '../../../bot/models/support_model.dart';
+import '../../../calls/screens/add_favorite_screen.dart';
 import '../../../calls/screens/calls_screen.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
@@ -25,16 +27,19 @@ import '../../../community/screens/community_screen.dart';
 import '../../../group/models/group_model.dart';
 import '../../../personalization/controllers/seasons_controller.dart';
 import '../../../personalization/controllers/user_controller.dart';
-import '../../../personalization/screens/favorite/add_favorite_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../personalization/widgets/dialogs/new_list_bottom_dialog.dart';
 import '../../../status/screens/status_screen.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../../newsletter/models/newsletter_model.dart';
+import '../../controllers/chat_lists_controller.dart';
+import '../../models/list_item_data.dart';
+import '../../screens/home_select_user_screen.dart';
 import '../dialogs/contexts/edit_tab_context_menu.dart';
 import '../lists/main_home_content_list.dart';
 import '../navs/side_nav_bar.dart';
 import '../sections/archive_privacy_section.dart';
+import '../sections/chat_info_section.dart';
 import '../texts/pressable_text.dart';
 
 class HomeScreenWidget extends StatefulWidget {
@@ -55,6 +60,8 @@ class HomeScreenWidget extends StatefulWidget {
   final Function(int) onItemTapped;
   final Function(GroupModel) onGroupSelected;
   final Function(UserModel) onUserSelected;
+  final ValueChanged<Set<String>>? onPinnedChatsChanged;
+  final ValueChanged<Set<String>>? onMutedChatsChanged;
 
   const HomeScreenWidget({
     super.key,
@@ -75,6 +82,8 @@ class HomeScreenWidget extends StatefulWidget {
     required this.onItemTapped,
     required this.onGroupSelected,
     required this.onUserSelected,
+    this.onPinnedChatsChanged,
+    this.onMutedChatsChanged,
   });
 
   @override
@@ -82,7 +91,7 @@ class HomeScreenWidget extends StatefulWidget {
 }
 
 class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProviderStateMixin {
-  final List<ChatListType> tabs = [ChatListType.all, ChatListType.unread, ChatListType.favorite, ChatListType.groups];
+  final ChatListsController listsController = ChatListsController.instance;
   final ScrollController _scrollController = ScrollController();
   final GetStorage storage = GetStorage();
   final dialogManager = DialogManager();
@@ -117,6 +126,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
         return capitalize(S.of(context).groups);
       case ChatListType.custom:
         return '';
+      case ChatListType.archived:
+        return 'Архив';
     }
   }
 
@@ -130,7 +141,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
       await _checkAndShowDialog();
     });
     _scrollController.addListener(_handleScroll);
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: listsController.lists.length + 2, vsync: this);
     _tabController.index = 0;
     _tabController.addListener(_onTabChanged);
     _loadAccessKeyVisibility();
@@ -142,6 +153,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
     _tabController.dispose();
     super.dispose();
   }
+
+
 
   void _loadAccessKeyVisibility() {
     final hiddenUntil = storage.read<int>(_accessKeyHiddenUntilKey);
@@ -207,34 +220,6 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
     }
   }
 
-  void _deleteTab(int index) {
-    if (index < 0 || index >= tabs.length) {
-      return;
-    }
-
-    final currentIndex = _tabController.index;
-
-    int newIndex = currentIndex;
-
-    if (index < currentIndex) {
-      newIndex--;
-    } else if (index == currentIndex && currentIndex >= tabs.length - 1) {
-      newIndex--;
-    }
-
-    final newTabs = List.of(tabs)..removeAt(index);
-
-    _tabController.dispose();
-
-    final newController = TabController(length: newTabs.length, vsync: this, initialIndex: newTabs.isEmpty ? 0 : newIndex.clamp(0, newTabs.length - 1));
-
-    setState(() {
-      tabs..clear()..addAll(newTabs);
-
-      _tabController = newController;
-    });
-  }
-
   Future<void> _checkAndShowDialog() async {
     final now = DateTime.now();
     final lastShownStr = GetStorage().read<String>('last_confirmation_dialog_shown');
@@ -244,6 +229,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
 
     if (lastShownStr != null) {
       final lastShown = DateTime.tryParse(lastShownStr);
+
       if (lastShown != null && now.difference(lastShown).inDays < 30) return;
     }
 
@@ -300,7 +286,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                               SliverToBoxAdapter(child: _buildCategoryMessages()),
                                             ];
                                           },
-                                          body: TabBarView(
+                                          body: Obx(() => TabBarView(
                                             controller: _tabController,
                                             physics: const NeverScrollableScrollPhysics(),
                                             children: [
@@ -329,79 +315,31 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                           widget.onUserSelected(user);
                                                         },
                                                         selectedUserIds: widget.selectedChats,
+                                                        onPinnedChatsChanged: widget.onPinnedChatsChanged,
+                                                        onMutedChatsChanged: widget.onMutedChatsChanged,
                                                       ),
-                                                      ArchivePrivacySection(),
+                                                      StreamBuilder<int>(
+                                                        stream: APIs.getArchivedUsersCount(widget.user.id),
+                                                        builder: (context, snapshot) {
+                                                          final count = snapshot.data ?? 0;
+
+                                                          if (count == 0) {
+                                                            return const SizedBox.shrink();
+                                                          }
+
+                                                          return ArchivePrivacySection(user: widget.user);
+                                                        },
+                                                      ),
+                                                      ChatInfoSection(),
                                                     ],
                                                   ),
                                                 ),
                                               ),
-                                              Center(
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(S.of(context).noUnreadChats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm)),
-                                                    SizedBox(height: 20),
-                                                    PressableText(
-                                                      text: S.of(context).viewAllChats,
-                                                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w400),
-                                                      onTap: () {
-                                                        _tabController.animateTo(0);
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Center(
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    SvgPicture.asset(ChatifyVectors.addFavorite, width: 120, height: 120),
-                                                    const SizedBox(height: 15),
-                                                    Text(S.of(context).topUpYourFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-                                                    const SizedBox(height: 10),
-                                                    Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                                                      child: Text(S.of(context).viewFavoritesChatsAndCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
-                                                    ),
-                                                    const SizedBox(height: 25),
-                                                    PressableText(
-                                                      text: S.of(context).addUsersOrGroups,
-                                                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
-                                                      onTap: () {
-                                                        Navigator.push(context, createPageRoute(AddFavoriteScreen(selectedUserIds: widget.selectedChats)));
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Center(
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    SvgPicture.asset(ChatifyVectors.createGroup, width: 200, height: 200),
-                                                    const SizedBox(height: 5),
-                                                    Text('Создайте группу', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-                                                    const SizedBox(height: 10),
-                                                    Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 60),
-                                                      child: Text('Достигайте целей вместе с людьми из вашего окружения.', style: TextStyle(color: ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400, height: 1.2), textAlign: TextAlign.center),
-                                                    ),
-                                                    const SizedBox(height: 25),
-                                                    PressableText(
-                                                      text: 'Создайте группу',
-                                                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
-                                                      onTap: () {
-                                                        Navigator.push(context, createPageRoute(AddFavoriteScreen(selectedUserIds: widget.selectedChats)));
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                              for (final item in listsController.lists)
+                                                _buildListContent(item),
                                               Container(),
                                             ],
-                                          ),
+                                          )),
                                         ),
                                       ),
                                     ],
@@ -478,13 +416,109 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
     );
   }
 
+  Widget _buildListContent(ListItemData item) {
+    switch (item.type) {
+      case ChatListType.unread:
+        return _buildUnreadContent();
+      case ChatListType.favorite:
+        return _buildFavoriteContent();
+      case ChatListType.groups:
+        return _buildGroupsContent();
+      case ChatListType.custom:
+      case ChatListType.all:
+        return const SizedBox.shrink();
+      case ChatListType.archived:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildUnreadContent() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(ChatifyVectors.circleCheck, width: 70, height: 70),
+            SizedBox(height: 25),
+            Text(S.of(context).noUnreadChats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+            SizedBox(height: 20),
+            Text('На этом пока всё.', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm)),
+            SizedBox(height: 20),
+            PressableText(
+              text: S.of(context).viewAllChats,
+              style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w400),
+              onTap: () {
+                _tabController.animateTo(0);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFavoriteContent() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(ChatifyVectors.addFavorite, width: 120, height: 120),
+          const SizedBox(height: 15),
+          Text(S.of(context).topUpYourFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Text(S.of(context).viewFavoritesChatsAndCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+          ),
+          const SizedBox(height: 25),
+          PressableText(
+            text: S.of(context).addUsersOrGroups,
+            style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
+            onTap: () {
+              Navigator.push(context, createPageRoute(AddFavoriteScreen()));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGroupsContent() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(ChatifyVectors.createGroup, width: 200, height: 200),
+          const SizedBox(height: 5),
+          Text('Создайте группу', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 60),
+            child: Text('Достигайте целей вместе с людьми из вашего окружения.', style: TextStyle(color: ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400, height: 1.2), textAlign: TextAlign.center),
+          ),
+          const SizedBox(height: 25),
+          PressableText(
+            text: 'Создайте группу',
+            style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
+            onTap: () {
+              Navigator.push(context, createPageRoute(HomeSelectUserScreen(isFavoritesMode: true)));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCategoryMessages() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TabBar(
+          Obx(() => TabBar(
             controller: _tabController,
             isScrollable: true,
             dividerColor: ChatifyColors.transparent,
@@ -498,19 +532,40 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
             splashFactory: NoSplash.splashFactory,
             overlayColor: WidgetStateProperty.all(ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt())),
             tabs: [
-              for (int index = 0; index < tabs.length; index++)
-                _buildCustomTab(getTabTitle(tabs[index]), index),
-              _buildCustomTab('+', tabs.length),
+              _buildCustomTab(0),
+
+              for (int index = 0; index < listsController.lists.length; index++)
+                _buildCustomTab(index + 1),
+
+              _buildCustomTab(listsController.lists.length + 1),
             ],
-          ),
+          )),
         ],
       ),
     );
   }
 
-  Widget _buildCustomTab(String text, int index) {
-    final isAddTab = index == tabs.length;
+  Widget _buildCustomTab(int index) {
+    final lists = listsController.lists;
+
+    if (index == 0) {
+      return _buildTab(text: getTabTitle(ChatListType.all), index: index, isAddTab: false, isFavorite: false, canEdit: false);
+    }
+
+    final listIndex = index - 1;
+
+    if (listIndex == lists.length) {
+      return _buildTab(text: '', index: index, isAddTab: true, isFavorite: false, canEdit: false);
+    }
+
+    final item = lists[listIndex];
+
+    return _buildTab(text: item.type == ChatListType.custom ? item.title : getTabTitle(item.type), index: index, isAddTab: false, isFavorite: item.type == ChatListType.favorite, canEdit: true);
+  }
+
+  Widget _buildTab({required String text, required int index, required bool isAddTab, required bool isFavorite, required bool canEdit}) {
     final isSelected = _tabController.index == index;
+    final primaryColor = colorsController.getColor(colorsController.selectedColorScheme.value);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 20),
@@ -518,33 +573,39 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
         color: ChatifyColors.transparent,
         child: InkWell(
           splashFactory: NoSplash.splashFactory,
-          splashColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-          highlightColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt()),
+          splashColor: primaryColor.withAlpha((0.1 * 255).toInt()),
+          highlightColor: primaryColor.withAlpha((0.2 * 255).toInt()),
           borderRadius: BorderRadius.circular(30),
           onTap: () {
             if (isAddTab) {
-              showNewListBottomSheet(context);
+              showNewListBottomSheetDialog(context);
             } else {
               _tabController.index = index;
             }
           },
           onLongPress: () {
-            if (!isAddTab) {
-              showEditTabContextMenu(context, () => _deleteTab(index), isFavorite: tabs[index] == ChatListType.favorite);
+            if (!canEdit) {
+              return;
             }
+
+            showEditTabContextMenu(context, index - 1, text, listsController, isFavorite: isFavorite);
           },
           child: Container(
             height: 34,
             padding: const EdgeInsets.symmetric(horizontal: 18),
             decoration: BoxDecoration(
-              color: isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt()) : ChatifyColors.transparent,
+              color: isSelected ? primaryColor.withAlpha((0.2 * 255).toInt()) : ChatifyColors.transparent,
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: _tabController.index == index ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey), width: 1),
+              border: Border.all(color: isSelected ? primaryColor.withAlpha((0.1 * 255).toInt(),) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey), width: 1,),
             ),
             child: Center(
-              child: _tabController.index == index && index == 4
-                ? Icon(Icons.add, color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.steelGrey, size: 20)
-                : Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: index == 4 ? ChatifySizes.fontSizeMg : ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: _tabController.index == index ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.darkGrey),
+              child: isAddTab
+                ? Icon(Icons.add, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 20)
+                : Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: isSelected ? context.isDarkMode ? ChatifyColors.white : ChatifyColors.black : ChatifyColors.darkGrey,
+                ),
               ),
             ),
           ),

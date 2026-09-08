@@ -43,14 +43,7 @@ void showImageMoreDialog(BuildContext context, Offset position) {
                     color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()),
-                        spreadRadius: 4,
-                        blurRadius: 8,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.4 * 255).toInt()), spreadRadius: 4, blurRadius: 8, offset: const Offset(0, 8))],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),

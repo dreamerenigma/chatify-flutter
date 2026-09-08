@@ -1765,7 +1765,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Только при открытом приложении",
     ),
     "onlyYouSeeWhoLists": MessageLookupByLibrary.simpleMessage(
-      "Только вы видите, кто находится в ваших списках",
+      "Вы можете добавить неограниченное количество людей и групп. Только вы видите, кто включен в ваши списки.",
     ),
     "open": MessageLookupByLibrary.simpleMessage("Открыть"),
     "openAddressBook": MessageLookupByLibrary.simpleMessage(
@@ -1807,7 +1807,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "passkeyCreated": MessageLookupByLibrary.simpleMessage("Пароль создан"),
     "password": MessageLookupByLibrary.simpleMessage("Пароль"),
     "periodicRemindersStatusUpdates": MessageLookupByLibrary.simpleMessage(
-      "Получайте периодические \nнапоминания об обновлениях \nстатуса, которых вы не видели",
+      "Получайте периодические напоминания об обновлениях статуса, которых вы не видели",
     ),
     "permissionNotGranted": MessageLookupByLibrary.simpleMessage(
       "Разрешение не предоставлено",
@@ -1839,7 +1839,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Воспроизвести звук для проверки",
     ),
     "playSoundsIncomingOutgoing": MessageLookupByLibrary.simpleMessage(
-      "Воспроизводить звуки для \nвходящих и исходящих \nсообщений",
+      "Воспроизводить звуки для входящих и исходящих сообщений",
     ),
     "pleaseCheckSpellingDifferentKeywords": MessageLookupByLibrary.simpleMessage(
       "Проверьте правильность написания или используйте другие ключевые слова.",
@@ -2304,22 +2304,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Показывать уведомления о реакциях на отправленные вами сообщения",
     ),
     "showNotifyAboutReactionsSend": MessageLookupByLibrary.simpleMessage(
-      "Показывать уведомления \n о реакциях на отправленные вами \nсообщения",
+      "Показывать уведомления о реакциях на отправленные вами сообщения",
     ),
     "showNotifyIconTaskbar": MessageLookupByLibrary.simpleMessage(
       "Показывать значок уведомлений на панели задач",
     ),
     "showNotifyReactionsMessagesSend": MessageLookupByLibrary.simpleMessage(
-      "Показывать уведомления \nо реакциях на отправленные вами \nсообщения",
+      "Показывать уведомления о реакциях на отправленные вами сообщения",
     ),
     "showNotifyStatusLiked": MessageLookupByLibrary.simpleMessage(
-      "Показывать уведомления при\n отметках \"нравиться\" к статусу",
+      "Показывать уведомления при отметках \"нравиться\" к статусу",
     ),
     "showPopUpNotificationsScreen": MessageLookupByLibrary.simpleMessage(
-      "Показывать всплывающие \nуведомления в верхней части \nэкрана",
+      "Показывать всплывающие уведомления в верхней части экрана",
     ),
     "showPopUpNotify": MessageLookupByLibrary.simpleMessage(
-      "Показывать всплывающие \nуведомления в верхней части \nэкрана",
+      "Показывать всплывающие уведомления в верхней части экрана",
     ),
     "signIn": MessageLookupByLibrary.simpleMessage("Вход"),
     "signInFaceRecognitionFingerprint": MessageLookupByLibrary.simpleMessage(

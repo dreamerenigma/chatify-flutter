@@ -129,11 +129,11 @@ Widget _buildFilterChats({
     child: Material(
       color: ChatifyColors.transparent,
       child: InkWell(
-        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
         splashColor: ChatifyColors.transparent,
         highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.softGrey,
         hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.softGrey,
-        borderRadius: BorderRadius.circular(6),
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Row(

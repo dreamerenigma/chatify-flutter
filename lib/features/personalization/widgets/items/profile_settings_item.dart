@@ -11,6 +11,7 @@ class ProfileSettingsItem extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? titleColor;
   final Color? iconColor;
+  final EdgeInsetsGeometry? padding;
 
   const ProfileSettingsItem({
     super.key,
@@ -21,23 +22,23 @@ class ProfileSettingsItem extends StatelessWidget {
     this.onTap,
     this.titleColor,
     this.iconColor,
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = context.isDarkMode;
-    final Color defaultTitleColor = isDark ? ChatifyColors.white : ChatifyColors.black;
+    final Color defaultTitleColor = context.isDarkMode ? ChatifyColors.white : ChatifyColors.black;
 
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -47,10 +48,10 @@ class ProfileSettingsItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: TextStyle(color: titleColor ?? defaultTitleColor, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                    Text(title, style: TextStyle(color: titleColor ?? defaultTitleColor, fontSize: 17, fontWeight: FontWeight.w400)),
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
-                      Text(subtitle!, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+                      Text(subtitle!, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3)),
                     ],
                   ],
                 ),

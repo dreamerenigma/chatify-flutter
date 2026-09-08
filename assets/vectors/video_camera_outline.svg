@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   version="1.1"
+   id="Layer_1"
+   viewBox="0 0 156.25 156.25"
+   enable-background="new 0 0 100 100"
+   xml:space="preserve"
+   sodipodi:docname="video_camera_outline.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showguides="true"
+   inkscape:zoom="0.19702149"
+   inkscape:cx="-144.65427"
+   inkscape:cy="794.32959"
+   inkscape:window-width="1920"
+   inkscape:window-height="1009"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<path
+   id="path1"
+   style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+   d="M 16.433716 14.68544 C 12.088419 14.68544 8.4292906 17.336679 5.4237366 20.693207 C 2.4181827 24.049736 0.062561035 28.384417 0.062561035 33.140564 L 0.062561035 123.38676 C 0.062561035 131.9557 6.9154455 139.88266 16.433716 139.88266 L 109.44519 139.88266 C 113.71831 139.88266 117.9292 138.11642 121.27724 135.25772 C 124.62529 132.39902 127.18163 128.24397 127.18163 123.38676 L 127.18163 107.66602 L 156.11916 124.2775 L 156.11916 33.224487 L 127.18163 49.384689 L 127.18163 33.140564 C 127.18163 27.140416 124.36388 22.36255 120.83206 19.312668 C 117.30024 16.262786 113.18828 14.68544 109.44519 14.68544 L 16.433716 14.68544 z M 16.433716 21.384811 L 109.44519 21.384811 C 111.04343 21.384811 114.12687 22.373928 116.45317 24.382782 C 118.77946 26.391637 120.48225 29.165548 120.48225 33.140564 L 120.48187 123.38676 C 120.48187 125.8643 119.12994 128.28138 116.92734 130.16205 C 114.72475 132.04272 111.74293 133.18176 109.44481 133.18176 L 16.433716 133.18176 C 10.595718 133.18176 6.7615509 128.45692 6.7615509 123.38676 L 6.7615509 33.140564 C 6.7615509 30.800262 8.2454794 27.584013 10.414124 25.162125 C 12.582767 22.740238 15.435541 21.384811 16.433716 21.384811 z " />
+</svg>

@@ -13,7 +13,7 @@ class PrivateMessagesProtectedNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Expanded(
@@ -25,13 +25,13 @@ class PrivateMessagesProtectedNotice extends StatelessWidget {
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 12),
+                        padding: const EdgeInsets.only(right: 6),
                         child: Icon(Icons.lock_outline, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, size: 14),
                       ),
                     ),
                     TextSpan(
                       text: S.of(context).yourPrivateMessagesProtected,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontWeight: FontWeight.w400),
                     ),
                     TextSpan(
                       text: S.of(context).endToEndEncryption,

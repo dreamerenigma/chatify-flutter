@@ -26,12 +26,16 @@ class ChatUserCard extends StatefulWidget {
   final UserModel user;
   final ValueChanged<UserModel> onUserSelected;
   final bool isSelected;
+  final bool isPinned;
+  final bool isMuted;
 
   const ChatUserCard({
     super.key,
     required this.user,
     required this.onUserSelected,
     required this.isSelected,
+    this.isPinned = false,
+    this.isMuted = false,
   });
 
   @override
@@ -180,95 +184,113 @@ class ChatUserCardState extends State<ChatUserCard> {
                             ),
                             const SizedBox(height: 4),
                             message != null && message!.msg.isNotEmpty
-                                ? Row(
-                              children: [
-                                if (message!.type == MessageType.gif) ...[
-                                  HeroIcon(HeroIcons.gif, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      S.of(context).gif,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
-                                    ),
-                                  ),
-                                ] else if (message!.type == MessageType.image) ...[
-                                  Icon(Icons.image, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      S.of(context).photo,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
-                                    ),
-                                  ),
-                                ] else if (message!.type == MessageType.video) ...[
-                                  Icon(Icons.videocam, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      S.of(context).video,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
-                                    ),
-                                  ),
-                                ] else if (message!.type == MessageType.audio) ...[
-                                  Icon(Icons.audiotrack, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      S.of(context).audio,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
-                                    ),
-                                  ),
-                                ] else if (message!.type == MessageType.document) ...[
-                                  Icon(FluentIcons.document_16_filled, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      message!.documentName ?? S.of(context).unknownDocument,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
-                                    ),
-                                  ),
-                                ] else ...[
-                                  Flexible(
-                                    child: RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        children: [
-                                          WidgetSpan(
-                                            alignment: PlaceholderAlignment.middle,
-                                            child: SvgPicture.asset(
-                                              ChatifyVectors.doubleCheck,
-                                              colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
-                                              width: 18,
-                                              height: 18,
-                                            ),
-                                          ),
-                                          const WidgetSpan(child: SizedBox(width: 4)),
-                                          TextSpan(
-                                            text: message!.msg,
-                                            style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontSize: ChatifySizes.fontSizeSm, fontFamily: 'Roboto'),
-                                          ),
-                                        ],
+                              ? Row(
+                                  children: [
+                                    if (message!.type == MessageType.gif) ...[
+                                      HeroIcon(HeroIcons.gif, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
+                                      const SizedBox(width: 4),
+                                      Flexible(
+                                        child: Text(
+                                          S.of(context).gif,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            )
-                            : Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                                    ] else if (message!.type == MessageType.image) ...[
+                                      Icon(Icons.image, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                                      const SizedBox(width: 4),
+                                      Flexible(
+                                        child: Text(
+                                          S.of(context).photo,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                        ),
+                                      ),
+                                    ] else if (message!.type == MessageType.video) ...[
+                                      Icon(Icons.videocam, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                                      const SizedBox(width: 4),
+                                      Flexible(
+                                        child: Text(
+                                          S.of(context).video,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                        ),
+                                      ),
+                                    ] else if (message!.type == MessageType.audio) ...[
+                                      Icon(Icons.audiotrack, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                                      const SizedBox(width: 4),
+                                      Flexible(
+                                        child: Text(
+                                          S.of(context).audio,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                        ),
+                                      ),
+                                    ] else if (message!.type == MessageType.document) ...[
+                                      Icon(FluentIcons.document_16_filled, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                                      const SizedBox(width: 4),
+                                      Flexible(
+                                        child: Text(
+                                          message!.documentName ?? S.of(context).unknownDocument,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      Flexible(
+                                        child: RichText(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(
+                                            children: [
+                                              WidgetSpan(
+                                                alignment: PlaceholderAlignment.middle,
+                                                child: SvgPicture.asset(
+                                                  ChatifyVectors.doubleCheck,
+                                                  colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
+                                                  width: 18,
+                                                  height: 18,
+                                                ),
+                                              ),
+                                              const WidgetSpan(child: SizedBox(width: 4)),
+                                              TextSpan(
+                                                text: message!.msg,
+                                                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontSize: ChatifySizes.fontSizeSm, fontFamily: 'Roboto'),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    if (widget.isMuted) ...[
+                                      const SizedBox(width: 8),
+                                      SvgPicture.asset(
+                                        ChatifyVectors.notificationNoneFilled,
+                                        width: 16,
+                                        height: 16,
+                                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, BlendMode.srcIn),
+                                      ),
+                                    ],
+                                    if (widget.isPinned) ...[
+                                      const SizedBox(width: 8),
+                                      SvgPicture.asset(
+                                        ChatifyVectors.pin,
+                                        width: 16,
+                                        height: 16,
+                                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, BlendMode.srcIn),
+                                      ),
+                                    ],
+                                  ],
+                                )
+                              : Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                           ],
                         ),
                       ),

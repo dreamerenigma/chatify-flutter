@@ -1,4 +1,6 @@
 import 'package:chatify/utils/popups/app_loaders.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
@@ -20,6 +22,8 @@ class UserList extends StatefulWidget {
   final List<Contact> contacts;
   final List<UserModel> searchList;
   final List<UserModel> list;
+  final ValueChanged<Set<String>>? onPinnedChatsChanged;
+  final ValueChanged<Set<String>>? onMutedChatsChanged;
   final Function(UserModel) onUserSelected;
   final Function(bool)? onSelectionModeChanged;
 
@@ -34,6 +38,8 @@ class UserList extends StatefulWidget {
     this.useApp = false,
     this.showContacts = false,
     this.contacts = const [],
+    this.onPinnedChatsChanged,
+    this.onMutedChatsChanged,
     this.onSelectionModeChanged,
     required this.selectedUserIds,
   });
@@ -44,12 +50,16 @@ class UserList extends StatefulWidget {
 
 class _UserListState extends State<UserList> {
   final ColorsController colorsController = Get.put(ColorsController());
+  late final Stream<QuerySnapshot<Map<String, dynamic>>> _myUsersStream;
   bool isLoading = true;
   List<UserModel> cachedUsers = [];
+  Set<String> _lastPinnedChats = {};
+  Set<String> _lastMutedChats = {};
 
   @override
   void initState() {
     super.initState();
+    _myUsersStream = APIs.getMyUsersId();
     _loadUsersOnce();
   }
 
@@ -79,14 +89,42 @@ class _UserListState extends State<UserList> {
     }
   }
 
+  void _notifyPinnedChatsChanged(Set<String> pinnedChats) {
+    if (setEquals(_lastPinnedChats, pinnedChats)) {
+      return;
+    }
+
+    _lastPinnedChats = {...pinnedChats};
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      widget.onPinnedChatsChanged?.call(_lastPinnedChats);
+    });
+  }
+
+  void _notifyMutedChatsChanged(Set<String> mutedChats) {
+    if (setEquals(_lastMutedChats, mutedChats)) {
+      return;
+    }
+
+    _lastMutedChats = {...mutedChats};
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      widget.onMutedChatsChanged?.call(_lastMutedChats);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.showContacts) {
       return _buildContactsList();
     }
 
-    return StreamBuilder(
-      stream: APIs.getMyUsersId(),
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: _myUsersStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return AppLoaders.buildLoadingIndicator();
@@ -96,10 +134,16 @@ class _UserListState extends State<UserList> {
           return const SizedBox.shrink();
         }
 
-        final userIds = snapshot.data?.docs.map((e) => e.id).toList() ?? [];
+        final docs = snapshot.data?.docs ?? [];
+        final userIds = docs.where((doc) => doc.data()['archived'] != true).map((doc) => doc.id).toList();
+        final pinnedChats = docs.where((doc) => doc.data()['pinned'] == true).map((doc) => doc.id).toSet();
+        final mutedChats = docs.where((doc) => doc.data()['muted'] == true).map((doc) => doc.id).toSet();
+
+        _notifyPinnedChatsChanged(pinnedChats);
+        _notifyMutedChatsChanged(mutedChats);
 
         if (userIds.isEmpty) {
-          return _buildUserList([]);
+          return _buildUserList([], pinnedChats, mutedChats);
         }
 
         return StreamBuilder(
@@ -115,7 +159,7 @@ class _UserListState extends State<UserList> {
 
             final users = snapshot.data?.docs.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
 
-            return _buildUserList(widget.isSearching ? widget.searchList : users);
+            return _buildUserList(widget.isSearching ? widget.searchList : users, pinnedChats, mutedChats);
           },
         );
       },
@@ -131,19 +175,19 @@ class _UserListState extends State<UserList> {
     );
   }
 
-  Widget _buildUserList(List<UserModel> users) {
+  Widget _buildUserList(List<UserModel> users, Set<String> pinnedChats, Set<String> mutedChats) {
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: Column(
         children: [
           for (final user in users)
-            _buildUserItem(user),
+            _buildUserItem(user, isPinned: pinnedChats.contains(user.id), isMuted: mutedChats.contains(user.id)),
         ],
       ),
     );
   }
 
-  Widget _buildUserItem(UserModel user) {
+  Widget _buildUserItem(UserModel user, {required bool isPinned, required bool isMuted}) {
     if (widget.isInviting && !widget.useApp) {
       return InviteUserCard(contact: Contact(), onContactSelected: (_) {}, onInvite: () {});
     }
@@ -156,6 +200,6 @@ class _UserListState extends State<UserList> {
       return UseAppUserCard(user: user, onUserSelected: widget.onUserSelected);
     }
 
-    return ChatUserCard(user: user, isSelected: widget.selectedUserIds.contains(user.id), onUserSelected: widget.onUserSelected);
+    return ChatUserCard(user: user, isSelected: widget.selectedUserIds.contains(user.id), isPinned: isPinned, isMuted: isMuted, onUserSelected: widget.onUserSelected);
   }
 }

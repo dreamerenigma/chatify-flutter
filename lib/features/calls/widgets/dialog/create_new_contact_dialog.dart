@@ -16,12 +16,14 @@ class CreateNewContactDialog extends StatelessWidget {
   }
 
   void showCreateNewContactDialog(BuildContext context) {
+    final parentContext = context;
+
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
+      context: parentContext,
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.softGrey,
-          title: Text(S.of(context).createNewContactOrAddExistingOne,
+          backgroundColor: dialogContext.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.softGrey,
+          title: Text(S.of(dialogContext).createNewContactOrAddExistingOne,
             style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey),
           ),
           actions: <Widget>[
@@ -40,15 +42,16 @@ class CreateNewContactDialog extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
               child: Text(
-                S.of(context).existing,
+                S.of(dialogContext).existing,
                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
               ),
             ),
             TextButton(
               onPressed: () {
-                final double maxHeight = MediaQuery.of(context).size.height * 0.62;
-                Navigator.pop(context);
-                showAddNewContactBottomSheetDialog(context, maxHeight);
+                final double maxHeight = MediaQuery.of(parentContext).size.height * 0.62;
+
+                Navigator.pop(dialogContext);
+                showAddNewContactBottomSheetDialog(parentContext, maxHeight);
               },
               style: TextButton.styleFrom(
                 foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),

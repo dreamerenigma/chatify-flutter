@@ -96,6 +96,7 @@ class ChatifyColors {
   static const Color orangeDark = Color(0xFFE05B2E);
   static const Color green = Color(0xFF1DA960);
   static const Color greenDark = Color(0xFF1A9A57);
+  static const Color greenSlate = Color(0xFF21C063);
   static const Color lightBlue = Color(0xFF009DE1);
   static const Color lightBlueDark = Color(0xFF038BC9);
   static const Color blueGreen = Color(0xFF02A698);

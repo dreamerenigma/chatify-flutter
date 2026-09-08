@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 43.75 43.75"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="share_screen.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.27863046"
+     inkscape:cx="986.97036"
+     inkscape:cy="-360.6928"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="ic_fluent_share_screen_28_filled" />
+  <!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+  <title
+     id="title1">ic_fluent_share_screen_28_filled</title>
+  <desc
+     id="desc1">Created with Sketch.</desc>
+  <g
+     id="🔍-System-Icons"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     style="fill:#000000"
+     transform="matrix(1.8208365,0,0,1.8208365,-3.6043983,-4.1185268)">
+    <g
+       id="ic_fluent_share_screen_28_filled"
+       fill="#212121"
+       fill-rule="nonzero"
+       style="fill:#000000">
+      <path
+         d="m 23.75,4.99939 c 1.2426,0 2.25,1.00736 2.25,2.25 v 0 V 20.75 C 26,21.9926 24.9926,23 23.75,23 v 0 H 4.25 C 3.00736,23 2,21.9926 2,20.75 v 0 -13.50061 c 0,-1.24264 1.00736,-2.25 2.25,-2.25 v 0 z m -9.7525,3.6217 c -0.199,0 -0.3898,0.07923 -0.5305,0.22004 l -3.25,3.25447 c -0.29265,0.2931 -0.29232,0.768 8e-4,1.0607 0.2931,0.2927 0.768,0.2924 1.0606,-7e-4 l 1.9693,-1.9721 0,5.706846 c 0,0.4142 0.3358,0.75 0.75,0.75 0.4142,0 0.75,-0.3358 0.75,-0.75 l 0,-5.708546 1.9742,1.9741 c 0.2929,0.2929 0.7678,0.2929 1.0607,0 0.2929,-0.2929 0.2929,-0.7677 0,-1.0606 L 14.5281,8.84076 C 14.3873,8.70005 14.1965,8.62109 13.9975,8.62109 Z"
+         id="🎨-Color"
+         style="fill:#000000"
+         sodipodi:nodetypes="sscsscsscsscsscccccsssccsccs" />
+    </g>
+  </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>ic_fluent_share_screen_28_filled</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

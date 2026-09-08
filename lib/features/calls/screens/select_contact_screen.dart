@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/schedule_call_screen.dart';
+import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
 import 'package:chatify/features/personalization/screens/qr_code/qr_code_screen.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,7 @@ import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/buttons/animated_icon_button.dart';
 import '../widgets/dialog/save_contact_dialog.dart';
+import 'audio/outgoing_audio_call_screen.dart';
 import 'call_phone_number.dart';
 import 'create_link_call_screen.dart';
 import 'new_contact_screen.dart';
@@ -46,7 +48,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
   Key textFieldKey = UniqueKey();
   List<Contact> _contacts = [];
   List<Contact> _filteredContacts = [];
-  List<UserModel> _chatUsers = [];
+  List<UserModel> chatUsers = [];
   List<UserModel> list = [];
   List<UserModel> searchList = [];
   Set<UserModel> selectedUsers = {};
@@ -88,7 +90,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
     if (userIds.isNotEmpty) {
       final chatUserDocs = (await APIs.getAllUsers(userIds).first).docs;
       setState(() {
-        _chatUsers = chatUserDocs.map((e) => UserModel.fromJson(e.data())).toList();
+        chatUsers = chatUserDocs.map((e) => UserModel.fromJson(e.data())).toList();
         isFetchingChatUsers = false;
       });
     } else {
@@ -148,7 +150,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
     int totalItemsCount = 0;
 
     if (!isLoading) {
-      totalItemsCount += _chatUsers.length;
+      totalItemsCount += chatUsers.length;
       totalItemsCount += _filteredContacts.length;
 
       if (selectedUsers.isEmpty) {
@@ -236,19 +238,19 @@ class SelectContactScreenState extends State<SelectContactScreen> {
                             child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                           );
                         }
-                        if (index > 1 && index <= _chatUsers.length + 1) {
+                        if (index > 1 && index <= chatUsers.length + 1) {
                           final adjustedIndex = index - 2;
-                          final chatUser = _chatUsers[adjustedIndex];
+                          final chatUser = chatUsers[adjustedIndex];
 
-                          return UseAppUserCard(user: chatUser, isSelected: selectedUsers.contains(chatUser), onUserSelected: _toggleUserSelection);
+                          return UseAppUserCard(user: chatUser, showSelectionButton: true, isSelected: selectedUsers.contains(chatUser), onUserSelected: _toggleUserSelection);
                         }
-                        if (index == _chatUsers.length + 2) {
+                        if (index == chatUsers.length + 2) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
                           );
                         }
-                        final filteredIndex = index - _chatUsers.length - 3;
+                        final filteredIndex = index - chatUsers.length - 3;
 
                         if (filteredIndex >= 0 && filteredIndex < _filteredContacts.length) {
                           final contact = _filteredContacts[filteredIndex];
@@ -299,14 +301,22 @@ class SelectContactScreenState extends State<SelectContactScreen> {
           AnimatedIconButton(
             visible: _visibleFirst,
             icon: Icons.videocam_outlined,
-            onTap: () {},
+            onTap: () {
+              if (selectedUsers.isEmpty) return;
+
+              Navigator.push(context, MaterialPageRoute(builder: (context) => OutgoingVideoCallScreen(user: selectedUsers.first)));
+            },
           ),
           const SizedBox(width: 12),
           AnimatedIconButton(
             visible: _visibleSecond,
             icon: Icons.call_outlined,
             padding: 12,
-            onTap: () {},
+            onTap: () {
+              if (selectedUsers.isEmpty) return;
+
+              Navigator.push(context, MaterialPageRoute(builder: (context) => OutgoingAudioCallScreen(user: selectedUsers.first)));
+            },
           ),
         ],
       ),
@@ -414,7 +424,9 @@ class SelectContactScreenState extends State<SelectContactScreen> {
         ),
         const SizedBox(height: 6),
         _buildActionTile(
-          onTap: () => ScheduleCallScreen(user: widget.user),
+          onTap: () {
+            Navigator.push(context, createPageRoute(ScheduleCallScreen(user: widget.user)));
+          },
           icon: const Icon(UniconsLine.calendar_alt, color: ChatifyColors.black, size: 23),
           label: S.of(context).scheduleCall,
         ),

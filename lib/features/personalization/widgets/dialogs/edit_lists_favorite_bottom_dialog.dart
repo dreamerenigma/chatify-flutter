@@ -5,7 +5,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../screens/lists/add_list_screen.dart';
+import '../../screens/lists/add_to_list_screen.dart';
 
 void showEditListsFavoriteBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -53,7 +53,7 @@ void showEditListsFavoriteBottomSheet(BuildContext context) {
             const SizedBox(height: 4),
             InkWell(
               onTap: () {
-                Navigator.push(context, createPageRoute(AddListScreen(user: APIs.me)));
+                Navigator.push(context, createPageRoute(AddToListScreen(user: APIs.me)));
               },
               hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
               highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,

@@ -154,6 +154,9 @@ class StatusScreenState extends State<StatusScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             InkWell(
+              splashColor: ChatifyColors.transparent,
+              highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+              hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
               onTap: () {
                 showAddStatusBottomDialog(context);
               },

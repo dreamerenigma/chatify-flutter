@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 25 25"
+   version="1.1"
+   fill="none"
+   stroke="#000000"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   stroke-width="1.5"
+   id="svg1"
+   sodipodi:docname="unpin.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.39404296"
+     inkscape:cx="149.72987"
+     inkscape:cy="518.97895"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     id="path1"
+     style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;stroke:none;stroke-linecap:butt;stroke-linejoin:miter;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+     d="M 7.9320709,0.00976563 C 7.300681,0.00985077 6.8610373,0.27826358 7.0147713,0.89065161 7.1479653,1.0138684 7.2664577,1.1497297 7.4111303,1.2590013 7.7599079,1.5603238 7.8794111,1.67936 8.2150255,1.9460879 c 0.1309937,0 0.1582317,0.00313 0.3460427,0.00313 h 8.4819008 c -0.354927,1.191358 -0.828125,2.9822212 -0.828125,4.7910156 0,1.5561602 0.544851,3.5203255 1.527344,5.0097665 0.52469,0.79542 0.5644,0.834516 0.892193,1.215515 0.26399,0.306841 0.565304,0.579868 0.86068,0.856626 0.211664,0.198322 0.41129,0.378777 0.65265,0.57554 0.152648,0.125815 0.351385,0.270569 0.502264,0.398477 0.373469,-0.294101 0.494144,-0.622356 0.264087,-1.038345 0,0 -0.704554,-1.266816 -1.40625,-2.810546 C 18.806117,9.4035308 18.15625,7.4881442 18.15625,6.7402344 c 0,-1.9807705 1.101562,-5.453125 1.101562,-5.453125 C 19.467666,0.65892761 19.000198,0.0098315 18.337891,0.00976563 Z M 6.9456787,6.4764942 C 6.9801298,6.7842417 7,7.0770953 7,7.3430714 7,8.0909813 6.34818,9.4035338 5.6464844,10.947266 c -0.7016956,1.54373 -1.40625,2.810548 -1.40625,2.810546 -0.3577265,0.646805 0.1104719,1.440052 0.8496094,1.439454 h 6.5175782 v 8.822265 c -4.44e-4,0.536288 0.434415,0.971147 0.970703,0.970703 0.535525,-6.35e-4 0.969194,-0.435177 0.96875,-0.970703 v -8.822265 h 1.9683 c -0.326227,-0.329554 -0.584443,-0.576698 -0.972048,-0.963664 -0.288159,-0.325338 -0.613015,-0.617749 -0.950601,-0.96877 -0.110549,0 -6.9343229,-0.007 -6.9343229,-0.007 C 6.9366287,12.7208 7.0346227,12.580471 7.4121094,11.75 7.9735942,10.514734 8.5643757,9.7638554 8.8151855,8.5018238 8.5343848,8.1825931 8.2475195,7.8686761 7.9604576,7.5550647 7.7738276,7.3518477 7.347996,6.9024203 6.9456787,6.4764942 Z"
+     sodipodi:nodetypes="ccccccssaacccssccccsscccccccccccsccc" />
+  <rect
+     style="fill:none;stroke:#000000;stroke-width:1.19062;stroke-linecap:round;stroke-miterlimit:146.2;stroke-dasharray:none;paint-order:stroke fill markers"
+     id="rect1"
+     width="1.1132315"
+     height="28.686888"
+     x="1.649892"
+     y="3.2927995"
+     rx="0.54295409"
+     ry="0.54666883"
+     transform="rotate(-45.026025)" />
+</svg>

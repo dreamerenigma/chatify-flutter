@@ -12,6 +12,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/popups/dialogs.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/user_model.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'gallery_screen.dart';
@@ -96,22 +97,43 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                 });
               },
             ),
-            PopupMenuButton<int>(
-              position: PopupMenuPosition.under,
-              color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
-              icon: const Icon(Icons.more_vert),
-              onSelected: (value) {
-                if (value == 1) {
-                  _showResetDialog();
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 1,
-                  child: Text(S.of(context).resetQrCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis),
+            TooltipTheme(
+              data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+              child: Theme(
+                data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+                child: PopupMenuButton<int>(
+                  tooltip: S.of(context).more,
+                  position: PopupMenuPosition.under,
+                  offset: const Offset(-8, 0),
+                  menuPadding: EdgeInsets.symmetric(vertical: 4),
+                  constraints: const BoxConstraints(minWidth: 0, maxWidth: 250),
+                  icon: const Icon(Icons.more_vert),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                      }
+                      return ChatifyColors.transparent;
+                    }),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 1,
+                      child: AppPopupMenuItem(
+                        text: S.of(context).resetQrCode,
+                        onTap: () {
+                          Navigator.pop(context);
+                          _showResetDialog();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              ),
             ),
           ]
           : null,

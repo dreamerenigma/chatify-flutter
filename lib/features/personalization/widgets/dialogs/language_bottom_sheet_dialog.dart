@@ -70,13 +70,6 @@ void showLanguageBottomSheetDialog(BuildContext context, LanguagesController con
                       ),
                     ),
                     value: language.code,
-                    groupValue: controller.selectedLanguage.value,
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.setLanguage(value);
-                        Get.back();
-                      }
-                    },
                     iconColor: ChatifyColors.transparent,
                   )),
                 ],

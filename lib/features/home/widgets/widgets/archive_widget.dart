@@ -78,6 +78,7 @@ class ArchiveWidgetState extends State<ArchiveWidget> with SingleTickerProviderS
                         archivedUsers: widget.archivedUsers,
                         onUserSelected: (user) {},
                         user: widget.user,
+                        selectedUserIds: <String>{},
                       ),
                     ),
                   )
@@ -90,7 +91,7 @@ class ArchiveWidgetState extends State<ArchiveWidget> with SingleTickerProviderS
                       style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
                       textAlign: TextAlign.center,
                     ),
-                  ) ,
+                  ),
               ],
             ),
           ],

@@ -65,6 +65,7 @@ class AddUserScreenState extends State<AddUserScreen> {
 
   Future<void> _fetchChatUsers() async {
     final userIds = (await APIs.getMyUsersId().first).docs.map((e) => e.id).toList();
+
     if (userIds.isNotEmpty) {
       final chatUserDocs = (await APIs.getAllUsers(userIds).first).docs;
       setState(() {
@@ -83,6 +84,7 @@ class AddUserScreenState extends State<AddUserScreen> {
     setState(() {
       _filteredContacts = _contacts.where((contact) {
         final contactName = contact.displayName.toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });

@@ -76,7 +76,7 @@ class ListsScreenState extends State<ListsScreen> {
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    showNewListBottomSheet(context);
+                    showNewListBottomSheetDialog(context);
                   },
                   icon: const Icon(Icons.add, color: ChatifyColors.black),
                   label: Text(S.of(context).createYourOwnList, style: TextStyle(color: ChatifyColors.black)),

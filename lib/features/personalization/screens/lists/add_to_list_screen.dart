@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,32 +13,37 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../chat/models/user_model.dart';
+import '../../../community/widgets/cards/invite_user_card.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../widgets/cards/use_app_user_card.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
-class AddListScreen extends StatefulWidget {
+class AddToListScreen extends StatefulWidget {
   final UserModel user;
-  const AddListScreen({super.key, required this.user});
+
+  const AddToListScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
-  AddListScreenState createState() => AddListScreenState();
+  AddToListScreenState createState() => AddToListScreenState();
 }
 
-class AddListScreenState extends State<AddListScreen> {
+class AddToListScreenState extends State<AddToListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   List<Contact> contacts = [];
   List<Contact> filteredContacts = [];
   List<UserModel> chatUsers = [];
   List<UserModel> list = [];
   List<UserModel> searchList = [];
+  Set<UserModel> selectedUsers = {};
   bool isFetchingContacts = true;
   bool isFetchingChatUsers = true;
   bool isSearching = false;
   bool isNumericMode = false;
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
   Key textFieldKey = UniqueKey();
-
-  Set<UserModel> selectedUsers = {};
 
   @override
   void initState() {
@@ -58,10 +64,11 @@ class AddListScreenState extends State<AddListScreen> {
 
   Future<void> _fetchContacts() async {
     if (await Permission.contacts.request().isGranted) {
-      var contacts = await FlutterContacts.getContacts(withProperties: true);
+      final result = await FlutterContacts.getContacts(withProperties: true);
+
       setState(() {
-        contacts = contacts.toList();
-        filteredContacts = List.from(contacts);
+        contacts = result;
+        filteredContacts = List.from(result);
         isFetchingContacts = false;
       });
     } else {
@@ -91,6 +98,7 @@ class AddListScreenState extends State<AddListScreen> {
     setState(() {
       filteredContacts = contacts.where((contact) {
         final contactName = contact.displayName.toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -138,75 +146,127 @@ class AddListScreenState extends State<AddListScreen> {
     }
 
     return Scaffold(
-      appBar: isSearching ? null : PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          titleSpacing: 0,
-          backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
+      appBar: AppBar(
+        titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (isSearching) {
+              _toggleSearch();
+            } else {
               Navigator.pop(context);
-            },
-          ),
-          title: Text(S.of(context).addToList, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-          elevation: 1,
-          actions: [
-            IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
-          ],
+            }
+          },
         ),
-      ),
-      body: isLoading
-          ? Center(
-        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-      )
-      : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isSearching) _buildSearchBar(),
-          if (selectedUsers.isNotEmpty)
-            _buildSelectedUsers()
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Text(S.of(context).onlyYouSeeWhoLists, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+        title: isSearching
+          ? TextSelectionTheme(
+              data: TextSelectionThemeData(
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              ),
+              child: TextField(
+                key: textFieldKey,
+                focusNode: _searchFocusNode,
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                controller: _searchController,
+                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                decoration: InputDecoration(
+                  hintText: S.of(context).searchByNameOrPhoneNumber,
+                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
               ],
             ),
-          const Divider(),
-          Expanded(
-            child: ScrollConfiguration(
-              behavior: NoGlowScrollBehavior(),
-              child: ScrollbarTheme(
-                data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
-                child: Scrollbar(
-                  thickness: 4,
-                  thumbVisibility: false,
-                  child: ListView.builder(
-                    itemCount: totalItemsCount,
-                    itemBuilder: (context, index) {
-                      if (index < chatUsers.length) {
-                        final chatUser = chatUsers[index];
-                        return UseAppUserCard(
-                          user: chatUser,
-                          isSelected: selectedUsers.contains(chatUser),
-                          onUserSelected: (UserModel selectedUser) {
-                            _toggleUserSelection(selectedUser);
-                          },
-                        );
-                      }
-                      return null;
-                    },
+        actions: [
+          if (!isSearching)
+            IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
+
+          if (isSearching && _searchController.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(CupertinoIcons.clear_circled_solid),
+              onPressed: () {
+                _searchController.clear();
+              },
+            ),
+        ],
+      ),
+      body: isLoading
+        ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))
+        : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (selectedUsers.isNotEmpty)
+              _buildSelectedUsers()
+            else
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: Text(S.of(context).onlyYouSeeWhoLists, textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: ChatifyColors.darkGrey)),
+                  ),
+                ],
+              ),
+            CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0),
+            Expanded(
+              child: ScrollConfiguration(
+                behavior: NoGlowScrollBehavior(),
+                child: ScrollbarTheme(
+                  data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+                  child: Scrollbar(
+                    thickness: 4,
+                    thumbVisibility: false,
+                    child: ListView.builder(
+                      itemCount: totalItemsCount,
+                      itemBuilder: (context, index) {
+                        if (chatUsers.isNotEmpty && index == 1) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 6),
+                            child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm,)),
+                          );
+                        }
+
+                        if (index >= 2 && index < chatUsers.length + 2) {
+                          final adjustedIndex = index - 2;
+                          final chatUser = chatUsers[adjustedIndex];
+
+                          return UseAppUserCard(user: chatUser, showSelectionButton: true, isSelected: selectedUsers.contains(chatUser), onUserSelected: _toggleUserSelection);
+                        }
+
+                        if (index == chatUsers.length + 2) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                          );
+                        }
+
+                        final filteredIndex = index - chatUsers.length - 3;
+
+                        if (filteredIndex >= 0 && filteredIndex < filteredContacts.length) {
+                          final contact = filteredContacts[filteredIndex];
+
+                          return InviteUserCard(contact: contact, onInvite: () {}, onContactSelected: (_) {});
+                        }
+
+                        return const SizedBox.shrink();
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addList',
         onPressed: () async {},
@@ -217,6 +277,7 @@ class AddListScreenState extends State<AddListScreen> {
     );
   }
 
+  // New searching method
   Widget _buildSearchBar() {
     return Padding(
       padding: EdgeInsets.only(left: 12, right: 12, top: MediaQuery.of(context).padding.top + 5, bottom: 4),

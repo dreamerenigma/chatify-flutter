@@ -51,7 +51,7 @@ class DateUtil {
     }
   }
 
-  static String getCallDateTime({required BuildContext context, required DateTime time}) {
+  static String getCallDateTime({required BuildContext context, required DateTime time, bool showTime = true}) {
     const months = [
       'января',
       'февраля',
@@ -69,6 +69,11 @@ class DateUtil {
 
     final day = time.day;
     final month = months[time.month - 1];
+
+    if (!showTime) {
+      return '$day $month ${time.year} г.';
+    }
+
     final formattedTime = TimeOfDay.fromDateTime(time).format(context);
 
     return '$day $month, $formattedTime';

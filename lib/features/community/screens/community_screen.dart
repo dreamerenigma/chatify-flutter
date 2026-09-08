@@ -11,6 +11,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../calls/screens/calls_screen.dart';
+import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../chat/models/user_model.dart';
 import '../../home/screens/home_screen.dart';
 import '../../home/widgets/app_bars/home_app_bar.dart';
@@ -107,22 +108,44 @@ class CommunityScreenState extends State<CommunityScreen> {
         onToggleSearch: () {},
         hintText: '',
         title: Text(S.of(context).community),
-        popupMenuButton: PopupMenuButton<int>(
-          position: PopupMenuPosition.under,
-          color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
-          icon: const Icon(Icons.more_vert),
-          onSelected: (value) {
-            if (value == 1) {
-              Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
-            }
-          },
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 1,
-              child: Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+        popupMenuButton: TooltipTheme(
+          data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+          child: Theme(
+            data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+            child: PopupMenuButton<int>(
+              tooltip: S.of(context).more,
+              position: PopupMenuPosition.under,
+              offset: const Offset(-8, 0),
+              menuPadding: EdgeInsets.symmetric(vertical: 4),
+              constraints: const BoxConstraints(minWidth: 0, maxWidth: 125),
+              icon: const Icon(Icons.more_vert),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                  }
+                  return ChatifyColors.transparent;
+                }),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+              ),
+              color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
+                    text: S.of(context).settings,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          ),
         ),
         showSearch: false,
       ),

@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/autoloaded_media_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
@@ -54,14 +55,7 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).dataStorage, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -88,6 +82,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
               child: ListView(
                 children: [
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {},
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -110,6 +108,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                   ),
                   const Divider(),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {},
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -132,6 +134,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
                       setState(() {
                         isDataSavings = !isDataSavings;
@@ -143,15 +149,17 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Экономия данных', style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                          Switch(
+                          CustomSwitch(
                             value: isDataSavings,
                             onChanged: (bool value) {
                               setState(() {
                                 isDataSavings = value;
                               });
                             },
-                            activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
+                            switchWidth: 58,
+                            switchHeight: 35,
+                            thumbSize: 27,
+                            thumbPadding: 3,
                           ),
                         ],
                       ),
@@ -160,6 +168,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
 
                   const SizedBox(height: 10),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {},
                     child: Padding(
                       padding: const EdgeInsets.only(left: 65, right: 20, top: 10, bottom: 10),
@@ -179,8 +191,13 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                   ),
                   const Divider(),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () async {
                       final result = await showQualityLoadedMediaDialog(context, selectedQuality);
+
                       if (result != null) {
                         _updateQuality(result);
                       }
@@ -221,6 +238,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () async {
                       final result = await showAutoLoadedMediaDialog(context, selectedAutoLoadedMedia);
                       if (result != null) {
@@ -247,6 +268,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () async {
                       final result = await showAutoLoadedMediaDialog(context, selectedAutoLoadedMedia);
                       if (result != null) {
@@ -275,6 +300,10 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 25),
                     child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                       onTap: () async {
                         final result = await showAutoLoadedMediaDialog(context, selectedAutoLoadedMedia);
                         if (result != null) {

@@ -15,6 +15,7 @@ import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/seasons_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../controllers/themes_controller.dart';
+import '../../widgets/dialogs/color_scheme_selection_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'chat_backup_screen.dart';
 import 'chats_history_screen.dart';
@@ -72,15 +73,19 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 16, bottom: 16),
+                    padding: const EdgeInsets.only(left: 20, top: 16, bottom: 8),
                     child: Text(S.of(context).screen, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
                       themesController.showThemeSelectionDialog(context);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 18, right: 18, top: 6, bottom: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                       child: Row(
                         children: [
                           Obx(() {
@@ -90,7 +95,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(S.of(context).themes, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text(S.of(context).themes, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                               Obx(() {
                                 return Text(themesController.getThemeDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
                               }),
@@ -101,15 +106,19 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
                       seasonsController.showSeasonSelectionDialog(context);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       child: Row(
                         children: [
                           Obx(() {
-                            return SvgPicture.asset(ChatifyVectors.seasons, width: 32, height: 32, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn));
+                            return SvgPicture.asset(ChatifyVectors.seasons, width: 30, height: 30, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn));
                           }),
                           const SizedBox(width: 16),
                           Column(
@@ -126,15 +135,19 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
-                      colorsController.showColorSchemeSelectionDialog(context);
+                      showColorSchemeSelectionDialog(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
                       child: Row(
                         children: [
                           Obx(() {
-                            return Icon(Icons.color_lens, color: colorsController.getColor(colorsController.selectedColorScheme.value));
+                            return Icon(Icons.color_lens, size: 30, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
                           Column(
@@ -151,6 +164,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () async {
                       final selectedWallpaper = await Navigator.push(context, createPageRoute(const WallpaperScreen(imagePath: '')));
 
@@ -182,6 +199,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                       ),
                       Obx(() {
                         return InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                           onTap: () {
                             settingsController.toggleSendWithEnter(!settingsController.sendWithEnter.value);
                           },
@@ -219,6 +240,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                         onTap: () {
                           setState(() {
                             isVisibilityMedia = !isVisibilityMedia;
@@ -254,6 +279,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                         ),
                       ),
                       InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                         onTap: () {
                           fontsController.showFontSelectionDialog(context);
                         },
@@ -280,6 +309,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                         ),
                       ),
                       InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                         onTap: () {
                           setState(() {
                             isTranscriptVoiceMsg = !isTranscriptVoiceMsg;
@@ -335,6 +368,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                         child: Text(S.of(context).archivedChats, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       ),
                       InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                         onTap: () {
                           setState(() {
                             isArchiveChats = !isArchiveChats;
@@ -375,8 +412,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   const Divider(height: 0, thickness: 1),
                   InkWell(
                     splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
                       Navigator.push(context, createPageRoute(const ChatBackupScreen()));
                     },
@@ -394,6 +432,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
                       Navigator.push(context, createPageRoute(const TransferringChatsScreen()));
                     },
@@ -411,6 +453,10 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     ),
                   ),
                   InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                     onTap: () {
                       Navigator.push(context, createPageRoute(const ChatsHistoryScreen()));
                     },

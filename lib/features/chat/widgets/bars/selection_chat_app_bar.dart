@@ -98,7 +98,7 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
               child: Theme(
                 data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
                 child: PopupMenuButton<int>(
-                  tooltip: 'Ещё',
+                  tooltip: S.of(context).more,
                   position: PopupMenuPosition.under,
                   offset: const Offset(-8, 0),
                   menuPadding: EdgeInsets.symmetric(vertical: 4),

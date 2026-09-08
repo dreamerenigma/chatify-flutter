@@ -1,10 +1,12 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../utils/constants/app_colors.dart';
 import 'package:akar_icons_flutter/akar_icons_flutter.dart';
-
 import '../../../../utils/constants/app_sizes.dart';
-import '../../models/list_item_data.dart';
+import '../../controllers/chat_lists_controller.dart';
+import 'delete_tab_confirmation_dialog.dart';
 
 void showChangingListBottomSheetDialog(BuildContext context) {
   showModalBottomSheet(
@@ -30,11 +32,7 @@ class ChangingListsContent extends StatefulWidget {
 }
 
 class _ChangingListsContentState extends State<ChangingListsContent> {
-  final List<ListItemData> _lists = [
-    ListItemData(title: 'Непрочитанное', subtitle: 'Предустановка', canDelete: true),
-    ListItemData(title: 'Избранное', canDelete: false),
-    ListItemData(title: 'Группы', subtitle: 'Предустановка', canDelete: true),
-  ];
+  final ChatListsController listsController = ChatListsController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -85,38 +83,36 @@ class _ChangingListsContentState extends State<ChangingListsContent> {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 6),
-            child: ReorderableListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              buildDefaultDragHandles: false,
-              itemCount: _lists.length,
-              proxyDecorator: (child, index, animation) {
-                return Material(color: ChatifyColors.transparent, elevation: 0, child: child);
-              },
-              onReorderItem: (oldIndex, newIndex) {
-                setState(() {
-                  final item = _lists.removeAt(oldIndex);
-                  _lists.insert(newIndex, item);
-                });
-              },
-              itemBuilder: (context, index) {
-                final item = _lists[index];
+            child: Obx(() => ReorderableListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                buildDefaultDragHandles: false,
+                itemCount: listsController.lists.length,
+                proxyDecorator: (child, index, animation) {
+                  return Material(color: ChatifyColors.transparent, elevation: 0, child: child);
+                },
+                onReorderItem: (oldIndex, newIndex) {
+                  listsController.reorder(oldIndex, newIndex);
+                },
+                itemBuilder: (context, index) {
+                  final item = listsController.lists[index];
 
-                return SizedBox(
-                  key: ValueKey(item.title),
-                  height: 60,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: _buildListItem(
-                      context,
-                      title: item.title,
-                      subtitle: item.subtitle,
-                      onDelete: item.canDelete ? () {} : null,
-                      index: index,
+                  return SizedBox(
+                    key: ValueKey(item.title),
+                    height: 60,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: _buildListItem(
+                        context,
+                        title: item.title,
+                        subtitle: item.subtitle,
+                        onDelete: item.canDelete ? () => showDeleteTabConfirmationDialog(context, index, item.title, listsController) : null,
+                        index: index,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
           _buildAvailablePresets(context),
@@ -125,13 +121,7 @@ class _ChangingListsContentState extends State<ChangingListsContent> {
     );
   }
 
-  Widget _buildListItem(
-    BuildContext context, {
-    required int index,
-    required String title,
-    String? subtitle,
-    VoidCallback? onDelete,
-  }) {
+  Widget _buildListItem(BuildContext context, {required int index, required String title, String? subtitle, VoidCallback? onDelete}) {
     return SizedBox(
       height: 56,
       child: Row(
@@ -152,7 +142,7 @@ class _ChangingListsContentState extends State<ChangingListsContent> {
               onPressed: onDelete,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              icon: const Icon(Icons.delete_outline, size: 23),
+              icon: Icon(FluentIcons.delete_16_regular, size: 23),
             ),
           ReorderableDragStartListener(
             index: index,

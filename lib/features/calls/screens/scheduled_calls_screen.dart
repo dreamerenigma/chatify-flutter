@@ -70,7 +70,7 @@ class ScheduledCallsScreen extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ScheduleCallScreen(user: user)));
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ChatifyColors.blue,
+                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     foregroundColor: ChatifyColors.white,
                     elevation: 0,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

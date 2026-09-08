@@ -5,23 +5,36 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/formatters/phone_formatter.dart';
 
 void showCallsNumberBottomSheet(BuildContext context, String enteredNumber) {
   showModalBottomSheet(
     context: context,
+    showDragHandle: false,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-    shape: const RoundedRectangleBorder( borderRadius: BorderRadius.only( topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(26))),
     builder: (context) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12, bottom: 8),
+          child: Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, borderRadius: BorderRadius.circular(2)),
+            ),
+          ),
+        ),
         InkWell(
+          splashFactory: NoSplash.splashFactory,
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {
             _editPhoneNumber(context, enteredNumber);
           },
-          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Row(
               children: [
                 Expanded(
@@ -35,13 +48,13 @@ void showCallsNumberBottomSheet(BuildContext context, String enteredNumber) {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(S.of(context).callsNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
-                              Text(enteredNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                              Text(PhoneFormatter.formatPhoneNumber(enteredNumber), style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
                             ],
                           ),
                           Text(S.of(context).callViaMobileOperator, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                         ],
                       ),
-                      Icon( Icons.phone, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                      Icon(Icons.local_phone_outlined, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                     ],
                   ),
                 ),
@@ -60,9 +73,8 @@ Future<void> _editPhoneNumber(BuildContext context, String phoneNumber) async {
     status = await Permission.phone.request();
   }
   if (status.isGranted) {
-    final intent = AndroidIntent(
-      action: 'android.intent.action.DIAL',
-      data: 'tel:$phoneNumber', );
+    final intent = AndroidIntent(action: 'android.intent.action.DIAL', data: 'tel:$phoneNumber');
+
     try {
       await intent.launch();
     } catch (e) {

@@ -143,41 +143,37 @@ class NewGroupScreenState extends State<NewGroupScreen> {
           },
         ),
         title: isSearching
-            ? TextSelectionTheme(
-          data: TextSelectionThemeData(
-            cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-            selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          ),
-          child: TextField(
-            key: textFieldKey,
-            focusNode: _searchFocusNode,
-            cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            controller: _searchController,
-            style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-            decoration: InputDecoration(
-              hintText: S.of(context).searchByNameOrPhoneNumber,
-              hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
+          ? TextSelectionTheme(
+              data: TextSelectionThemeData(
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              ),
+              child: TextField(
+                key: textFieldKey,
+                focusNode: _searchFocusNode,
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                controller: _searchController,
+                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                decoration: InputDecoration(
+                  hintText: S.of(context).searchByNameOrPhoneNumber,
+                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                ),
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
+              ],
             ),
-          ),
-        )
-        : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
-            Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
-          ],
-        ),
         actions: isSearching
-          ? [
-              IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode),
-            ]
-          : [
-              IconButton(icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search), onPressed: _toggleSearch),
-            ],
+          ? [IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode)]
+          : [IconButton(icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search), onPressed: _toggleSearch)],
       ),
       body: isLoading
         ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))

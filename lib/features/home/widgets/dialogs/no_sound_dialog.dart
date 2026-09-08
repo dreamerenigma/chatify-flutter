@@ -1,106 +1,112 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../core/enums/radio_position_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../personalization/widgets/dialogs/custom_radio_list_tile.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
-class NoSoundDialog {
-  void showNoSoundDialog(BuildContext context, int initialDuration, ValueChanged<int> onUpdate) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        int selectedDuration = initialDuration;
-        bool isOptionSelected = false;
+void showNoSoundDialog(BuildContext context, int initialDuration, ValueChanged<int> onUpdate) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      int selectedDuration = initialDuration;
+      bool isOptionSelected = true;
 
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              title: Text(S.of(context).noSound, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-              contentPadding: EdgeInsets.zero,
-              actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
-                    child: Text(S.of(context).participantsNotifyMentioned, style: TextStyle(color: ChatifyColors.darkGrey)),
-                  ),
-                  RadioGroup<int>(
-                    groupValue: selectedDuration,
-                    onChanged: (value) {
-                      if (value == null) return;
-
-                      setState(() {
-                        selectedDuration = value;
-                        isOptionSelected = true;
-                      });
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        RadioListTile<int>(
-                          title: Text(S.of(context).nineHours),
-                          value: 1,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          contentPadding: const EdgeInsets.only(left: 12),
-                        ),
-                        RadioListTile<int>(
-                          title: Text(S.of(context).oneWeek),
-                          value: 5,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          contentPadding: const EdgeInsets.only(left: 12),
-                        ),
-                        RadioListTile<int>(
-                          title: Text(S.of(context).always),
-                          value: 60,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          contentPadding: const EdgeInsets.only(left: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  ),
-                  child: Text(
-                    S.of(context).cancel,
-                    style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
-                  ),
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+            title: Text('Выключение уведомлений о сообщениях', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400, height: 1.3)),
+            contentPadding: EdgeInsets.zero,
+            actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
+                  child: Text(S.of(context).participantsNotifyMentioned, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400, height: 1.5)),
                 ),
-                TextButton(
-                  onPressed: () {
-                    if (isOptionSelected) {
-                      onUpdate(selectedDuration);
-                    }
-                    Navigator.of(context).pop();
+                RadioGroup<int>(
+                  groupValue: selectedDuration,
+                  onChanged: (value) {
+                    if (value == null) return;
+
+                    setState(() {
+                      selectedDuration = value;
+                      isOptionSelected = true;
+                    });
                   },
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  ),
-                  child: Text(
-                    S.of(context).ok,
-                    style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomRadioListTile<int>(
+                        title: Text(S.of(context).nineHours),
+                        value: 8,
+                        radioScale: 1.15,
+                        iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        radioPosition: RadioPositionType.left,
+                        padding: const EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
+                      ),
+                      CustomRadioListTile<int>(
+                        title: Text(S.of(context).oneWeek),
+                        value: 168,
+                        radioScale: 1.15,
+                        iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        radioPosition: RadioPositionType.left,
+                        padding: const EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
+                      ),
+                      CustomRadioListTile<int>(
+                        title: Text(S.of(context).always),
+                        value: 0,
+                        radioScale: 1.15,
+                        iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        radioPosition: RadioPositionType.left,
+                        padding: const EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                child: Text(
+                  S.of(context).cancel,
+                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (isOptionSelected) {
+                    onUpdate(selectedDuration);
+                  }
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                child: Text(
+                  S.of(context).ok,
+                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
 }

@@ -1,1 +1,1 @@
-enum ChatListType { all, unread, favorite, groups, custom }
+enum ChatListType { all, unread, favorite, groups, archived, custom }

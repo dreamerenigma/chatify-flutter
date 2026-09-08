@@ -25,8 +25,8 @@ class PressableTextState extends State<PressableText> {
   Widget build(BuildContext context) {
     final Color highlightColor = colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.2 * 255).toInt());
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 38),
+    return Material(
+      color: ChatifyColors.transparent,
       child: InkWell(
         onTap: widget.onTap,
         borderRadius: BorderRadius.circular(30),
@@ -37,16 +37,12 @@ class PressableTextState extends State<PressableText> {
             _fontSize = isHighlighted ? 14 : 16;
           });
         },
-        child: Container(
-          width: double.infinity,
-          height: 42,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: ChatifyColors.transparent),
-          alignment: Alignment.center,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
             style: widget.style.copyWith(fontSize: _fontSize),
-            child: Text(widget.text, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, maxLines: 1),
+            child: Text(widget.text, textAlign: TextAlign.center),
           ),
         ),
       ),

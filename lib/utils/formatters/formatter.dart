@@ -4,12 +4,14 @@ import 'package:intl/intl.dart';
 class Formatter {
   static String formatDate(DateTime? date) {
     date ??= DateTime.now();
+
     return DateFormat('dd-MMM-yyyy').format(date);
   }
 
   static String formatTime(int seconds) {
     int minutes = seconds ~/ 60;
     int secondsRemaining = seconds % 60;
+
     return '${minutes.toString().padLeft(2, '0')}:${secondsRemaining.toString().padLeft(2, '0')}';
   }
 
@@ -31,6 +33,7 @@ class Formatter {
   static String formatDuration(Duration duration) {
     final minutes = duration.inMinutes.remainder(60).toString();
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+
     return '$minutes:$seconds';
   }
 
@@ -46,6 +49,7 @@ class Formatter {
     if (duration == null) return '0:00';
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(1, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+
     return '$minutes:$seconds';
   }
 }

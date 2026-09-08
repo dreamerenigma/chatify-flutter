@@ -15,6 +15,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/formatters/phone_formatter.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../calls/widgets/dialog/save_contact_dialog.dart';
 import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
@@ -30,7 +31,12 @@ import 'contacts_screen.dart';
 import 'new_newsletter_screen.dart';
 
 class HomeSelectUserScreen extends StatefulWidget {
-  const HomeSelectUserScreen({super.key});
+  final bool isFavoritesMode;
+
+  const HomeSelectUserScreen({
+    super.key,
+    this.isFavoritesMode = false,
+  });
 
   @override
   State<HomeSelectUserScreen> createState() => _HomeSelectUserScreenState();
@@ -48,6 +54,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
   Key textFieldKey = UniqueKey();
   List<Contact> _contacts = [];
   List<Contact> filteredContacts = [];
+  List<UserModel> matchedChatUsers = [];
   List<UserModel> chatUsers = [];
   List<UserModel> searchList = [];
   List<UserModel> list = [];
@@ -56,11 +63,26 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
   @override
   void initState() {
     super.initState();
-    fetchContacts();
-    fetchChatUsers();
-    _searchController.addListener(() {
-      _filterContacts();
-    });
+    _loadData();
+    _searchController.addListener(_filterContacts);
+    if (widget.isFavoritesMode) {
+      isSearching = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _searchFocusNode.requestFocus();
+        }
+      });
+    }
+  }
+
+  Future<void> _loadData() async {
+    await Future.wait([
+      fetchContacts(),
+      fetchChatUsers(),
+    ]);
+
+    _findContactsOnApp();
   }
 
   Future<void> fetchContacts() async {
@@ -91,6 +113,31 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
         isFetchingChatUsers = false;
       });
     }
+  }
+
+  void _findContactsOnApp() {
+    final matched = <UserModel>[];
+
+    for (final contact in _contacts) {
+      final contactPhones = contact.phones.map((e) => PhoneFormatter.normalizePhone(e.number)).where((phone) => phone.isNotEmpty).toSet();
+
+      for (final user in chatUsers) {
+        final userPhone =
+        PhoneFormatter.normalizePhone(user.phoneNumber);
+
+        if (userPhone.isNotEmpty && contactPhones.contains(userPhone)) {
+          if (!matched.any((u) => u.id == user.id)) {
+            matched.add(user);
+          }
+        }
+      }
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      matchedChatUsers = matched;
+    });
   }
 
   void _filterContacts() {
@@ -192,11 +239,20 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 isSelectionMode = false;
                 selectedUsers.clear();
               });
-            } else if (isSearching) {
-              _toggleSearch();
-            } else {
-              Navigator.pop(context);
+              return;
             }
+
+            if (widget.isFavoritesMode) {
+              Navigator.pop(context);
+              return;
+            }
+
+            if (isSearching) {
+              _toggleSearch();
+              return;
+            }
+
+            Navigator.pop(context);
           },
         ),
         titleSpacing: 0,
@@ -220,39 +276,15 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
               ],
             )
           : isSearching
-            ? TextSelectionTheme(
-              data: TextSelectionThemeData(
-                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              ),
-              child: TextField(
-              key: textFieldKey,
-              focusNode: _searchFocusNode,
-              controller: _searchController,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-              keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
-              decoration: InputDecoration(
-                hintText: S.of(context).searchContacts,
-                hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                suffixIcon: isSearching
-                  ? IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode,
-                )
-                  : null,
-                ),
-              ),
-              )
+            ?  _buildSearchField()
             : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(S.of(context).choose, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                SizedBox(height: 3),
-                Text('$totalItemsCount ${S.of(context).totalCountContacts}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400)),
-              ],
-            ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(S.of(context).choose, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                  SizedBox(height: 3),
+                  Text('$totalItemsCount ${S.of(context).totalCountContacts}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400)),
+                ],
+              ),
             actions: isSearching || isSelectionMode ? []
           : [
             Row(
@@ -372,45 +404,47 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
             thumbVisibility: false,
             child: ListView(
               children: [
-                Column(
-                  children: [
-                    SizedBox(height: 8),
-                    AppActionMenuItem(
-                      icon: _buildIconContainer(Icons.group_add, colorsController.getColor(colorsController.selectedColorScheme.value)),
-                      title: S.of(context).newGroup,
-                      onTap: () {
-                        Navigator.push(context, createPageRoute(const NewGroupScreen()));
-                      },
-                    ),
-                    AppActionMenuItem(
-                      icon: _buildIconContainer(Icons.person_add_alt_1_rounded, colorsController.getColor(colorsController.selectedColorScheme.value)),
-                      title: S.of(context).newContact,
-                      onTap: () {
-                        final saveContactController = SaveContactController.instance;
-                        final selectedOption = saveContactController.getOption();
-
-                        Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
-                      },
-                      trailing: GestureDetector(
+                if (!widget.isFavoritesMode)
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      AppActionMenuItem(
+                        icon: _buildIconContainer(Icons.group_add, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        title: S.of(context).newGroup,
                         onTap: () {
-                          Navigator.push(context, createPageRoute(QrCodeScreen(user: APIs.me, initialIndex: 1)));
+                          Navigator.push(context, createPageRoute(const NewGroupScreen()));
                         },
-                        child: const Icon(Icons.qr_code, color: ChatifyColors.grey),
                       ),
-                    ),
-                    AppActionMenuItem(
-                      icon: _buildIconContainer(Icons.groups, colorsController.getColor(colorsController.selectedColorScheme.value)),
-                      title: S.of(context).newCommunity,
-                      onTap: () {
-                        Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
-                      },
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
-                ),
+                      AppActionMenuItem(
+                        icon: _buildIconContainer(Icons.person_add_alt_1_rounded, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        title: S.of(context).newContact,
+                        onTap: () {
+                          final saveContactController = SaveContactController.instance;
+                          final selectedOption = saveContactController.getOption();
+
+                          Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
+                        },
+                        trailing: GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, createPageRoute(QrCodeScreen(user: APIs.me, initialIndex: 1)));
+                          },
+                          child: const Icon(Icons.qr_code, size: 24, color: ChatifyColors.grey),
+                        ),
+                      ),
+                      AppActionMenuItem(
+                        icon: _buildIconContainer(Icons.groups, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        title: S.of(context).newCommunity,
+                        onTap: () {
+                          Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
+                        },
+                      ),
+                    ],
+                  ),
+                if (matchedChatUsers.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                  ),
                 ...chatUsers.map((chatUser) =>
                   UseAppUserCard(
                     user: chatUser,
@@ -434,6 +468,32 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return TextSelectionTheme(
+      data: TextSelectionThemeData(
+        cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+        selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+        selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+      ),
+      child: TextField(
+        key: textFieldKey,
+        focusNode: _searchFocusNode,
+        controller: _searchController,
+        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+        keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
+        decoration: InputDecoration(
+          hintText: S.of(context).searchContacts,
+          hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          suffixIcon: isSearching ? IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad, size: 24, color: ChatifyColors.darkGrey), onPressed: _toggleInputMode): null,
+          contentPadding: EdgeInsets.only(top: 12)
         ),
       ),
     );

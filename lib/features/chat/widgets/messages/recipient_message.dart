@@ -187,13 +187,13 @@ class RecipientMessageState extends State<RecipientMessage> {
 
   Widget _buildMessageTail() {
     return Positioned(
-      top: isWebOrWindows ? 6 : 5,
+      top: isWebOrWindows ? 6 : 5.5,
       right: 7,
       child: CustomPaint(
         size: const Size(10, 10),
         painter: TrianglePainter(
-          fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight,
-          borderColor: ChatifyColors.greenMessageBorderDark,
+          fillColor: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageLight,
+          borderColor: ChatifyColors.greenMessageDivider,
         ),
       ),
     );
@@ -339,7 +339,10 @@ class RecipientMessageState extends State<RecipientMessage> {
               right: 7,
               child: CustomPaint(
                 size: const Size(10, 10),
-                painter: TrianglePainter(fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight, borderColor: ChatifyColors.greenMessageBorderDark),
+                painter: TrianglePainter(
+                  fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight,
+                  borderColor: ChatifyColors.greenMessageBorderDark,
+                ),
               ),
             ),
             if (isVideo)

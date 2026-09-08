@@ -28,6 +28,7 @@ class MessageBubble extends StatelessWidget {
         color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder,
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
         boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha(25), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 2))],
+        border: Border.all(color: ChatifyColors.greenMessageDivider, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

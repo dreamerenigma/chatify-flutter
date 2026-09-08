@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="632"
-    android:versionName="1.3.94">
+    android:versionCode="245"
+    android:versionName="1.4.1">
 
     <uses-feature android:name="android.hardware.camera" android:required="false" tools:targetApi="eclair" />
     <uses-feature android:name="android.hardware.telephony" android:required="false" tools:targetApi="eclair" />

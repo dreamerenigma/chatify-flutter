@@ -7,6 +7,7 @@ class RecentCallModel {
   final bool isIncoming;
   final bool isMissed;
   final bool isVideo;
+  final bool isFavorite;
 
   const RecentCallModel({
     required this.user,
@@ -14,7 +15,26 @@ class RecentCallModel {
     this.isIncoming = false,
     this.isMissed = false,
     this.isVideo = false,
+    this.isFavorite = false,
   });
+
+  RecentCallModel copyWith({
+    UserModel? user,
+    DateTime? time,
+    bool? isIncoming,
+    bool? isMissed,
+    bool? isVideo,
+    bool? isFavorite,
+  }) {
+    return RecentCallModel(
+      user: user ?? this.user,
+      time: time ?? this.time,
+      isIncoming: isIncoming ?? this.isIncoming,
+      isMissed: isMissed ?? this.isMissed,
+      isVideo: isVideo ?? this.isVideo,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -23,6 +43,7 @@ class RecentCallModel {
       'isIncoming': isIncoming,
       'isMissed': isMissed,
       'isVideo': isVideo,
+      'isFavorite': isFavorite,
     };
   }
 
@@ -33,6 +54,7 @@ class RecentCallModel {
       isIncoming: map['isIncoming'] ?? false,
       isMissed: map['isMissed'] ?? false,
       isVideo: map['isVideo'] ?? false,
+      isFavorite: map['isFavorite'] ?? false,
     );
   }
 

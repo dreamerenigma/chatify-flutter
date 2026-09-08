@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 37.5 37.5"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="pin.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.27863045"
+     inkscape:cx="3.5889832"
+     inkscape:cy="195.59958"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1"
+     showguides="true" />
+  <rect
+     x="0"
+     fill="none"
+     id="rect1"
+     width="0"
+     height="0"
+     y="0" />
+  <g
+     id="g1"
+     transform="matrix(1.7604886,0,0,1.7604886,-3.8024429,-1.5209772)">
+    <path
+       d="m 19.517978,15.095215 c 0,-1.933141 -2.845642,-2.006078 -2.845642,-4.666855 V 3.7126404 h 0.474273 c 0.785397,0 1.42282,-0.6374242 1.42282,-1.422822 0,-0.7853975 -0.637423,-1.42282172 -1.42282,-1.42282172 H 8.3039225 c -0.7853979,0 -1.4228222,0.63742422 -1.4228222,1.42282172 0,0.7853978 0.6374243,1.422822 1.4228222,1.422822 H 8.7781962 V 10.42836 c 0,2.745593 -2.8456437,2.765763 -2.8456437,4.666855 h 5.8223125 v 6.119817 c 0,0.521703 0.426847,0.948549 0.948549,0.948549 0.521702,0 0.948549,-0.426846 0.948549,-0.948549 v -6.119817 z"
+       id="path1"
+       sodipodi:nodetypes="cccsssssscsccssscc"
+       style="stroke-width:0.948548" />
+  </g>
+</svg>

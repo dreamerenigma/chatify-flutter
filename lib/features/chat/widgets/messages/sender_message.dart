@@ -211,7 +211,7 @@ class SenderMessageState extends State<SenderMessage> {
               ),
             ),
             Positioned(
-              top: isWebOrWindows ? 10 : 5,
+              top: isWebOrWindows ? 10 : 5.5,
               left: 7,
               child: Transform(
                 alignment: Alignment.center,
@@ -220,7 +220,7 @@ class SenderMessageState extends State<SenderMessage> {
                   size: const Size(10, 10),
                   painter: TrianglePainter(
                     fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight),
-                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageBorder),
+                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.blueMessageBorder),
                   ),
                 ),
               ),

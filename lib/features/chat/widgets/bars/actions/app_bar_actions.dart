@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:chatify/utils/popups/custom_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,6 +34,7 @@ class AppBarActions extends StatefulWidget {
 class _AppBarActionsState extends State<AppBarActions> with SingleTickerProviderStateMixin {
   late AnimationController _searchController;
   late Animation<double> _searchScaleAnimation;
+
   bool get isMobile => Platform.isIOS || Platform.isAndroid;
 
   @override
@@ -141,36 +143,28 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           SizedBox(
             width: 44,
             height: 44,
-            child: PopupMenuButton<int>(
-              tooltip: S.of(context).more,
-              position: PopupMenuPosition.under,
-              offset: const Offset(-8, 0),
-              menuPadding: EdgeInsets.symmetric(vertical: 4),
-              constraints: const BoxConstraints(minWidth: 0, maxWidth: 235),
-              icon: const Icon(Icons.more_vert),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
-                  }
-                  return ChatifyColors.transparent;
-                }),
-                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+            child: TooltipTheme(
+              data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+              child: Theme(
+                data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+                child: IconButton(
+                  tooltip: S.of(context).more,
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.more_vert, size: 22, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  onPressed: () => _showPopupMenu(context),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                      }
+                      return ChatifyColors.transparent;
+                    }),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                  ),
+                  color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                ),
               ),
-              onSelected: widget.onPopupItemSelected,
-              itemBuilder: (context) => [
-                _popupItem(context, 1, S.of(context).groupData),
-                _popupItem(context, 2, S.of(context).mediaGroups),
-                _popupItem(context, 3, S.of(context).search),
-                _popupItem(context, 4, S.of(context).noSound),
-                _popupItem(context, 5, S.of(context).disappearingMessages),
-                _popupItem(context, 6, S.of(context).wallpaper),
-                _popupItem(context, 7, S.of(context).addToList),
-                _popupItem(context, 8, S.of(context).more),
-              ],
             ),
           ),
         if (Platform.isWindows)
@@ -191,7 +185,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
       child: AppPopupMenuItem(
         text: title,
         onTap: () {
-          Navigator.pop(context);
+          Navigator.pop(context, value);
         },
       ),
     );
@@ -219,5 +213,143 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
         child: Container(padding: padding, child: icon),
       ),
     );
+  }
+
+  void _showPopupMenu(BuildContext context) {
+    showMenu<int>(
+      context: context,
+      position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width - 235, kToolbarHeight + 25, 8, 0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      constraints: const BoxConstraints(minWidth: 235, maxWidth: 235),
+      menuPadding: EdgeInsets.symmetric(vertical: 4),
+      color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+      items: [
+        _popupItem(context, 1, S.of(context).groupData),
+        _popupItem(context, 2, S.of(context).mediaGroups),
+        PopupMenuDivider(height: 8, indent: 0, endIndent: 0, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled),
+        _popupItem(context, 3, 'Просмотр контакта'),
+        _popupItem(context, 4, S.of(context).search),
+        _popupItem(context, 5, 'Медиа, ссылки и докум.'),
+        _popupItem(context, 6, S.of(context).noSound),
+        _popupItem(context, 7, S.of(context).disappearingMessages),
+        _popupItem(context, 8, S.of(context).wallpaper),
+        PopupMenuDivider(height: 8, indent: 0, endIndent: 0, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled),
+        PopupMenuItem<int>(
+          value: 9,
+          padding: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                splashFactory: NoSplash.splashFactory,
+                borderRadius: BorderRadius.circular(ChatifySizes.inputFieldRadius),
+                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                onTap: () {
+                  Navigator.pop(context, 9);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 6, top: 10, bottom: 10),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(S.of(context).more, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+                      Icon(Icons.arrow_right, size: 28, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == null) return;
+
+      if (value == 9) {
+        _showMorePopupMenu(context);
+        return;
+      }
+
+      widget.onPopupItemSelected?.call(value);
+    });
+  }
+
+  void _showMorePopupMenu(BuildContext context) {
+    showMenu<int>(
+      context: context,
+      position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width - 255, kToolbarHeight + 25, 8, 0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      constraints: const BoxConstraints(minWidth: 255, maxWidth: 255),
+      menuPadding: EdgeInsets.symmetric(vertical: 4),
+      color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+      items: [
+        PopupMenuItem<int>(
+          value: 10,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Пожаловаться',
+            onTap: () {
+              Navigator.pop(context, 10);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 11,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Заблокировать',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 12,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Очистить чат',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 13,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Экспорт чата',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 14,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Добавить иконку на экран',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 15,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Добавить в список',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == null) return;
+
+      widget.onPopupItemSelected?.call(value);
+    });
   }
 }

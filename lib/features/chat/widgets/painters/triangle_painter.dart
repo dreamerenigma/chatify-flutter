@@ -24,16 +24,18 @@ class TrianglePainter extends CustomPainter {
       ..close();
 
     canvas.save();
+    canvas.clipPath(path);
     canvas.translate(1.5, 1.5);
     canvas.drawPath(path, shadowPaint);
     canvas.restore();
     canvas.drawPath(path, fillPaint);
 
     final borderPath = Path()
-      ..moveTo(size.width - 3, 0)
+      ..moveTo(0, 0)
+      ..lineTo(size.width - 3, 0)
       ..quadraticBezierTo(size.width, 0, size.width - 1, 3)
       ..lineTo(1, size.height - 1)
-      ..quadraticBezierTo(0, size.height, 0, size.height - 3);
+      ..lineTo(0, size.height - 1);
 
     canvas.drawPath(borderPath, strokePaint);
   }

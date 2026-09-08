@@ -2,6 +2,7 @@ import 'package:chatify/features/home/controllers/dialog_controller.dart';
 import 'package:get/get.dart';
 import '../features/chat/controllers/zoom_controller.dart';
 import '../features/community/controllers/country_controller.dart';
+import '../features/home/controllers/chat_lists_controller.dart';
 import '../features/home/controllers/overlay_color_controller.dart';
 import '../features/personalization/controllers/colors_controller.dart';
 import '../features/personalization/controllers/fonts_controller.dart';
@@ -29,5 +30,6 @@ class GeneralBindings extends Bindings {
     Get.put<OverlayColorController>(OverlayColorController());
     Get.put<ExpandController>(ExpandController());
     Get.put<CountryController>(CountryController());
+    Get.put<ChatListsController>(ChatListsController());
   }
 }

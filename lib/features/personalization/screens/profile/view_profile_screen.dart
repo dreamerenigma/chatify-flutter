@@ -18,16 +18,22 @@ import '../../../../../utils/popups/dialogs.dart';
 import '../../../../../utils/helper/date_util.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/enums/date_format_type.dart';
+import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/screens/chat_screen.dart';
 import '../../../group/models/group_model.dart';
 import '../../../status/widgets/options/action_option.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import '../../widgets/dialogs/add_list_bottom_sheet_dialog.dart';
 import '../../widgets/dialogs/add_new_contact_bottom_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
+import '../../widgets/dialogs/media_visibility_dialog.dart';
+import '../../widgets/images/profile_photo_widget.dart';
 import '../../widgets/items/profile_settings_item.dart';
 import '../../widgets/lists/group_list.dart';
+import '../notifications/user_notifications_screen.dart';
 
 class ViewProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -38,18 +44,12 @@ class ViewProfileScreen extends StatefulWidget {
 }
 
 class ViewProfileScreenState extends State<ViewProfileScreen> {
+  final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
   final ScrollController _scrollController = ScrollController();
   late List<String> mediaThumbnails;
   late List<GroupModel> groups;
   bool isCloseChatEnabled = false;
-  double _scrollOffset = 0;
-
-  double get _headerProgress {
-    const double start = 0;
-    const double end = 150;
-
-    return ((_scrollOffset - start) / (end - start)).clamp(0.0, 1.0);
-  }
+  bool isProfilePhotoLoaded = false;
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     groups = [];
     _scrollController.addListener(() {
       setState(() {
-        _scrollOffset = _scrollController.offset;
+        _scrollOffset.value = _scrollController.offset;
       });
     });
   }
@@ -66,13 +66,16 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _scrollOffset.dispose();
     super.dispose();
+  }
+
+  void _openProfilePhoto(UserModel user, BuildContext context) {
+    Navigator.push(context, createPageRoute(PhotoProfileScreen(image: user.image, user: user)));
   }
 
   @override
   Widget build(BuildContext context) {
-    var mq = MediaQuery.of(context).size;
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -81,7 +84,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(width: mq.width, height: mq.height * .03 + 56),
+                SizedBox(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height * .03 + 56),
                 Expanded(
                   child: ScrollConfiguration(
                     behavior: NoGlowScrollBehavior(),
@@ -119,113 +122,153 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   }
 
   Widget _buildAnimatedHeader() {
-    final double progress = _headerProgress;
+    return ValueListenableBuilder<double>(
+      valueListenable: _scrollOffset,
+      builder: (context, scrollOffset, child) {
+        final double progress = (scrollOffset / 150).clamp(0.0, 1.0);
+        final double borderOpacity = ((progress - 0.9) / 0.1).clamp(0.0, 1.0);
 
-    return Positioned(
-      top: 20,
-      left: 0,
-      right: 0,
-      child: SizedBox(
-        height: 70,
-        child: Stack(
-          alignment: Alignment.centerLeft,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
-            ),
-            Positioned(
-              left: 55,
-              child: Opacity(
-                opacity: progress,
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(21),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.user.image,
-                        width: 42,
-                        height: 42,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) {
-                          return CircleAvatar(
-                            backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            child: SvgPicture.asset(ChatifyVectors.person, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.blueAccent, BlendMode.srcIn)),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text( '${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                  ],
+        return Positioned(
+          top: 25,
+          left: 0,
+          right: 0,
+          child: Container(
+            decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey),
+            height: 60,
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
                 ),
-              ),
-            ),
-            Positioned(
-              right: 2,
-              child: PopupMenuButton<int>(
-                icon: const Icon(Icons.more_vert, size: 25),
-                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
-                onSelected: (value) {
-                  if (value == 1) {
-                    final double maxHeight = MediaQuery.of(context).size.height * 0.62;
+                Positioned(
+                  left: 55,
+                  child: Opacity(
+                    opacity: progress,
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(21),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.user.image,
+                            width: 42,
+                            height: 42,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) {
+                              return CircleAvatar(
+                                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                child: SvgPicture.asset(ChatifyVectors.profile, width: 42, height: 42),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Text(
+                          '${widget.user.name} ${widget.user.surname}',
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.normal, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 2,
+                  child: PopupMenuButton<int>(
+                    tooltip: S.of(context).more,
+                    position: PopupMenuPosition.under,
+                    offset: const Offset(-8, 0),
+                    menuPadding: EdgeInsets.symmetric(vertical: 4),
+                    constraints: const BoxConstraints(minWidth: 0, maxWidth: 255),
+                    icon: const Icon(Icons.more_vert),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith((states) {
+                        if (states.contains(WidgetState.pressed)) {
+                          return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                        }
+                        return ChatifyColors.transparent;
+                      }),
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                      overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                    ),
+                    color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 1,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AppPopupMenuItem(
+                          text: 'Поделиться',
+                          onTap: () {
+                            final double maxHeight = MediaQuery.of(context).size.height * 0.62;
 
-                    showAddNewContactBottomSheetDialog(context, maxHeight);
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 1,
-                    child: Text(S.of(context).addContact),
+                            showAddNewContactBottomSheetDialog(context, maxHeight);
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 2,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AppPopupMenuItem(
+                          text: 'Изменить',
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 3,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AppPopupMenuItem(
+                          text: 'Открыть в адресной книге',
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 4,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AppPopupMenuItem(
+                          text: 'Подтвержд. кода безоп.',
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  PopupMenuItem(
-                    value: 2,
-                    child: Text(S.of(context).confirmSecureCode),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: IgnorePointer(
+                    child: Opacity(opacity: borderOpacity, child: Container(height: 1, color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.buttonDisabled)),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget buildProfileInfo(UserModel user, BuildContext context) {
-    var mq = MediaQuery.of(context).size;
+    final double imageSize = MediaQuery.of(context).size.height * .15;
     List<Widget> profileInfoWidgets = [];
 
-    profileInfoWidgets.add(
-      GestureDetector(
-        onTap: () {
-          Navigator.push(context, createPageRoute(PhotoProfileScreen(image: user.image, user: user)));
-        },
-        child: Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * .1),
-            child: CachedNetworkImage(
-              width: MediaQuery.of(context).size.height * .15,
-              height: MediaQuery.of(context).size.height * .15,
-              fit: BoxFit.cover,
-              imageUrl: user.image,
-              errorWidget: (context, url, error) => CircleAvatar(
-                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                foregroundColor: ChatifyColors.white,
-                child: SvgPicture.asset(ChatifyVectors.person, width: 50, height: 50, colorFilter: ColorFilter.mode(ChatifyColors.blueAccent, BlendMode.srcIn)),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    profileInfoWidgets.add(SizedBox(height: mq.height * .008));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .008));
+    profileInfoWidgets.add(ProfilePhotoWidget(user: user, size: imageSize, onTap: () => _openProfilePhoto(user, context)));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .008));
     profileInfoWidgets.add(Center(child: Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500))));
-    profileInfoWidgets.add(SizedBox(height: mq.height * .006));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
     if (user.phoneNumber.isNotEmpty && user.phoneNumber != "null") {
       profileInfoWidgets.add(Center(child: Text(user.phoneNumber, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400))));
     }
-    profileInfoWidgets.add(SizedBox(height: mq.height * .006));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
     profileInfoWidgets.add(
       StreamBuilder<firestore.DocumentSnapshot>(
         stream: APIs.firestore.collection('Users').doc(user.id).snapshots(),
@@ -263,7 +306,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         },
       ),
     );
-    profileInfoWidgets.add(SizedBox(height: mq.height * .006));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
     profileInfoWidgets.add(
       Center(
         child: GestureDetector(
@@ -288,7 +331,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         ),
       ),
     );
-    profileInfoWidgets.add(SizedBox(height: mq.height * .02));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .02));
     profileInfoWidgets.add(
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -300,7 +343,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
             },
           ),
-          SizedBox(width: mq.width * 0.03),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
           ActionOption(
             icon: Icons.call_outlined,
             label: S.of(context).audio,
@@ -308,15 +351,15 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user)));
             },
           ),
-          SizedBox(width: mq.width * 0.03),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
           ActionOption(
-            icon: Icons.videocam_outlined,
+            svgAsset: ChatifyVectors.videoCameraOutline,
             label: S.of(context).video,
             onTap: () {
               Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
             },
           ),
-          SizedBox(width: mq.width * 0.03),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
           ActionOption(
             icon: Icons.search,
             label: S.of(context).search,
@@ -329,10 +372,10 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         ],
       ),
     );
-    profileInfoWidgets.add(SizedBox(height: mq.height * .03));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .03));
     profileInfoWidgets.add(
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -354,7 +397,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
   Widget _buildMedia() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -401,19 +444,26 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           title: 'Управление хранилищем',
           subtitle: '77 KB',
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {},
         ),
         SizedBox(height: 6),
         ProfileSettingsItem(
           icon: const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey, size: 25),
           title: S.of(context).notifications,
-          onTap: () {},
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          onTap: () {
+            Navigator.push(context, createPageRoute(const UserNotificationsScreen()));
+          },
         ),
         SizedBox(height: 20),
         ProfileSettingsItem(
           icon: const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey, size: 25),
           title: S.of(context).mediaVisibility,
-          onTap: () {},
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          onTap: () {
+            showMediaVisibilityDialog(context);
+          },
         ),
         SizedBox(height: 20),
       ],
@@ -428,6 +478,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           icon: const Icon(Icons.lock_outlined, color: ChatifyColors.darkGrey, size: 25),
           title: S.of(context).encryption,
           subtitle: S.of(context).callsProtectedEndToEndEncryption,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {},
         ),
         const SizedBox(height: 10),
@@ -435,6 +486,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           icon: const HugeIcon(icon: HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
           title: S.of(context).disappearingMessages,
           subtitle: S.of(context).off,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {},
         ),
         const SizedBox(height: 10),
@@ -442,15 +494,18 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           icon: const Iconify(Mdi.message_text_lock_outline, color: ChatifyColors.darkGrey),
           title: S.of(context).closingChat,
           subtitle: S.of(context).closeHideChatDevice,
-          trailing: Switch(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          trailing: CustomSwitch(
             value: isCloseChatEnabled,
             onChanged: (value) {
               setState(() {
                 isCloseChatEnabled = value;
               });
             },
-            activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            activeTrackColor: ChatifyColors.blueAccent,
+            switchWidth: 58,
+            switchHeight: 35,
+            thumbSize: 27,
+            thumbPadding: 3,
           ),
           onTap: () {
             setState(() {
@@ -463,6 +518,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           icon: SvgPicture.asset(ChatifyVectors.shieldCheckeredFilled, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           title: 'Расширенная защита конфиденциальности в чате',
           subtitle: 'Выкл.',
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {},
         ),
       ],
@@ -470,28 +526,122 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   }
 
   Widget _buildGeneralGroup() {
-    if (groups.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Text('Общих групп нет', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-      );
-    }
-
     final String groupText = groups.length == 1 ? S.of(context).generalGroup : S.of(context).generalGroups;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 25, top: 12, bottom: 12),
+      padding: const EdgeInsets.only(top: 12, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text('${groups.length} ', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
-              Text(groupText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
-            ],
-          ),
-          const SizedBox(height: 10),
-          GroupList(groups: groups, currentUser: APIs.me.name, onGroupSelected: (group) {}),
+          if (groups.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text('Общих групп нет', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+            )
+          else ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Text('${groups.length} ', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                  Text(groupText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GroupList(groups: groups, currentUser: APIs.me.name, onGroupSelected: (group) {}),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Material(
+                  color: ChatifyColors.transparent,
+                  child: InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                            child: Center(child: SvgPicture.asset(ChatifyVectors.groups, width: 22, height: 22))
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              'Создать группу с контактом ${widget.user.name} ${widget.user.surname}',
+                              style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Material(
+                  color: ChatifyColors.transparent,
+                  child: InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                            child: Center(child: SvgPicture.asset(ChatifyVectors.addGroup, width: 24, height: 24)),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Добавление в группы', style: TextStyle( fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: Text('Добавьте этот контакт в группы, в которых состоите.', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                ProfileSettingsItem(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  icon: SvgPicture.asset(ChatifyVectors.favoriteNone, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 25, height: 25),
+                  title: 'Удалить из избранного',
+                  onTap: () {},
+                ),
+                const SizedBox(height: 4),
+                ProfileSettingsItem(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  icon: SvgPicture.asset(ChatifyVectors.addToList, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 25, height: 25),
+                  title: 'Добавить в список',
+                  onTap: () {
+                    showAddListBottomSheetDialog(context);
+                  },
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -506,22 +656,25 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           title: 'Очистить чат',
           titleColor: ChatifyColors.danger,
           iconColor: ChatifyColors.danger,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           onTap: () {},
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
         ProfileSettingsItem(
           icon: const Icon(Icons.not_interested, size: 25),
           title: '${S.of(context).block}: ${widget.user.name} ${widget.user.surname}',
           titleColor: ChatifyColors.danger,
           iconColor: ChatifyColors.danger,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           onTap: () {},
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
         ProfileSettingsItem(
           icon: const Icon(Icons.thumb_down_alt_outlined, size: 25),
           title: '${S.of(context).complainAbout} ${widget.user.name} ${widget.user.surname}',
           titleColor: ChatifyColors.danger,
           iconColor: ChatifyColors.danger,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           onTap: () {},
         ),
         const SizedBox(height: 10),

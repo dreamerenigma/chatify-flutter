@@ -40,14 +40,7 @@ class _SettingsArchiveScreenState extends State<SettingsArchiveScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).settingsArchive, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -76,7 +69,7 @@ class _SettingsArchiveScreenState extends State<SettingsArchiveScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 12),
+                      SizedBox(height: 6),
                       _buildSettingsArchive(context),
                     ],
                   ),
@@ -90,32 +83,37 @@ class _SettingsArchiveScreenState extends State<SettingsArchiveScreen> {
   }
 
   Widget _buildSettingsArchive(BuildContext context) {
-    return InkWell(
-      onTap: toggleSwitch,
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(S.of(context).subtitleArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.2)),
-                ),
-                CustomSwitch(
-                  value: isArchiveEnabled,
-                  onChanged: (val) => toggleSwitch(),
-                  switchWidth: 50,
-                  switchHeight: 31,
-                  thumbSize: 21,
-                  thumbPadding: 5,
-                ),
-              ],
-            ),
-            Text(S.of(context).archivedChatsWillNotUnarchived, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
-          ],
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        onTap: toggleSwitch,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(child: Text(S.of(context).subtitleArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.2))),
+                  CustomSwitch(
+                    value: isArchiveEnabled,
+                    onChanged: (val) => toggleSwitch(),
+                    switchWidth: 58,
+                    switchHeight: 35,
+                    thumbSize: 27,
+                    thumbPadding: 3,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 70),
+                child: Text(S.of(context).archivedChatsWillNotUnarchived, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+              ),
+            ],
+          ),
         ),
       ),
     );

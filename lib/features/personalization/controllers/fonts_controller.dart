@@ -156,43 +156,35 @@ class FontsController extends GetxController {
             contentPadding: EdgeInsets.zero,
             titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomRadioListTile(
-                  title: Text(S.of(context).small),
-                  value: 'small',
-                  groupValue: _getStringFromFontMode(tempSelectedFont.value),
-                  onChanged: (value) {
-                    setState(() {
-                      setTempFont(getFontModeFromString(value!));
-                    });
-                  },
-                  iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
-                CustomRadioListTile(
-                  title: Text(S.of(context).average),
-                  value: 'average',
-                  groupValue: _getStringFromFontMode(tempSelectedFont.value),
-                  onChanged: (value) {
-                    setState(() {
-                      setTempFont(getFontModeFromString(value!));
-                    });
-                  },
-                  iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
-                CustomRadioListTile(
-                  title: Text(S.of(context).big),
-                  value: 'big',
-                  groupValue: _getStringFromFontMode(tempSelectedFont.value),
-                  onChanged: (value) {
-                    setState(() {
-                      setTempFont(getFontModeFromString(value!));
-                    });
-                  },
-                  iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
-              ],
+            content: RadioGroup<String>(
+              groupValue: _getStringFromFontMode(tempSelectedFont.value),
+              onChanged: (value) {
+                if (value == null) return;
+
+                setState(() {
+                  setTempFont(getFontModeFromString(value));
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomRadioListTile(
+                    title: Text(S.of(context).small),
+                    value: 'small',
+                    iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  ),
+                  CustomRadioListTile(
+                    title: Text(S.of(context).average),
+                    value: 'average',
+                    iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  ),
+                  CustomRadioListTile(
+                    title: Text(S.of(context).big),
+                    value: 'big',
+                    iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(

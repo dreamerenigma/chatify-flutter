@@ -1,7 +1,7 @@
 name: chatify
 description: Applications for messaging, calling and creating shared groups
 publish_to: 'none'
-version: 1.3.94+632
+version: 1.4.1+245
 repository: https://github.com/dreamerenigma?tab=repositories
 
 environment:

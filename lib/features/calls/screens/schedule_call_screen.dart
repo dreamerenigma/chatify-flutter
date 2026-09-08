@@ -1,5 +1,6 @@
 import 'package:chatify/common/widgets/switches/custom_switch.dart';
 import 'package:chatify/features/utils/widgets/dividers/custom_divider.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +12,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../widgets/dialog/reminder_call_bottom_dialog.dart';
 import '../widgets/dialog/type_call_dialog.dart';
 
 class ScheduleCallScreen extends StatefulWidget {
@@ -97,212 +99,219 @@ class _ScheduleCallScreenState extends State<ScheduleCallScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildTextField(
-                  controller: nameController,
-                  focusNode: nameFocusNode,
-                  hintText: S.of(context).callFrom,
-                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.bold),
-                  initialValue: '${S.of(context).callFrom} ${widget.user.name}',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.bold),
-                  showClearButton: true,
-                  minLines: 1,
-                  maxLines: 1,
-                  padding: const EdgeInsets.only(left: 16, right: 4, top: 4, bottom: 4),
-                ),
-                _buildTextField(
-                  controller: descriptionController,
-                  focusNode: descriptionFocusNode,
-                  hintText: S.of(context).descriptionOptional,
-                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                  minLines: 1,
-                  maxLines: null,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
-                  padding: const EdgeInsets.only(left: 16, right: 8),
-                ),
-                Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Icon(UniconsLine.calendar_alt, color: ChatifyColors.darkGrey),
-                      const SizedBox(width: 14),
-                      InkWell(
-                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                        child: Text(dateFormatted, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
-                        onTap: () {},
-                      ),
-                      const Spacer(),
-                      InkWell(
-                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                        child: Text(timeFormattedStart, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: isEndTimeVisible
-                    ? Column(
-                        key: const ValueKey('visible_end_time'),
+            ScrollConfiguration(
+              behavior: NoGlowScrollBehavior(),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTextField(
+                      controller: nameController,
+                      focusNode: nameFocusNode,
+                      hintText: S.of(context).callFrom,
+                      hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.bold),
+                      initialValue: '${S.of(context).callFrom} ${widget.user.name}',
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.bold),
+                      showClearButton: true,
+                      minLines: 1,
+                      maxLines: 1,
+                      padding: const EdgeInsets.only(left: 16, right: 4, top: 4, bottom: 4),
+                    ),
+                    _buildTextField(
+                      controller: descriptionController,
+                      focusNode: descriptionFocusNode,
+                      hintText: S.of(context).descriptionOptional,
+                      hintStyle: TextStyle(color: ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                      minLines: 1,
+                      maxLines: null,
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                      padding: const EdgeInsets.only(left: 16, right: 8),
+                    ),
+                    Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
                         children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 27, top: 2, bottom: 2),
-                              child: Column(
-                                children: List.generate(8, (index) {
-                                  return Container(width: 2, height: 4, margin: const EdgeInsets.symmetric(vertical: 1), color: ChatifyColors.darkGrey);
-                                }),
-                              ),
-                            ),
+                          Icon(UniconsLine.calendar_alt, color: ChatifyColors.darkGrey),
+                          const SizedBox(width: 14),
+                          InkWell(
+                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                            child: Text(dateFormatted, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
+                            onTap: () {},
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                const Icon(UniconsLine.calendar_alt, color: ChatifyColors.darkGrey),
-                                const SizedBox(width: 14),
-                                InkWell(
-                                  splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                                  child: Text(dateFormatted, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                                  onTap: () {},
-                                ),
-                                const Spacer(),
-                                InkWell(
-                                  splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                                  child: Text(timeFormattedEnd, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                                  onTap: () {},
-                                ),
-                              ],
-                            ),
+                          const Spacer(),
+                          InkWell(
+                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                            child: Text(timeFormattedStart, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
+                            onTap: () {},
                           ),
                         ],
-                      )
-                    : const SizedBox(key: ValueKey('hidden_end_time')),
-                ),
-                const SizedBox(height: 18),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 55, vertical: 30),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isEndTimeVisible = !isEndTimeVisible;
-                      });
-                    },
-                    child: Text(
-                      isEndTimeVisible ? S.of(context).removeEventEndTime : S.of(context).addEventEndTime,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Material(
-                  color: ChatifyColors.transparent,
-                  child: InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    onTap: () {
-                      showTypeCallDialog(
-                        context,
-                            (selectedType) {
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: isEndTimeVisible
+                        ? Column(
+                            key: const ValueKey('visible_end_time'),
+                            children: [
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 27, top: 2, bottom: 2),
+                                  child: Column(
+                                    children: List.generate(8, (index) {
+                                      return Container(width: 2, height: 4, margin: const EdgeInsets.symmetric(vertical: 1), color: ChatifyColors.darkGrey);
+                                    }),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    const Icon(UniconsLine.calendar_alt, color: ChatifyColors.darkGrey),
+                                    const SizedBox(width: 14),
+                                    InkWell(
+                                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                                      child: Text(dateFormatted, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      onTap: () {},
+                                    ),
+                                    const Spacer(),
+                                    InkWell(
+                                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                                      child: Text(timeFormattedEnd, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      onTap: () {},
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox(key: ValueKey('hidden_end_time')),
+                    ),
+                    const SizedBox(height: 18),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 55, vertical: 30),
+                      child: GestureDetector(
+                        onTap: () {
                           setState(() {
-                            callType = selectedType;
-                            callIcon = selectedType == 'Аудио' ? Icons.call_outlined : Icons.videocam_outlined;
+                            isEndTimeVisible = !isEndTimeVisible;
                           });
                         },
-                        callType,
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      child: Row(
-                        children: [
-                          Icon(callIcon, size: 28, color: ChatifyColors.darkGrey),
-                          const SizedBox(width: 14),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(S.of(context).callType, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                              Text(callType, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-                            ],
-                          ),
-                        ],
+                        child: Text(
+                          isEndTimeVisible ? S.of(context).removeEventEndTime : S.of(context).addEventEndTime,
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Material(
-                  color: ChatifyColors.transparent,
-                  child: InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(ChatifyVectors.personTime, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
-                          const SizedBox(width: 14),
-                          Expanded(child: Text('Для присоединения требуется одобрение', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
-                          const SizedBox(width: 12),
-                          CustomSwitch(
-                            value: isApprovalRequired,
-                            onChanged: (newValue) {
+                    const SizedBox(height: 8),
+                    Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                        onTap: () {
+                          showTypeCallDialog(
+                            context,
+                                (selectedType) {
                               setState(() {
-                                isApprovalRequired = newValue;
+                                callType = selectedType;
+                                callIcon = selectedType == 'Аудио' ? Icons.call_outlined : Icons.videocam_outlined;
                               });
                             },
-                            switchWidth: 58,
-                            switchHeight: 35,
-                            thumbSize: 27,
-                            thumbPadding: 3,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
-                SizedBox(height: 5),
-                Material(
-                  color: ChatifyColors.transparent,
-                  child: InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      child: Row(
-                        children: [
-                          Icon(Icons.notifications_none_rounded, size: 28, color: ChatifyColors.darkGrey),
-                          const SizedBox(width: 14),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            callType,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          child: Row(
                             children: [
-                              Text('Напоминание', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                              Text('За 15 минут', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                              Icon(callIcon, size: 28, color: ChatifyColors.darkGrey),
+                              const SizedBox(width: 14),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(S.of(context).callType, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                  Text(callType, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(height: 5),
+                    Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(ChatifyVectors.personTime, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                              const SizedBox(width: 14),
+                              Expanded(child: Text('Для присоединения требуется одобрение', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+                              const SizedBox(width: 12),
+                              CustomSwitch(
+                                value: isApprovalRequired,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    isApprovalRequired = newValue;
+                                  });
+                                },
+                                switchWidth: 58,
+                                switchHeight: 35,
+                                thumbSize: 27,
+                                thumbPadding: 3,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
+                    SizedBox(height: 5),
+                    Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                        onTap: () {
+                          showReminderCallBottomDialog(context);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          child: Row(
+                            children: [
+                              Icon(Icons.notifications_none_rounded, size: 28, color: ChatifyColors.darkGrey),
+                              const SizedBox(width: 14),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Напоминание', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                  Text('За 15 минут', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),

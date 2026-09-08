@@ -29,7 +29,12 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ValueNotifier<String?>? currentRouteNotifier;
   final String? previousRoute;
 
-  const ChatAppBar({super.key, required this.user, this.currentRouteNotifier, this.previousRoute});
+  const ChatAppBar({
+    super.key,
+    required this.user,
+    this.currentRouteNotifier,
+    this.previousRoute,
+  });
 
   @override
   State<ChatAppBar> createState() => _ChatAppBarState();
@@ -39,6 +44,7 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateMixin {
+  final Set<String> selectedChats = <String>{};
   late AnimationController _searchController;
   int selectedDuration = 1440;
   bool showRealStatus = false;
@@ -77,15 +83,38 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  Future<void> _muteChats() async {
+    final initialDuration = await APIs.getChatMutedDuration(selectedChats.first);
+
+    if (!context.mounted) return;
+
+    showNoSoundDialog(
+      context,
+      initialDuration,
+      (duration) async {
+        try {
+          for (final userId in selectedChats) {
+            await APIs.setChatMuted(userId: userId, muted: true, duration: duration);
+          }
+
+          clearSelection();
+        } catch (e) {
+          log('Error muting chats: $e');
+        }
+      },
+    );
+  }
+
   void updateDuration(int duration) {
     setState(() {
       selectedDuration = duration;
     });
   }
 
-  void showNoSoundDialog() {
-    final noSoundDialog = NoSoundDialog();
-    noSoundDialog.showNoSoundDialog(context, selectedDuration, updateDuration);
+  void clearSelection() {
+    setState(() {
+      selectedChats.clear();
+    });
   }
 
   @override
@@ -147,8 +176,8 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
 
   Widget _buildMobileAppBar(BuildContext context) {
     return AppBar(
-      leadingWidth: 50,
-      titleSpacing: 0,
+      leadingWidth: 55,
+      titleSpacing: -5,
       surfaceTintColor: ChatifyColors.transparent,
       backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
       elevation: 0,
@@ -169,26 +198,45 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
           onAudioCall: () {
             Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user)));
           },
-          onPopupItemSelected: (value) {
-            if (value == 1) {
-
-            } else if (value == 2) {
-
-            } else if (value == 3) {
-
-            } else if (value == 4) {
-
-            } else if (value == 5) {
-
-            } else if (value == 6) {
-
-            } else if (value == 3) {
-
-            }
-          },
+          onPopupItemSelected: _handlePopupAction,
         ),
       ],
     );
+  }
+
+  Future<void> _handlePopupAction(int value) async {
+    switch (value) {
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
+        break;
+      case 4:
+        break;
+      case 5:
+        break;
+      case 6:
+        await _muteChats();
+        break;
+      case 7:
+        break;
+      case 8:
+        break;
+      case 10:
+        break;
+      case 11:
+        break;
+      case 12:
+        break;
+      case 13:
+        break;
+      case 14:
+        break;
+      case 15:
+        break;
+    }
   }
 
   Widget _buildUserInfo(BuildContext context, UserModel user) {

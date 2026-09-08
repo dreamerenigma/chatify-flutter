@@ -27,6 +27,8 @@ class MainHomeContentList extends StatelessWidget {
   final List<UserModel> searchList;
   final Set<String> selectedUserIds;
   final Function(UserModel) onUserSelected;
+  final ValueChanged<Set<String>>? onPinnedChatsChanged;
+  final ValueChanged<Set<String>>? onMutedChatsChanged;
 
   const MainHomeContentList({
     super.key,
@@ -42,6 +44,8 @@ class MainHomeContentList extends StatelessWidget {
     required this.searchList,
     required this.selectedUserIds,
     required this.onUserSelected,
+    this.onPinnedChatsChanged,
+    this.onMutedChatsChanged,
   });
 
   @override
@@ -60,7 +64,16 @@ class MainHomeContentList extends StatelessWidget {
         if (communities.isNotEmpty)
           CommunityList(communities: communities, isHomeScreen: true, onCommunitySelected: (community) {}),
         if (users.isEmpty)
-          UserList(isSearching: isSearching, searchList: searchList, list: users, isSharing: false, onUserSelected: onUserSelected, selectedUserIds: selectedUserIds),
+          UserList(
+            isSearching: isSearching,
+            searchList: searchList,
+            list: users,
+            isSharing: false,
+            onUserSelected: onUserSelected,
+            selectedUserIds: selectedUserIds,
+            onPinnedChatsChanged: onPinnedChatsChanged,
+            onMutedChatsChanged: onMutedChatsChanged,
+          ),
         if (supports.isEmpty)
           SupportList(supports: supports, onSupportSelected: (support) {}),
         if (infosApp.isEmpty)

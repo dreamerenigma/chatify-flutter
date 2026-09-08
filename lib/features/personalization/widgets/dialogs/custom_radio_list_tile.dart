@@ -1,57 +1,58 @@
+import 'package:chatify/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
+import '../../../../core/enums/radio_position_type.dart';
 import '../../../utils/widgets/icons/custom_icon.dart';
 import 'light_dialog.dart';
 
-class CustomRadioListTile extends StatefulWidget {
+class CustomRadioListTile<T> extends StatelessWidget {
   final dynamic icon;
   final Widget title;
-  final String value;
-  final String groupValue;
-  final Function(String?) onChanged;
+  final T value;
   final Color iconColor;
+  final RadioPositionType radioPosition;
+  final EdgeInsetsGeometry padding;
+  final double radioScale;
 
   const CustomRadioListTile({
     super.key,
     this.icon,
     required this.title,
     required this.value,
-    required this.groupValue,
-    required this.onChanged,
     required this.iconColor,
+    this.radioPosition = RadioPositionType.right,
+    this.padding = const EdgeInsets.only(left: 20, right: 12, top: 8, bottom: 8),
+    this.radioScale = 1.0,
   });
 
   @override
-  CustomRadioListTileState createState() => CustomRadioListTileState();
-}
-
-class CustomRadioListTileState extends State<CustomRadioListTile> {
-  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        widget.onChanged(widget.value);
-      },
-      child: Container(
-        padding: const EdgeInsets.only(left: 20, right: 12, top: 8, bottom: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                if (widget.icon != null) ...[
-                  CustomIcon(icon: widget.icon, color: widget.iconColor, size: 24),
-                  const SizedBox(width: 16),
-                ],
-                widget.title,
-              ],
-            ),
-            Radio<String>(
-              value: widget.value,
-              groupValue: widget.groupValue,
-              onChanged: widget.onChanged,
-              activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            ),
-          ],
+    final radio = Transform.scale(scale: radioScale, child: Radio<T>(value: value, activeColor: colorsController.getColor(colorsController.selectedColorScheme.value), overlayColor: WidgetStateProperty.all(ChatifyColors.transparent)));
+    final titleWidget = Row(
+      children: [
+        if (icon != null) ...[
+          CustomIcon(icon: icon, color: iconColor, size: 24),
+          const SizedBox(width: 16),
+        ],
+        title,
+      ],
+    );
+
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+        onTap: () {
+          RadioGroup.maybeOf<T>(context)?.onChanged(value);
+        },
+        child: Padding(
+          padding: padding,
+          child: radioPosition == RadioPositionType.right
+            ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [titleWidget, radio])
+            : Row(children: [radio, const SizedBox(width: 8), titleWidget]),
         ),
       ),
     );

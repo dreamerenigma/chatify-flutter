@@ -53,7 +53,7 @@ class _ActionItemState extends State<ActionItem> {
                 child: Center(child: widget.icon),
               ),
               const SizedBox(height: 8),
-              Text(widget.label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400)),
+              Text(widget.label, maxLines: 1, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400)),
             ],
           ),
         ),

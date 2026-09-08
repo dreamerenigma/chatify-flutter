@@ -1,0 +1,1 @@
+enum RadioPositionType { left, right }

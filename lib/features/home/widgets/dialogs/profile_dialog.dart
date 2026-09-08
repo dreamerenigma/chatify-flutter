@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -47,12 +49,18 @@ class ProfileDialog extends StatelessWidget {
                         fit: BoxFit.cover,
                         imageUrl: user.image,
                         errorWidget: (context, url, error) {
-
                           return Container(
                             width: double.infinity,
                             height: double.infinity,
-                            decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value),),
-                            child: const Icon(CupertinoIcons.person, color: ChatifyColors.white, size: 50),
+                            color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              ChatifyVectors.person,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.contain,
+                              colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn),
+                            ),
                           );
                         },
                       ),

@@ -3,6 +3,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../core/enums/snack_bar_position_type.dart';
 import '../../features/personalization/widgets/dialogs/light_dialog.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
@@ -130,41 +131,33 @@ class AppLoaders {
 class CustomIconSnackBar {
   static bool _isSnackBarVisible = false;
 
-  static Future<void> showAnimatedSnackBar(BuildContext context, String message, {Widget? icon, Color? iconColor, Color? backgroundColor}) async {
+  static Future<void> showAnimatedSnackBar(
+    BuildContext context,
+    String message, {
+    Widget? icon,
+    Color? iconColor,
+    Color? backgroundColor,
+    SnackBarPositionType position = SnackBarPositionType.top,
+  }) async {
     if (_isSnackBarVisible) return;
 
-    OverlayState? overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry;
+    final OverlayState overlayState = Overlay.of(context);
+    final GlobalKey<AnimatedSnackBarState> snackBarKey = GlobalKey<AnimatedSnackBarState>();
 
-    GlobalKey<AnimatedSnackBarState> snackBarKey = GlobalKey<AnimatedSnackBarState>();
+    late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
       builder: (context) {
-        final topPadding = MediaQuery.of(context).padding.top;
-        final appBarHeight = kToolbarHeight;
+        final mediaQuery = MediaQuery.of(context);
+        final topPadding = mediaQuery.padding.top;
+        final bottomPadding = mediaQuery.padding.bottom;
 
         return Positioned(
-          left: 0,
-          right: 0,
-          top: topPadding + appBarHeight,
-          bottom: 0,
-          child: ClipRect(
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 16,
-                  right: 16,
-                  top: 8,
-                  child: AnimatedSnackBar(
-                    key: snackBarKey,
-                    message: message,
-                    icon: icon,
-                    iconColor: iconColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          left: 16,
+          right: 16,
+          top: position == SnackBarPositionType.top ? topPadding + kToolbarHeight + 8 : null,
+          bottom: position == SnackBarPositionType.bottom ? bottomPadding + 8 : null,
+          child: AnimatedSnackBar(key: snackBarKey, message: message, icon: icon, iconColor: iconColor, position: position),
         );
       },
     );
@@ -178,7 +171,10 @@ class CustomIconSnackBar {
       await snackBarKey.currentState!.hideSnackBar();
     }
 
-    overlayEntry.remove();
+    if (overlayEntry.mounted) {
+      overlayEntry.remove();
+    }
+
     _isSnackBarVisible = false;
   }
 }

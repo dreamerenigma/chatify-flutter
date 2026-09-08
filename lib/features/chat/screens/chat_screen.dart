@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
@@ -14,6 +15,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/devices/device_utility.dart';
+import '../../../utils/helper/date_util.dart';
 import '../../../utils/popups/app_loaders.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
@@ -55,6 +57,15 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   Set<int> selectedMessages = <int>{};
   MessageModel? replyMessage;
   UserModel? replyUser;
+
+  bool _isDifferentDay(MessageModel current, MessageModel? previous) {
+    if (previous == null) return true;
+
+    final currentDate = DateTime.fromMillisecondsSinceEpoch(int.parse(current.sent));
+    final previousDate = DateTime.fromMillisecondsSinceEpoch(int.parse(previous.sent));
+
+    return currentDate.year != previousDate.year || currentDate.month != previousDate.month || currentDate.day != previousDate.day;
+  }
 
   SelectionActionModeType get selectionActionMode {
     if (selectedMessages.isEmpty) {
@@ -195,16 +206,25 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
 
     final selected = selectedMessages.map((index) => list[index]).where((message) => message.deletedBy.contains(APIs.user.uid)).toList();
 
-    if (selected.isEmpty) return;
+    if (selected.isEmpty) {
+      _clearSelection();
+      return;
+    }
 
     try {
       for (final message in selected) {
-        await APIs.deleteMessageDocument(message);
+        final deleted = await APIs.deleteMessageDocument(message);
+
+        if (!deleted) {
+          log('❌ Не удалось удалить документ: ${message.sent}');
+        }
       }
 
-      _clearSelection();
+      if (mounted) {
+        _clearSelection();
+      }
     } catch (e, stackTrace) {
-      debugPrint('❌ Ошибка полного удаления сообщения: $e');
+      debugPrint('❌ Ошибка полного удаления сообщений: $e');
       debugPrintStack(stackTrace: stackTrace);
     }
   }
@@ -359,7 +379,6 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                           }
 
                           final data = snapshot.data?.docs;
-
                           final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
 
                           list = newList;
@@ -394,23 +413,31 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                                   physics: const ClampingScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     final message = list[index];
+                                    final previousMessage = index + 1 < list.length ? list[index + 1] : null;
+                                    final showDateSeparator = _isDifferentDay(message, previousMessage);
 
-                                    return MessageCard(
-                                      key: ValueKey(message.sent),
-                                      message: message,
-                                      isSelected: selectedMessages.contains(index),
-                                      onLongPress: () {
-                                        _startSelection();
-                                        _toggleMessageSelection(index);
-                                      },
-                                      onTap: () => _toggleMessageSelection(index),
-                                      messages: list,
-                                      onReply: (message) {
-                                        setState(() {
-                                          replyMessage = message;
-                                          replyUser = widget.user;
-                                        });
-                                      },
+                                    return Column(
+                                      children: [
+                                        if (showDateSeparator)
+                                          _buildDateSeparator(context, message),
+                                        MessageCard(
+                                          key: ValueKey(message.sent),
+                                          message: message,
+                                          isSelected: selectedMessages.contains(index),
+                                          onLongPress: () {
+                                            _startSelection();
+                                            _toggleMessageSelection(index);
+                                          },
+                                          onTap: () => _toggleMessageSelection(index),
+                                          messages: list,
+                                          onReply: (message) {
+                                            setState(() {
+                                              replyMessage = message;
+                                              replyUser = widget.user;
+                                            });
+                                          },
+                                        ),
+                                      ],
                                     );
                                   },
                                 ),
@@ -558,6 +585,22 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateSeparator(BuildContext context, MessageModel message) {
+    final date = DateTime.fromMillisecondsSinceEpoch(int.parse(message.sent));
+
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220), borderRadius: BorderRadius.circular(12)),
+        child: Text(
+          DateUtil.getCallDateTime(context: context, time: date, showTime: false),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
         ),
       ),
     );

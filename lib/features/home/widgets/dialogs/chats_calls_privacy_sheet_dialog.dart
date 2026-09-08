@@ -65,7 +65,7 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
                     backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     side: BorderSide.none,
                   ),
-                  child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  child: Text(S.of(context).readMore, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                 ),
               ),
             ),

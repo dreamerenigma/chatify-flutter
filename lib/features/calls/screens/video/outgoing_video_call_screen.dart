@@ -27,6 +27,11 @@ class OutgoingVideoCallScreen extends StatefulWidget {
 }
 
 class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with SingleTickerProviderStateMixin {
+  final AudioRecorder _recorder = AudioRecorder();
+  late List<CameraDescription> _cameras;
+  late AudioPlayer audioPlayer = AudioPlayer();
+  late AnimationController _animationController;
+  late Animation<double> _animation;
   late String videoPath;
   bool isMuted = false;
   bool isRecording = false;
@@ -34,29 +39,13 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
   bool isExternalSpeaker = false;
   int currentCameraIndex = 0;
   CameraController? _cameraController;
-  late List<CameraDescription> _cameras;
-  late AudioPlayer audioPlayer = AudioPlayer();
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-  final AudioRecorder _recorder = AudioRecorder();
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
+    _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
     _initializeCamera();
-
     audioPlayer = AudioPlayer();
     _requestPermission().then((_) {
       _startRingingTone();
@@ -115,10 +104,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
   Future<void> _initializeCamera() async {
     _cameras = await availableCameras();
     if (_cameras.isNotEmpty) {
-      _cameraController = CameraController(
-        _cameras[0],
-        ResolutionPreset.high,
-      );
+      _cameraController = CameraController(_cameras[0], ResolutionPreset.high);
 
       try {
         await _cameraController!.initialize();
@@ -144,10 +130,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
 
     await _cameraController?.dispose();
 
-    _cameraController = CameraController(
-      selectedCamera,
-      ResolutionPreset.high,
-    );
+    _cameraController = CameraController(selectedCamera, ResolutionPreset.high);
 
     try {
       await _cameraController!.initialize();
@@ -235,22 +218,12 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                       children: [
                         Text(
                           widget.user.name,
-                          style: TextStyle(
-                            fontSize: ChatifySizes.fontSizeMd,
-                            color: ChatifyColors.white,
-                            shadows: const [Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Color.fromARGB(128, 0, 0, 0))],
-                          ),
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white, shadows: const [Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Color.fromARGB(128, 0, 0, 0))]),
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.lock_outline, color: ChatifyColors.white, size: 16, shadows: [
-                              Shadow(
-                                offset: Offset(1.0, 1.0),
-                                blurRadius: 2.0,
-                                color: Color.fromARGB(128, 0, 0, 0),
-                              ),
-                            ]),
+                            const Icon(Icons.lock_outline, color: ChatifyColors.white, size: 16, shadows: [Shadow(offset: Offset(1.0, 1.0), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))]),
                             const SizedBox(width: 4),
                             SizedBox(
                               width: 220,
@@ -259,13 +232,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                                 style: TextStyle(
                                   fontSize: ChatifySizes.fontSizeSm,
                                   color: ChatifyColors.white,
-                                  shadows: const [
-                                    Shadow(
-                                      offset: Offset(1.0, 1.0),
-                                      blurRadius: 2.0,
-                                      color: Color.fromARGB(128, 0, 0, 0),
-                                    ),
-                                  ],
+                                  shadows: const [Shadow(offset: Offset(1.0, 1.0), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -288,14 +255,7 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                 decoration: BoxDecoration(
                   color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                   borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha((0.1 * 255).toInt()),
-                      spreadRadius: 5,
-                      blurRadius: 10,
-                      offset: const Offset(0, -3),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 5, blurRadius: 10, offset: const Offset(0, -3))],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -312,23 +272,18 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                       ),
                       InkWell(
                         onTap: () async {
-                          bool? shouldNavigate = await showDialog<bool>(
+                          final bool? shouldNavigate = await showDialog<bool>(
                             context: context,
-                            builder: (BuildContext context) {
+                            builder: (dialogContext) {
                               return AlertDialog(
-                                backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                                title: Text(S.of(context).switchToVideoCall,
-                                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
-                                ),
+                                backgroundColor: dialogContext.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+                                title: Text(S.of(dialogContext).switchToVideoCall, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                                content: SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.8,
-                                  height: MediaQuery.of(context).size.width * 0.005,
-                                ),
+                                content: SizedBox(width: MediaQuery.of(dialogContext).size.width * 0.8, height: MediaQuery.of(dialogContext).size.width * 0.005),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(false);
+                                      Navigator.of(dialogContext).pop(false);
                                     },
                                     style: TextButton.styleFrom(
                                       foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -336,13 +291,13 @@ class OutgoingVideoCallScreenState extends State<OutgoingVideoCallScreen> with S
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                     ),
                                     child: Text(
-                                      S.of(context).cancel,
+                                      S.of(dialogContext).cancel,
                                       style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                                     ),
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(true);
+                                      Navigator.of(dialogContext).pop(true);
                                     },
                                     style: TextButton.styleFrom(
                                       foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),

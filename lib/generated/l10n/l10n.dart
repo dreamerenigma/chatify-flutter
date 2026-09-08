@@ -8069,10 +8069,10 @@ class S {
     );
   }
 
-  /// `Generate reports \n automatically`
+  /// `Generate reports automatically`
   String get generateReportsAuto {
     return Intl.message(
-      'Generate reports \n automatically',
+      'Generate reports automatically',
       name: 'generateReportsAuto',
       desc: '',
       args: [],
@@ -8529,10 +8529,10 @@ class S {
     );
   }
 
-  /// `Only you can see who is in your lists`
+  /// `You can add an unlimited number of people and groups. Only you can see who is included in your lists.`
   String get onlyYouSeeWhoLists {
     return Intl.message(
-      'Only you can see who is in your lists',
+      'You can add an unlimited number of people and groups. Only you can see who is included in your lists.',
       name: 'onlyYouSeeWhoLists',
       desc: '',
       args: [],
@@ -8684,10 +8684,10 @@ class S {
     );
   }
 
-  /// `Play sounds for \nincoming and \noutgoing messages`
+  /// `Play sounds for incoming and outgoing messages`
   String get playSoundsIncomingOutgoing {
     return Intl.message(
-      'Play sounds for \nincoming and \noutgoing messages',
+      'Play sounds for incoming and outgoing messages',
       name: 'playSoundsIncomingOutgoing',
       desc: '',
       args: [],
@@ -8699,10 +8699,10 @@ class S {
     return Intl.message('Reminders', name: 'reminders', desc: '', args: []);
   }
 
-  /// `Get periodic \nreminders for status updates you \nmissed seen`
+  /// `Get periodic reminders for status updates you missed seen`
   String get periodicRemindersStatusUpdates {
     return Intl.message(
-      'Get periodic \nreminders for status updates you \nmissed seen',
+      'Get periodic reminders for status updates you missed seen',
       name: 'periodicRemindersStatusUpdates',
       desc: '',
       args: [],
@@ -8774,10 +8774,10 @@ class S {
     );
   }
 
-  /// `Show pop-up \nnotifications at the top of the \nscreen`
+  /// `Show pop-up notifications at the top of the screen`
   String get showPopUpNotify {
     return Intl.message(
-      'Show pop-up \nnotifications at the top of the \nscreen',
+      'Show pop-up notifications at the top of the screen',
       name: 'showPopUpNotify',
       desc: '',
       args: [],
@@ -8794,30 +8794,30 @@ class S {
     );
   }
 
-  /// `Show notifications \nabout reactions to messages you \nsent`
+  /// `Show notifications about reactions to messages you sent`
   String get showNotifyReactionsMessagesSend {
     return Intl.message(
-      'Show notifications \nabout reactions to messages you \nsent',
+      'Show notifications about reactions to messages you sent',
       name: 'showNotifyReactionsMessagesSend',
       desc: '',
       args: [],
     );
   }
 
-  /// `Show pop-up \nnotifications at the top of the \nscreen`
+  /// `Show pop-up notifications at the top of the screen`
   String get showPopUpNotificationsScreen {
     return Intl.message(
-      'Show pop-up \nnotifications at the top of the \nscreen',
+      'Show pop-up notifications at the top of the screen',
       name: 'showPopUpNotificationsScreen',
       desc: '',
       args: [],
     );
   }
 
-  /// `Show notifications \n about reactions to messages you send`
+  /// `Show notifications about reactions to messages you send`
   String get showNotifyAboutReactionsSend {
     return Intl.message(
-      'Show notifications \n about reactions to messages you send',
+      'Show notifications about reactions to messages you send',
       name: 'showNotifyAboutReactionsSend',
       desc: '',
       args: [],
@@ -8839,10 +8839,10 @@ class S {
     );
   }
 
-  /// `Show notifications when a status is \nliked`
+  /// `Show notifications when a status is liked`
   String get showNotifyStatusLiked {
     return Intl.message(
-      'Show notifications when a status is \nliked',
+      'Show notifications when a status is liked',
       name: 'showNotifyStatusLiked',
       desc: '',
       args: [],

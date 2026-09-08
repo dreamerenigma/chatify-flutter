@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:chatify/features/status/widgets/images/camera_screen.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../api/apis.dart';
+import '../../../core/enums/chat_list_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -21,6 +23,7 @@ import '../../utils/widgets/bars/nav_bars/bottom_nav.dart';
 import '../widgets/app_bars/home_app_bar_widget.dart';
 import '../widgets/app_bars/selection_app_bar.dart';
 import '../widgets/dialogs/delete_chat_dialog.dart';
+import '../widgets/dialogs/no_sound_dialog.dart';
 import '../widgets/widgets/home_screen_widget.dart';
 import 'home_select_user_screen.dart';
 
@@ -36,6 +39,8 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final List<UserModel> searchList = [];
   final Set<String> selectedChats = <String>{};
+  final Set<String> pinnedChats = <String>{};
+  final Set<String> mutedChats = <String>{};
   final UserController userController = Get.find<UserController>();
   final PageController _pageController = PageController();
   late bool isHomeScreen;
@@ -50,6 +55,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   List<UserModel> users = [];
   List<SupportAppModel> supports = [];
   List<InfoAppModel> infosApp = [];
+  ChatListType chatListType = ChatListType.all;
 
   bool get isSelecting => selectedChats.isNotEmpty;
 
@@ -118,6 +124,50 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
+  Future<void> _handleArchiveSelectedChats() async {
+    if (selectedChats.isEmpty) return;
+
+    try {
+      for (final userId in selectedChats) {
+        await APIs.setChatArchived(userId: userId, archived: true);
+      }
+
+      clearSelection();
+    } catch (e) {
+      log('Error archiving chats: $e');
+    }
+  }
+
+  Future<void> _handleUnarchiveSelectedChats() async {
+    if (selectedChats.isEmpty) return;
+
+    try {
+      for (final userId in selectedChats) {
+        await APIs.setChatArchived(userId: userId, archived: false);
+      }
+
+      clearSelection();
+    } catch (e) {
+      log('Error unarchiving chats: $e');
+    }
+  }
+
+  Future<void> _handlePinSelectedChats() async {
+    if (selectedChats.isEmpty) return;
+
+    final bool allPinned = selectedChats.every((userId) => pinnedChats.contains(userId));
+
+    try {
+      for (final userId in selectedChats) {
+        await APIs.setChatPinned(userId: userId, pinned: !allPinned);
+      }
+
+      clearSelection();
+    } catch (e) {
+      log('Error pinning chats: $e');
+    }
+  }
+
   void _fetchGroups() async {
     List<GroupModel> fetchedGroups = await APIs.getGroups();
     setState(() {
@@ -162,7 +212,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
-  void _clearSelection() {
+  void clearSelection() {
     setState(() {
       selectedChats.clear();
     });
@@ -196,6 +246,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMuted = selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id));
+
     isHomeScreen = selectedIndex == 0;
 
     return GestureDetector(
@@ -213,12 +265,52 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           : isSelecting
             ? SelectionAppBar(
                 selectedChatsCount: selectedChats.length,
-                onClearSelection: _clearSelection,
+                onClearSelection: clearSelection,
                 onDelete: _handleDeleteSelectedChats,
-                onPin: () {},
-                onMute: () {},
-                onArchive: () {},
-                onAddToFavorites: () {},
+                onPin: _handlePinSelectedChats,
+                onMute: () async {
+                  if (selectedChats.isEmpty) return;
+
+                  if (isMuted) {
+                    try {
+                      for (final userId in selectedChats) {
+                        await APIs.setChatMuted(
+                          userId: userId,
+                          muted: false,
+                        );
+                      }
+
+                      clearSelection();
+                    } catch (e) {
+                      log('Error unmuting chats: $e');
+                    }
+
+                    return;
+                  }
+
+                  final initialDuration = await APIs.getChatMutedDuration(selectedChats.first);
+
+                  if (!context.mounted) return;
+
+                  showNoSoundDialog(
+                    context,
+                    initialDuration,
+                        (duration) async {
+                      try {
+                        for (final userId in selectedChats) {
+                          await APIs.setChatMuted(userId: userId, muted: true, duration: duration);
+                        }
+
+                        clearSelection();
+                      } catch (e) {
+                        log('Error muting chats: $e');
+                      }
+                    },
+                  );
+                },
+                onArchive: chatListType == ChatListType.archived ? _handleUnarchiveSelectedChats : _handleArchiveSelectedChats,
+                isPinned: selectedChats.isNotEmpty && selectedChats.every((id) => pinnedChats.contains(id)),
+                isMuted: selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id)),
               )
             : selectedIndex == 0
               ? HomeAppBarWidget(
@@ -279,6 +371,16 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           onGroupSelected: (group) {},
           onUserSelected: (user) {
             _toggleChatSelection(user);
+          },
+          onPinnedChatsChanged: (value) {
+            setState(() {
+              pinnedChats..clear()..addAll(value);
+            });
+          },
+          onMutedChatsChanged: (value) {
+            setState(() {
+              mutedChats..clear()..addAll(value);
+            });
           },
           user: widget.user,
         ),

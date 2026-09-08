@@ -68,46 +68,36 @@ class ThemesController extends GetxController {
             contentPadding: EdgeInsets.zero,
             titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomRadioListTile(
-                  icon: Icons.settings,
-                  title: Text(S.of(context).system),
-                  value: 'system',
-                  groupValue: selectedTheme.value,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTheme.value = value as String;
-                    });
-                  },
-                  iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
-                CustomRadioListTile(
-                  icon: Icons.brightness_6,
-                  title: Text(S.of(context).light),
-                  value: 'light',
-                  groupValue: selectedTheme.value,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTheme.value = value as String;
-                    });
-                  },
-                  iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
-                CustomRadioListTile(
-                  icon: Icons.brightness_2,
-                  title: Text(S.of(context).dark),
-                  value: 'dark',
-                  groupValue: selectedTheme.value,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTheme.value = value as String;
-                    });
-                  },
-                  iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                ),
-              ],
+            content: RadioGroup<String>(
+              groupValue: selectedTheme.value,
+              onChanged: (value) {
+                setState(() {
+                  selectedTheme.value = value as String;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomRadioListTile(
+                    icon: Icons.settings,
+                    title: Text(S.of(context).system),
+                    value: 'system',
+                    iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  ),
+                  CustomRadioListTile(
+                    icon: Icons.brightness_6,
+                    title: Text(S.of(context).light),
+                    value: 'light',
+                    iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  ),
+                  CustomRadioListTile(
+                    icon: Icons.brightness_2,
+                    title: Text(S.of(context).dark),
+                    value: 'dark',
+                    iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(

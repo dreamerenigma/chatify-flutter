@@ -64,6 +64,7 @@ class ChatifyVectors {
   static const String cameraLink = "assets/vectors/camera_link.svg";
   static const String video = "assets/vectors/video.svg";
   static const String videoOutlined = "assets/vectors/video_outlined.svg";
+  static const String videoCameraOutline = "assets/vectors/video_camera_outline.svg";
   static const String newUser = "assets/vectors/new_user.svg";
   static const String newGroup = "assets/vectors/new_group.svg";
   static const String blockUser = "assets/vectors/block_user.svg";
@@ -78,6 +79,7 @@ class ChatifyVectors {
   static const String locationPin = "assets/vectors/location_pin.svg";
   static const String notification = "assets/vectors/notification.svg";
   static const String notificationNone = "assets/vectors/notification_none.svg";
+  static const String notificationNoneFilled = "assets/vectors/notification_none_filled.svg";
   static const String clear = "assets/vectors/clear.svg";
   static const String doubleCheck = "assets/vectors/double_check.svg";
   static const String arrowDown = "assets/vectors/arrow_down.svg";
@@ -197,6 +199,18 @@ class ChatifyVectors {
   static const String scheduledCallsGreen = "assets/vectors/scheduled_calls_green.svg";
   static const String scheduledCallsRed = "assets/vectors/scheduled_calls_red.svg";
   static const String scheduledCallsOrange = "assets/vectors/scheduled_calls_orange.svg";
+  static const String shareScreen = "assets/vectors/share_screen.svg";
+  static const String videoCamera = "assets/vectors/video_camera.svg";
+  static const String phoneMissed = "assets/vectors/phone_missed.svg";
+  static const String phoneOutgoing = "assets/vectors/phone_outgoing.svg";
+  static const String delete = "assets/vectors/delete.svg";
+  static const String favoriteNone = "assets/vectors/favorite_none.svg";
+  static const String circleCheck = "assets/vectors/circle_check.svg";
+  static const String pin = "assets/vectors/pin.svg";
+  static const String unpin = "assets/vectors/unpin.svg";
+  static const String groups = "assets/vectors/groups.svg";
+  static const String addGroup = "assets/vectors/add_group.svg";
+  static const String addToList = "assets/vectors/add_to_list.svg";
 
   /// -- Flags country
   static const String abw = '${pathFlags}abw$format';

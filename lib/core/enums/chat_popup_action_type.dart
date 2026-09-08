@@ -1,0 +1,16 @@
+enum ChatPopupActionType {
+  groupData,
+  mediaGroups,
+  contactInfo,
+  search,
+  mediaLinksDocuments,
+  mute,
+  disappearingMessages,
+  wallpaper,
+  report,
+  block,
+  clearChat,
+  exportChat,
+  addShortcut,
+  addToList,
+}
