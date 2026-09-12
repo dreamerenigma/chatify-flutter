@@ -2,7 +2,6 @@ import 'package:chatify/features/authentication/screens/add_account_screen.dart'
 import 'package:chatify/features/authentication/screens/login_screen.dart';
 import 'package:chatify/features/community/screens/community_screen.dart';
 import 'package:chatify/features/group/screens/new_group_screen.dart';
-import 'package:chatify/features/splash_screen/screens/splash_screen.dart';
 import 'package:chatify/features/status/screens/status_screen.dart';
 import 'package:chatify/routes/routes.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
@@ -16,6 +15,7 @@ import '../features/personalization/screens/chats/chats_screen.dart';
 import '../features/personalization/screens/favorite/favorite_message_screen.dart';
 import '../features/personalization/screens/help/support/support_screen.dart';
 import '../features/personalization/screens/send/send_file_screen.dart';
+import '../features/splash/screens/splash_screen.dart';
 
 class AppRoutes {
   static final pages = [

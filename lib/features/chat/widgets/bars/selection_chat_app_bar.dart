@@ -50,7 +50,9 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
     return AppBar(
       automaticallyImplyLeading: false,
       titleSpacing: 0,
+      elevation: 0,
       leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => _clearSelection()),
+      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
       title: Row(
         children: [
           const SizedBox(width: 16),
@@ -211,8 +213,6 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
             ),
         ],
       ),
-      elevation: 0,
-      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
     );
   }
 

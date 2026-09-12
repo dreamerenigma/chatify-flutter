@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  agora_rtc_engine
   audioplayers_windows
   camera_windows
   cloud_firestore
@@ -14,6 +15,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_storage
   flutter_webrtc
+  iris_method_channel
   local_auth_windows
   media_kit_libs_windows_video
   media_kit_video

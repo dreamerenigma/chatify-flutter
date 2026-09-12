@@ -6,13 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../api/apis.dart';
+import '../../../api/community_api.dart';
 import '../../../core/enums/chat_list_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
+import '../../../utils/platforms/platform_utils.dart' as Platform;
 import '../../bot/models/info_app_model.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/models/community_model.dart';
@@ -47,6 +50,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool isSearching = false;
   bool isToolbarVisible = true;
   bool isLoading = true;
+  bool isRequestingPermissions = true;
   int selectedIndex = 0;
   int selectedChatsCount = 0;
   List<GroupModel> groups = [];
@@ -65,10 +69,18 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     isHomeScreen = selectedIndex == 0;
     WidgetsBinding.instance.addObserver(this);
     APIs.getSelfInfo();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_pageController.hasClients) {
         _pageController.animateToPage(selectedIndex, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
       }
+
+      await _initializePermissions();
+
+      if (!mounted) return;
+
+      setState(() {
+        isRequestingPermissions = false;
+      });
     });
     _loadUserInfo();
     _fetchGroups();
@@ -115,6 +127,18 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         APIs.updateActiveStatus(false);
         break;
     }
+  }
+
+  Future<void> _initializePermissions() async {
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      return;
+    }
+
+    await Permission.microphone.request();
+    await Permission.contacts.request();
+    await Permission.notification.request();
+    await Permission.camera.request();
+    await Permission.photos.request();
   }
 
   Future<void> _loadUserInfo() async {
@@ -176,7 +200,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _fetchCommunities() async {
-    List<CommunityModel> fetchedCommunities = await APIs.getCommunity();
+    List<CommunityModel> fetchedCommunities = await CommunityApi.getCommunity();
     setState(() {
       communities = fetchedCommunities;
     });

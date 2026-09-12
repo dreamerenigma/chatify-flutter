@@ -5,8 +5,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
+import '../../../../config/config.dart';
+import '../../../../core/enums/call_state_type.dart';
+import '../../../../core/enums/call_status_type.dart';
+import '../../../../core/enums/call_type.dart';
+import '../../../../core/services/calls/agora_call_service.dart';
+import '../../../../core/services/calls/agora_token_service.dart';
+import '../../../../core/services/calls/call_service.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -17,31 +23,42 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../models/call_model.dart';
+import '../../models/call_result.dart';
 import '../../widgets/dialog/protected_enctyption_sheet_dialog.dart';
 import '../../widgets/panels/call_control_panel.dart';
 import '../add_participants_screen.dart';
 
 class OutgoingAudioCallScreen extends StatefulWidget {
   final UserModel user;
+  final VoidCallback? onMinimize;
 
-  const OutgoingAudioCallScreen({super.key, required this.user});
+  const OutgoingAudioCallScreen({
+    super.key,
+    required this.user,
+    required this.onMinimize,
+  });
 
   @override
   OutgoingAudioCallScreenState createState() => OutgoingAudioCallScreenState();
 }
 
 class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
+  final CallService _callService = Get.find<CallService>();
+  final AgoraCallService _agoraCallService = Get.find<AgoraCallService>();
   late AudioPlayer audioPlayer = AudioPlayer();
   bool isMuted = false;
   bool showNewContent = false;
   bool isExternalSpeaker = false;
+  String? _callId;
+  StreamSubscription<CallModel>? _callSubscription;
 
   @override
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
-    _setEarpiece();
     _startRingingTone();
+    _startCall();
   }
 
   @override
@@ -49,6 +66,103 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
     _stopRingingTone();
     audioPlayer.dispose();
     super.dispose();
+  }
+
+  Future<void> _startCall() async {
+    try {
+      log('[OUTGOING_AUDIO] 1. startCall()', name: 'OutgoingAudioCallScreen');
+
+      final callId = await _callService.startCall(widget.user);
+
+      _callId = callId;
+
+      log('[OUTGOING_AUDIO] 2. call created: $callId', name: 'OutgoingAudioCallScreen');
+
+      log('[OUTGOING_AUDIO] 3. prepareAgora()', name: 'OutgoingAudioCallScreen');
+
+      await prepareAgora();
+
+      log('[OUTGOING_AUDIO] 4. Agora prepared', name: 'OutgoingAudioCallScreen');
+
+      log('[OUTGOING_AUDIO] 5. joinChannel(call_$callId)', name: 'OutgoingAudioCallScreen');
+
+      final channelName = 'call_$callId';
+      final token = await AgoraTokenService.fetchToken(channelName: channelName, uid: 0);
+
+      await _agoraCallService.joinChannel(channelName: channelName, token: token);
+
+      log('[OUTGOING_AUDIO] 6. Agora join requested', name: 'OutgoingAudioCallScreen');
+
+      if (!mounted) return;
+
+      _listenCall(callId);
+    } catch (e, stackTrace) {
+      log('[OUTGOING_AUDIO] ❌ START CALL ERROR: $e', name: 'OutgoingAudioCallScreen', error: e, stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      await _stopRingingTone();
+
+      Navigator.pop(context, CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
+    }
+  }
+
+  // Future<void> _startCall() async {
+  //   try {
+  //     final callId = await _callService.startCall(widget.user);
+  //
+  //     _callId = callId;
+  //
+  //     _listenCall(callId);
+  //   } catch (e) {
+  //     if (!mounted) return;
+  //
+  //     await _stopRingingTone();
+  //
+  //     Navigator.pop(context, CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
+  //   }
+  // }
+
+  Future<void> prepareAgora() async {
+    await _agoraCallService.initialize(appId: Config.appId);
+  }
+
+  Future<void> _toggleSpeaker() async {
+    log('[OUTGOING_AUDIO] 🔊 Toggle speaker', name: 'OutgoingAudioCallScreen');
+
+    final newState = !isExternalSpeaker;
+
+    log('[OUTGOING_AUDIO] Current: $isExternalSpeaker', name: 'OutgoingAudioCallScreen');
+
+    log('[OUTGOING_AUDIO] Request new state: $newState', name: 'OutgoingAudioCallScreen');
+
+    final success =
+    await _agoraCallService.setSpeakerphone(newState);
+
+    if (!mounted) return;
+
+    if (!success) {
+      log('[OUTGOING_AUDIO] ❌ Speaker switch failed', name: 'OutgoingAudioCallScreen');
+
+      return;
+    }
+
+    setState(() {
+      isExternalSpeaker = newState;
+    });
+
+    log('[OUTGOING_AUDIO] ✅ UI state updated: $isExternalSpeaker', name: 'OutgoingAudioCallScreen');
+  }
+
+  Future<void> _finishCall(CallStatusType status) async {
+    await _stopRingingTone();
+
+    await _callSubscription?.cancel();
+    _callSubscription = null;
+
+    if (!mounted) return;
+
+    Navigator.pop(context, CallResult(type: CallType.audio, status: status));
   }
 
   Future<void> _startRingingTone() async {
@@ -76,46 +190,39 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
     }
   }
 
-  void _toggleMicrophone() {
+  void _listenCall(String callId) {
+    log('[OUTGOING_AUDIO] Listening call: $callId', name: 'OutgoingAudioCallScreen');
+
+    _callSubscription = _callService.observeCall(callId).listen((call) async {
+      log('[OUTGOING_AUDIO] Call state: ${call.state.name}', name: 'OutgoingAudioCallScreen');
+      switch (call.state) {
+        case CallStateType.ringing:
+          break;
+        case CallStateType.accepted:
+          log('[OUTGOING_AUDIO] Call accepted', name: 'OutgoingAudioCallScreen');
+          break;
+        case CallStateType.rejected:
+          log('[OUTGOING_AUDIO] Call rejected', name: 'OutgoingAudioCallScreen');
+          await _finishCall(CallStatusType.rejected);
+          break;
+        case CallStateType.ended:
+          log('[OUTGOING_AUDIO] Call ended', name: 'OutgoingAudioCallScreen');
+          await _finishCall(CallStatusType.noAnswer);
+          break;
+      }
+    });
+  }
+
+  Future<void> _toggleMicrophone() async {
+    final newMutedState = !isMuted;
+
     setState(() {
-      isMuted = !isMuted;
+      isMuted = newMutedState;
     });
 
-    if (isMuted) {
-      audioPlayer.setVolume(0);
-    } else {
-      audioPlayer.setVolume(1);
-    }
-  }
+    final agoraCallService = Get.find<AgoraCallService>();
 
-  Future<void> _toggleSpeaker() async {
-    final newValue = !isExternalSpeaker;
-
-    try {
-      await Helper.setSpeakerphoneOn(newValue);
-
-      if (!mounted) return;
-
-      setState(() {
-        isExternalSpeaker = newValue;
-      });
-    } catch (e) {
-      log('Error switching speaker: $e');
-    }
-  }
-
-  Future<void> _setEarpiece() async {
-    try {
-      await Helper.setSpeakerphoneOn(false);
-
-      if (mounted) {
-        setState(() {
-          isExternalSpeaker = false;
-        });
-      }
-    } catch (e) {
-      log('Error setting earpiece: $e');
-    }
+    await agoraCallService.mute(newMutedState);
   }
 
   @override
@@ -134,9 +241,31 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
               padding: const EdgeInsets.all(16),
               child: Stack(
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
-                    child: CircleAvatar(backgroundColor: ChatifyColors.darkSlate, radius: 25, child: Icon(Icons.close_fullscreen, color: ChatifyColors.white)),
+                    child: Material(
+                      color: ChatifyColors.darkSlate,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () {
+                          widget.onMinimize?.call();
+                          Navigator.of(context).pop();
+                        },
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Center(
+                            child: SvgPicture.asset(
+                              ChatifyVectors.resize,
+                              width: 26,
+                              height: 26,
+                              colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -152,15 +281,37 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
-                        const SizedBox(height: 4),
-                        SizedBox(
-                          width: 220,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.lock_outline, color: ChatifyColors.darkGrey, size: 16),
-                              Expanded(child: Text(S.of(context).protectedWithEndToEndEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center)),
-                            ],
+                        const SizedBox(height: 2),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 50),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Icon(
+                                    Icons.lock_outline,
+                                    color: ChatifyColors.white,
+                                    size: 14,
+                                    shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                  ),
+                                ),
+                                const WidgetSpan(child: SizedBox(width: 4)),
+                                TextSpan(
+                                  text: S.of(context).protectedWithEndToEndEncryption,
+                                  style: TextStyle(
+                                    color: ChatifyColors.grey,
+                                    fontSize: ChatifySizes.fontSizeSm,
+                                    fontWeight: FontWeight.w400,
+                                    shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                    height: 1.4
+                                  ),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -194,11 +345,10 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
           CallControlPanel(
             isExternalSpeaker: isExternalSpeaker,
             isMuted: isMuted,
-
+            isVideoEnabled: false,
             onMore: () {
               showProtectedEncryptionBottomSheet(context);
             },
-
             onVideo: () async {
               final bool? shouldNavigate = await showDialog<bool>(
                 context: context,
@@ -254,7 +404,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
 
               if (!mounted) return;
 
-              navigator.pop();
+              navigator.pop(CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
             },
           ),
         ],

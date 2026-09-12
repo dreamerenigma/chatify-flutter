@@ -7,7 +7,7 @@ import '../../../../utils/constants/app_colors.dart';
 class CallControlPanel extends StatelessWidget {
   final bool isExternalSpeaker;
   final bool isMuted;
-
+  final bool isVideoEnabled;
   final VoidCallback onMore;
   final VoidCallback onVideo;
   final VoidCallback onSpeaker;
@@ -19,6 +19,7 @@ class CallControlPanel extends StatelessWidget {
     super.key,
     required this.isExternalSpeaker,
     required this.isMuted,
+    required this.isVideoEnabled,
     required this.onMore,
     required this.onVideo,
     required this.onSpeaker,
@@ -31,47 +32,52 @@ class CallControlPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: context.isDarkMode ? ChatifyColors.popupColor.withAlpha((0.7 * 255).toInt()) : ChatifyColors.lightGrey),
-            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 3, blurRadius: 10, offset: const Offset(0, -3))],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 6, right: 6, bottom: 20),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 22, mainAxisExtent: 100),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                switch (index) {
-                  case 0:
-                    return _buildControl(
-                      context: context,
-                      icon: Icons.volume_up_rounded,
-                      label: isExternalSpeaker ? 'Динамик' : 'Телефон',
-                      iconColor: isExternalSpeaker ? ChatifyColors.black : ChatifyColors.white,
-                      circleColor: isExternalSpeaker ? ChatifyColors.white : ChatifyColors.darkSlate,
-                      onTap: onSpeaker,
-                    );
-                  case 1:
-                    return _buildControl(context: context, svgAsset: ChatifyVectors.videoCamera, iconColor: ChatifyColors.darkerGrey, label: 'Видео', onTap: onVideo);
-                  case 2:
-                    return _buildControl(context: context, icon: isMuted ? Icons.mic : Icons.mic_off, label: isMuted ? 'Включить звук' : 'Отключить звук', onTap: onMicrophone);
-                  case 3:
-                    return _buildControl(context: context, icon: Icons.more_horiz_rounded, label: 'Ещё', onTap: onMore);
-                  case 4:
-                    return _buildControl(context: context, svgAsset: ChatifyVectors.shareScreen, iconColor: ChatifyColors.darkerGrey, label: 'Поделиться', onTap: onShare);
-                  case 5:
-                    return _buildControl(context: context, icon: Icons.call_end_rounded, label: 'Завершить', circleColor: ChatifyColors.error, onTap: onEndCall);
-                  default:
-                    return const SizedBox.shrink();
-                }
-              },
+      child: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+              borderRadius: BorderRadius.circular(40),
+              border: Border.all(color: context.isDarkMode ? ChatifyColors.popupColor.withAlpha((0.7 * 255).toInt()) : ChatifyColors.lightGrey),
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 3, blurRadius: 10, offset: const Offset(0, -3))],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 6, right: 6, bottom: 20),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 22, mainAxisExtent: 100),
+                itemCount: 6,
+                itemBuilder: (context, index) {
+                  switch (index) {
+                    case 0:
+                      return _buildControl(
+                        context: context,
+                        icon: isExternalSpeaker ? Icons.volume_up_rounded : Icons.hearing_rounded,
+                        label: isExternalSpeaker ? 'Динамик' : 'Телефон',
+                        iconColor: isExternalSpeaker ? ChatifyColors.black : ChatifyColors.white,
+                        circleColor: isExternalSpeaker ? ChatifyColors.white : ChatifyColors.darkSlate,
+                        onTap: onSpeaker,
+                      );
+                    case 1:
+                      return _buildControl(context: context, svgAsset: ChatifyVectors.videoCamera, iconColor: ChatifyColors.darkerGrey, label: 'Видео', onTap: onVideo);
+                    case 2:
+                      return _buildControl(context: context, icon: isMuted ? Icons.mic : Icons.mic_off, label: isMuted ? 'Включить звук' : 'Отключить звук', onTap: onMicrophone);
+                    case 3:
+                      return _buildControl(context: context, icon: Icons.more_horiz_rounded, label: 'Ещё', onTap: onMore);
+                    case 4:
+                      return _buildControl(context: context, svgAsset: ChatifyVectors.shareScreen, iconColor: ChatifyColors.darkerGrey, label: 'Поделиться', onTap: onShare);
+                    case 5:
+                      return _buildControl(context: context, icon: Icons.call_end_rounded, label: 'Завершить', circleColor: ChatifyColors.error, onTap: onEndCall);
+                    default:
+                      return const SizedBox.shrink();
+                  }
+                },
+              ),
             ),
           ),
         ),

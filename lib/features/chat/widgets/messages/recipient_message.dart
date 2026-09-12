@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../utils/helper/date_util.dart';
+import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -17,12 +18,15 @@ import '../../../../utils/formatters/formatter.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/message_model.dart';
 import '../../screens/forward_message_screen.dart';
+import '../dialogs/call_modal_bottom_sheet.dart';
+import 'call_message.dart';
 import 'message_bubble.dart';
 import '../buttons/emoji_hover_button.dart';
 import '../dialogs/edit_message_dialog.dart';
 import '../media/media_widget.dart';
 import '../painters/triangle_painter.dart';
 import 'emoji_message.dart';
+import 'message_text.dart';
 
 class RecipientMessage extends StatefulWidget {
   final MessageModel message;
@@ -123,7 +127,7 @@ class RecipientMessageState extends State<RecipientMessage> {
   }
 
   Widget _buildMessageContent() {
-    if (widget.message.type == MessageType.text) {
+    if (widget.message.type == MessageType.text || widget.message.type == MessageType.emoji) {
       return _buildTextMessage();
     }
 
@@ -132,7 +136,7 @@ class RecipientMessageState extends State<RecipientMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Platform.isWindows)
+          if (!Platform.isWindows && widget.message.type != MessageType.call)
             Center(
               child: Container(
                 width: 35,
@@ -150,10 +154,25 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ),
               ),
             ),
-          Flexible(child: _buildMediaMessage()),
+          Flexible(child: _buildContent()),
         ],
       ),
     );
+  }
+
+  Widget _buildContent() {
+    switch (widget.message.type) {
+      case MessageType.call:
+        return _buildCallMessage();
+      case MessageType.image:
+      case MessageType.gif:
+      case MessageType.video:
+      case MessageType.audio:
+      case MessageType.document:
+        return _buildMediaMessage();
+      default:
+        return _buildTextMessage();
+    }
   }
 
   Widget _buildTextMessage() {
@@ -170,9 +189,11 @@ class RecipientMessageState extends State<RecipientMessage> {
             MessageBubble(
               key: _containerKey,
               message: widget.message,
+              type: MessageBubbleType.recipient,
               isWebOrWindows: isWebOrWindows,
               isPressed: isPressed,
               onSecondaryTap: _handleSecondaryTap,
+              child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: _handleSecondaryTap),
             ),
             _buildMessageTail(),
             if (widget.message.type == MessageType.emoji)
@@ -185,9 +206,54 @@ class RecipientMessageState extends State<RecipientMessage> {
     );
   }
 
+  Widget _buildCallMessage() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      child: GestureDetector(
+        onTap: () {
+          _handleTap();
+          showCallModalBottomSheet(context, widget.message);
+        },
+        onSecondaryTap: _handleSecondaryTap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                MessageBubble(
+                  key: _containerKey,
+                  message: widget.message,
+                  isWebOrWindows: isWebOrWindows,
+                  isPressed: isPressed,
+                  onSecondaryTap: _handleSecondaryTap,
+                  showInnerContainer: true,
+                  showMetaCheck: false,
+                  type: MessageBubbleType.recipient,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 170),
+                    child: CallMessage(message: widget.message, isSender: false),
+                  ),
+                ),
+                _buildMessageTail(),
+              ],
+            ),
+
+            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+              _buildHoverActions(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildMessageTail() {
+    final isCall = widget.message.type == MessageType.call;
+
     return Positioned(
-      top: isWebOrWindows ? 6 : 5.5,
+      top: isWebOrWindows ? 6 : isCall ? 3.5 : 5.5,
       right: 7,
       child: CustomPaint(
         size: const Size(10, 10),

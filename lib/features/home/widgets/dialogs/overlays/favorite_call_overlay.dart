@@ -162,7 +162,7 @@ Widget _buildFavoriteCalls(BuildContext context, String groupImage) {
                       backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                       foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                       child: SvgPicture.asset(
-                        ChatifyVectors.communityUsers,
+                        ChatifyVectors.groups,
                         colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
                         width: 28,
                         height: 28,

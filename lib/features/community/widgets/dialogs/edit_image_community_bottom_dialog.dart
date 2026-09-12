@@ -1,167 +1,143 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../../utils/constants/app_vectors.dart';
+import '../../../status/widgets/dialogs/delete_confirmation_dialog.dart';
 import '../../screens/emoji_sticker_screen.dart';
+import '../../screens/search_internet_screen.dart';
+import '../items/community_image_items.dart';
 
 void showEditImageCommunityBottomDialog(
   BuildContext context,
-  Function(String?) onImagePicked,
-  VoidCallback onDeletePressed,
   String communityId,
   String imageUrl,
+  VoidCallback onDeletePressed,
+  Function(String?) onImagePicked,
   Function(String?) updateImagePath,
+  Function(Color color, String emoji) onEmojiSelected,
 ) {
-  final mq = MediaQuery.of(context).size;
-
   showModalBottomSheet(
     context: context,
+    showDragHandle: false,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-    builder: (_) {
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(26))),
+    builder: (bottomSheetContext) {
       return Padding(
-        padding: EdgeInsets.only(bottom: mq.height * .05, left: mq.height * .03, right: 18.0),
+        padding: const EdgeInsets.only(bottom: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const SizedBox(height: 14),
+            Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 14),
+            Padding(
+              padding: EdgeInsets.only(left: 8, right: 8, bottom: 6),
+              child: SizedBox(
+                height: 56,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(FluentIcons.delete_24_regular, size: 26),
+                        onPressed: () {
+                          showDeleteConfirmationDialog(bottomSheetContext, onDeletePressed);
+                        },
+                      ),
+                    ),
+                    Center(child: Text(S.of(context).communityPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400))),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 26),
+                        onPressed: () {
+                          Navigator.pop(bottomSheetContext);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(S.of(context).communityPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context, onImagePicked, onDeletePressed);
+                CommunityImageItem(
+                  icon: Icons.camera_alt_outlined,
+                  title: S.of(context).camera,
+                  onTap: () async {
+                    Navigator.of(bottomSheetContext).pop();
+
+                    await Future<void>.delayed(Duration.zero);
+
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
+
+                    if (image == null) {
+                      return;
+                    }
+
+                    onImagePicked(image.path);
+                    updateImagePath(image.path);
                   },
                 ),
-              ],
-            ),
-            SizedBox(height: mq.height * .03),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          side: const BorderSide(color: ChatifyColors.darkerGrey, width: 2),
-                          fixedSize: Size(mq.width * .1, mq.height * .1),
-                        ),
-                        onPressed: () async {
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
-                          if (image != null) {
-                            onImagePicked(image.path);
-                            updateImagePath(image.path);
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.blue),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(S.of(context).camera, style: TextStyle(color: ChatifyColors.blue)),
-                    ],
-                  ),
+                CommunityImageItem(
+                  icon: Icons.image_outlined,
+                  title: S.of(context).gallery,
+                  onTap: () async {
+                    Navigator.of(bottomSheetContext).pop();
+
+                    await Future<void>.delayed(Duration.zero);
+
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+                    if (image == null) return;
+
+                    onImagePicked(image.path);
+                    updateImagePath(image.path);
+                  },
                 ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          side: const BorderSide(color: ChatifyColors.darkerGrey, width: 2),
-                          fixedSize: Size(mq.width * .1, mq.height * .1),
-                        ),
-                        onPressed: () async {
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                          if (image != null) {
-                            onImagePicked(image.path);
-                            updateImagePath(image.path);
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Icon(Icons.image_sharp, color: ChatifyColors.blue),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(S.of(context).gallery, style: TextStyle(color: ChatifyColors.blue)),
-                    ],
-                  ),
+                CommunityImageItem(
+                  svgAsset: ChatifyVectors.emojiSticker,
+                  title: S.of(context).emoticonsStickers,
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+
+                    final result = await Navigator.push(context, createPageRoute(EmojiStickerScreen(initialColor: Colors.red[200]!, initialEmoji: '')));
+
+                    if (result == null || result is! Map) {
+                      return;
+                    }
+
+                    final Color? color = result['color'] as Color?;
+                    final String? emoji = result['emoji'] as String?;
+
+                    if (color == null || emoji == null || emoji.isEmpty) {
+                      return;
+                    }
+
+                    onEmojiSelected(color, emoji);
+                  },
                 ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          side: const BorderSide(color: ChatifyColors.darkerGrey, width: 2),
-                          fixedSize: Size(mq.width * .1, mq.height * .1),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, createPageRoute(EmojiStickerScreen(initialColor: Colors.red[200]!, initialEmoji: '')));
-                        },
-                        child: const Icon(Icons.emoji_emotions_outlined, color: ChatifyColors.blue),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(S.of(context).emoji, style: TextStyle(color: ChatifyColors.blue)),
-                    ],
-                  ),
+                CommunityImageItem(
+                  icon: Icons.search,
+                  title: S.of(context).searchInternet,
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    Navigator.push(bottomSheetContext, createPageRoute(SearchInternetScreen()));
+                  },
                 ),
               ],
             ),
           ],
         ),
-      );
-    },
-  );
-}
-
-
-void _showDeleteConfirmationDialog(
-  BuildContext context,
-  Function(String?) onImagePicked,
-  VoidCallback onDeletePressed,
-  ) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(S.of(context).deleteProfilePhoto),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            ),
-            child: Text(S.of(context).cancel, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
-          ),
-          TextButton(
-            onPressed: () {
-              onImagePicked(null);
-              onDeletePressed();
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            ),
-            child: Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
-          ),
-        ],
       );
     },
   );

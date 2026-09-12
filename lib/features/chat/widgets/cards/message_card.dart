@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
@@ -239,7 +240,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                     alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                     child: IntrinsicWidth(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (widget.message.type == MessageType.call ? 0.85 : 0.8)),
                         child: isMe
                           ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
                           : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction,
@@ -251,7 +252,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
               ),
               if (hasReaction)
                 Positioned(
-                  bottom: 3,
+                  bottom: 4,
                   left: isMe ? null : 28,
                   right: isMe ? 23 : null,
                   child: Transform.translate(

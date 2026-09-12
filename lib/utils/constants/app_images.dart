@@ -29,7 +29,6 @@ class ChatifyImages {
 
   /// -- Other
   static const String community = "assets/images/community.png";
-  static const String createdCommunity = "assets/images/created_community.png";
   static const String welcomeBlue = "assets/images/welcome_blue.png";
   static const String welcomeGreen = "assets/images/welcome_green.png";
   static const String welcomeRed = "assets/images/welcome_red.png";

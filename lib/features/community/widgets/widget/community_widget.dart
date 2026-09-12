@@ -6,7 +6,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/community_api.dart';
 import '../../../../common/widgets/badges/creation_date_badge.dart';
 import '../../../../common/widgets/cards/encryption_notice_card.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -43,19 +43,19 @@ class CommunityWidget extends StatefulWidget {
 }
 
 class _CommunityWidgetState extends State<CommunityWidget> {
-  List<MessageModel> list = [];
-  List<MessageModel> cachedMessages = [];
-  List<bool> isHoveredList = [];
+  final overlayController = Get.put(OverlayColorController());
+  final GlobalKey _textFieldKey = GlobalKey();
   late final CommunityModel community;
   late FocusNode focusNode;
-  final overlayController = Get.put(OverlayColorController());
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
-  Stream<QuerySnapshot<Map<String, dynamic>>>? messageStream;
   bool isHovered = false;
   bool isTyping = false;
   bool isHoveredDate = false;
-  final GlobalKey _textFieldKey = GlobalKey();
+  List<MessageModel> list = [];
+  List<MessageModel> cachedMessages = [];
+  List<bool> isHoveredList = [];
+  Stream<QuerySnapshot<Map<String, dynamic>>>? messageStream;
 
   bool _isTextFieldHit(TapDownDetails details) {
     final renderBox = _textFieldKey.currentContext?.findRenderObject() as RenderBox?;
@@ -90,7 +90,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
     final text = textController.text.trim();
     if (text.isEmpty) return;
 
-    await APIs.sendMessageCommunityChat(communityId: community.id, chatId: 'main', text: text);
+    await CommunityApi.sendMessageCommunityChat(communityId: community.id, chatId: 'main', text: text);
 
     setState(() {
       textController.clear();
@@ -129,11 +129,13 @@ class _CommunityWidgetState extends State<CommunityWidget> {
         showEmojiStickersDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           await showEmojiStickersDialog(context, position, onEmojiSelected, onGifSelected);
         },
         showAttachFileDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           await showAttachFileDialog(context, position, onImageSelected);
         },
         onEmojiSelected: onEmojiSelected,
@@ -150,6 +152,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
         behavior: HitTestBehavior.translucent,
         onTapDown: (details) {
           final focused = FocusManager.instance.primaryFocus;
+
           if (focused != null && !_isTextFieldHit(details)) {
             focused.unfocus();
           }
@@ -168,9 +171,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover, alignment: Alignment.center)),
-              ),
+              child: Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover, alignment: Alignment.center))),
             ),
             Positioned.fill(
               child: Obx(

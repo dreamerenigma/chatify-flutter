@@ -28,7 +28,7 @@ class CustomDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: left, right: right, top: top, bottom: bottom),
-      child: Divider(height: 0, thickness: thickness, indent: indent, endIndent: endIndent, color:  color ?? (context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.buttonDisabled)),
+      child: Divider(height: 0, thickness: thickness, indent: indent, endIndent: endIndent, color: color ?? (context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.buttonDisabled)),
     );
   }
 }

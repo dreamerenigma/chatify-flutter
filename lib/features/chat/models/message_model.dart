@@ -1,4 +1,6 @@
 import '../../../api/apis.dart';
+import '../../../core/enums/call_status_type.dart';
+import '../../../core/enums/call_type.dart';
 import '../../../core/enums/message_type.dart';
 
 class MessageModel {
@@ -8,6 +10,8 @@ class MessageModel {
   late final String fromId;
   late final String sent;
   late final MessageType type;
+  late final CallType? callType;
+  late final CallStatusType? callStatus;
   late final String? documentName;
   late final String? fileSize;
   late final List<String> deletedBy;
@@ -19,6 +23,8 @@ class MessageModel {
     required this.msg,
     required this.read,
     required this.type,
+    this.callType,
+    this.callStatus,
     required this.fromId,
     required this.sent,
     this.documentName,
@@ -75,8 +81,37 @@ class MessageModel {
       case 'document':
         type = MessageType.document;
         break;
+      case 'call':
+        type = MessageType.call;
+        break;
       default:
         type = MessageType.text;
+    }
+
+    final callTypeValue = json['callType'];
+
+    if (callTypeValue == 'audio') {
+      callType = CallType.audio;
+    } else if (callTypeValue == 'video') {
+      callType = CallType.video;
+    } else {
+      callType = null;
+    }
+
+    final callStatusValue = json['callStatus'];
+
+    switch (callStatusValue) {
+      case 'answered':
+        callStatus = CallStatusType.answered;
+        break;
+      case 'missed':
+        callStatus = CallStatusType.missed;
+        break;
+      case 'noAnswer':
+        callStatus = CallStatusType.noAnswer;
+        break;
+      default:
+        callStatus = null;
     }
   }
 
@@ -88,6 +123,14 @@ class MessageModel {
     data['type'] = type.name;
     data['fromId'] = fromId;
     data['sent'] = sent;
+
+    if (callType != null) {
+      data['callType'] = callType!.name;
+    }
+
+    if (callStatus != null) {
+      data['callStatus'] = callStatus!.name;
+    }
 
     if (documentName != null) {
       data['documentName'] = documentName;

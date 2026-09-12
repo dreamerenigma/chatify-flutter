@@ -253,7 +253,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                       errorWidget: (context, url, error) => CircleAvatar(
                         backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                         foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.communityUsers, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                        child: SvgPicture.asset(ChatifyVectors.groups, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                       ),
                     ),
                   ),

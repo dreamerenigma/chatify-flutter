@@ -136,7 +136,7 @@ class _RecentCallCardState extends State<RecentCallCard> {
                       splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                       highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                       onTap: () {
-                        Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: widget.call.user)));
+                        Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: widget.call.user, onMinimize: () {})));
                       },
                       child: const SizedBox(width: 48, height: 48, child: Center(child: Icon(Icons.call_outlined, size: 26))),
                     ),

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   version="1.1"
+   id="Layer_1"
+   viewBox="0 0 156.25 156.25"
+   enable-background="new 0 0 100 100"
+   xml:space="preserve"
+   sodipodi:docname="video_camera_incoming.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showguides="true"
+   inkscape:zoom="0.55726093"
+   inkscape:cx="98.697032"
+   inkscape:cy="442.34215"
+   inkscape:window-width="1920"
+   inkscape:window-height="1009"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<path
+   id="path1"
+   style="stroke-width:2.23826"
+   d="m 13.635254,10.675049 c -5.5889639,0 -13.61846933,7.998392 -13.61846933,15.085983 V 131.38962 c 0,6.81104 5.58758273,13.1298 13.61846933,13.1298 H 110.9211 c 6.87313,0 15.04783,-5.8042 15.04783,-13.1298 v -29.54064 l 30.26696,16.59089 0,-79.447799 -30.26696,16.128016 V 25.761032 c 0,-9.962713 -9.46111,-15.085983 -15.04783,-15.085983 z m 73.089218,28.7117 c 2.61772,-0.02083 5.138898,0.999125 7.004166,2.835846 3.862733,3.803544 3.910819,10.096385 0.107193,13.959122 h 0.0019 l -36.054611,36.636734 8.521652,-0.07439 c 5.423326,-0.04923 9.91336,4.363613 9.95903,9.786986 0.04813,5.42243 -4.364646,9.91142 -9.787369,9.95712 l -32.378768,0.28344 c -2.617152,0.0219 -5.137686,-0.99678 -7.003785,-2.83203 l -0.05493,-0.053 -0.0351,-0.0389 c -0.06328,-0.0685 -0.125419,-0.13811 -0.186538,-0.20828 -0.195505,-0.20332 -0.382365,-0.41412 -0.559616,-0.63362 l -0.01373,-0.0156 -0.01144,-0.0175 c -1.336695,-1.71075 -2.073788,-3.81546 -2.093888,-5.9864 l -0.28305,-32.378774 c -0.04927,-5.422676 4.364515,-9.91228 9.786987,-9.95903 h 0.0019 c 5.421763,-0.04813 9.910373,4.363276 9.957123,9.78508 v 0.0023 l 0.07629,8.570099 36.087799,-36.669922 c 1.83577,-1.866345 4.340967,-2.928233 6.958771,-2.949143 z"
+   sodipodi:nodetypes="ssssssccccsssccccccccccccccccccccccccc" />
+</svg>

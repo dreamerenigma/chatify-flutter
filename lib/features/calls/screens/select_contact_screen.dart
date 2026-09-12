@@ -315,7 +315,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
             onTap: () {
               if (selectedUsers.isEmpty) return;
 
-              Navigator.push(context, MaterialPageRoute(builder: (context) => OutgoingAudioCallScreen(user: selectedUsers.first)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => OutgoingAudioCallScreen(user: selectedUsers.first, onMinimize: () {})));
             },
           ),
         ],

@@ -172,7 +172,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "alert": MessageLookupByLibrary.simpleMessage("Предупреждение"),
     "all": MessageLookupByLibrary.simpleMessage("Все"),
     "allCommunityMembersAddGroups": MessageLookupByLibrary.simpleMessage(
-      "Все участники сообщества могут добавлять группы",
+      "Добавлять других участников могут все участники сообщества.",
     ),
     "allCommunityMembersAddOtherMembers": MessageLookupByLibrary.simpleMessage(
       "Добавлять других участников могут все участники сообщества.",
@@ -550,7 +550,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "communities": MessageLookupByLibrary.simpleMessage("Сообщества"),
     "community": MessageLookupByLibrary.simpleMessage("Сообщества"),
     "communityAdminsOnly": MessageLookupByLibrary.simpleMessage(
-      "Только админы сообщества",
+      "Только админы",
     ),
     "communityCreatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Сообщество успешно создано!",
@@ -562,7 +562,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Данные о сообществе",
     ),
     "communityExamples": MessageLookupByLibrary.simpleMessage(
-      "Посмотреть примеры сообществ",
+      "Смотреть примеры сообществ",
     ),
     "communityName": MessageLookupByLibrary.simpleMessage(
       "Название сообщества",
@@ -1267,7 +1267,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupPicture": MessageLookupByLibrary.simpleMessage("Картинка группы"),
     "groups": MessageLookupByLibrary.simpleMessage("Группы"),
     "groupsAddedCommunityDisplayed": MessageLookupByLibrary.simpleMessage(
-      "Здесь будут отображаться другие группы, добавленные в сообщество. Участники сообщества могут вступить в эти группы",
+      "Здесь появятся другие группы, добавленные в сообщество. Участники сообщества могут вступить в эти группы",
     ),
     "groupsCount": MessageLookupByLibrary.simpleMessage("группы"),
     "groupsInCommunity": MessageLookupByLibrary.simpleMessage(
@@ -1756,7 +1756,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "only": MessageLookupByLibrary.simpleMessage("Только..."),
     "onlyAdmins": MessageLookupByLibrary.simpleMessage("Только админы"),
     "onlyCommunityAdminsAddGroups": MessageLookupByLibrary.simpleMessage(
-      "Только админы сообщества могут добавлять группы. Участники могут предлагать группы на рассмотрение админам.",
+      "Добавлять новых участников могут только админы групп и сообщества.",
     ),
     "onlyContactsPhoneNumber": MessageLookupByLibrary.simpleMessage(
       "Только контакты с +7 999 888-77-66 в их адресных книгах получат ваше сообщение рассылки.",

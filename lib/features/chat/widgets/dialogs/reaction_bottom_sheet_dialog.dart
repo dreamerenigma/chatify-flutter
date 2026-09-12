@@ -91,9 +91,7 @@ class _ReactionBottomSheetContentState extends State<ReactionBottomSheetContent>
   }
 
   Future<void> _loadReactionUsers() async {
-    final userIds = localReactions.values
-        .expand((users) => users)
-        .toSet();
+    final userIds = localReactions.values.expand((users) => users).toSet();
 
     if (userIds.isEmpty) {
       if (mounted) {
@@ -122,7 +120,8 @@ class _ReactionBottomSheetContentState extends State<ReactionBottomSheetContent>
     });
   }
 
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.only(top: 12, bottom: 80),
@@ -131,7 +130,7 @@ class _ReactionBottomSheetContentState extends State<ReactionBottomSheetContent>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(child: Container(width: 36, height: 5, decoration: BoxDecoration(color: ChatifyColors.lightSoftNight, borderRadius: BorderRadius.circular(2)))),
+          Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.lightSoftNight, borderRadius: BorderRadius.circular(2)))),
           const SizedBox(height: 14),
           Padding(padding: const EdgeInsets.only(left: 20, right: 20), child: Text(reactionsTitle, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500))),
           const SizedBox(height: 15),

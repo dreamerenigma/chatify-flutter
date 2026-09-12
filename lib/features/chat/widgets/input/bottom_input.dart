@@ -21,11 +21,12 @@ class BottomInput extends StatefulWidget {
   final FocusNode focusNode;
   final bool isHovered;
   final VoidCallback sendMessage;
+  final GlobalKey textFieldKey;
   final Future<void> Function() showEmojiStickersDialog;
   final Future<void> Function() showAttachFileDialog;
   final Function(String) onEmojiSelected;
   final Function(String) onGifSelected;
-  final GlobalKey textFieldKey;
+
 
   const BottomInput({
     super.key,
@@ -33,10 +34,10 @@ class BottomInput extends StatefulWidget {
     required this.focusNode,
     required this.isHovered,
     required this.sendMessage,
+    required this.textFieldKey,
     required this.showEmojiStickersDialog,
     required this.showAttachFileDialog,
     required this.onEmojiSelected,
-    required this.textFieldKey,
     required this.onGifSelected,
   });
 
@@ -45,14 +46,10 @@ class BottomInput extends StatefulWidget {
 }
 
 class _BottomInputState extends State<BottomInput> {
-  Duration recordingDuration = Duration.zero;
-  Timer? _recordingTimer;
-  double _thumbPosition = 0.0;
   final double _dotSpacing = 4.4;
   final int _dotCount = 25;
   final AudioRecorder _audioRecorder = AudioRecorder();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  String? _audioFilePath;
   bool isHovered = false;
   bool hasText = false;
   bool isRecording = false;
@@ -60,6 +57,10 @@ class _BottomInputState extends State<BottomInput> {
   bool isPaused = false;
   bool isEmojiDialogOpen = false;
   bool isAttachDialogOpen = false;
+  double _thumbPosition = 0.0;
+  String? _audioFilePath;
+  Timer? _recordingTimer;
+  Duration recordingDuration = Duration.zero;
 
   @override
   void initState() {
@@ -345,14 +346,7 @@ class _BottomInputState extends State<BottomInput> {
         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
       ),
       child: Material(
         color: ChatifyColors.transparent,
@@ -399,14 +393,7 @@ class _BottomInputState extends State<BottomInput> {
             color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.white.withAlpha((0.8 * 255).toInt()),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: Offset(0, 4),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
           ),
           child: Material(
             color: ChatifyColors.transparent,
@@ -531,14 +518,7 @@ class _BottomInputState extends State<BottomInput> {
             color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.white.withAlpha((0.8 * 255).toInt()),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: Offset(0, 4),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
           ),
           child: Material(
             color: ChatifyColors.transparent,

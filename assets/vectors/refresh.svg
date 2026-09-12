@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 75 75"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="refresh.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.39404297"
+     inkscape:cx="50.755886"
+     inkscape:cy="534.2057"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">refresh</title>
+  <g
+     id="Layer_2"
+     data-name="Layer 2"
+     transform="matrix(0,1.555916,-1.555916,0,75.122985,1.5440909)"
+     style="stroke:#000000;stroke-opacity:1">
+    <g
+       id="invisible_box"
+       data-name="invisible box"
+       style="stroke:#000000;stroke-opacity:1">
+      <rect
+         fill="none"
+         id="rect1"
+         width="0"
+         height="0"
+         x="0"
+         y="0"
+         style="stroke:#000000;stroke-opacity:1" />
+    </g>
+    <g
+       id="icons_Q2"
+       data-name="icons Q2"
+       style="stroke:#000000;stroke-opacity:1">
+      <path
+         d="m 2,24 a 22,22 0 0 0 41.7,9.7 2,2 0 0 0 -0.5,-2.6 2,2 0 0 0 -3,0.7 A 17.8,17.8 0 0 1 24,42 18,18 0 1 1 37.4,12 H 32.1 A 2.1,2.1 0 0 0 30,13.7 2,2 0 0 0 32,16 h 10 a 2,2 0 0 0 2,-2 V 4.1 A 2.1,2.1 0 0 0 42.3,2 2,2 0 0 0 40,4 V 8.9 A 22,22 0 0 0 2,24 Z"
+         id="path1"
+         style="stroke:#000000;stroke-opacity:1" />
+    </g>
+  </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>refresh</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

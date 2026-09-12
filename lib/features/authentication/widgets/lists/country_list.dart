@@ -257,18 +257,13 @@ Widget buildCountryList(BuildContext context) {
       final country = countries[index];
       final countryName = localizations?.translate('countries.${country.name}') ?? country.name;
 
-      return ListTile(
-        leading: SvgPicture.asset(country.flag),
-        title: Text(countryName),
-        subtitle: Text(country.nativeName),
-      );
+      return ListTile(leading: SvgPicture.asset(country.flag), title: Text(countryName), subtitle: Text(country.nativeName));
     },
   );
 }
 
 String? getCountryNameByCode(String code) {
-  final country = countries.firstWhere((country) => country.code.replaceAll('+', '') == code.replaceAll('+', ''),
-    orElse: () => Country('', '', '', '', ''),
-  );
+  final country = countries.firstWhere((country) => country.code.replaceAll('+', '') == code.replaceAll('+', ''), orElse: () => Country('', '', '', '', ''));
+
   return country.name.isNotEmpty ? country.name : null;
 }

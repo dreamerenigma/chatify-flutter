@@ -409,14 +409,14 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                     children: [
                       SizedBox(height: 8),
                       AppActionMenuItem(
-                        icon: _buildIconContainer(Icons.group_add, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        icon: _buildIconContainer(Icons.group_add, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newGroup,
                         onTap: () {
                           Navigator.push(context, createPageRoute(const NewGroupScreen()));
                         },
                       ),
                       AppActionMenuItem(
-                        icon: _buildIconContainer(Icons.person_add_alt_1_rounded, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        icon: _buildIconContainer(Icons.person_add_alt_1_rounded, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newContact,
                         onTap: () {
                           final saveContactController = SaveContactController.instance;
@@ -432,7 +432,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                         ),
                       ),
                       AppActionMenuItem(
-                        icon: _buildIconContainer(Icons.groups, colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        icon: _buildIconContainer(Icons.groups, iconSize: 26, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newCommunity,
                         onTap: () {
                           Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
@@ -499,12 +499,12 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
     );
   }
 
-  Widget _buildIconContainer(IconData icon, Color color) {
+  Widget _buildIconContainer(IconData icon, {double iconSize = 24, required Color color}) {
     return Container(
       width: 45,
       height: 45,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-      child: Icon(icon, color: ChatifyColors.black, size: 24),
+      child: Icon(icon, color: ChatifyColors.black, size: iconSize),
     );
   }
 }

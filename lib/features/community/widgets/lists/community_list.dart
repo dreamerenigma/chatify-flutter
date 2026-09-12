@@ -58,25 +58,28 @@ class _CommunityListState extends State<CommunityList> {
           final community = widget.communities[index];
           final isSelected = selectedIndex == index;
 
-          return widget.isHomeScreen
-            ? HomeCommunityCard(
-                community: community,
-                isSelected: isSelected,
-                isValidDate: widget.isValidDate,
-                fileToSend: widget.fileToSend,
-                onCommunitySelected: (_) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                  widget.onCommunitySelected(community);
-                },
-              )
-            : CommunityCard(
-                onTap: () {},
-                community: community,
-                isValidDate: widget.isValidDate,
-                fileToSend: widget.fileToSend,
-              );
+          return Padding(
+            padding: EdgeInsets.only(bottom: index == widget.communities.length - 1 ? 0 : 6),
+            child: widget.isHomeScreen
+              ? HomeCommunityCard(
+                  community: community,
+                  isSelected: isSelected,
+                  isValidDate: widget.isValidDate,
+                  fileToSend: widget.fileToSend,
+                  onCommunitySelected: (_) {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                    widget.onCommunitySelected(community);
+                  },
+                )
+              : CommunityCard(
+                  onTap: () {},
+                  community: community,
+                  isValidDate: widget.isValidDate,
+                  fileToSend: widget.fileToSend,
+                ),
+          );
         },
       ),
     );

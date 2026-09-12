@@ -103,7 +103,6 @@ class AddGroupScreen extends StatelessWidget {
           ),
           Expanded(
             child: CommunityWidgets(
-              createdAt: createdAt,
               isValidDate: (date) => true,
               showAllButton: false,
               isInteractive: false,

@@ -1,39 +1,46 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
-import 'package:chatify/utils/constants/app_sizes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
-import '../../../../../utils/helper/date_util.dart';
-import '../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/devices/device_utility.dart';
-import '../../../../utils/helper/avatar_color_util.dart';
+import '../../../calls/models/call_result.dart';
 import '../../../calls/widgets/widget/outgoing_audio_call_widget.dart';
 import '../../../calls/widgets/widget/outgoing_video_call_widget.dart';
 import '../../../home/widgets/dialogs/no_sound_dialog.dart';
 import '../../../personalization/screens/profile/view_profile_screen.dart';
+import '../../models/mini_call_data_model.dart';
 import '../../models/user_model.dart';
-import '../dialogs/chat_settings_dialog.dart';
+import '../widget/user_info_widget.dart';
 import 'actions/app_bar_actions.dart';
+import 'mini_call_bar.dart';
 
 class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final UserModel user;
-  final ValueNotifier<String?>? currentRouteNotifier;
+  final MiniCallDataModel? callData;
   final String? previousRoute;
+  final ValueNotifier<String?>? currentRouteNotifier;
+  final ValueChanged<CallResult>? onCallFinished;
+  final VoidCallback? onMinimizeCall;
+  final VoidCallback? onReturnToCall;
+  final VoidCallback? onEndCall;
+  final VoidCallback? onToggleMicrophone;
 
   const ChatAppBar({
     super.key,
     required this.user,
-    this.currentRouteNotifier,
+    this.callData,
     this.previousRoute,
+    this.currentRouteNotifier,
+    this.onCallFinished,
+    this.onMinimizeCall,
+    this.onReturnToCall,
+    this.onEndCall,
+    this.onToggleMicrophone,
   });
 
   @override
@@ -141,7 +148,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
             constraints: const BoxConstraints(maxWidth: 235),
             child: Row(
               children: [
-                Expanded(child: _buildUserInfo(context, widget.user)),
+                Expanded(child: UserInfoWidget(user: widget.user, showStatusText: showStatusText)),
               ],
             ),
           ),
@@ -175,32 +182,63 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   }
 
   Widget _buildMobileAppBar(BuildContext context) {
-    return AppBar(
-      leadingWidth: 55,
-      titleSpacing: -5,
-      surfaceTintColor: ChatifyColors.transparent,
-      backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
-      elevation: 0,
-      title: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: Row(
-          children: [
-            Expanded(child: _buildUserInfo(context, widget.user)),
-            const SizedBox(width: 10),
-          ],
-        ),
+    final bool showMiniCallBar = widget.callData?.isActive == true && widget.callData?.isMinimized == true;
+
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight + (showMiniCallBar ? 56 : 0)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: AppBar(
+              leadingWidth: 55,
+              titleSpacing: -5,
+              surfaceTintColor: ChatifyColors.transparent,
+              backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
+              elevation: 0,
+              title: Padding(padding: const EdgeInsets.only(top: 10, bottom: 10,),
+                child: Row(
+                  children: [
+                    Expanded(child: UserInfoWidget(user: widget.user, showStatusText: showStatusText)),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+              ),
+              actions: [
+                AppBarActions(
+                  onVideoCall: () async {
+                    final result =
+                    await Navigator.push<CallResult>(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
+
+                    if (result == null || !mounted) return;
+
+                    widget.onCallFinished?.call(result);
+                  },
+                  onAudioCall: () async {
+                    final result =
+                    await Navigator.push<CallResult>(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user, onMinimize: widget.onMinimizeCall)));
+
+                    if (result == null || !mounted) return;
+
+                    widget.onCallFinished?.call(result);
+                  },
+                  onPopupItemSelected:
+                  _handlePopupAction,
+                ),
+              ],
+            ),
+          ),
+          if (showMiniCallBar)
+            MiniCallBar(
+              userName: '${widget.user.name} ${widget.user.surname}',
+              callType: widget.callData!.callType,
+              isMuted: widget.callData!.isMuted,
+              onTap: widget.onReturnToCall!,
+              onEndCall: widget.onEndCall!,
+              onToggleMicrophone: widget.onToggleMicrophone!,
+            ),
+        ],
       ),
-      actions: [
-        AppBarActions(
-          onVideoCall: () {
-            Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
-          },
-          onAudioCall: () {
-            Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user)));
-          },
-          onPopupItemSelected: _handlePopupAction,
-        ),
-      ],
     );
   }
 
@@ -237,139 +275,6 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       case 15:
         break;
     }
-  }
-
-  Widget _buildUserInfo(BuildContext context, UserModel user) {
-    final avatarColors = AvatarColorUtil.get(user.id);
-
-    return InkWell(
-      mouseCursor: SystemMouseCursors.basic,
-      borderRadius: BorderRadius.circular(8),
-      splashColor: ChatifyColors.transparent,
-      highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
-      onTap: () {
-        if (Platform.isWindows) {
-          final RenderBox renderBox = context.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
-
-          showChatSettingsDialog(context, user, position, initialIndex: 0);
-        } else {
-          Navigator.push(context, createPageRoute(ViewProfileScreen(user: user)));
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .04),
-              child: CachedNetworkImage(
-                width: 40,
-                height: 40,
-                imageUrl: user.image,
-                fit: BoxFit.cover,
-                placeholder: (context, url) {
-                  return Container(width: 40, height: 40, color: ChatifyColors.blackGrey);
-                },
-                errorWidget: (context, url, error) {
-                  return Container(
-                    width: 40,
-                    height: 40,
-                    color: avatarColors.background,
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(ChatifyVectors.person, width: 19, height: 19, colorFilter: ColorFilter.mode(avatarColors.icon, BlendMode.srcIn,)),
-                  );
-                },
-              ),
-            ),
-            SizedBox(width: Platform.isWindows ? 14 : 10),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '${user.name}${user.surname.isNotEmpty ? ' ${user.surname}' : ''}',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
-                  ),
-                  SizedBox(height: 2),
-                  StreamBuilder<DocumentSnapshot>(
-                    stream: APIs.firestore.collection('Users').doc(user.id).snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox.shrink();
-                      }
-
-                      if (snapshot.hasData) {
-                        log("Snapshot data: ${snapshot.data!.data()}");
-                        var userData = snapshot.data!.data() as Map<String, dynamic>;
-                        bool isTyping = userData['is_typing'] ?? false;
-                        bool isOnline = userData['is_online'] ?? false;
-                        dynamic lastActiveDynamic = userData['last_active'];
-                        String lastActiveText;
-
-                        if (lastActiveDynamic is Timestamp) {
-                          lastActiveText = DateUtil.getLastActiveTime(context: context, lastActive: lastActiveDynamic, addWasPrefix: true);
-                        } else if (lastActiveDynamic is String) {
-                          int? millis = int.tryParse(lastActiveDynamic);
-                          if (millis != null) {
-                            Timestamp ts = Timestamp.fromMillisecondsSinceEpoch(millis);
-                            lastActiveText = DateUtil.getLastActiveTime(context: context, lastActive: ts, addWasPrefix: true);
-                          } else {
-                            lastActiveText = S.of(context).lastSeenNotAvailable;
-                          }
-                        } else {
-                          lastActiveText = S.of(context).lastSeenNotAvailable;
-                        }
-
-                        return SizedBox(
-                          height: 20,
-                          child: Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [
-                              AnimatedOpacity(
-                                opacity: showStatusText ? 0.0 : 1.0,
-                                duration: const Duration(milliseconds: 600),
-                                curve: Curves.easeInCubic,
-                                child: Text(
-                                  S.of(context).contactDetails,
-                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                              AnimatedOpacity(
-                                opacity: showStatusText ? 1.0 : 0.0,
-                                duration: const Duration(milliseconds: 600),
-                                curve: Curves.easeInCubic,
-                                child: Text(
-                                  isTyping ? S.of(context).printing : isOnline ? S.of(context).online : lastActiveText,
-                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return const SizedBox.shrink();
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildSearchOverlay() {

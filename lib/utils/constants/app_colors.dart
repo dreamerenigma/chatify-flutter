@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class ChatifyColors {
   // App theme colors
-  static const Color primary = Color(0xFF3ED0A0);
   static const Color primaryDark = Color(0xFF2DA27E);
+  static const Color primary = Color(0xFF3ED0A0);
+  static const Color primaryGreen = Color(0xFF99DB89);
   static const Color primaryCyan = Color(0xFFA8E5EC);
   static const Color blue = Color(0xFF2196F3);
   static const Color lightBlueLink = Color(0xFF53BDEB);
@@ -29,6 +30,7 @@ class ChatifyColors {
   static const Color switcherPrimary = Color(0xff437967);
   static const Color buttonPrimary = Color(0xFF64BD9F);
   static const Color buttonRed = Color(0xffff6b6b);
+  static const Color buttonRedNight = Color(0xFFC82E40);
 
   // Text colors
   static const Color textPrimary = Color(0xFF333333);
@@ -155,5 +157,20 @@ class ChatifyColors {
     Color(0xFF685D4F),
     Color(0xFF665B4E),
     Color(0xFF555555),
+  ];
+
+  static final List<Color> colors = [
+    Colors.red[200]!,
+    Colors.orange[100]!,
+    Colors.yellow[200]!,
+    Colors.green[100]!,
+    Colors.blue[100]!,
+    Colors.indigo[100]!,
+    Colors.purple[100]!,
+    Colors.deepPurple[200]!,
+    Colors.pink[100]!,
+    Colors.cyan[100]!,
+    Colors.brown[100]!,
+    Colors.blueGrey[100]!,
   ];
 }

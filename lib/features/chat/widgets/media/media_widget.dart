@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import 'package:gif_view/gif_view.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:http/http.dart' as http;
 import 'package:chatify/utils/popups/dialogs.dart';
@@ -47,8 +50,18 @@ class MediaWidget extends StatefulWidget {
 }
 
 class MediaWidgetState extends State<MediaWidget> {
-  bool isDownloading = false;
   final logger = Logger();
+  final GifController _gifController = GifController();
+  bool isGifPlaying = false;
+  bool isDownloading = false;
+  Timer? _gifTimer;
+
+  @override
+  void dispose() {
+    _gifTimer?.cancel();
+    _gifController.stop();
+    super.dispose();
+  }
 
   void onOpenDocument() async {
     try {
@@ -104,6 +117,31 @@ class MediaWidgetState extends State<MediaWidget> {
     }
   }
 
+  void _playGif() {
+    if (isGifPlaying) return;
+
+    _gifTimer?.cancel();
+
+    setState(() {
+      isGifPlaying = true;
+    });
+
+    _gifController.play();
+
+    _gifTimer = Timer(
+      const Duration(seconds: 5),
+      () {
+        if (!mounted) return;
+
+        _gifController.stop();
+
+        setState(() {
+          isGifPlaying = false;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (widget.message.type) {
@@ -141,18 +179,18 @@ class MediaWidgetState extends State<MediaWidget> {
         },
         child: Container(
           width: 250,
-          height: 250,
+          height: 230,
           decoration: BoxDecoration(borderRadius: borderRadius),
           child: CachedNetworkImage(
             imageUrl: widget.message.msg,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(
               width: 250,
-              height: 250,
+              height: 230,
               decoration: const BoxDecoration(color: ChatifyColors.transparent),
               child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt()), BlendMode.darken), child: const SizedBox.expand()),
             ),
-            imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 250, height: 250),
+            imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 230, height: 230),
             errorWidget: (context, url, error) => const Icon(Icons.image, size: 70),
           ),
         ),
@@ -163,10 +201,38 @@ class MediaWidgetState extends State<MediaWidget> {
   Widget _buildGifWidget(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: CachedNetworkImage(
-        imageUrl: widget.message.msg,
-        placeholder: (context, url) => const Padding(padding: EdgeInsets.all(8.0), child: GifLoadingIndicator(text: 'Gif')),
-        errorWidget: (context, url, error) => const HeroIcon(HeroIcons.gif, size: 70),
+      child: SizedBox(
+        width: 250,
+        height: 230,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            GifView.network(
+              widget.message.msg,
+              controller: _gifController,
+              width: 250,
+              height: 230,
+              fit: BoxFit.cover,
+              loop: true,
+              progressBuilder: (context) {
+                return const Padding(padding: EdgeInsets.all(8), child: GifLoadingIndicator(text: 'Gif'));
+              },
+              errorBuilder: (context, error, tryAgain) {
+                return const Center(child: HeroIcon(HeroIcons.gif, size: 70));
+              },
+            ),
+            if (!isGifPlaying)
+              GestureDetector(
+                onTap: _playGif,
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.55), shape: BoxShape.circle),
+                  child: SvgPicture.asset(ChatifyVectors.gif, width: 38, height: 38, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -278,8 +344,6 @@ class MediaWidgetState extends State<MediaWidget> {
       ),
     );
   }
-
-
 
   Widget getFileIconWidget(String fileExtension) {
     switch (fileExtension.toLowerCase()) {

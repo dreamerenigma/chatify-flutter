@@ -35,10 +35,10 @@ class EmojiPanel extends StatelessWidget {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
-        onTap: () {},
         borderRadius: BorderRadius.circular(30),
         splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        onTap: () {},
         child: Padding(
           padding: const EdgeInsets.all(2),
           child: Text(emoji, style: TextStyle(fontSize: ChatifySizes.fontSizeXl)),

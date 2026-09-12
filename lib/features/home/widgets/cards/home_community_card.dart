@@ -1,17 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/helper/date_util.dart';
 import 'package:flutter/material.dart';
 import 'package:chatify/features/community/models/community_model.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../community/screens/community_info_screen.dart';
+import '../../../community/widgets/media/community_network_image.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../dialogs/edit_settings_chat_dialog.dart';
 
@@ -42,6 +40,8 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
 
   @override
   Widget build(BuildContext context) {
+    final imageSize = isWindows ? 46.0 : DeviceUtils.getScreenHeight(context) * .055;
+
     return Card(
       margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
       elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
@@ -88,10 +88,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
               if (isWindows) {
                 widget.onCommunitySelected(widget.community);
               } else {
-                Navigator.push(
-                  context,
-                  createPageRoute(CommunityInfoScreen(community: widget.community, isValidDate: (date) => widget.isValidDate, fileToSend: widget.fileToSend)),
-                );
+                Navigator.push(context, createPageRoute(CommunityInfoScreen(community: widget.community, isValidDate: (date) => widget.isValidDate, fileToSend: widget.fileToSend)));
               }
             },
             splashFactory: NoSplash.splashFactory,
@@ -102,19 +99,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
-                  ClipOval(
-                    child: CachedNetworkImage(
-                      width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                      height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                      imageUrl: widget.community.image,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, error, stackTrace) => CircleAvatar(
-                        backgroundColor: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
-                        foregroundColor:  context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.communityUsers, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
-                      ),
-                    ),
-                  ),
+                  ClipOval(child: CommunityNetworkImage(imagePath: widget.community.image, width: imageSize, height: imageSize, isWindows: isWindows)),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -145,7 +130,27 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Icon(Icons.check, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                        Row(
+                          children: [
+                            Icon(Icons.check, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Объявления',
+                              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontFamily: 'Roboto'),
+                            ),
+                            const SizedBox(width: 6),
+                            Icon(Icons.play_arrow_rounded, size: 16, color: context.isDarkMode ? ChatifyColors.darkGrey: ChatifyColors.textSecondary),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                S.of(context).welcomeToCommunity,
+                                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

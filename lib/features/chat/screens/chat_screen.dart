@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
+import '../../../core/enums/call_type.dart';
 import '../../../core/enums/selection_action_mode_type.dart';
+import '../../../core/services/calls/agora_call_service.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -17,9 +20,12 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../utils/popups/app_loaders.dart';
+import '../../calls/models/call_model.dart';
+import '../../calls/models/call_result.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/message_model.dart';
+import '../models/mini_call_data_model.dart';
 import '../widgets/bars/chat_app_bar.dart';
 import '../widgets/bars/selection_chat_app_bar.dart';
 import '../widgets/cards/message_card.dart';
@@ -43,6 +49,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   final TextEditingController textController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
+  late AudioPlayer audioPlayer = AudioPlayer();
   late final AnimationController animationController;
   late final Animation<double> opacityAnimation;
   late final Stream<QuerySnapshot<Map<String, dynamic>>> messagesStream;
@@ -52,6 +59,11 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   bool showEmoji = false;
   bool isUploading = false;
   bool isEmojiToolbarVisible = true;
+  bool isCallMinimized = false;
+  bool isCallActive = false;
+  bool isMuted = false;
+  CallType? activeCallType;
+  CallModel? activeCall;
   List<MessageModel> list = [];
   List<MessageModel> messages = [];
   Set<int> selectedMessages = <int>{};
@@ -101,32 +113,101 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    audioPlayer = AudioPlayer();
     messagesStream = APIs.getAllMessages(widget.user);
     scrollController.addListener(onScroll);
     animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(animationController);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
-
-      inputFocusNode.requestFocus();
-
-      await Future.delayed(const Duration(milliseconds: 100));
-
-      if (!mounted) return;
-
-      await SystemChannels.textInput.invokeMethod('TextInput.hide');
-    });
   }
 
   @override
   void dispose() {
+    APIs.updateTypingStatus(false);
     scrollController.removeListener(onScroll);
+    audioPlayer.dispose();
     textController.dispose();
     inputFocusNode.dispose();
     scrollController.dispose();
     animationController.dispose();
-    _closeChat();
     super.dispose();
+  }
+
+  Future<void> _handleDeleteSelectedDeletedMessages() async {
+    if (selectedMessages.isEmpty) return;
+
+    final selected = selectedMessages.map((index) => list[index]).where((message) => message.deletedBy.contains(APIs.user.uid)).toList();
+
+    if (selected.isEmpty) {
+      _clearSelection();
+      return;
+    }
+
+    try {
+      for (final message in selected) {
+        final deleted = await APIs.deleteMessageDocument(message);
+
+        if (!deleted) {
+          log('❌ Не удалось удалить документ: ${message.sent}');
+        }
+      }
+
+      if (mounted) {
+        _clearSelection();
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ Ошибка полного удаления сообщений: $e');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> _handleReaction(MessageModel message, String reaction) async {
+    await APIs.updateMessageReaction(message, reaction);
+  }
+
+  Future<void> _handleReactionForSelectedMessages(String reaction) async {
+    final selected = selectedMessages.toList();
+
+    setState(() {
+      isSelecting = false;
+      isEmojiToolbarVisible = false;
+      selectedMessages.clear();
+    });
+
+    for (final index in selected) {
+      final message = list[index];
+
+      await _handleReaction(message, reaction);
+    }
+  }
+
+  Future<void> _onCallFinished(CallResult result) async {
+    await APIs.sendCallMessage(widget.user, result.type, result.status);
+  }
+
+  Future<void> _endActiveCall() async {
+    try {
+      final agoraCallService = Get.find<AgoraCallService>();
+      await agoraCallService.leaveChannel();
+
+      if (!mounted) return;
+
+      setState(() {
+        isCallActive = false;
+        isCallMinimized = false;
+        activeCallType = null;
+      });
+    } catch (e, stackTrace) {
+      log('Error ending active call: $e');
+      debugPrintStack(stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        isCallActive = false;
+        isCallMinimized = false;
+        activeCallType = null;
+      });
+    }
   }
 
   void scrollToBottom() {
@@ -201,34 +282,6 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     }
   }
 
-  Future<void> _handleDeleteSelectedDeletedMessages() async {
-    if (selectedMessages.isEmpty) return;
-
-    final selected = selectedMessages.map((index) => list[index]).where((message) => message.deletedBy.contains(APIs.user.uid)).toList();
-
-    if (selected.isEmpty) {
-      _clearSelection();
-      return;
-    }
-
-    try {
-      for (final message in selected) {
-        final deleted = await APIs.deleteMessageDocument(message);
-
-        if (!deleted) {
-          log('❌ Не удалось удалить документ: ${message.sent}');
-        }
-      }
-
-      if (mounted) {
-        _clearSelection();
-      }
-    } catch (e, stackTrace) {
-      debugPrint('❌ Ошибка полного удаления сообщений: $e');
-      debugPrintStack(stackTrace: stackTrace);
-    }
-  }
-
   void toggleEmojiKeyboard() {
     setState(() {
       showEmoji = !showEmoji;
@@ -240,37 +293,12 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     });
   }
 
-  Future<void> _handleReaction(MessageModel message, String reaction) async {
-    await APIs.updateMessageReaction(message, reaction);
-  }
-
-  void _closeChat() {
-    APIs.updateTypingStatus(false);
-    inputFocusNode.unfocus();
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-  }
-
   void _hideEmojiToolbarOnScroll() {
     if (!mounted || !isEmojiToolbarVisible) return;
 
     setState(() {
       isEmojiToolbarVisible = false;
     });
-  }
-
-  Future<void> _handleReactionForSelectedMessages(String reaction) async {
-    final selected = selectedMessages.toList();
-
-    setState(() {
-      isSelecting = false;
-      isEmojiToolbarVisible = false;
-      selectedMessages.clear();
-    });
-
-    for (final index in selected) {
-      final message = list[index];
-      await _handleReaction(message, reaction);
-    }
   }
 
   void _startReply() {
@@ -311,200 +339,236 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     CustomIconSnackBar.showAnimatedSnackBar(context, 'Сообщение скопировано!', icon: const Icon(BootstrapIcons.check_circle), iconColor: ChatifyColors.success);
   }
 
+  void _returnToCall() {
+    setState(() {
+      isCallMinimized = false;
+    });
+  }
+
+  void _minimizeCall() {
+    if (!mounted) return;
+
+    log('[CHAT_SCREEN] MINIMIZE CALL');
+
+    setState(() {
+      isCallActive = true;
+      isCallMinimized = true;
+    });
+  }
+
+  void _toggleMicrophone() {
+    setState(() {
+      isMuted = !isMuted;
+    });
+
+    if (isMuted) {
+      audioPlayer.setVolume(0);
+    } else {
+      audioPlayer.setVolume(1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Set<String> selectedReactions = selectedMessages.map((index) => list[index].reactions).whereType<String>().where((reaction) => reaction.isNotEmpty).toSet();
-    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    final bool showMiniCallBar = isCallActive && isCallMinimized;
+    final double appBarHeight = (Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight) + (showMiniCallBar ? 56 : 0);
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
+        preferredSize: Size.fromHeight(appBarHeight),
         child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))]),
-              child: AppBar(
-                automaticallyImplyLeading: false,
-                flexibleSpace: isSelecting ? const SizedBox.shrink() : ChatAppBar(user: widget.user),
-              ),
+              child: isSelecting
+                ? const SizedBox.shrink()
+                : ChatAppBar(
+                    user: widget.user,
+                    callData: MiniCallDataModel(isActive: isCallActive, isMinimized: isCallMinimized, callType: activeCallType ?? CallType.audio, isMuted: isMuted),
+                    onReturnToCall: _returnToCall,
+                    onEndCall: _endActiveCall,
+                    onToggleMicrophone: _toggleMicrophone,
+                    onCallFinished: _onCallFinished,
+                    onMinimizeCall: _minimizeCall,
+                  )
             ),
             if (isSelecting && selectedMessages.isNotEmpty)
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    color: context.isDarkMode  ? ChatifyColors.blackGrey : ChatifyColors.white,
-                    child: SelectionChatAppBar(
-                      selectedMessages: selectedMessages,
-                      list: list,
-                      clearSelection: _clearSelection,
-                      handleDeleteSelectedMessages: _handleDeleteSelectedMessages,
-                      handleUpdateMessage: _handleUpdateMessage,
-                      selectionActionMode: selectionActionMode,
-                      handleDeleteDeletedMessages: _handleDeleteSelectedDeletedMessages,
-                      onReply: _startReply,
-                      onCopyMessage: _copySelectedMessage,
-                      user: widget.user,
-                    ),
-                  ),
+              Container(
+                color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+                child: SelectionChatAppBar(
+                  selectedMessages: selectedMessages,
+                  list: list,
+                  clearSelection: _clearSelection,
+                  handleDeleteSelectedMessages: _handleDeleteSelectedMessages,
+                  handleUpdateMessage: _handleUpdateMessage,
+                  selectionActionMode: selectionActionMode,
+                  handleDeleteDeletedMessages: _handleDeleteSelectedDeletedMessages,
+                  onReply: _startReply,
+                  onCopyMessage: _copySelectedMessage,
+                  user: widget.user,
                 ),
               ),
           ],
         ),
       ),
       backgroundColor: context.isDarkMode  ? ChatifyColors.black : ChatifyColors.white,
-      body: ScrollConfiguration(
-        behavior: NoGlowScrollBehavior(),
-        child: Stack(
-          children: [
-            Consumer<WallpaperProvider>(
-              builder: (context, wallpaperProvider, child) {
-                final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty
-                  ? wallpaperProvider.backgroundImage
-                  : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+      body: _buildBody(),
+    );
+  }
 
-                return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
-              },
-            ),
-            Column(
-              children: [
-                Expanded(
-                  child: Stack(
-                    children: [
-                      StreamBuilder(
-                        stream: messagesStream,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-                            return const SizedBox();
-                          }
+  Widget _buildBody() {
+    final Set<String> selectedReactions = selectedMessages.map((index) => list[index].reactions).whereType<String>().where((reaction) => reaction.isNotEmpty).toSet();
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
-                          final data = snapshot.data?.docs;
-                          final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+    return ScrollConfiguration(
+      behavior: NoGlowScrollBehavior(),
+      child: Stack(
+        children: [
+          Consumer<WallpaperProvider>(
+            builder: (context, wallpaperProvider, child) {
+              final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
 
-                          list = newList;
+              return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
+            },
+          ),
+          Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    StreamBuilder(
+                      stream: messagesStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
+                          return const SizedBox();
+                        }
 
-                          if (list.isNotEmpty) {
-                            APIs.markMessagesAsRead(list);
-                          }
+                        final data = snapshot.data?.docs;
+                        final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
 
-                          if (list.isEmpty) {
-                            return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
-                          }
+                        list = newList;
 
-                          return ScrollbarTheme(
-                            data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
-                            child: Scrollbar(
-                              controller: scrollController,
-                              thickness: 5,
-                              thumbVisibility: false,
-                              child: NotificationListener<ScrollNotification>(
-                                onNotification: (notification) {
-                                  if (notification is ScrollStartNotification) {
-                                    _hideEmojiToolbarOnScroll();
-                                  }
+                        if (list.isNotEmpty) {
+                          APIs.markMessagesAsRead(list);
+                        }
 
-                                  return false;
+                        if (list.isEmpty) {
+                          return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
+                        }
+
+                        return ScrollbarTheme(
+                          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+                          child: Scrollbar(
+                            controller: scrollController,
+                            thickness: 5,
+                            thumbVisibility: false,
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification: (notification) {
+                                if (notification is ScrollStartNotification) {
+                                  _hideEmojiToolbarOnScroll();
+                                }
+
+                                return false;
+                              },
+                              child: ListView.builder(
+                                controller: scrollController,
+                                reverse: true,
+                                itemCount: list.length,
+                                padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
+                                physics: const ClampingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final message = list[index];
+                                  final previousMessage = index + 1 < list.length ? list[index + 1] : null;
+                                  final showDateSeparator = _isDifferentDay(message, previousMessage);
+
+                                  return Column(
+                                    children: [
+                                      if (showDateSeparator)
+                                        _buildDateSeparator(context, message),
+                                      MessageCard(
+                                        key: ValueKey(message.sent),
+                                        message: message,
+                                        isSelected: selectedMessages.contains(index),
+                                        onLongPress: () {
+                                          _startSelection();
+                                          _toggleMessageSelection(index);
+                                        },
+                                        onTap: () => _toggleMessageSelection(index),
+                                        messages: list,
+                                        onReply: (message) {
+                                          setState(() {
+                                            replyMessage = message;
+                                            replyUser = message.fromId == APIs.user.uid ? APIs.me : widget.user;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  );
                                 },
-                                child: ListView.builder(
-                                  controller: scrollController,
-                                  reverse: true,
-                                  itemCount: list.length,
-                                  padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
-                                  physics: const ClampingScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    final message = list[index];
-                                    final previousMessage = index + 1 < list.length ? list[index + 1] : null;
-                                    final showDateSeparator = _isDifferentDay(message, previousMessage);
-
-                                    return Column(
-                                      children: [
-                                        if (showDateSeparator)
-                                          _buildDateSeparator(context, message),
-                                        MessageCard(
-                                          key: ValueKey(message.sent),
-                                          message: message,
-                                          isSelected: selectedMessages.contains(index),
-                                          onLongPress: () {
-                                            _startSelection();
-                                            _toggleMessageSelection(index);
-                                          },
-                                          onTap: () => _toggleMessageSelection(index),
-                                          messages: list,
-                                          onReply: (message) {
-                                            setState(() {
-                                              replyMessage = message;
-                                              replyUser = widget.user;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                      if (isSelecting && selectedMessages.isNotEmpty && isEmojiToolbarVisible)
-                        Positioned(
-                          bottom: 100,
-                          left: -5,
-                          right: -5,
-                          child: Center(
-                            child: EmojiToolbar(
-                              emojis: const ['👍', '❤️', '😂', '😮', '😥', '🙏', '👏', '🥰', '😴', '😭', '🔥', '🤣'],
-                              selectedReactions: selectedReactions,
-                              onAddPressed: toggleEmojiKeyboard,
-                              onToggleKeyboard: toggleEmojiKeyboard,
-                              onReactionPressed: (emoji) {
-                                _handleReactionForSelectedMessages(emoji);
-                              },
-                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    if (isSelecting && selectedMessages.isNotEmpty && isEmojiToolbarVisible)
+                      Positioned(
+                        bottom: 100,
+                        left: -5,
+                        right: -5,
+                        child: Center(
+                          child: EmojiToolbar(
+                            emojis: const ['👍', '❤️', '😂', '😮', '😥', '🙏', '👏', '🥰', '😴', '😭', '🔥', '🤣'],
+                            selectedReactions: selectedReactions,
+                            onAddPressed: toggleEmojiKeyboard,
+                            onToggleKeyboard: toggleEmojiKeyboard,
+                            onReactionPressed: (emoji) {
+                              _handleReactionForSelectedMessages(emoji);
+                            },
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
-                if (isUploading)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-                    ),
-                  ),
-                if (replyMessage != null)
-                  _buildReplyPreview(replyMessage!, widget.user),
+              ),
+              if (isUploading)
                 Padding(
-                  padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
-                  child: ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard, isReplyVisible: replyMessage != null),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                  ),
                 ),
-              ],
-            ),
-            Positioned(
-              bottom: 75 + MediaQuery.of(context).viewPadding.bottom,
-              right: 15,
-              child: IgnorePointer(
-                ignoring: !isIconVisible,
-                child: FadeTransition(
-                  opacity: opacityAnimation,
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: FloatingActionButton(
-                      onPressed: scrollToBottom,
-                      backgroundColor: ChatifyColors.blackGrey,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      mini: true,
-                      child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
-                    ),
+              if (replyMessage != null && replyUser != null)
+                _buildReplyPreview(replyMessage!, replyUser!),
+              Padding(
+                padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
+                child: ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard, isReplyVisible: replyMessage != null),
+              ),
+            ],
+          ),
+          Positioned(
+            bottom: 75 + MediaQuery.of(context).viewPadding.bottom,
+            right: 15,
+            child: IgnorePointer(
+              ignoring: !isIconVisible,
+              child: FadeTransition(
+                opacity: opacityAnimation,
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: FloatingActionButton(
+                    onPressed: scrollToBottom,
+                    backgroundColor: ChatifyColors.blackGrey,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    mini: true,
+                    child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -521,34 +585,34 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                decoration: BoxDecoration(
-                  color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border(left: BorderSide(color: context.isDarkMode ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.blue, width: 5)),
-                ),
-                child: Stack(
-                  children: [
-                    Material(
-                      color: ChatifyColors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(30),
-                        splashFactory: NoSplash.splashFactory,
-                        highlightColor: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey,
-                        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey,
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
+              child: Material(
+                color: ChatifyColors.transparent,
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: context.isDarkMode ? ChatifyColors.deepNight.withValues(alpha: 0.6) : ChatifyColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border(left: BorderSide(color: context.isDarkMode ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.blue, width: 5)),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    onTap: () {},
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 4, bottom: 4),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '${user.name}${user.surname.isNotEmpty ? ' ${user.surname}' : ''}',
+                                user.id == APIs.user.uid ? S.of(context).you : '${user.name}${user.surname.isNotEmpty ? ' ${user.surname}' : ''}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: ChatifyColors.blueAccent.withValues(alpha: 0.8), fontSize: 15, fontWeight: FontWeight.w400),
+                                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 15, fontWeight: FontWeight.w400),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -560,27 +624,27 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                             ],
                           ),
                         ),
-                      ),
-                    ),
-                    Positioned(
-                      top: -8,
-                      right: -4,
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            replyMessage = null;
-                            replyUser = null;
-                          });
-                        },
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          alignment: Alignment.center,
-                          child: Icon(Icons.close, size: 17, color: ChatifyColors.darkGrey),
+                        Positioned(
+                          top: -2,
+                          right: -2,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                replyMessage = null;
+                                replyUser = null;
+                              });
+                            },
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              alignment: Alignment.center,
+                              child: Icon(Icons.close, size: 17, color: ChatifyColors.darkGrey),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

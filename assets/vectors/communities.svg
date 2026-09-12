@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   viewBox="0 0 3200 3200"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="communities.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="1.1145218"
+     inkscape:cx="314.03604"
+     inkscape:cy="519.05671"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">ionicons-v5-j</title>
+  <path
+     id="path1-8"
+     style="stroke-width:3.61333"
+     d="m 823.81695,1750.6853 c -163.68279,0 71.07236,0 0,0 z m -264.81668,115.0931 c 56.75274,0 40.94728,-1.7334 114.59095,14.1027 -184.7838,188.9003 -183.06586,294.9545 -182.70455,364.775 0.44862,86.6958 16.80504,281.768 35.75531,315.129 l -333.16008,0.2868 c -90.1432,0.078 -140.92259,-49.5958 -140.92259,-111.1203 0,-61.7846 -0.200199,-120.1291 -0.200199,-120.1291 0,-307.5669 255.803709,-463.0441 506.641159,-463.0441 z"
+     sodipodi:nodetypes="ssscscsscs" />
+  <path
+     id="path1-8-1"
+     style="stroke-width:3.61333"
+     d="m 2428.0948,1750.6459 c 163.6828,0 -71.0724,0 0,0 z m 264.8167,115.0931 c -56.7527,0 -40.9473,-1.7334 -114.591,14.1026 184.7839,188.9004 183.0659,294.9546 182.7046,364.775 -0.4487,86.6958 -16.8051,281.7681 -35.7553,315.1291 l 333.1601,0.2867 c 90.1432,0.078 140.9226,-49.5957 140.9226,-111.1202 0,-61.7846 0.2002,-120.1291 0.2002,-120.1291 0,-307.5669 -255.8037,-463.0441 -506.6412,-463.0441 z"
+     sodipodi:nodetypes="ssscscsscs" />
+  <path
+     d="m 1640.2524,1560.2596 c 202.436,0 384.9406,-121.9453 462.4051,-308.9686 77.4645,-187.0229 34.6325,-402.28967 -108.511,-545.43308 -143.1433,-143.14332 -358.4102,-185.97527 -545.433,-108.51082 -187.0232,77.4646 -308.9687,259.96893 -308.9687,462.4051 0,132.743 52.732,260.0489 146.5952,353.9123 93.8634,93.8633 221.1694,146.5951 353.9124,146.5951 z m 0,143.0021 c -310.2254,0 -929.51412,191.623 -929.51412,572.0087 0,0 0.62863,105.4621 0.62863,148.6737 0,92.1729 65.85766,137.3306 202.8201,137.3306 H 2395.2333 c 111.4853,0 174.2828,-61.3422 174.2828,-137.4329 0,-76.4127 0.2501,-148.5714 0.2501,-148.5714 0,-380.3857 -619.2886,-572.0087 -929.5138,-572.0087 z"
+     id="path1-8-5"
+     style="fill:#000000;stroke-width:4.46881"
+     sodipodi:nodetypes="sssssssssssssss" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>ionicons-v5-j</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <circle
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:51.9432;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke fill markers"
+     id="path2"
+     cx="704.53784"
+     cy="1412.8265"
+     r="317.76715" />
+  <circle
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:51.9432;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke fill markers"
+     id="path2-5"
+     cx="2601.5989"
+     cy="1413.1033"
+     r="317.76715" />
+</svg>

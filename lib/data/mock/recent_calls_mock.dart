@@ -1,7 +1,7 @@
-import '../../chat/models/user_model.dart';
-import '../models/recent_call_model.dart';
+import '../../features/calls/models/recent_call_model.dart';
+import '../../features/chat/models/user_model.dart';
 
-final List<RecentCallModel> testRecentCalls = [
+final List<RecentCallModel> mockRecentCalls = [
   RecentCallModel(
     user: UserModel(
       id: 'test_1',

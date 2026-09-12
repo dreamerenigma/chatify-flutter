@@ -18,7 +18,7 @@ import '../bindings/general_bindings.dart';
 import '../config/config.dart';
 import '../features/personalization/controllers/language_controller.dart';
 import '../features/personalization/controllers/themes_controller.dart';
-import '../features/splash_screen/screens/main_window_screen.dart';
+import '../features/splash/screens/main_window_screen.dart';
 import '../features/utils/windows/window_util_desktop.dart';
 import 'package:chatify/utils/theme/theme.dart';
 import '../generated/l10n/l10n.dart';

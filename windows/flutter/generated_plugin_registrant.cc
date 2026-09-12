@@ -6,6 +6,7 @@
 
 #include "generated_plugin_registrant.h"
 
+#include <agora_rtc_engine/agora_rtc_engine_plugin.h>
 #include <audioplayers_windows/audioplayers_windows_plugin.h>
 #include <camera_windows/camera_windows.h>
 #include <cloud_firestore/cloud_firestore_plugin_c_api.h>
@@ -17,6 +18,7 @@
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <firebase_storage/firebase_storage_plugin_c_api.h>
 #include <flutter_webrtc/flutter_web_r_t_c_plugin.h>
+#include <iris_method_channel/iris_method_channel_plugin_c_api.h>
 #include <local_auth_windows/local_auth_plugin.h>
 #include <media_kit_libs_windows_video/media_kit_libs_windows_video_plugin_c_api.h>
 #include <media_kit_video/media_kit_video_plugin_c_api.h>
@@ -28,6 +30,8 @@
 #include <window_manager/window_manager_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
+  AgoraRtcEnginePluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AgoraRtcEnginePlugin"));
   AudioplayersWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("AudioplayersWindowsPlugin"));
   CameraWindowsRegisterWithRegistrar(
@@ -50,6 +54,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FirebaseStoragePluginCApi"));
   FlutterWebRTCPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterWebRTCPlugin"));
+  IrisMethodChannelPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("IrisMethodChannelPluginCApi"));
   LocalAuthPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("LocalAuthPlugin"));
   MediaKitLibsWindowsVideoPluginCApiRegisterWithRegistrar(

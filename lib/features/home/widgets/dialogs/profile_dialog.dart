@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -105,7 +104,7 @@ class ProfileDialog extends StatelessWidget {
                 IconButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user)));
+                    Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
                   },
                   icon: Icon(Icons.call, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 30),
                 ),

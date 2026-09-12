@@ -252,8 +252,8 @@ class LoginScreenState extends State<LoginScreen> {
                                 text: TextSpan(
                                   style: const TextStyle(color: ChatifyColors.white, fontSize: 16),
                                   children: [
-                                    TextSpan(text: S.of(context).loginWith),
-                                    TextSpan(text: S.of(context).phone, style: const TextStyle(fontWeight: FontWeight.w500)),
+                                    TextSpan(text: S.of(context).loginWith, style: TextStyle(fontWeight: FontWeight.w400)),
+                                    TextSpan(text: S.of(context).phone, style: TextStyle(fontWeight: FontWeight.w500)),
                                   ],
                                 ),
                               ),

@@ -7,6 +7,7 @@ import 'package:chatify/features/community/widgets/cards/new_community_card.dart
 import 'package:chatify/utils/constants/app_images.dart';
 import 'package:get/get.dart';
 import '../../../api/apis.dart';
+import '../../../api/community_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -72,7 +73,7 @@ class CommunityScreenState extends State<CommunityScreen> {
 
   Future<void> _loadCommunities() async {
     try {
-      final communities = await APIs.getCommunity();
+      final communities = await CommunityApi.getCommunity();
 
       if (!mounted) return;
 
@@ -208,7 +209,7 @@ class CommunityScreenState extends State<CommunityScreen> {
                 Flexible(child: CommunityList(communities: list, onCommunitySelected: (community) {})),
                 Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
                 const SizedBox(height: 6),
-                CommunityWidgets(createdAt: createdAt, isValidDate: isValidDate, showAllButton: true, community: APIs.community!),
+                CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: APIs.community!),
                 Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightGrey),
               ],
             ),

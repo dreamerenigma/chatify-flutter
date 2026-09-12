@@ -1,0 +1,1 @@
+enum NewGroupDialogType { whoCanAddMembers, whoCanAddGroups }

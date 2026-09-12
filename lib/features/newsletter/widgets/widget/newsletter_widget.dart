@@ -120,6 +120,7 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
         showEmojiStickersDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           await showEmojiStickersDialog(context, position, onEmojiSelected, onGifSelected);
         },
         showAttachFileDialog: () async {

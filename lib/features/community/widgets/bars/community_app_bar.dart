@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/community_api.dart';
 import '../../../../common/widgets/buttons/custom_search_button.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -49,7 +49,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
 
   void _loadCommunities() async {
     try {
-      final data = await APIs.getCommunity();
+      final data = await CommunityApi.getCommunity();
       setState(() {
         communities = data;
         _isLoading = false;
@@ -118,9 +118,10 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
       },
       mouseCursor: SystemMouseCursors.basic,
       borderRadius: BorderRadius.circular(8),
-      splashColor: ChatifyColors.transparent,
-      highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
+      splashFactory: NoSplash.splashFactory,
+      splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Row(
@@ -140,7 +141,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
                   return CircleAvatar(
                     backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                     foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    child: SvgPicture.asset(ChatifyVectors.communityUsers, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                    child: SvgPicture.asset(ChatifyVectors.groups, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                   );
                 },
               ),

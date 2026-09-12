@@ -18,7 +18,10 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import '../config/config.dart';
+import '../core/enums/call_status_type.dart';
+import '../core/enums/call_type.dart';
 import '../core/enums/message_type.dart';
+import '../core/services/media/media_service.dart';
 import '../features/authentication/screens/add_account_screen.dart';
 import '../features/authentication/widgets/dialogs/consent_dialog.dart';
 import '../features/bot/models/info_app_model.dart';
@@ -59,6 +62,9 @@ class APIs {
 
   /// -- Accessing Firebase Messaging (Push Notification).
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
+  /// -- Accessing media service.
+  static MediaService get mediaService => Get.find<MediaService>();
 
   ///******************* User Related APIs *******************
   /// -- Getting Firebase Messaging token.
@@ -415,8 +421,6 @@ class APIs {
   static Future<void> updateActiveStatus(bool isOnline) async {
     try {
       await firestore.collection('Users').doc(user.uid).update({'is_online': isOnline, 'last_active': Timestamp.now(), 'push_token': me.pushToken});
-
-      log('PRESENCE → ${user.uid} | ''is_online=$isOnline',);
     } catch (e) {
       log('PRESENCE ERROR → ${user.uid} | $e');
     }
@@ -585,7 +589,7 @@ class APIs {
   }
 
   /// -- Add new user status.
-  static Future<void> addStatus({required String mediaUrl, required String type}) async {
+  static Future<void> addStatus({required String mediaPath, required String type}) async {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
 
@@ -594,21 +598,42 @@ class APIs {
         return;
       }
 
-      final doc = FirebaseFirestore.instance.collection('Statuses').doc();
+      final userId = currentUser.uid;
+      final doc = FirebaseFirestore.instance.collection('Users').doc(userId).collection('my_statuses').doc();
       final now = DateTime.now();
-      final status = UserStatusModel(id: doc.id, userId: currentUser.uid, mediaUrl: mediaUrl, type: type, createdAt: now, expiresAt: now.add(const Duration(hours: 24)));
+      final status = UserStatusModel(id: doc.id, mediaPath: mediaPath, type: type, createdAt: now, expiresAt: now.add(const Duration(hours: 24)));
 
       await doc.set(status.toMap());
 
-      log('Статус успешно добавлен.');
+      log('Статус успешно добавлен: ''Users/$userId/my_statuses/${doc.id}');
     } catch (e) {
       log('Ошибка при добавлении статуса: $e');
       rethrow;
     }
   }
 
-  /// -- Upload status image to Firebase Storage.
-  static Future<String> uploadStatusImage(File imageFile) async {
+  /// -- Get user status.
+  static Future<UserStatusModel?> getUserStatus(String userId) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('my_statuses')
+          .where('expires_at', isGreaterThan: Timestamp.now()).orderBy('expires_at').limit(1).get();
+
+      if (snapshot.docs.isEmpty) {
+        return null;
+      }
+
+      return UserStatusModel.fromDocument(snapshot.docs.first);
+    } catch (e) {
+      log('Ошибка получения статуса пользователя: $e');
+      return null;
+    }
+  }
+
+  /// -- Upload status image to Yandex Disk through backend.
+  static Future<String?> uploadStatusImage(File file) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
 
@@ -616,16 +641,21 @@ class APIs {
         throw Exception('User is not logged in');
       }
 
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${user.uid}';
-      final fileExtension = imageFile.path.split('.').last;
-      final storageReference = FirebaseStorage.instance.ref().child('status_images').child('$fileName.$fileExtension');
-      final uploadTask = storageReference.putFile(imageFile);
-      final taskSnapshot = await uploadTask;
+      final ext = file.path.split('.').last.toLowerCase();
+      final path = 'users/${user.uid}/my_statuses/''${DateTime.now().millisecondsSinceEpoch}.$ext';
+      final imagePath = await mediaService.uploadImage(file: file, path: path);
 
-      return await taskSnapshot.ref.getDownloadURL();
+      if (imagePath == null) {
+        log('Failed to upload status image: $path');
+        return null;
+      }
+
+      log('Status image uploaded: $imagePath');
+
+      return imagePath;
     } catch (e) {
-      log('Ошибка загрузки изображения статуса: $e');
-      rethrow;
+      log('Error uploading status image: $e');
+      return null;
     }
   }
 
@@ -774,6 +804,40 @@ class APIs {
     await sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
   }
 
+  /// -- Send call message.
+  static Future<String> sendCallMessage(UserModel chatUser, CallType callType, CallStatusType callStatus) async {
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final conversationId = getConversationId(chatUser.id);
+
+    final message = MessageModel(
+      toId: chatUser.id,
+      msg: '',
+      read: '',
+      type: MessageType.call,
+      callType: callType,
+      callStatus: callStatus,
+      fromId: user.uid,
+      sent: time,
+      deletedBy: [],
+      reactions: {},
+      deletedAt: null,
+    );
+
+    final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(time);
+
+    await ref.set(message.toJson());
+
+    return time;
+  }
+
+  /// -- Update call message status.
+  static Future<void> updateCallMessageStatus(UserModel chatUser, String messageId, CallStatusType status) async {
+    final conversationId = getConversationId(chatUser.id);
+    final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
+
+    await ref.update({'callStatus': status.name});
+  }
+
   /// -- Update read status of incoming message.
   static Future<void> updateMessageReadStatus(MessageModel message) async {
     if (message.toId != user.uid) {
@@ -877,18 +941,13 @@ class APIs {
   /// -- Send chat document.
   static Future<void> sendChatDocument(UserModel chatUser, File file) async {
     final ext = file.path.split('.').last.toLowerCase();
-    log('Extension: $ext');
-
     final ref = FirebaseStorage.instance.ref().child('documents/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-
     final contentType = getContentType(ext);
-    log('Content Type: $contentType');
 
     try {
       final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
       await uploadTask.whenComplete(() async {
         final documentUrl = await ref.getDownloadURL();
-        log('Document URL: $documentUrl');
 
         await sendMessage(chatUser, documentUrl, MessageType.document, fileName: file.path.split('/').last);
       });
@@ -909,36 +968,15 @@ class APIs {
   }
 
   /// -- Delete message.
-  static Future<void> deleteMessage(
-      MessageModel message, {
-        bool deleteForEveryone = false,
-      }) async {
-    final otherUserId = message.fromId == user.uid
-        ? message.toId
-        : message.fromId;
-
+  static Future<void> deleteMessage(MessageModel message, {bool deleteForEveryone = false}) async {
+    final otherUserId = message.fromId == user.uid ? message.toId : message.fromId;
     final conversationId = getConversationId(otherUserId);
-
-    final docRef = firestore
-        .collection('Chats')
-        .doc(conversationId)
-        .collection('messages')
-        .doc(message.sent);
+    final docRef = firestore.collection('Chats').doc(conversationId).collection('messages').doc(message.sent);
 
     try {
-      log('========== DELETE ==========');
-      log('message.sent: ${message.sent}');
-      log('message.fromId: ${message.fromId}');
-      log('message.toId: ${message.toId}');
-      log('current uid: ${user.uid}');
-      log('otherUserId: $otherUserId');
-      log('conversationId: $conversationId');
-      log('FULL PATH: ${docRef.path}');
-
       final snapshot = await docRef.get();
 
       if (!snapshot.exists) {
-        log('❌ NOT FOUND: ${docRef.path}');
         return;
       }
 
@@ -948,17 +986,11 @@ class APIs {
         }
 
         await docRef.update({'deletedForEveryone': true});
-
-        log('✅ Deleted for everyone');
       } else {
         await docRef.update({'deletedBy': FieldValue.arrayUnion([user.uid])});
-
-        log('✅ Deleted for me');
       }
     } catch (e, stackTrace) {
-      log('❌ DELETE ERROR: $e');
       log('$stackTrace');
-
       rethrow;
     }
   }
@@ -967,37 +999,14 @@ class APIs {
   static Future<bool> deleteMessageDocument(MessageModel message) async {
     final currentUid = APIs.user.uid;
 
-    // Определяем собеседника независимо от того,
-    // отправил сообщение текущий пользователь или получил его.
-    final otherUserId =
-    message.fromId == currentUid
-        ? message.toId
-        : message.fromId;
-
+    final otherUserId = message.fromId == currentUid ? message.toId : message.fromId;
     final conversationId = getConversationId(otherUserId);
-
-    final docRef = firestore
-        .collection('Chats')
-        .doc(conversationId)
-        .collection('messages')
-        .doc(message.sent);
+    final docRef = firestore.collection('Chats').doc(conversationId).collection('messages').doc(message.sent);
 
     try {
-      log('🔥 DELETE DOCUMENT');
-      log('currentUid: $currentUid');
-      log('fromId: ${message.fromId}');
-      log('toId: ${message.toId}');
-      log('otherUserId: $otherUserId');
-      log('conversationId: $conversationId');
-      log('message.sent: ${message.sent}');
-      log('FULL PATH: ${docRef.path}');
-
       final before = await docRef.get();
 
-      log('📄 EXISTS BEFORE DELETE: ${before.exists}');
-
       if (!before.exists) {
-        log('❌ DOCUMENT NOT FOUND: ${docRef.path}');
         return false;
       }
 
@@ -1005,20 +1014,12 @@ class APIs {
 
       final after = await docRef.get();
 
-      log('📄 EXISTS AFTER DELETE: ${after.exists}');
-
       if (!after.exists) {
-        log('✅ DOCUMENT REALLY DELETED');
         return true;
       }
 
-      log('❌ DOCUMENT STILL EXISTS');
       return false;
-    } catch (e, stackTrace) {
-      log('❌ ERROR DELETING DOCUMENT: ${docRef.path}');
-      log('$e');
-      log('$stackTrace');
-
+    } catch (e) {
       return false;
     }
   }
@@ -1466,119 +1467,7 @@ class APIs {
     }
   }
 
-  ///******************* Community Screen Related APIs *******************
-  /// -- Creating new community.
-  static Future<bool> createCommunity(BuildContext context, CommunityModel community, File? imageFile) async {
-    try {
-      final user = auth.currentUser!;
-      final communityId = firestore.collection('Communities').doc().id;
-      community.id = communityId;
-      community.createdAt = DateTime.now();
 
-      if (imageFile != null) {
-        final imageUrl = await uploadCommunityImageToFirebaseStorage(communityId, imageFile);
-        if (imageUrl != null) {
-          community.image = imageUrl;
-        } else {
-          Dialogs.showSnackbar(context, 'Failed to upload image.');
-          return false;
-        }
-      }
-
-      await firestore.collection('Communities').doc(communityId).set(community.toMap());
-      await firestore.collection('Users').doc(user.uid).collection('my_community').doc(communityId).set({'communityId': communityId});
-
-      Dialogs.showSnackbar(context, S.of(context).communityCreatedSuccessfully);
-      return true;
-    } catch (e) {
-      Dialogs.showSnackbar(context, S.of(context).communityCreationFailed);
-      return false;
-    }
-  }
-
-  /// -- Method to upload an image to Firebase Storage.
-  static Future<String?> uploadCommunityImageToFirebaseStorage(String communityId, File file) async {
-    try {
-      final ext = file.path.split('.').last;
-      final ref = storage.ref().child('community_pictures/$communityId.$ext');
-
-      await ref.putFile(file, SettableMetadata(contentType: 'image/$ext'));
-      return await ref.getDownloadURL();
-    } catch (e) {
-      log('Error uploading image to Firebase Storage: $e');
-      return null;
-    }
-  }
-
-  /// -- Method to fetch community from Firestore.
-  static Future<List<CommunityModel>> getCommunity() async {
-    try {
-      final querySnapshot = await firestore.collection('Communities').get();
-      final communities = querySnapshot.docs.map((doc) => CommunityModel.fromJson(doc.data())).toList();
-
-      return communities;
-    } catch (e) {
-      log('Error fetching community: $e');
-      return [];
-    }
-  }
-
-  /// -- Update community information.
-  static Future<void> updateCommunityInfo(String communityId, File file) async {
-    final ext = file.path.split('.').last;
-    log('Extension: $ext');
-
-    final ref = storage.ref().child('community_pictures/$communityId.$ext');
-
-    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
-
-    String downloadURL = await ref.getDownloadURL();
-    await firestore.collection('Communities').doc(communityId).update({'image': downloadURL});
-  }
-
-  /// -- Update community picture.
-  static Future<void> updateCommunityPicture(String communityId, File file) async {
-    final ext = file.path.split('.').last;
-
-    log('Extension: $ext');
-
-    final ref = storage.ref().child('community_pictures/$communityId.$ext');
-
-    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
-
-    String downloadURL = await ref.getDownloadURL();
-    await firestore.collection('Communities').doc(communityId).update({'image': downloadURL});
-  }
-
-  /// -- Delete community picture.
-  static Future<void> deleteCommunityPicture(String communityId, String imageUrl) async {
-    try {
-      await storage.refFromURL(imageUrl).delete();
-
-      await FirebaseFirestore.instance.collection('Communities').doc(communityId).update({'image': null});
-    } catch (e) {
-      log('Error deleting community picture: $e');
-    }
-  }
-
-  /// -- Send message community chat.
-  static Future<void> sendMessageCommunityChat({required String communityId, required String chatId, required String text}) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null || text.trim().isEmpty) return;
-
-    final messageRef = FirebaseFirestore.instance.collection('Communities').doc(communityId).collection('Chats').doc(chatId).collection('messages').doc();
-    final messageData = {'id': messageRef.id, 'text': text, 'senderId': currentUser.uid, 'timestamp': FieldValue.serverTimestamp(), 'type': 'text'};
-
-    try {
-      await messageRef.set(messageData);
-    } catch (e) {
-      log('Ошибка при отправке сообщения: $e');
-    }
-  }
 
   ///******************* Newsletter Screen Related APIs *******************
   /// -- Creating new newsletter.

@@ -49,7 +49,7 @@ class ChatInputAttachments extends StatelessWidget {
           onPressed: () async {
             showDialog(
               context: context,
-              barrierColor: Colors.transparent,
+              barrierColor: ChatifyColors.transparent,
               builder: (context) => Align(
                 alignment: const Alignment(0, 0.70),
                 child: Material(
@@ -70,7 +70,7 @@ class ChatInputAttachments extends StatelessWidget {
                           children: [
                             _buildIconButton(
                               context,
-                              icon: Icon(BootstrapIcons.file_earmark, color: ChatifyColors.white, size: 30),
+                              icon: Icon(BootstrapIcons.file_earmark, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 30),
                               color1: ChatifyColors.violetDark,
                               color2: ChatifyColors.violet,
                               label: S.of(context).documents,

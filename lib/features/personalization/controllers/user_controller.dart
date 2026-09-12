@@ -34,7 +34,6 @@ class UserController extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        log("[DEBUG] Firebase user is available: ${user.uid}");
         _loadUserData();
       } else {
         log("[DEBUG] No user signed in yet");
@@ -56,7 +55,6 @@ class UserController extends GetxController {
 
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        log("[DEBUG] Data fetched from Firestore: $data");
 
         user.value = UserModel(
           id: snapshot.id,
@@ -75,8 +73,6 @@ class UserController extends GetxController {
           isTyping: data['is_typing'] ?? false,
           role: data['role'] ?? 'User',
         );
-
-        log('[DEBUG] User data set: ${user.value.name}');
 
         isDataLoaded.value = true;
 

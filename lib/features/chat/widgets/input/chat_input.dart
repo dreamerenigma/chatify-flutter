@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chatify/features/chat/models/message_model.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
@@ -17,6 +19,7 @@ import '../../../../core/enums/message_type.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/user_model.dart';
+import '../dialogs/voice_record_bottom_sheet_dialog.dart';
 import 'buttons/chat_input_attachments_button.dart';
 import 'buttons/camera_button.dart';
 
@@ -47,6 +50,7 @@ class ChatInputState extends State<ChatInput> {
   bool isUploading = false;
   bool sendWithEnter = false;
   bool isTyping = false;
+  double _dragOffset = 0;
   Timer? typingTimer;
   List<MessageModel> list = [];
 
@@ -203,74 +207,105 @@ class ChatInputState extends State<ChatInput> {
                       bottomRight: const Radius.circular(25),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: toggleEmojiKeyboard,
-                        icon: Icon(Icons.emoji_emotions_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
-                      ),
-                      Expanded(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 50, maxHeight: 120),
-                          child: TextSelectionTheme(
-                            data: TextSelectionThemeData(
-                              cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                              selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                              selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            ),
-                            child: TextField(
-                              controller: textController,
-                              focusNode: widget.focusNode,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                              decoration: InputDecoration(
-                                hintText: S.of(context).typeSomething,
-                                hintStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.8 * 255).toInt())),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 2, right: 2),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: toggleEmojiKeyboard,
+                          icon: SvgPicture.asset(ChatifyVectors.emojiSticker, width: 24, height: 24, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+                        ),
+                        Expanded(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: 50, maxHeight: 120),
+                            child: TextSelectionTheme(
+                              data: TextSelectionThemeData(
+                                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                               ),
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(color: ChatifyColors.grey, fontSize: 17, fontWeight: FontWeight.w400),
-                              onTap: () {
-                                if (showEmoji) {
-                                  setState(() {
-                                    showEmoji = false;
-                                  });
-                                }
-                              },
-                              onSubmitted: (value) {
-                                if (sendWithEnter) {
-                                  sendMessage();
-                                }
-                              },
+                              child: TextField(
+                                controller: textController,
+                                focusNode: widget.focusNode,
+                                autofocus: false,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
+                                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                decoration: InputDecoration(
+                                  hintText: S.of(context).message,
+                                  hintStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.8 * 255).toInt()), fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  contentPadding: EdgeInsets.only(top: 2)
+                                ),
+                                textCapitalization: TextCapitalization.sentences,
+                                style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                                onTap: () {
+                                  if (showEmoji) {
+                                    setState(() {
+                                      showEmoji = false;
+                                    });
+                                  }
+                                },
+                                onSubmitted: (value) {
+                                  if (sendWithEnter) {
+                                    sendMessage();
+                                  }
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      ChatInputAttachments(
-                        chatTarget: user,
-                        isUploading: isUploading,
-                        setUploading: (value) {
-                          setState(() {
-                            isUploading = value;
-                          });
-                        },
-                      ),
-                      CameraButton(onImagePicked: handleImagePicked),
-                    ],
+                        ChatInputAttachments(
+                          chatTarget: user,
+                          isUploading: isUploading,
+                          setUploading: (value) {
+                            setState(() {
+                              isUploading = value;
+                            });
+                          },
+                        ),
+                        CameraButton(onImagePicked: handleImagePicked),
+                      ],
+                    ),
                   ),
                 ),
               ),
               SizedBox(width: DeviceUtils.getScreenWidth(context) * .009),
               GestureDetector(
-                onTapUp: (_) async {
+                onPanStart: (_) {
+                  _dragOffset = 0;
+                },
+
+                onPanUpdate: (details) {
+                  if (!hasText) {
+                    if (details.delta.dy < 0) {
+                      _dragOffset += -details.delta.dy;
+                    }
+                  }
+                },
+
+                onPanEnd: (_) {
                   if (hasText) {
                     sendMessage();
-                  } else {
-                    Dialogs.showSnackbarMargin(context, S.of(context).holdRecord, fontSize: ChatifySizes.fontSizeLm, margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10));
+                    return;
                   }
+
+                  if (_dragOffset >= 80) {
+                    _dragOffset = 0;
+
+                    voiceRecordBottomSheetDialog(context);
+
+                    return;
+                  }
+                  _dragOffset = 0;
+                  Dialogs.showSnackbarMargin(
+                    context,
+                    S.of(context).holdRecord,
+                    fontSize: ChatifySizes.fontSizeLm,
+                    margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10),
+                  );
                 },
                 child: CircleAvatar(
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),

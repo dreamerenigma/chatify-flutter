@@ -1,4 +1,6 @@
 class AppLinks {
+  AppLinks._();
+
   static const String app = 'https://chatify.inputstudios.ru';
   static const String helpCenter = 'https://faq.chatify.ru';
   static const String privacyPolicy = 'https://chatify.inputstudios.ru/legal/privacy-policy';
@@ -12,4 +14,6 @@ class AppLinks {
   static const String supportAI = 'https://faq.chatify.ru/1083092416402722?lang=ru';
   static const String addSocialLink = 'https://faq.chatify.ru/490705150777195';
   static const String advancedChatPrivacy = 'https://faq.chatify.ru/715385484388016';
+  static const String agoraServer = 'https://chatify-agora-server.onrender.com';
+  static const String yandexDiskServer = 'https://chatify-yandex-disk-server.onrender.com';
 }

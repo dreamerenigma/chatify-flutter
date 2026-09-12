@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../api/apis.dart';
+import '../../../data/mock/recent_calls_mock.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -26,7 +27,6 @@ import '../models/recent_call_model.dart';
 import '../widgets/actions/calls_quick_action.dart';
 import '../widgets/lists/recent_calls_list.dart';
 import '../widgets/popups/items/app_popup_menu_item.dart';
-import '../widgets/test_recent_calls.dart';
 import 'call_phone_number.dart';
 import 'details_call_screen.dart';
 
@@ -41,7 +41,7 @@ class CallsScreen extends StatefulWidget {
 
 class CallsScreenState extends State<CallsScreen> {
   final List<UserModel> searchList = [];
-  final List<RecentCallModel> recentCalls = testRecentCalls;
+  final List<RecentCallModel> recentCalls = mockRecentCalls;
   final Set<RecentCallModel> selectedCalls = {};
   List<UserModel> list = [];
   bool isSearching = false;
@@ -340,7 +340,7 @@ class CallsScreenState extends State<CallsScreen> {
           isPressed = false;
         });
 
-        Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user)));
+        Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
       },
       onTapCancel: () {
         setState(() {

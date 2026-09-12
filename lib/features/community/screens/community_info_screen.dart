@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
+import '../../../utils/platforms/platform_utils.dart';
+import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../models/community_model.dart';
 import 'package:chatify/features/community/screens/community_data_screen.dart';
@@ -12,6 +13,7 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../group/screens/add_group_screen.dart';
 import '../widgets/community_widget.dart';
 import '../widgets/dialogs/invite_participants_bottom_dialog.dart';
+import '../widgets/media/community_network_image.dart';
 
 class CommunityInfoScreen extends StatefulWidget {
   final CommunityModel community;
@@ -48,24 +50,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.community.image,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(color: ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(12)),
-                          child: const Center(child: Icon(Icons.groups, color: ChatifyColors.white, size: 30)),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(color: ChatifyColors.darkerGrey, borderRadius: BorderRadius.circular(12)),
-                          child: const Center(child: Icon(Icons.groups, color: ChatifyColors.white, size: 30)),
-                        ),
-                      ),
+                      child: CommunityNetworkImage(imagePath: widget.community.image, width: 60, height: 60, isWindows: isWindows, borderRadius: BorderRadius.circular(40 / 2), angle: 0),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -83,25 +68,28 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
               ),
             ),
           ),
-          _popupMenu(context),
+          _buildPopupMenu(context),
           Positioned.fill(
             top: 180,
-            child: Column(
+            child: Stack(
               children: [
-                Expanded(
-                  child: CommunityWidgets(createdAt: widget.createdAt, isValidDate: widget.isValidDate, showAllButton: false, showGroupsSection: true, community: widget.community),
+                CommunityWidgets(
+                  isValidDate: widget.isValidDate,
+                  showAllButton: false,
+                  showGroupsSection: true,
+                  community: widget.community,
                 ),
+                Align(alignment: Alignment.center, child: _buildTextCommunity()),
+                _buttonAddGroup(context),
               ],
             ),
           ),
-          _textCommunity(),
-          _buttonAddGroup(context),
         ],
       ),
     );
   }
 
-  Widget _popupMenu(BuildContext context) {
+  Widget _buildPopupMenu(BuildContext context) {
     return Positioned(
       left: 0,
       right: 0,
@@ -115,62 +103,86 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
               Navigator.pop(context);
             },
           ),
-          PopupMenuButton<int>(
-            position: PopupMenuPosition.under,
-            color: context.isDarkMode ? ChatifyColors.popupColor : ChatifyColors.white,
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              if (value == 1) {
-                Navigator.push(context, createPageRoute(CommunityDataScreen(community: widget.community)));
-              } else if (value == 2) {
-                showBottomSheetDialogNewGroups(context, widget.fileToSend);
-              } else if (value == 3) {
-                Navigator.push(context, createPageRoute(const SettingsCommunityScreen()));
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 1,
-                padding: const EdgeInsets.all(16.0),
-                child: Text(S.of(context).communityData, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+          TooltipTheme(
+            data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+            child: Theme(
+              data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+              child: PopupMenuButton<int>(
+                tooltip: S.of(context).more,
+                position: PopupMenuPosition.under,
+                offset: const Offset(-8, 0),
+                menuPadding: EdgeInsets.symmetric(vertical: 4),
+                constraints: const BoxConstraints(minWidth: 0, maxWidth: 230),
+                icon: const Icon(Icons.more_vert),
+                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                    }
+                    return ChatifyColors.transparent;
+                  }),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                ),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 1,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).communityData,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(CommunityDataScreen(community: widget.community)));
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 2,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).inviteParticipants,
+                      onTap: () {
+                        Navigator.pop(context);
+                        showBottomSheetDialogNewGroups(context, widget.fileToSend);
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 3,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).communitySettings,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(const SettingsCommunityScreen()));
+                      },
+                    ),
+                  ),
+                ],
               ),
-              PopupMenuItem(
-                value: 2,
-                padding: const EdgeInsets.all(16.0),
-                child: Text(S.of(context).inviteParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              ),
-              PopupMenuItem(
-                value: 3,
-                padding: const EdgeInsets.all(16.0),
-                child: Text(S.of(context).communitySettings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              ),
-            ],
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _textCommunity() {
-    return Positioned(
-      bottom: 80,
-      left: 0,
-      right: 0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          S.of(context).groupsAddedCommunityDisplayed,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: Colors.grey),
-        ),
+  Widget _buildTextCommunity() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        S.of(context).groupsAddedCommunityDisplayed,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.softGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
       ),
     );
   }
 
   Widget _buttonAddGroup(BuildContext context) {
     return Positioned(
-      bottom: 10,
+      bottom: 16,
       left: 0,
       right: 0,
       child: Padding(
@@ -181,8 +193,8 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
             onPressed: () {
               Navigator.push(context, createPageRoute(const AddGroupScreen()));
             },
-            icon: const Icon(Icons.add, size: 18, color: ChatifyColors.white),
-            label: Text(S.of(context).addGroup, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+            icon: const Icon(Icons.add, size: 18, color: ChatifyColors.black),
+            label: Text(S.of(context).addGroup, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             style: ElevatedButton.styleFrom(
               elevation: 1,
               side: BorderSide.none,

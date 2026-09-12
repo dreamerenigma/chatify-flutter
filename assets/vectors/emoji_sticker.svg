@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   viewBox="0 0 37.5 37.5"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="emoji_sticker.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.5572609"
+     inkscape:cx="400.17163"
+     inkscape:cy="575.13456"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="path3" />
+  <path
+     d="m 32.535369,17.916903 v -5.73227 c 0,-3.2149242 -3.838176,-7.3148161 -7.512589,-7.3148161 H 12.915867 c -3.65499,0 -8.2142834,3.5490166 -8.2142834,8.6872851 V 25.74477 c 0,3.670324 4.9075576,6.958831 8.2702214,6.958831 h 6.516477 c 1.441141,0 2.609417,-1.168277 2.609417,-2.609418 V 26.61496 c 0,-3.362664 2.227916,-6.08864 6.029842,-6.08864 h 1.79841 c 1.441141,0 2.609418,-1.168276 2.609418,-2.609417 z m -0.127636,3.571862 c -0.703807,0.489925 -1.55925,0.777166 -2.481782,0.777166 h -1.791432 c -2.401902,0 -4.297207,1.947126 -4.297207,4.349029 v 3.479223 c 0,0.734614 -0.182138,1.426684 -0.503719,2.033524 4.764046,-1.467211 8.364441,-5.589209 9.074132,-10.638942 z M 12.915867,3.1302048 H 25.02278 c 4.062303,0 9.2522,3.256207 9.2522,9.0544282 v 7.471881 c 0,8.166467 -6.620231,14.786698 -14.786698,14.786698 h -6.516477 c -4.3234249,0 -10.0098331,-3.396104 -10.0098331,-8.698442 V 13.557102 c 0,-7.2030231 5.4801051,-10.4268972 9.9538951,-10.4268972 z"
+     id="path1"
+     style="stroke:#000000;stroke-width:0.57309;stroke-dasharray:none;stroke-opacity:1"
+     sodipodi:nodetypes="ssssssssssssscsssscccsssssssss" />
+  <circle
+     style="fill:#000000;stroke:#000000;stroke-width:0.491953;stroke-linecap:round;stroke-miterlimit:146.2;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+     id="path2"
+     cx="12.989113"
+     cy="12.248343"
+     r="2.2329388" />
+  <circle
+     style="fill:#000000;stroke:#000000;stroke-width:0.491953;stroke-linecap:round;stroke-miterlimit:146.2;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+     id="path2-8"
+     cx="24.927086"
+     cy="12.240264"
+     r="2.2329388" />
+  <g
+     id="path3"
+     style="opacity:1"
+     transform="matrix(0.71148262,0,0,0.71148262,0.54507996,7.0767059)">
+    <path
+       id="path4"
+       style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;stroke-width:0.940457;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke fill markers;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+       d="m 15.055977,21.111984 v 0.23695 c 0,3.560682 1.899649,6.850894 4.98329,8.631235 3.083641,1.780341 9.236251,1.780341 12.319892,0 0,-2.633501 -0.008,-8.868185 -0.008,-8.868185 h -6.995084 z"
+       sodipodi:nodetypes="csscccc" />
+  </g>
+</svg>

@@ -258,22 +258,28 @@ class _AddStatusBottomSheetState extends State<AddStatusBottomSheet> {
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Builder(
         builder: (buttonContext) {
-          return InkWell(
-            borderRadius: BorderRadius.circular(6),
-            onTap: () {
-              _closeAlbumsOverlay();
-
-              albumsOverlay = showAlbumsOverlay(buttonContext, albums: albums, isLoadingAlbums: isLoadingAlbums);
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(S.of(context).recent, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.arrow_drop_down_sharp, size: 22),
-                ],
+          return Material(
+            color: ChatifyColors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              splashFactory: NoSplash.splashFactory,
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              onTap: () {
+                _closeAlbumsOverlay();
+                albumsOverlay = showAlbumsOverlay(buttonContext, albums: albums, isLoadingAlbums: isLoadingAlbums);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(S.of(context).recent, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.arrow_drop_down_sharp, size: 22),
+                  ],
+                ),
               ),
             ),
           );
@@ -325,19 +331,26 @@ class _AddStatusBottomSheetState extends State<AddStatusBottomSheet> {
   }
 
   Widget _buildCameraTile(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(context, createPageRoute(const CameraScreen()));
-      },
-      child: Container(
-        decoration: BoxDecoration(color: ChatifyColors.transparent, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.camera_alt_outlined, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-            const SizedBox(height: 6),
-            Text(S.of(context).camera, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-          ],
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        onTap: () {
+          Navigator.push(context, createPageRoute(const CameraScreen()));
+        },
+        child: Container(
+          decoration: BoxDecoration(color: ChatifyColors.transparent, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.camera_alt_outlined, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+              const SizedBox(height: 6),
+              Text(S.of(context).camera, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+            ],
+          ),
         ),
       ),
     );
@@ -439,8 +452,8 @@ class _AddStatusBottomSheetState extends State<AddStatusBottomSheet> {
                 shape: const CircleBorder(),
                 child: InkWell(
                   splashColor: ChatifyColors.transparent,
-                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                  hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                  hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                   customBorder: const CircleBorder(),
                   onTap: () {},
                   child: const Center(child: Icon(Icons.check_rounded, size: 24, color: ChatifyColors.white)),

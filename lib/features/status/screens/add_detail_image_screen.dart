@@ -186,18 +186,45 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                 child: IconButton(
                   icon: Padding(padding: const EdgeInsets.only(left: 3), child: const Icon(Icons.send, color: ChatifyColors.black, size: 23)),
                   onPressed: () async {
+                    log('STATUS: кнопка нажата');
+
                     try {
+                      log('STATUS: начинаем загрузку изображения');
+
                       final imageUrl = await APIs.uploadStatusImage(widget.imageFile);
 
-                      await APIs.addStatus(mediaUrl: imageUrl, type: 'image');
+                      log('STATUS: uploadStatusImage завершён: $imageUrl');
 
-                      if (!mounted) return;
+                      if (imageUrl == null) {
+                        log('STATUS: imageUrl == null');
+                        throw Exception('Не удалось загрузить изображение статуса');
+                      }
 
-                      Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
-                    } catch (e) {
-                      log('${S.of(context).errorAddingStatus}: $e');
+                      log('STATUS: добавляем статус в Firestore');
+
+                      await APIs.addStatus(mediaPath: imageUrl, type: 'image');
+
+                      log('STATUS: статус успешно добавлен');
+
+                      if (!mounted) {
+                        log('STATUS: widget уже unmounted');
+                        return;
+                      }
+
+                      log('STATUS: переходим на StatusScreen');
+
+                      Navigator.push(
+                        context,
+                        createPageRoute(
+                          StatusScreen(user: widget.user),
+                        ),
+                      );
+                    } catch (e, stackTrace) {
+                      log('STATUS ERROR: $e');
+                      log('STATUS STACK: $stackTrace');
                     }
                   },
+
                 ),
               ),
             ),

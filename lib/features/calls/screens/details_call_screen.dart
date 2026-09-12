@@ -213,7 +213,7 @@ class _DetailsCallScreenState extends State<DetailsCallScreen> {
             icon: Icons.call_outlined,
             label: S.of(context).audio,
             onTap: () {
-              Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user)));
+              Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
             },
           ),
           SizedBox(width: mq.width * 0.08),

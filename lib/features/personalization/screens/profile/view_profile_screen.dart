@@ -348,7 +348,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             icon: Icons.call_outlined,
             label: S.of(context).audio,
             onTap: () {
-              Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user)));
+              Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
             },
           ),
           SizedBox(width: MediaQuery.of(context).size.width * 0.03),

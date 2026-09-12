@@ -305,6 +305,47 @@ class DateUtil {
     }
   }
 
+  static String formatStatusTime(DateTime createdAt) {
+    final difference = DateTime.now().difference(createdAt);
+
+    if (difference.inSeconds < 10) {
+      return 'Только что';
+    }
+
+    if (difference.inMinutes < 1) {
+      return '${difference.inSeconds} ${plural(difference.inSeconds, 'секунду', 'секунды', 'секунд')} назад';
+    }
+
+    if (difference.inHours < 1) {
+      return '${difference.inMinutes} ${plural(difference.inMinutes, 'минуту', 'минуты', 'минут')} назад';
+    }
+
+    if (difference.inDays < 1) {
+      return '${difference.inHours} ${plural(difference.inHours, 'час', 'часа', 'часов')} назад';
+    }
+
+    return '${difference.inDays} ${plural(difference.inDays, 'день', 'дня', 'дней')} назад';
+  }
+
+  static String plural(int value, String one, String few, String many) {
+    final lastTwo = value % 100;
+    final last = value % 10;
+
+    if (lastTwo >= 11 && lastTwo <= 14) {
+      return many;
+    }
+
+    if (last == 1) {
+      return one;
+    }
+
+    if (last >= 2 && last <= 4) {
+      return few;
+    }
+
+    return many;
+  }
+
   /// -- Get the full name of the day of the week.
   static String getDayOfWeekName(int weekday) {
     switch (weekday) {

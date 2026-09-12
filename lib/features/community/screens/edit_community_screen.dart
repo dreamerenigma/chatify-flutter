@@ -4,6 +4,7 @@ import 'package:chatify/features/community/controllers/photo_community_controlle
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:get/get.dart';
+import '../../../api/community_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -23,11 +24,11 @@ class EditCommunityScreen extends StatefulWidget {
 
 class EditCommunityScreenState extends State<EditCommunityScreen> {
   final nameController = TextEditingController();
-  final descriptionController = TextEditingController();
-  int charCount = 0;
   final int maxCharCount = 100;
+  final descriptionController = TextEditingController();
   late final RxString imageRx;
   late final PhotoCommunityController communityController;
+  int charCount = 0;
   Color _selectedColor = Colors.grey[200]!;
   String _selectedEmoji = '';
   String? imagePath;
@@ -125,13 +126,18 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
 
                       showEditImageCommunityBottomDialog(
                         context,
-                        updateImagePath,
-                            () {
-                          APIs.deleteCommunityPicture(communityId, imageUrl);
-                        },
                         communityId,
                         imageUrl,
+                        () => CommunityApi.deleteCommunityPicture(communityId, imageUrl),
                         updateImagePath,
+                        updateImagePath,
+                        (color, emoji) {
+                          setState(() {
+                            _selectedColor = color;
+                            _selectedEmoji = emoji;
+                            imagePath = null;
+                          });
+                        },
                       );
                     },
                     child: Stack(
@@ -261,7 +267,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
               creatorId: APIs.me.id,
             );
 
-            final success = await APIs.createCommunity(context, community, File(imagePath!));
+            final success = await CommunityApi.createCommunity(context, community, File(imagePath!));
 
             if (success) {
               nameController.clear();

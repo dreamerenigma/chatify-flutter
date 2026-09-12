@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 
@@ -11,41 +12,82 @@ class MessageAudioCallDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
       insetPadding: const EdgeInsets.symmetric(horizontal: 30),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      contentPadding: EdgeInsets.zero,
+      content: Stack(
         children: [
-          ListTile(
-            title: Text(S.of(context).cantTalkWhatHappened, style: TextStyle(color: ChatifyColors.darkGrey)),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildItem(
+                  context,
+                  text: S.of(context).cantTalkWhatHappened,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                _buildItem(
+                  context,
+                  text: S.of(context).callYouBackNow,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                _buildItem(
+                  context,
+                  text: S.of(context).callBackLater,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                _buildItem(
+                  context,
+                  text: S.of(context).cantTalkCallBackLater,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                _buildItem(
+                  context,
+                  text: S.of(context).writeMessage,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
           ),
-          ListTile(
-            title: Text(S.of(context).callYouBackNow, style: TextStyle(color: ChatifyColors.darkGrey)),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ListTile(
-            title: Text(S.of(context).callBackLater, style: TextStyle(color: ChatifyColors.darkGrey)),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ListTile(
-            title: Text(S.of(context).cantTalkCallBackLater, style: TextStyle(color: ChatifyColors.darkGrey)),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ListTile(
-            title: Text(S.of(context).writeMessage, style: TextStyle(color: ChatifyColors.darkGrey)),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: const SizedBox(width: 40, height: 40, child: Icon(Icons.close_rounded, size: 22, color: ChatifyColors.darkGrey)),
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildItem(BuildContext context, {required String text, required VoidCallback onTap}) {
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          child: Text(text, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),
+        ),
       ),
     );
   }

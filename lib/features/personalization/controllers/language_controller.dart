@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../generated/l10n/l10n.dart';
+import '../constants/language_constant.dart';
+import '../widgets/dialogs/items/language_item.dart';
 
 class LanguagesController extends GetxController {
   final box = GetStorage();
@@ -20,6 +22,18 @@ class LanguagesController extends GetxController {
     }
 
     return false;
+  }
+
+  List<LanguageItem> getOrderedLanguages(BuildContext context,) {
+    final languages = getLanguages(context);
+
+    languages.sort((a, b) {
+      if (a.code == selectedLanguage.value) return -1;
+      if (b.code == selectedLanguage.value) return 1;
+      return 0;
+    });
+
+    return languages;
   }
 
   @override

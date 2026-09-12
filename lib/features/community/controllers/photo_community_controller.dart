@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
-import '../../../api/apis.dart';
+import '../../../api/community_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../community/models/community_model.dart';
 
@@ -57,7 +57,7 @@ class PhotoCommunityController extends GetxController {
       try {
         File imageFile = File(imagePath);
         if (community != null) {
-          await APIs.updateCommunityPicture(community!.id, imageFile);
+          await CommunityApi.updateCommunityPicture(community!.id, imageFile);
         } else {
           log(S.of(context).communityNullCannotUpdateImage);
         }
@@ -71,7 +71,7 @@ class PhotoCommunityController extends GetxController {
         if (community != null) {
           String? currentImageUrl = await _getCurrentImageUrlForCommunity(community!.id);
           if (currentImageUrl != null) {
-            await APIs.deleteCommunityPicture(community!.id, currentImageUrl);
+            await CommunityApi.deleteCommunityPicture(community!.id, currentImageUrl);
           } else {
             log(S.of(context).noImageUrlDelete);
           }

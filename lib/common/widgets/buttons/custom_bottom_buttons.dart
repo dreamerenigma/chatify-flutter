@@ -86,7 +86,6 @@ class _CustomBottomButtonsState extends State<CustomBottomButtons> {
       decoration: BoxDecoration(
         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.softGrey,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15)),
-
       ),
       child: widget.showConfirmButton
         ? Row(
