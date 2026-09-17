@@ -316,7 +316,6 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                           replacement: const SizedBox.shrink(),
                           child: NewsletterList(
                             newsletters: widget.newsletters,
-                            selectedNewsletter: selectedNewsletter,
                             onNewsletterSelected: (newsletter) {
                               setState(() {
                                 selectedNewsletter = newsletter;
@@ -335,7 +334,6 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                           child: CommunityList(
                             communities: widget.communities,
                             isHomeScreen: true,
-                            selectedCommunity: selectedCommunity,
                             onCommunitySelected: (community) {
                               setState(() {
                                 selectedCommunity = community;

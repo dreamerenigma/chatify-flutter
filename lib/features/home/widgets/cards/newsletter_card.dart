@@ -13,7 +13,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../screens/newsletter_chat_screen.dart';
+import '../../../newsletter/screens/newsletter_chat_screen.dart';
 import '../dialogs/edit_settings_chat_dialog.dart';
 import '../dialogs/newsletter_dialog.dart';
 
@@ -25,6 +25,7 @@ class NewsletterCard extends StatefulWidget {
   final String createdAt;
   final ValueChanged<NewsletterModel> onNewsletterSelected;
   final bool isSelected;
+  final bool isSelectionMode;
 
   const NewsletterCard({
     super.key,
@@ -35,6 +36,7 @@ class NewsletterCard extends StatefulWidget {
     required this.newsletters,
     required this.onNewsletterSelected,
     required this.isSelected,
+    this.isSelectionMode = false,
   });
 
   @override
@@ -43,7 +45,6 @@ class NewsletterCard extends StatefulWidget {
 
 class _NewsletterCardState extends State<NewsletterCard> {
   late Future<Map<String, String>> userNamesFuture;
-  bool isSelected = false;
   bool isLongPressed = false;
 
   String get formattedDate {
@@ -57,6 +58,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
       }
       final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
       final formatted = DateFormat('dd.MM.yyyy').format(date);
+
       return formatted;
     } catch (e) {
       return S.of(context).invalidDate;
@@ -76,6 +78,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
       elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onSecondaryTapDown: (details) {
           if (isWindows) {
             Future.delayed(Duration(milliseconds: 100), () {
@@ -114,6 +117,11 @@ class _NewsletterCardState extends State<NewsletterCard> {
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
             onTap: () {
+              if (widget.isSelectionMode) {
+                widget.onNewsletterSelected(widget.newsletter);
+                return;
+              }
+
               if (isWindows) {
                 widget.onNewsletterSelected(widget.newsletter);
               } else {
@@ -134,6 +142,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                     clipBehavior: Clip.none,
                     children: [
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () {
                           showDialog(
                             context: context,
@@ -163,21 +172,21 @@ class _NewsletterCardState extends State<NewsletterCard> {
                           ),
                         ),
                       ),
-                      if (!isWindows && isSelected)
-                      Positioned(
-                        bottom: -3,
-                        right: -2,
-                        child: Container(
-                          width: 23,
-                          height: 23,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                      if (!isWindows && widget.isSelected)
+                        Positioned(
+                          bottom: -3,
+                          right: -2,
+                          child: Container(
+                            width: 23,
+                            height: 23,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                            ),
+                            child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                           ),
-                          child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(width: 16),
@@ -205,7 +214,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                                 }  else if (snapshot.hasData) {
                                   final userNames = snapshot.data!;
                                   final newsletterNames = widget.newsletters.map((id) => userNames[id] ?? S.of(context).unknownUser).join(', ');
-                                  
+
                                   return Expanded(
                                     child: Text(
                                       newsletterNames,

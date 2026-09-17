@@ -20,7 +20,7 @@ void showUpdateStatusSheetDialog(BuildContext context) {
             padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
             child: Text(S.of(context).seeMyStatusUpdates, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 16),
           _buildRadioOption(
             context: context,
             title: S.of(context).myContacts,
@@ -38,7 +38,7 @@ void showUpdateStatusSheetDialog(BuildContext context) {
             value: 3,
             trailingText: S.of(context).onZero,
           ),
-          const SizedBox(height: 24.0),
+          const SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
             child: SizedBox(
@@ -63,7 +63,7 @@ void showUpdateStatusSheetDialog(BuildContext context) {
 
 Widget _buildRadioOption({required BuildContext context, required String title, required int value, String? trailingText}) {
   return Padding(
-    padding: const EdgeInsets.only(left: 20, right: 20,),
+    padding: const EdgeInsets.only(left: 20, right: 20),
     child: RadioListTile<int>(
       value: value,
       activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),

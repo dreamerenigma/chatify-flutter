@@ -1480,7 +1480,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Members can always propose groups for admin approval. Community admins can delete any groups. ",
     ),
     "membersCanProposeExistingGroups": MessageLookupByLibrary.simpleMessage(
-      "Members can propose existing groups to admins for review and add new groups themselves. Open community settings",
+      "Members can propose existing groups to admins for review and add new groups themselves. Open",
     ),
     "menu": MessageLookupByLibrary.simpleMessage("Menu"),
     "message": MessageLookupByLibrary.simpleMessage("Message"),
@@ -1721,6 +1721,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "openClear": MessageLookupByLibrary.simpleMessage("Open and clear"),
     "openClearAllClosedChats": MessageLookupByLibrary.simpleMessage(
       "Open and clear all closed chats",
+    ),
+    "openCommunitySettings": MessageLookupByLibrary.simpleMessage(
+      " community settings",
     ),
     "openInAnotherApp": MessageLookupByLibrary.simpleMessage(
       "Open in another app",

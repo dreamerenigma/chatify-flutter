@@ -52,6 +52,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
   bool isHovered = false;
   bool isTyping = false;
   bool isHoveredDate = false;
+  bool _isEventsInfoVisible = true;
   List<MessageModel> list = [];
   List<MessageModel> cachedMessages = [];
   List<bool> isHoveredList = [];
@@ -118,7 +119,16 @@ class _CommunityWidgetState extends State<CommunityWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CommunityAppBar(community: community, user: widget.user),
+      appBar: CommunityAppBar(
+        community: community,
+        user: widget.user,
+        isEventsInfoVisible: _isEventsInfoVisible,
+        onCloseEventsInfo: () {
+          setState(() {
+            _isEventsInfoVisible = false;
+          });
+        },
+      ),
       body: _buildBody(),
       bottomNavigationBar: BottomInput(
         textFieldKey: _textFieldKey,

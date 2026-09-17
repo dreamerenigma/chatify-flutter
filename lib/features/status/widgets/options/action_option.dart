@@ -10,6 +10,7 @@ class ActionOption extends StatelessWidget {
   final String? svgAsset;
   final double width;
   final double height;
+  final double? labelWidth;
 
   const ActionOption({
     super.key,
@@ -19,6 +20,7 @@ class ActionOption extends StatelessWidget {
     this.svgAsset,
     this.width = 65,
     this.height = 50,
+    this.labelWidth,
   });
 
   @override
@@ -45,14 +47,8 @@ class ActionOption extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         SizedBox(
-          width: width,
-          child: Text(
-            label,
-            style: const TextStyle(color: ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
+          width: labelWidth ?? width,
+          child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, height: 1.2), textAlign: TextAlign.center),
         ),
       ],
     );
@@ -63,6 +59,6 @@ class ActionOption extends StatelessWidget {
       return SvgPicture.asset(svgAsset!, width: 26, height: 26, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn));
     }
 
-    return Icon( icon, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black);
+    return Icon(icon, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black);
   }
 }

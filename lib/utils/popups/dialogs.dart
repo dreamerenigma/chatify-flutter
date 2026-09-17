@@ -1,6 +1,7 @@
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../core/enums/snack_bar_position_type.dart';
 import '../../features/personalization/widgets/dialogs/light_dialog.dart';
 import '../constants/app_colors.dart';
 import 'animated_snackbar.dart';
@@ -217,23 +218,31 @@ class CustomSnackBar {
 class CustomIconSnackBar {
   static bool _isSnackBarVisible = false;
 
-  static Future<void> showAnimatedSnackBar(BuildContext context, String message, {Widget? icon, Color? iconColor}) async {
+  static Future<void> showAnimatedSnackBar(
+    BuildContext context,
+    String message, {
+    Widget? icon,
+    Color? iconColor,
+    SnackBarPositionType position = SnackBarPositionType.top,
+    double offset = 40,
+  }) async {
     if (_isSnackBarVisible) return;
 
-    OverlayState? overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry;
+    final overlayState = Overlay.of(context);
+    final snackBarKey = GlobalKey<AnimatedSnackBarState>();
 
-    GlobalKey<AnimatedSnackBarState> snackBarKey = GlobalKey<AnimatedSnackBarState>();
+    late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
       builder: (context) {
-        double appBarHeight = AppBar().preferredSize.height;
+        final topPadding = MediaQuery.of(context).padding.top;
 
         return Positioned(
-          top: appBarHeight + 40,
+          top: position == SnackBarPositionType.top ? topPadding + kToolbarHeight + offset : null,
+          bottom: position == SnackBarPositionType.bottom ? offset : null,
           left: 16,
           right: 16,
-          child: AnimatedSnackBar(key: snackBarKey, message: message, icon: icon, iconColor: iconColor),
+          child: AnimatedSnackBar(key: snackBarKey, message: message, icon: icon, iconColor: iconColor, position: position),
         );
       },
     );

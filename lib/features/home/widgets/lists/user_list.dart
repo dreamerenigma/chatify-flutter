@@ -52,6 +52,7 @@ class _UserListState extends State<UserList> {
   final ColorsController colorsController = Get.put(ColorsController());
   late final Stream<QuerySnapshot<Map<String, dynamic>>> _myUsersStream;
   bool isLoading = true;
+  bool hasUsersLoaded = false;
   List<UserModel> cachedUsers = [];
   Set<String> _lastPinnedChats = {};
   Set<String> _lastMutedChats = {};
@@ -126,16 +127,29 @@ class _UserListState extends State<UserList> {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: _myUsersStream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting && !hasUsersLoaded) {
           return AppLoaders.buildLoadingIndicator();
         }
 
         if (snapshot.hasError) {
+          if (hasUsersLoaded) {
+            return _buildUserList(cachedUsers, _lastPinnedChats, _lastMutedChats);
+          }
+
           return const SizedBox.shrink();
         }
 
         final docs = snapshot.data?.docs ?? [];
-        final userIds = docs.where((doc) => doc.data()['archived'] != true).map((doc) => doc.id).toList();
+        final activeDocs = docs.where((doc) => doc.data()['archived'] != true).toList();
+
+        activeDocs.sort((a, b) {
+          final aTime = int.tryParse(a.data()['lastMessageTime']?.toString() ?? '') ?? 0;
+          final bTime = int.tryParse(b.data()['lastMessageTime']?.toString() ?? '') ?? 0;
+
+          return bTime.compareTo(aTime);
+        });
+
+        final userIds = activeDocs.map((doc) => doc.id).toList();
         final pinnedChats = docs.where((doc) => doc.data()['pinned'] == true).map((doc) => doc.id).toSet();
         final mutedChats = docs.where((doc) => doc.data()['muted'] == true).map((doc) => doc.id).toSet();
 
@@ -158,6 +172,13 @@ class _UserListState extends State<UserList> {
             }
 
             final users = snapshot.data?.docs.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
+
+            final order = {
+              for (int i = 0; i < userIds.length; i++)
+                userIds[i]: i,
+            };
+
+            users.sort((a, b) => (order[a.id] ?? 999999).compareTo(order[b.id] ?? 999999));
 
             return _buildUserList(widget.isSearching ? widget.searchList : users, pinnedChats, mutedChats);
           },

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   aria-label="Microsoft"
+   role="img"
+   viewBox="0 0 800 800"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="microsoft.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.19702148"
+     inkscape:cx="-152.26766"
+     inkscape:cy="-236.01487"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 1.4039653,1.4039653 V 377.99685 H 377.99685 V 1.4039653 Z"
+     fill="#f25022"
+     id="path1"
+     style="stroke-width:2.20229" />
+  <path
+     d="M 422.0428,1.4039653 V 377.99685 H 798.63569 V 1.4039653 Z"
+     fill="#7fba00"
+     id="path2"
+     style="stroke-width:2.20229" />
+  <path
+     d="M 1.4039653,422.0428 V 798.63569 H 377.99685 V 422.0428 Z"
+     fill="#00a4ef"
+     id="path3"
+     style="stroke-width:2.20229" />
+  <path
+     d="M 422.0428,422.0428 V 798.63569 H 798.63569 V 422.0428 Z"
+     fill="#ffb900"
+     id="path4"
+     style="stroke-width:2.20229" />
+</svg>

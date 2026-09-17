@@ -32,16 +32,9 @@ void showReminderCallBottomDialog(BuildContext context) {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, bottom: 4),
-                      child: Center(
-                        child: Container(
-                          width: 36,
-                          height: 4,
-                          decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, borderRadius: BorderRadius.circular(2)),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 14),
+                    Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
+                    const SizedBox(height: 14),
                     SizedBox(height: 6),
                     SizedBox(
                       height: 56,

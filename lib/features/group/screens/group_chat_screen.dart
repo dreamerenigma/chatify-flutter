@@ -9,6 +9,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../api/group_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/message_model.dart';
 import '../../chat/widgets/cards/message_card.dart';
@@ -102,7 +103,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             children: [
               Expanded(
                 child: StreamBuilder(
-                  stream: APIs.getGroupMessages(widget.group),
+                  stream: GroupApi.getGroupMessages(widget.group),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:

@@ -8,8 +8,8 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../screens/newsletter_chat_screen.dart';
-import '../../screens/photo_newsletter_screen.dart';
+import '../../../newsletter/screens/newsletter_chat_screen.dart';
+import '../../../newsletter/screens/photo_newsletter_screen.dart';
 
 class NewsletterDialog extends StatefulWidget {
   final String newsletterId;

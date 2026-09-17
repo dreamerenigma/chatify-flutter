@@ -16,7 +16,7 @@ void showReactionBottomSheetDialog(BuildContext context, {required MessageModel 
     isScrollControlled: true,
     showDragHandle: false,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
     builder: (_) {
       return ReactionBottomSheetContent(message: message);
     },

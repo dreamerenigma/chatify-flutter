@@ -16,6 +16,7 @@ import '../dialogs/edit_settings_chat_dialog.dart';
 class HomeCommunityCard extends StatefulWidget {
   final CommunityModel community;
   final bool isSelected;
+  final bool isSelectionMode;
   final VoidCallback? onTap;
   final bool isValidDate;
   final String fileToSend;
@@ -29,6 +30,7 @@ class HomeCommunityCard extends StatefulWidget {
     required this.fileToSend,
     required this.onCommunitySelected,
     required this.isSelected,
+    this.isSelectionMode = false,
   });
 
   @override
@@ -85,6 +87,11 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
             onTap: () {
+              if (widget.isSelectionMode) {
+                widget.onCommunitySelected(widget.community);
+                return;
+              }
+
               if (isWindows) {
                 widget.onCommunitySelected(widget.community);
               } else {
@@ -99,7 +106,27 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
-                  ClipOval(child: CommunityNetworkImage(imagePath: widget.community.image, width: imageSize, height: imageSize, isWindows: isWindows)),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      ClipOval(child: CommunityNetworkImage(imagePath: widget.community.image, width: imageSize, height: imageSize, isWindows: isWindows)),
+                      if (!isWindows && widget.isSelected)
+                        Positioned(
+                          bottom: -3,
+                          right: -2,
+                          child: Container(
+                            width: 23,
+                            height: 23,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                            ),
+                            child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(

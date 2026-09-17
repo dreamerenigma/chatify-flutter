@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:developer';
-import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../api/group_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../group/controllers/photo_group_controller.dart';
@@ -31,7 +31,7 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
 
   Future<void> deleteGroupPhoto() async {
     try {
-      await APIs.deleteGroupPicture(widget.groupId, widget.imageGroup);
+      await GroupApi.deleteGroupPicture(widget.groupId, widget.imageGroup);
 
       Get.find<UserController>().clearUserImage();
 

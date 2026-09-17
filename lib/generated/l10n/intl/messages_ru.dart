@@ -1535,7 +1535,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Участники всегда могут предлагать группы на подтверждение админом. Админы сообщества могут удалять любые группы. ",
     ),
     "membersCanProposeExistingGroups": MessageLookupByLibrary.simpleMessage(
-      "Участники могут предлагать существующие группы на рассмотрение админам и добавлять новые группы самостоятельно. Открыть настройки сообщества",
+      "Участники могут предлагать существующие группы на рассмотрение админам и добавлять новые группы самостоятельно. Открыть",
     ),
     "menu": MessageLookupByLibrary.simpleMessage("Меню"),
     "message": MessageLookupByLibrary.simpleMessage("Сообщение"),
@@ -1781,6 +1781,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "openClear": MessageLookupByLibrary.simpleMessage("Открыть и очистить"),
     "openClearAllClosedChats": MessageLookupByLibrary.simpleMessage(
       "Открыть и очистить все закрытые чаты",
+    ),
+    "openCommunitySettings": MessageLookupByLibrary.simpleMessage(
+      "настройки сообщества",
     ),
     "openInAnotherApp": MessageLookupByLibrary.simpleMessage(
       "Открыть в другом приложении",

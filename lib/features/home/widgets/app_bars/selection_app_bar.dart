@@ -18,6 +18,8 @@ class SelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isArchiveMode;
   final bool isPinned;
   final bool isMuted;
+  final bool isNewsletterMode;
+  final bool isCommunityMode;
 
   const SelectionAppBar({
     super.key,
@@ -30,6 +32,8 @@ class SelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.isArchiveMode = false,
     this.isPinned = false,
     this.isMuted = false,
+    this.isNewsletterMode = false,
+    this.isCommunityMode = false,
   });
 
   @override
@@ -49,19 +53,21 @@ class SelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text('$selectedChatsCount'),
           const Spacer(),
           const SizedBox(width: 21),
-          if (onPin != null)
+          if (!isNewsletterMode && !isCommunityMode) ...[
+            if (onPin != null)
+              IconButton(
+                onPressed: onPin,
+                icon: isPinned ? SvgPicture.asset(ChatifyVectors.unpin, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.white, BlendMode.srcIn)) : Icon(BootstrapIcons.pin, size: 24),
+              ),
             IconButton(
-              onPressed: onPin,
-              icon: isPinned ? SvgPicture.asset(ChatifyVectors.unpin, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.white, BlendMode.srcIn)) : Icon(BootstrapIcons.pin, size: 24),
+              onPressed: onDelete,
+              icon: const Icon(FluentIcons.delete_24_regular, size: 24),
             ),
-          IconButton(
-            onPressed: onDelete,
-            icon: const Icon(FluentIcons.delete_24_regular, size: 24),
-          ),
-          IconButton(
-            onPressed: onMute,
-            icon: Icon(isMuted ? Icons.notifications_none_rounded : Icons.notifications_off_outlined, size: 24),
-          ),
+            IconButton(
+              onPressed: onMute,
+              icon: Icon(isMuted ? Icons.notifications_none_rounded : Icons.notifications_off_outlined, size: 24),
+            ),
+          ],
           IconButton(
             onPressed: onArchive,
             icon: Icon(isArchiveMode ? Icons.unarchive_outlined : Icons.archive_outlined, size: 24),
@@ -90,86 +96,130 @@ class SelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
                 itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 1,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: S.of(context).addChatIconScreen,
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                  if (isNewsletterMode) ...[
+                    PopupMenuItem(
+                      value: 9,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Отключить рассылку',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 2,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Просмотр контакта',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    PopupMenuItem(
+                      value: 10,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Данные о рассылке',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 3,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Пометить как непрочитанное',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                  ] else if (isCommunityMode) ...[
+                    PopupMenuItem(
+                      value: 11,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Покинуть сообщество',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 4,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Закрыть чат',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    PopupMenuItem(
+                      value: 12,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Данные о сообществе',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 5,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Добавить в избранное',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                  ] else ...[
+                    PopupMenuItem(
+                      value: 1,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: S.of(context).addChatIconScreen,
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 6,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Добавить в список',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    PopupMenuItem(
+                      value: 2,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Просмотр контакта',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 7,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Очистить чат',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    PopupMenuItem(
+                      value: 3,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Пометить как непрочитанное',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 8,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: AppPopupMenuItem(
-                      text: 'Заблокировать',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    PopupMenuItem(
+                      value: 4,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Закрыть чат',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
+                    PopupMenuItem(
+                      value: 5,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Добавить в избранное',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 6,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Добавить в список',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 7,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Очистить чат',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 8,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: AppPopupMenuItem(
+                        text: 'Заблокировать',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

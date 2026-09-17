@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-class YandexDiskApi {
-  static const String _baseUrl = 'https://chatify-yandex-disk-server.onrender.com';
+import '../../../../utils/constants/app_links.dart';
 
+class YandexDiskApi {
   /// Uploads a file to Yandex Disk through our backend.
   ///
   /// [file] - local file to upload.
@@ -16,33 +17,81 @@ class YandexDiskApi {
   /// users/userId/audio/1758123456789.m4a
   Future<String?> uploadFile({required File file, required String path}) async {
     try {
-      final uri = Uri.parse('$_baseUrl/api/yandex-disk/upload');
+      log('YANDEX API: upload started');
+      log('YANDEX API: file = ${file.path}');
+      log('YANDEX API: path = $path');
+
+      final uri = Uri.parse('${AppLinks.baseUrl}/api/yandex-disk/upload');
+
+      log('YANDEX API: endpoint = $uri');
+
       final request = http.MultipartRequest('POST', uri);
 
       request.fields['path'] = path;
-      request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
-      final streamedResponse = await request.send();
+      log('YANDEX API: adding multipart file');
+
+      final multipartFile = await http.MultipartFile.fromPath('file', file.path, filename: file.uri.pathSegments.last);
+
+      request.files.add(multipartFile);
+
+      log('YANDEX API: file exists before upload = ''${await file.exists()}');
+
+      log('YANDEX API: file size before upload = ''${await file.length()}');
+
+      log('YANDEX API: multipart request prepared');
+
+      log('YANDEX API: file field = ''${multipartFile.field}');
+
+      log('YANDEX API: file filename = ''${multipartFile.filename}');
+
+      log('YANDEX API: file length = ''${multipartFile.length}');
+
+      log('YANDEX API: request fields = ''${request.fields}');
+
+      log('YANDEX API: request files = ''${request.files.length}');
+
+      log('YANDEX API: request content type = ''${request.headers['content-type']}');
+
+      log('YANDEX API: sending request...');
+
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+
+      log('YANDEX API: response received: ''${streamedResponse.statusCode}');
+
+      log('YANDEX API: response received: ''${streamedResponse.statusCode}');
+
       final response = await http.Response.fromStream(streamedResponse);
 
+      log('YANDEX API: response body = ${response.body}');
+
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        log('Yandex Disk upload failed: ''${response.statusCode} ${response.body}');
+        log('YANDEX API: upload failed: ''${response.statusCode} ${response.body}');
 
         return null;
       }
 
       final json = jsonDecode(response.body);
 
-      log('Yandex upload response: ${response.body}');
+      log('YANDEX API: decoded response = $json');
 
       if (json['success'] != true) {
-        log('Yandex Disk upload failed: ${response.body}');
+        log('YANDEX API: backend returned success=false');
+
         return null;
       }
 
-      return json['data']['path'] as String?;
-    } catch (e) {
-      log('Yandex Disk upload error: $e');
+      final uploadedPath = json['data']['path'] as String?;
+
+      log('YANDEX API: uploaded path = $uploadedPath');
+
+      return uploadedPath;
+    } on TimeoutException {
+      log('YANDEX API: upload TIMEOUT after 30 seconds');
+
+      return null;
+    } catch (e, stackTrace) {
+      log('YANDEX API: upload error: $e', stackTrace: stackTrace);
 
       return null;
     }
@@ -53,7 +102,7 @@ class YandexDiskApi {
   /// [path] is the logical path returned by uploadFile().
   Future<String?> getDownloadUrl(String path) async {
     try {
-      final uri = Uri.parse('$_baseUrl/api/yandex-disk/url').replace(queryParameters: {'path': path});
+      final uri = Uri.parse('${AppLinks.baseUrl}/api/yandex-disk/url').replace(queryParameters: {'path': path});
 
       final response = await http.get(uri);
 

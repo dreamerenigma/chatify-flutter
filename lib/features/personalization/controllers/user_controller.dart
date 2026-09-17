@@ -51,7 +51,6 @@ class UserController extends GetxController {
 
     try {
       final snapshot = await _firestore.collection('Users').doc(firebaseUser.uid).get();
-      log("Firestore snapshot: $snapshot");
 
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
@@ -88,6 +87,7 @@ class UserController extends GetxController {
   Future<void> updateUser(UserModel newUser) async {
     final oldUser = user.value;
     final updatedUser = await _saveUserDataToFirestore(newUser, oldUser);
+
     user.value = updatedUser;
     update();
   }
@@ -96,6 +96,7 @@ class UserController extends GetxController {
     try {
       if (newUser.id.isEmpty) {
         final firebaseUser = FirebaseAuth.instance.currentUser;
+
         if (firebaseUser != null) {
           newUser = newUser.copyWith(id: firebaseUser.uid);
           log("User ID был пустой. Присвоили из FirebaseAuth: '${newUser.id}'");

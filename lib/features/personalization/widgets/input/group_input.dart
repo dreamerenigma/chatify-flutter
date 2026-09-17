@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../api/group_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -77,7 +78,7 @@ class GroupInputState extends State<GroupInput> {
       pushToken: '',
       lastMessageTimestamp: 0,
     );
-    await APIs.sendGroupImage(group, image);
+    await GroupApi.sendGroupImage(group, image);
     setState(() => isUploading = false);
   }
 
@@ -96,7 +97,7 @@ class GroupInputState extends State<GroupInput> {
       );
       const messageType = MessageType.text;
 
-      APIs.sendGroupMessage(group, textController.text, messageType);
+      GroupApi.sendGroupMessage(group, textController.text, messageType);
 
       textController.clear();
       playSendSound();

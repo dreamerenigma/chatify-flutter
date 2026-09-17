@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:chatify/features/chat/widgets/messages/voice_record_message.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/helper/date_util.dart';
+import '../../../../api/apis.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -174,10 +176,11 @@ class SenderMessageState extends State<SenderMessage> {
     switch (widget.message.type) {
       case MessageType.call:
         return _buildCallMessage();
+      case MessageType.audio:
+        return _buildVoiceRecordMessage();
       case MessageType.image:
       case MessageType.gif:
       case MessageType.video:
-      case MessageType.audio:
       case MessageType.document:
         return _buildMediaMessage();
       default:
@@ -279,6 +282,46 @@ class SenderMessageState extends State<SenderMessage> {
               ),
             ),
             _buildMessageTail(),
+            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+              _buildHoverActions(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVoiceRecordMessage() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: (_) {},
+      onExit: (_) {},
+      child: GestureDetector(
+        onTap: () {},
+        onSecondaryTap: _handleSecondaryTap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                MessageBubble(
+                  key: _containerKey,
+                  message: widget.message,
+                  isWebOrWindows: isWebOrWindows,
+                  isPressed: isPressed,
+                  onSecondaryTap: _handleSecondaryTap,
+                  showInnerContainer: false,
+                  showMetaCheck: true,
+                  type: MessageBubbleType.recipient,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 250),
+                    child: VoiceRecordMessage(message: widget.message, isSender: false, user: APIs.me),
+                  ),
+                ),
+                _buildMessageTail(),
+              ],
+            ),
+
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
               _buildHoverActions(),
           ],

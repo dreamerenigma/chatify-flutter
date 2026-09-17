@@ -7,7 +7,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
-import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../chat/models/user_model.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import '../screens/community_info_screen.dart';
 import '../screens/community_screen.dart';
@@ -16,19 +16,29 @@ import 'package:chatify/features/community/models/community_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 
 class CommunityWidgets extends StatefulWidget {
+  final UserModel user;
   final bool Function(DateTime) isValidDate;
   final bool showAllButton;
   final bool isInteractive;
   final bool showGroupsSection;
   final CommunityModel community;
+  final bool hideAdsPreview;
+  final bool hideAdsDate;
+  final bool showGeneralCloseIcon;
+  final String? generalSubtitle;
 
   const CommunityWidgets({
     super.key,
+    required this.user,
     required this.isValidDate,
     this.showAllButton = false,
     this.isInteractive = true,
     this.showGroupsSection = false,
     required this.community,
+    this.hideAdsPreview = false,
+    this.hideAdsDate = false,
+    this.showGeneralCloseIcon = false,
+    this.generalSubtitle,
   });
 
   @override
@@ -57,6 +67,14 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
     return DateFormat('dd.MM.yyyy', Localizations.localeOf(context).toString()).format(creationDate);
   }
 
+  String get _generalSubtitle {
+    if (widget.generalSubtitle != null) {
+      return widget.generalSubtitle!;
+    }
+
+    return widget.community.creatorId == APIs.auth.currentUser?.uid ? 'Добро пожаловать в группу "Общая"' : 'Вы';
+  }
+
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
@@ -72,6 +90,8 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
               highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               onTap: () {
+                APIs.community = widget.community;
+
                 Navigator.push(context, createPageRoute(CommunityScreen(user: APIs.me)));
               },
               child: Container(
@@ -84,8 +104,8 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
                     Container(
                       width: 42,
                       height: 42,
-                      decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(14)),
-                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.megaphone, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)))),
+                      decoration: BoxDecoration(color: ChatifyColors.switcherPrimary, borderRadius: BorderRadius.circular(12)),
+                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.megaphone, width: 22, height: 22, colorFilter: ColorFilter.mode(ChatifyColors.buttonPrimaryLight, BlendMode.srcIn)))),
                     ),
                     const SizedBox(width: 16),
                     _buildAds(context),
@@ -96,7 +116,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
           ),
           if (widget.showGroupsSection) ...[
             CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Text(S.of(context).groupsYouMember, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400))),
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 2), child: Text(S.of(context).groupsYouMember, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400))),
           ],
           Material(
             color: ChatifyColors.transparent,
@@ -109,6 +129,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
                 Navigator.push(context, createPageRoute(const GeneralChatScreen()));
               },
               child: Container(
+                width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
                 child: Row(
@@ -137,33 +158,39 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
     final createdAt = widget.community.createdAt;
 
     return Flexible(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            fit: FlexFit.tight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(S.of(context).announcements, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(
-                  S.of(context).welcomeToCommunity,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                  textWidthBasis: TextWidthBasis.parent,
-                ),
-              ],
+      child: SizedBox(
+        height: 45,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(S.of(context).announcements, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
+                  if (!widget.hideAdsPreview)
+                    Text(
+                      S.of(context).welcomeToCommunity,
+                      style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      textWidthBasis: TextWidthBasis.parent,
+                    ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            getCommunityCreationDate(context: context, creationDate: createdAt),
-            style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
-          ),
-        ],
+            if (!widget.hideAdsDate)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  getCommunityCreationDate(context: context, creationDate: createdAt),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -171,27 +198,33 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
   Widget _buildGeneral(BuildContext context) {
     return Expanded(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(S.of(context).generalCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(S.of(context).newCommunityMembersAddedAuto, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(S.of(context).generalCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                Text(
+                  _generalSubtitle,
+                  style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
-          SizedBox(
-            width: 100,
-            child: Text(
-              getCommunityCreationDate(context: context, creationDate: widget.community.createdAt),
-              style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
-              textAlign: TextAlign.end,
+          if (widget.showGeneralCloseIcon)
+            const Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Icon(Icons.close_rounded, size: 24))
+          else
+            SizedBox(
+              width: 100,
+              child: Text(
+                getCommunityCreationDate(context: context, creationDate: widget.community.createdAt),
+                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+                textAlign: TextAlign.end,
+              ),
             ),
-          ),
         ],
       ),
     );

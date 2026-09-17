@@ -1,12 +1,11 @@
 import 'dart:developer';
-import 'package:flutter/services.dart';
+import '../../../utils/constants/app_keys.dart';
 
 class PasskeyService {
-  static const _channel = MethodChannel('com.inputstudios.chatify/passkey');
-
   static Future<String?> createPasskey() async {
     try {
-      final result = await _channel.invokeMethod<String>('createPasskey');
+      final result = await AppKeys.channel.invokeMethod<String>('createPasskey');
+
       return result;
     } catch (e) {
       log('Passkey error: $e');
@@ -14,4 +13,3 @@ class PasskeyService {
     }
   }
 }
-

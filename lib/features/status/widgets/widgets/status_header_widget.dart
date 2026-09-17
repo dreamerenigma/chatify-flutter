@@ -20,6 +20,7 @@ class StatusHeaderWidget extends StatefulWidget {
   final UserModel user;
   final UserStatusModel? userStatus;
   final String? statusImageUrl;
+  final String? profileImageUrl;
   final VoidCallback onAddStatus;
 
   const StatusHeaderWidget({
@@ -27,6 +28,7 @@ class StatusHeaderWidget extends StatefulWidget {
     required this.user,
     required this.userStatus,
     required this.statusImageUrl,
+    required this.profileImageUrl,
     required this.onAddStatus,
   });
 
@@ -35,8 +37,12 @@ class StatusHeaderWidget extends StatefulWidget {
 }
 
 class _StatusHeaderWidgetState extends State<StatusHeaderWidget> {
+
   @override
   Widget build(BuildContext context) {
+    final hasStatus = widget.userStatus != null;
+    final imageUrl = widget.statusImageUrl?.trim().isNotEmpty == true ? widget.statusImageUrl!.trim() : widget.profileImageUrl;
+
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
@@ -50,9 +56,9 @@ class _StatusHeaderWidgetState extends State<StatusHeaderWidget> {
 
             if (!mounted) return;
 
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,);
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.dark, statusBarBrightness: Brightness.light));
+            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: ChatifyColors.transparent, statusBarIconBrightness: Brightness.dark, statusBarBrightness: Brightness.light));
           } else {
             showAddStatusBottomDialog(context);
           }
@@ -66,26 +72,42 @@ class _StatusHeaderWidgetState extends State<StatusHeaderWidget> {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    padding: widget.userStatus != null
-                      ? const EdgeInsets.all(2) : EdgeInsets.zero, decoration: widget.userStatus != null ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1.5))
+                    padding: hasStatus ? const EdgeInsets.all(2) : EdgeInsets.zero, decoration: hasStatus
+                      ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1.5))
                       : null,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .5),
                       child: CachedNetworkImage(
                         width: DeviceUtils.getScreenHeight(context) * .062,
                         height: DeviceUtils.getScreenHeight(context) * .062,
-                        imageUrl: widget.statusImageUrl ?? widget.user.image,
+                        imageUrl: imageUrl ?? '',
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
-                        errorWidget: (context, url, error) => Container(
-                          width: DeviceUtils.getScreenHeight(context) * .062,
-                          height: DeviceUtils.getScreenHeight(context) * .062,
-                          color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                          alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            ChatifyVectors.person, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
-                          ),
-                        ),
+                        placeholder: (context, url) {
+                          return Container(
+                            color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              ChatifyVectors.person,
+                              width: 22,
+                              height: 22,
+                              colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
+                            ),
+                          );
+                        },
+                        errorWidget: (context, url, error) {
+                          return Container(
+                            width: DeviceUtils.getScreenHeight(context) * .062,
+                            height: DeviceUtils.getScreenHeight(context) * .062,
+                            color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              ChatifyVectors.person,
+                              width: 22,
+                              height: 22,
+                              colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

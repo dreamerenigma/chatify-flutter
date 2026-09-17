@@ -16,12 +16,12 @@ import 'package:googleapis_auth/auth_io.dart' as auths;
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import '../config/config.dart';
 import '../core/enums/call_status_type.dart';
 import '../core/enums/call_type.dart';
 import '../core/enums/message_type.dart';
 import '../core/services/media/media_service.dart';
+import '../core/services/media/yandex/yandex_disk_paths.dart';
 import '../features/authentication/screens/add_account_screen.dart';
 import '../features/authentication/widgets/dialogs/consent_dialog.dart';
 import '../features/bot/models/info_app_model.dart';
@@ -29,7 +29,6 @@ import '../features/chat/models/user_model.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/chat/models/user_status_model.dart';
 import '../features/community/models/community_model.dart';
-import '../features/group/models/group_model.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/newsletter/models/newsletter_model.dart';
 import '../generated/l10n/l10n.dart';
@@ -39,7 +38,6 @@ import '../utils/constants/app_sounds.dart';
 import '../utils/popups/dialogs.dart';
 import '../utils/urls/url_utils.dart';
 import 'access_firebase_token.dart';
-import 'package:path/path.dart' as path;
 
 class APIs {
   /// -- Authentication.
@@ -65,6 +63,10 @@ class APIs {
 
   /// -- Accessing media service.
   static MediaService get mediaService => Get.find<MediaService>();
+
+  static Future<String?> getMediaUrl(String path) async {
+    return await mediaService.getUrl(path);
+  }
 
   ///******************* User Related APIs *******************
   /// -- Getting Firebase Messaging token.
@@ -359,8 +361,9 @@ class APIs {
   }
 
   /// -- Adding an user to my user when first message in send.
-  static Future<void> sendFirstMessage(UserModel chatUser, String msg, MessageType type) async {
-    await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({}).then((value) => sendMessage(chatUser, msg, type));
+  static Future<void> sendFirstMessage(UserModel chatUser, String msg, MessageType type,) async {
+    await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({}, SetOptions(merge: true));
+    await sendMessage(chatUser, msg, type);
   }
 
   /// -- Updating user info.
@@ -397,19 +400,70 @@ class APIs {
     }
   }
 
+  /// -- Upload profile picture to Yandex Disk through backend.
+  static Future<String?> uploadProfilePicture(File file) async {
+    final requestId = DateTime.now().microsecondsSinceEpoch;
+
+    log('PROFILE UPLOAD [$requestId]: started');
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        throw Exception('User is not logged in');
+      }
+
+      log('PROFILE UPLOAD [$requestId]: file = ${file.path}');
+
+      final ext = file.path.split('.').last.toLowerCase();
+      final path = 'users/${user.uid}/profile_picture/profile.$ext';
+
+      log('PROFILE UPLOAD [$requestId]: path = $path');
+
+      final imagePath = await mediaService.uploadFile(file: file, path: path);
+
+      log('PROFILE UPLOAD [$requestId]: result = $imagePath');
+
+      return imagePath;
+    } catch (e, stackTrace) {
+      log('PROFILE UPLOAD [$requestId]: ERROR = $e', stackTrace: stackTrace);
+
+      return null;
+    }
+  }
+
   /// -- Update profile picture of user.
-  static Future<void> updateProfilePicture(File file) async {
-    final ext = file.path.split('.').last;
-    log('Extension: $ext');
+  static Future<bool> updateProfilePicture(File file) async {
+    try {
+      log('UPDATE PROFILE: started');
 
-    final ref = storage.ref().child('profile_pictures/${user.uid}.$ext');
+      final imagePath = await uploadProfilePicture(file);
 
-    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
-        log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
+      log('UPDATE PROFILE: imagePath = $imagePath');
 
-    me.image = await ref.getDownloadURL();
-    await firestore.collection('Users').doc(user.uid).update({'image': me.image});
+      if (imagePath == null) {
+        log('UPDATE PROFILE: upload failed');
+        return false;
+      }
+
+      me.image = imagePath;
+
+      log('UPDATE PROFILE: updating Firestore...');
+      log('UPDATE PROFILE: image = ${me.image}');
+
+      await firestore.collection('Users').doc(user.uid).update({
+        'image': me.image,
+      });
+
+      log('UPDATE PROFILE: Firestore updated');
+
+      return true;
+    } catch (e, stackTrace) {
+      log('UPDATE PROFILE ERROR: $e');
+      log('UPDATE PROFILE STACK: $stackTrace');
+
+      return false;
+    }
   }
 
   /// -- Getting specific user info.
@@ -643,7 +697,7 @@ class APIs {
 
       final ext = file.path.split('.').last.toLowerCase();
       final path = 'users/${user.uid}/my_statuses/''${DateTime.now().millisecondsSinceEpoch}.$ext';
-      final imagePath = await mediaService.uploadImage(file: file, path: path);
+      final imagePath = await mediaService.uploadFile(file: file, path: path);
 
       if (imagePath == null) {
         log('Failed to upload status image: $path');
@@ -656,45 +710,6 @@ class APIs {
     } catch (e) {
       log('Error uploading status image: $e');
       return null;
-    }
-  }
-
-  /// Create app directories.
-  static Future<void> createDirectories() async {
-    if (kIsWeb) {
-      return;
-    }
-
-    Directory? baseDir;
-
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      baseDir = await getApplicationDocumentsDirectory();
-    } else {
-      baseDir = await getExternalStorageDirectory();
-    }
-
-    if (baseDir != null) {
-      String mediaPath = path.join(baseDir.path, 'Android', 'media', 'com.chatify', 'Chatify', 'Media');
-
-      List<String> directories = [
-        'WallPaper',
-        'Chatify Audio',
-        'Chatify Documents',
-        'Chatify Images',
-        'Chatify Profile Photos',
-        'Chatify Stickers',
-        'Chatify Video',
-      ];
-
-      for (String dirName in directories) {
-        String dirPath = path.join(mediaPath, dirName);
-        Directory directory = Directory(dirPath);
-
-        if (!(await directory.exists())) {
-          await directory.create(recursive: true);
-          log('Создан каталог: $dirPath');
-        }
-      }
     }
   }
 
@@ -801,6 +816,8 @@ class APIs {
     final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(time);
 
     await ref.set(message.toJson());
+    await firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id).set({'lastMessageTime': time}, SetOptions(merge: true));
+    await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': time}, SetOptions(merge: true));
     await sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
   }
 
@@ -828,6 +845,96 @@ class APIs {
     await ref.set(message.toJson());
 
     return time;
+  }
+
+  /// -- Send voice message.
+  static Future<String> sendVoiceMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize,}) async {
+    log('========== API: SEND VOICE MESSAGE ==========');
+
+    try {
+      final time = DateTime.now().millisecondsSinceEpoch.toString();
+      final conversationId = getConversationId(chatUser.id);
+
+      log('Message ID: $time');
+      log('Conversation ID: $conversationId');
+      log('Local audio path: $localPath');
+
+      final file = File(localPath);
+
+      if (!await file.exists()) {
+        throw Exception('Voice file does not exist: $localPath');
+      }
+
+      final localFileSize = await file.length();
+
+      if (localFileSize == 0) {
+        throw Exception('Voice file is empty: $localPath');
+      }
+
+      log('Local voice file exists');
+      log('Local voice file size: $localFileSize bytes');
+
+      final yandexPath = YandexDiskPaths.messageAudio(conversationId, time);
+
+      log('Yandex Disk path: $yandexPath');
+
+      final uploadedPath = await mediaService.uploadFile(file: file, path: yandexPath);
+
+      if (uploadedPath == null || uploadedPath.isEmpty) {
+        throw Exception('Failed to upload voice message to Yandex Disk');
+      }
+
+      log('✅ Voice uploaded to Yandex Disk');
+      log('Uploaded path: $uploadedPath');
+
+      final message = MessageModel(
+        toId: chatUser.id,
+        msg: uploadedPath,
+        read: '',
+        type: MessageType.audio,
+        fromId: user.uid,
+        sent: time,
+        documentName: fileName,
+        fileSize: fileSize ?? localFileSize.toString(),
+        deletedBy: [],
+        reactions: {},
+        deletedAt: null,
+      );
+
+      final data = message.toJson();
+
+      log('---------- MESSAGE DATA ----------');
+      log('toId: ${data['toId']}');
+      log('msg: ${data['msg']}');
+      log('type: ${data['type']}');
+      log('fromId: ${data['fromId']}');
+      log('sent: ${data['sent']}');
+      log('fileSize: ${data['fileSize']}');
+      log('----------------------------------');
+
+      final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(time);
+
+      log('Firestore path: ${ref.path}');
+      log('Writing message to Firestore...');
+
+      await ref.set(data);
+
+      log('✅ Message successfully written to Firestore');
+
+      log('Sending push notification...');
+
+      await sendPushNotification(chatUser, 'Голосовое сообщение');
+
+      log('✅ Push notification sent');
+
+      log('========== API: SEND VOICE MESSAGE DONE ==========');
+
+      return time;
+    } catch (e, stack) {
+      log('❌ SEND VOICE MESSAGE ERROR: $e');
+      log('$stack');
+      rethrow;
+    }
   }
 
   /// -- Update call message status.
@@ -1154,320 +1261,10 @@ class APIs {
     });
   }
 
+  /// -- Get archived chat users count.
   static Stream<int> getArchivedUsersCount(String userId) {
     return firestore.collection('Users').doc(userId).collection('my_users').where('archived', isEqualTo: true).snapshots().map((snapshot) => snapshot.docs.length);
   }
-
-  ///******************* Group Screen Related APIs *******************
-  /// -- Useful for getting conversation id.
-  static String getGroupConversationId(String id) {
-    if (user.uid.isEmpty || id.isEmpty) {
-      log('Error: user.uid or groupId is empty! user.uid: ${user.uid}, groupId: $id');
-    }
-    final conversationId = user.uid.hashCode <= id.hashCode ? '${user.uid}_$id' : '${id}_${user.uid}';
-    log('Generated conversationId: $conversationId');
-
-    return conversationId;
-  }
-
-  /// -- Getting all message of a specific conversation from Firestore Database.
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupAllMessages(GroupModel group) {
-    final conversationId = getGroupConversationId(group.groupId);
-    if (conversationId.isEmpty) {
-      log('Error: conversationId is empty!');
-      return Stream.empty();
-    }
-    final path = 'Groups/$conversationId/messages/';
-    if (path.contains('//')) {
-      log('Error: Path contains //: $path');
-      return Stream.empty();
-    }
-    log('Firestore path: $path');
-    return firestore.collection(path).orderBy('sent', descending: true).snapshots();
-  }
-
-  /// -- Creating new group.
-  static Future<bool> createGroup(BuildContext context, GroupModel group, File? imageFile) async {
-    try {
-      final user = auth.currentUser!;
-      final groupId = firestore.collection('Groups').doc().id;
-
-      group.groupId = groupId;
-      group.createdAt = DateTime.now();
-
-      group.creatorName = user.displayName ?? 'Неизвестный пользователь';
-      group.members = [user.uid];
-
-      await firestore.collection('Groups').doc(groupId).set(group.toMap());
-      await firestore.collection('Users').doc(user.uid).collection('my_group').doc(groupId).set({'groupId': groupId});
-
-      if (imageFile != null) {
-        final imageUrl = await uploadGroupImageToFirebaseStorage(groupId, imageFile);
-        if (imageUrl != null) {
-          group.groupImage = imageUrl;
-
-          await firestore.collection('Groups').doc(groupId).update({'groupImage': imageUrl});
-        } else {
-          Dialogs.showSnackbar(context, 'Не удалось загрузить изображение.');
-          return false;
-        }
-      }
-
-      Dialogs.showSnackbar(context, 'Группа успешно создана');
-      return true;
-    } catch (e) {
-      Dialogs.showSnackbar(context, 'Ошибка при создании группы');
-      return false;
-    }
-  }
-
-  /// -- Method to fetch group from Firestore.
-  static Future<List<GroupModel>> getGroups() async {
-    try {
-      final querySnapshot = await firestore.collection('Groups').get();
-
-      return querySnapshot.docs.map((doc) => GroupModel.fromJson(doc.data())).toList();
-    } catch (e) {
-      log('Error fetching group: $e');
-      return [];
-    }
-  }
-
-  /// -- Method to fetch a single group from Firestore by ID.
-  static Future<GroupModel> getGroupById(String groupId) async {
-    try {
-      final docSnapshot = await firestore.collection('Groups').doc(groupId).get();
-
-      if (docSnapshot.exists && docSnapshot.data() != null) {
-        return GroupModel.fromJson(docSnapshot.data()!);
-      } else {
-        throw Exception('Group with ID $groupId not found');
-      }
-    } catch (e) {
-      log('Error fetching group by ID: $e');
-      rethrow;
-    }
-  }
-
-  /// -- Send group message.
-  static Future<void> sendGroupMessage(GroupModel group, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
-    if (group.groupId.isEmpty) {
-      log('Error: groupId is empty!');
-      return;
-    }
-
-    log('Sending message to group with groupId: ${group.groupId}');
-
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
-
-    final message = MessageModel(
-      toId: group.groupId,
-      msg: msg,
-      read: '',
-      type: type,
-      fromId: user.uid,
-      sent: time,
-      documentName: fileName,
-      fileSize: fileSize,
-      deletedBy: [],
-      reactions: {},
-      deletedAt: null,
-    );
-
-    final ref = firestore.collection('Groups/${group.groupId}/messages/');
-    log('Firestore path for messages: ${ref.path}');
-
-    try {
-      await ref.doc(time).set(message.toJson()).then((value) => sendGroupPushNotification(group, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
-      await firestore.collection('Groups').doc(group.groupId).update({
-        'lastMessageTimestamp': int.parse(time),
-      });
-    } catch (e) {
-      log('Error sending group message: $e');
-    }
-  }
-
-  /// -- Getting group message of a specific conversation from Firestore Database.
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupMessages(GroupModel group) {
-    final conversationId = getGroupConversationId(group.groupId);
-    assert(conversationId.isNotEmpty, 'Conversation ID cannot be empty.');
-    final path = 'Groups/$conversationId/messages/';
-    log('Firestore collection path: $path');
-
-    return firestore.collection(path).orderBy('sent', descending: true).snapshots();
-  }
-
-  /// -- Send group image.
-  static Future<void> sendGroupImage(GroupModel group, File file) async {
-    final ext = file.path.split('.').last.toLowerCase();
-    final isGif = ext == 'gif';
-    final ref = storage.ref().child('group_images/${group.groupId}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-    final contentType = isGif ? 'image/gif' : 'image/$ext';
-    final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
-
-    await uploadTask.then((taskSnapshot) async {
-      final imageUrl = await ref.getDownloadURL();
-
-      if (isGif) {
-        await sendGroupMessage(group, imageUrl, MessageType.gif);
-      } else {
-        await sendGroupMessage(group, imageUrl, MessageType.image);
-      }
-    });
-  }
-
-  /// -- Send group video.
-  static Future<void> sendGroupVideo(GroupModel group, List<String> members, File file) async {
-    final ext = file.path.split('.').last.toLowerCase();
-    log('Extension: $ext');
-
-    final ref = storage.ref().child('videos/${getGroupConversationId(group.groupId)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-
-    final contentType = 'video/$ext';
-
-    await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
-      log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
-
-      final videoUrl = await ref.getDownloadURL();
-      await sendGroupMessage(group, videoUrl, MessageType.video);
-    });
-  }
-
-  /// -- Send chat audio.
-  static Future<void> sendGroupAudio(GroupModel group, File file, String fileName) async {
-    final ext = file.path.split('.').last.toLowerCase();
-    log('Extension: $ext');
-
-    final ref = storage.ref().child('audio/${getConversationId(group.groupId)}/$fileName');
-    final contentType = 'audio/$ext';
-
-    await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
-      log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
-
-      final audioUrl = await ref.getDownloadURL();
-
-      await sendGroupMessage(group, audioUrl, MessageType.audio);
-    });
-  }
-
-  /// -- Send group document.
-  static Future<void> sendGroupDocument(GroupModel group, List<String> members, File file) async {
-    final ext = file.path.split('.').last.toLowerCase();
-    log('Extension: $ext');
-
-    final ref = FirebaseStorage.instance.ref().child('documents/${getGroupConversationId(group.groupId)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-
-    final contentType = getContentType(ext);
-    log('Content Type: $contentType');
-
-    try {
-      final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
-      await uploadTask.whenComplete(() async {
-        final documentUrl = await ref.getDownloadURL();
-        log('Document URL: $documentUrl');
-
-        await sendGroupMessage(group, documentUrl, MessageType.document, fileName: file.path.split('/').last,
-        );
-      });
-    } on FirebaseException catch (e) {
-      if (e.code == 'object-not-found') {
-        log('File not found at the specified reference.');
-      } else {
-        log('Unknown error occurred.');
-      }
-    } catch (e) {
-      log('An unexpected error occurred: $e');
-    }
-  }
-
-  /// -- Sending push notification.
-  static Future<void> sendGroupPushNotification(GroupModel groupId, String msg, {String? imageUrl}) async {
-    final logger = Logger();
-    try {
-      AccessFirebaseToken accessToken = AccessFirebaseToken();
-      String bearerToken = await accessToken.getAccessToken();
-
-      final body = {
-        "message": {
-          "token": groupId.pushToken,
-          "notification": {
-            "title": me.name,
-            "body": msg,
-            "image": imageUrl,
-          },
-          "data": {
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "image": imageUrl,
-          },
-        },
-      };
-
-      var res = await post(
-        Uri.parse('https://fcm.googleapis.com/v1/projects/chatify-6fdfb/messages:send'),
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': 'Bearer $bearerToken',
-        },
-        body: jsonEncode(body),
-      );
-
-      logger.d("Response statusCode: ${res.statusCode}");
-      logger.d("Response body: ${res.body}");
-
-      if (res.statusCode != 200) {
-        throw Exception('Failed to send push notification');
-      }
-    } catch (e) {
-      logger.d("\nsendPushNotification: $e");
-    }
-  }
-
-  /// -- Method to upload an image to Firebase Storage.
-  static Future<String?> uploadGroupImageToFirebaseStorage(String groupId, File file) async {
-    try {
-      final ext = file.path.split('.').last;
-      log('Uploading file: ${file.path}, extension: $ext');
-
-      final ref = FirebaseStorage.instance.ref().child('group_pictures/$groupId.$ext');
-      await ref.putFile(file, SettableMetadata(contentType: 'image/$ext'));
-
-      final downloadURL = await ref.getDownloadURL();
-      log('Image uploaded successfully. URL: $downloadURL');
-      return downloadURL;
-    } catch (e, stackTrace) {
-      log('Error uploading image to Firebase Storage: $e');
-      log('StackTrace: $stackTrace');
-      return null;
-    }
-  }
-
-  /// -- Update group picture.
-  static Future<void> updateGroupPicture(String groupId, File file) async {
-    final ext = file.path.split('.').last;
-    log('Extension: $ext');
-
-    final ref = storage.ref().child('group_pictures/$groupId.$ext');
-
-    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
-
-    String downloadURL = await ref.getDownloadURL();
-    await firestore.collection('Groups').doc(groupId).update({'image': downloadURL});
-  }
-
-  /// -- Delete group picture.
-  static Future<void> deleteGroupPicture(String groupId, String imageUrl) async {
-    try {
-      await storage.refFromURL(imageUrl).delete();
-
-      await FirebaseFirestore.instance.collection('Groups').doc(groupId).update({'image': null});
-    } catch (e) {
-      log('Error deleting group picture: $e');
-    }
-  }
-
-
 
   ///******************* Newsletter Screen Related APIs *******************
   /// -- Creating new newsletter.

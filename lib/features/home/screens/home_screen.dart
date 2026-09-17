@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:chatify/features/status/widgets/images/camera_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,13 +12,14 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../api/apis.dart';
 import '../../../api/community_api.dart';
+import '../../../api/group_api.dart';
 import '../../../core/enums/chat_list_type.dart';
+import '../../../core/enums/selection_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
-import '../../../utils/platforms/platform_utils.dart' as Platform;
 import '../../bot/models/info_app_model.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/models/community_model.dart';
@@ -27,6 +31,7 @@ import '../widgets/app_bars/home_app_bar_widget.dart';
 import '../widgets/app_bars/selection_app_bar.dart';
 import '../widgets/dialogs/delete_chat_dialog.dart';
 import '../widgets/dialogs/no_sound_dialog.dart';
+import '../widgets/items/home_item.dart';
 import '../widgets/widgets/home_screen_widget.dart';
 import 'home_select_user_screen.dart';
 
@@ -46,6 +51,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final Set<String> mutedChats = <String>{};
   final UserController userController = Get.find<UserController>();
   final PageController _pageController = PageController();
+  final Set<String> selectedNewsletterIds = {};
+  final Set<String> selectedCommunityIds = {};
+  final Map<String, int> userLastMessageTimes = {};
   late bool isHomeScreen;
   bool isSearching = false;
   bool isToolbarVisible = true;
@@ -59,9 +67,13 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   List<UserModel> users = [];
   List<SupportAppModel> supports = [];
   List<InfoAppModel> infosApp = [];
+  List<HomeItem> homeItems = [];
   ChatListType chatListType = ChatListType.all;
+  SelectionType selectionType = SelectionType.none;
 
-  bool get isSelecting => selectedChats.isNotEmpty;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _myUsersSubscription;
+
+  bool get isSelecting => selectionType != SelectionType.none;
 
   @override
   void initState() {
@@ -87,10 +99,12 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _fetchCommunities();
     _fetchNewsletters();
     _fetchSupportChat();
+    _listenToMyUsers();
   }
 
   @override
   void dispose() {
+    _myUsersSubscription?.cancel();
     _pageController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -193,9 +207,10 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _fetchGroups() async {
-    List<GroupModel> fetchedGroups = await APIs.getGroups();
+    List<GroupModel> fetchedGroups = await GroupApi.getGroups();
     setState(() {
       groups = fetchedGroups;
+      _rebuildHomeItems();
     });
   }
 
@@ -203,6 +218,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     List<CommunityModel> fetchedCommunities = await CommunityApi.getCommunity();
     setState(() {
       communities = fetchedCommunities;
+      _rebuildHomeItems();
     });
   }
 
@@ -210,6 +226,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     List<NewsletterModel> fetchedNewsletters = await APIs.getNewsletter();
     setState(() {
       newsletters = fetchedNewsletters;
+      _rebuildHomeItems();
     });
   }
 
@@ -217,6 +234,26 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     List<SupportAppModel> fetchedSupports = await APIs.getSupportChat();
     setState(() {
       supports = fetchedSupports;
+      _rebuildHomeItems();
+    });
+  }
+
+  void _listenToMyUsers() {
+    _myUsersSubscription = APIs.getMyUsersId().listen((snapshot) {
+      userLastMessageTimes.clear();
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
+
+        userLastMessageTimes[doc.id] = lastMessageTime;
+      }
+
+      _rebuildHomeItems();
+
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -239,6 +276,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void clearSelection() {
     setState(() {
       selectedChats.clear();
+      selectedNewsletterIds.clear();
+      selectedCommunityIds.clear();
+      selectionType = SelectionType.none;
     });
   }
 
@@ -260,12 +300,100 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void _toggleChatSelection(UserModel user) {
     setState(() {
+      if (selectionType == SelectionType.none) {
+        selectionType = SelectionType.chats;
+      }
+
+      if (selectionType != SelectionType.chats) {
+        return;
+      }
+
       if (selectedChats.contains(user.id)) {
         selectedChats.remove(user.id);
       } else {
         selectedChats.add(user.id);
       }
+
+      if (selectedChats.isEmpty) {
+        selectionType = SelectionType.none;
+      }
     });
+  }
+
+  void _toggleNewsletterSelection(NewsletterModel newsletter) {
+    setState(() {
+      if (selectionType == SelectionType.none) {
+        selectionType = SelectionType.newsletters;
+      }
+
+      if (selectionType != SelectionType.newsletters) {
+        return;
+      }
+
+      if (selectedNewsletterIds.contains(newsletter.id)) {
+        selectedNewsletterIds.remove(newsletter.id);
+      } else {
+        selectedNewsletterIds.add(newsletter.id);
+      }
+
+      if (selectedNewsletterIds.isEmpty) {
+        selectionType = SelectionType.none;
+      }
+    });
+  }
+
+  void onCommunitySelected(CommunityModel community) {
+    setState(() {
+      if (selectionType == SelectionType.none) {
+        selectionType = SelectionType.communities;
+      }
+
+      if (selectionType != SelectionType.communities) {
+        return;
+      }
+
+      if (selectedCommunityIds.contains(community.id)) {
+        selectedCommunityIds.remove(community.id);
+      } else {
+        selectedCommunityIds.add(community.id);
+      }
+
+      if (selectedCommunityIds.isEmpty) {
+        selectionType = SelectionType.none;
+      }
+    });
+  }
+
+  void _rebuildHomeItems() {
+    final items = <HomeItem>[];
+
+    for (final user in users) {
+      items.add(ChatHomeItem(user: user, activityTime: userLastMessageTimes[user.id] ?? 0));
+    }
+
+    for (final group in groups) {
+      items.add(GroupHomeItem(group: group, activityTime: group.lastMessageTimestamp));
+    }
+
+    for (final community in communities) {
+      items.add(CommunityHomeItem(community: community, activityTime: 0));
+    }
+
+    for (final newsletter in newsletters) {
+      items.add(NewsletterHomeItem(newsletter: newsletter, activityTime: 0));
+    }
+
+    for (final support in supports) {
+      items.add(SupportHomeItem(support: support, activityTime: 0));
+    }
+
+    for (final info in infosApp) {
+      items.add(InfoAppHomeItem(info: info, activityTime: 0));
+    }
+
+    items.sort((a, b) => b.activityTime.compareTo(a.activityTime));
+
+    homeItems = items;
   }
 
   @override
@@ -286,56 +414,72 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         backgroundColor: isWebOrWindows ? context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : null,
         appBar: defaultTargetPlatform == TargetPlatform.windows
           ? null
-          : isSelecting
+          : selectionType == SelectionType.newsletters
             ? SelectionAppBar(
-                selectedChatsCount: selectedChats.length,
+                selectedChatsCount: selectedNewsletterIds.length,
                 onClearSelection: clearSelection,
-                onDelete: _handleDeleteSelectedChats,
-                onPin: _handlePinSelectedChats,
-                onMute: () async {
-                  if (selectedChats.isEmpty) return;
+                onDelete: () {},
+                onMute: () {},
+                onArchive: () {},
+                isNewsletterMode: true,
+              )
+            : selectionType == SelectionType.communities
+              ? SelectionAppBar(
+                  selectedChatsCount: selectedCommunityIds.length,
+                  onClearSelection: clearSelection,
+                  onDelete: () {},
+                  onMute: () {},
+                  onArchive: () {},
+                  isCommunityMode: true,
+                )
+            : selectionType == SelectionType.chats
+              ? SelectionAppBar(
+                  selectedChatsCount: selectedChats.length,
+                  onClearSelection: clearSelection,
+                  onDelete: _handleDeleteSelectedChats,
+                  onPin: _handlePinSelectedChats,
+                  isNewsletterMode: false,
+                  onMute: () async {
+                    if (selectedChats.isEmpty) return;
 
-                  if (isMuted) {
-                    try {
-                      for (final userId in selectedChats) {
-                        await APIs.setChatMuted(
-                          userId: userId,
-                          muted: false,
-                        );
-                      }
-
-                      clearSelection();
-                    } catch (e) {
-                      log('Error unmuting chats: $e');
-                    }
-
-                    return;
-                  }
-
-                  final initialDuration = await APIs.getChatMutedDuration(selectedChats.first);
-
-                  if (!context.mounted) return;
-
-                  showNoSoundDialog(
-                    context,
-                    initialDuration,
-                        (duration) async {
+                    if (isMuted) {
                       try {
                         for (final userId in selectedChats) {
-                          await APIs.setChatMuted(userId: userId, muted: true, duration: duration);
+                          await APIs.setChatMuted(userId: userId, muted: false);
                         }
 
                         clearSelection();
                       } catch (e) {
-                        log('Error muting chats: $e');
+                        log('Error unmuting chats: $e');
                       }
-                    },
-                  );
-                },
-                onArchive: chatListType == ChatListType.archived ? _handleUnarchiveSelectedChats : _handleArchiveSelectedChats,
-                isPinned: selectedChats.isNotEmpty && selectedChats.every((id) => pinnedChats.contains(id)),
-                isMuted: selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id)),
-              )
+
+                      return;
+                    }
+
+                    final initialDuration = await APIs.getChatMutedDuration(selectedChats.first);
+
+                    if (!context.mounted) return;
+
+                    showNoSoundDialog(
+                      context,
+                      initialDuration,
+                      (duration) async {
+                        try {
+                          for (final userId in selectedChats) {
+                            await APIs.setChatMuted(userId: userId, muted: true, duration: duration);
+                          }
+
+                          clearSelection();
+                        } catch (e) {
+                          log('Error muting chats: $e');
+                        }
+                      },
+                    );
+                  },
+                  onArchive: chatListType == ChatListType.archived ? _handleUnarchiveSelectedChats : _handleArchiveSelectedChats,
+                  isPinned: selectedChats.isNotEmpty && selectedChats.every((id) => pinnedChats.contains(id)),
+                  isMuted: selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id)),
+                )
             : selectedIndex == 0
               ? HomeAppBarWidget(
                 isSearching: isSearching,
@@ -390,6 +534,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           supports: supports,
           infosApp: infosApp,
           selectedChats: selectedChats,
+          onNewsletterSelected: _toggleNewsletterSelection,
           onPageChanged: _onPageChanged,
           onItemTapped: onItemTapped,
           onGroupSelected: (group) {},
@@ -407,6 +552,10 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             });
           },
           user: widget.user,
+          selectedNewsletterIds: selectedNewsletterIds,
+          selectionType: selectionType,
+          selectedCommunityIds: selectedCommunityIds,
+          onCommunitySelected: onCommunitySelected,
         ),
         bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped) : null,
       ),

@@ -12,6 +12,7 @@ class ProfileSettingsItem extends StatelessWidget {
   final Color? titleColor;
   final Color? iconColor;
   final EdgeInsetsGeometry? padding;
+  final Widget? subtitleWidget;
 
   const ProfileSettingsItem({
     super.key,
@@ -23,6 +24,7 @@ class ProfileSettingsItem extends StatelessWidget {
     this.titleColor,
     this.iconColor,
     this.padding,
+    this.subtitleWidget,
   });
 
   @override
@@ -49,9 +51,13 @@ class ProfileSettingsItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title, style: TextStyle(color: titleColor ?? defaultTitleColor, fontSize: 17, fontWeight: FontWeight.w400)),
-                    if (subtitle != null) ...[
+                    if (subtitleWidget != null || subtitle != null) ...[
                       const SizedBox(height: 2),
-                      Text(subtitle!, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3)),
+                      subtitleWidget ??
+                        Text(
+                          subtitle!,
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3),
+                        ),
                     ],
                   ],
                 ),

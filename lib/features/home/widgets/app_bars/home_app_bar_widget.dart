@@ -15,7 +15,7 @@ import '../../../personalization/screens/favorite/favorite_message_screen.dart';
 import '../../../group/screens/new_group_screen.dart';
 import '../../../personalization/screens/settings/settings_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../screens/new_newsletter_screen.dart';
+import '../../../newsletter/screens/new_newsletter_screen.dart';
 import '../../screens/related_devices_screen.dart';
 import 'home_app_bar.dart';
 

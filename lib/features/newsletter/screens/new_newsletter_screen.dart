@@ -10,7 +10,7 @@ import '../../../../utils/popups/dialogs.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../newsletter/models/newsletter_model.dart';
+import '../models/newsletter_model.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 

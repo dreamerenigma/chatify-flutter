@@ -17,12 +17,12 @@ class VoiceTrackPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final centerY = size.height / 2;
-    final inactivePaint = Paint()..color = color..strokeWidth = 3..strokeCap = StrokeCap.round;
-    final activePaint = Paint()..color = activeColor..strokeWidth = 3..strokeCap = StrokeCap.round;
+    final inactivePaint = Paint()..color = color..strokeWidth = 2..strokeCap = StrokeCap.round;
+    final activePaint = Paint()..color = activeColor..strokeWidth = 2..strokeCap = StrokeCap.round;
 
     const markerRadius = 7.0;
-    const horizontalPadding = 0.0;
-    const barCount = 45;
+    const horizontalPadding = 0;
+    const barCount = 32;
 
     final minX = markerRadius + horizontalPadding;
     final maxX = size.width - markerRadius - horizontalPadding;
@@ -45,6 +45,6 @@ class VoiceTrackPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant VoiceTrackPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.activeColor != activeColor;
+    return oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.activeColor != activeColor || oldDelegate.markerColor != markerColor;
   }
 }

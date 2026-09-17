@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/edit_phone_screen.dart';
@@ -46,7 +47,9 @@ class ProfileForm extends StatefulWidget {
 class ProfileFormState extends State<ProfileForm> {
   late UserController userController;
   bool _isVisible = false;
+  bool _isLoadingProfileImage = false;
   double _scale = 1.3;
+  String? _profileImageUrl;
 
   @override
   void initState() {
@@ -57,6 +60,7 @@ class ProfileFormState extends State<ProfileForm> {
         _isVisible = true;
       });
     });
+    _loadProfileImage();
   }
 
   void _navigateToProfileScreen() async {
@@ -66,12 +70,65 @@ class ProfileFormState extends State<ProfileForm> {
     });
 
     await Future.delayed(const Duration(milliseconds: 300));
-    await Navigator.push(context, createPageRoute(PhotoProfileScreen(image: widget.user.image, user: widget.user)));
+
+    String? imageUrl;
+
+    if (widget.user.image.isNotEmpty) {
+      if (widget.user.image.startsWith('http://') || widget.user.image.startsWith('https://')) {
+        imageUrl = widget.user.image;
+      } else {
+        imageUrl = await APIs.getMediaUrl(widget.user.image);
+      }
+    }
+
+    if (!mounted) return;
+
+    await Navigator.push(context, createPageRoute(PhotoProfileScreen(image: imageUrl, user: widget.user)));
+
+    if (!mounted) return;
 
     setState(() {
       _scale = 1.3;
       _isVisible = true;
     });
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image;
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      setState(() {
+        _profileImageUrl = imagePath;
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoadingProfileImage = true;
+    });
+
+    try {
+      final url = await APIs.mediaService.getUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingProfileImage = false;
+      });
+
+      log('PROFILE IMAGE URL ERROR: $e');
+    }
   }
 
   @override
@@ -98,28 +155,26 @@ class ProfileFormState extends State<ProfileForm> {
                           children: [
                             widget.image != null
                               ? ClipRRect(
-                                borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .1),
-                                child: Image.file(File(widget.image!), width: DeviceUtils.getScreenHeight(context) * .18, height: DeviceUtils.getScreenHeight(context) * .18, fit: BoxFit.cover),
-                              )
+                                  borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .1),
+                                  child: Image.file(File(widget.image!), width: DeviceUtils.getScreenHeight(context) * .18, height: DeviceUtils.getScreenHeight(context) * .18, fit: BoxFit.cover),
+                                )
                               : ClipRRect(
-                                borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .1),
-                                child: widget.user.image.isNotEmpty
-                                  ? CachedNetworkImage(
+                              borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .1),
+                              child: _profileImageUrl != null
+                                ? CachedNetworkImage(
                                     width: DeviceUtils.getScreenHeight(context) * .18,
                                     height: DeviceUtils.getScreenHeight(context) * .18,
                                     fit: BoxFit.cover,
-                                    imageUrl: widget.user.image,
+                                    imageUrl: _profileImageUrl!,
                                     errorWidget: (context, url, error) => CircleAvatar(
                                       radius: DeviceUtils.getScreenHeight(context) * .075,
                                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                       child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .2, height: DeviceUtils.getScreenHeight(context) * .2),
                                     ),
                                   )
-                                  : CircleAvatar(
+                                : CircleAvatar(
                                     radius: DeviceUtils.getScreenHeight(context) * .1,
                                     backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                    foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                     child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .2, height: DeviceUtils.getScreenHeight(context) * .2),
                                   ),
                                 ),
@@ -163,8 +218,8 @@ class ProfileFormState extends State<ProfileForm> {
                                         },
                                         shape: const CircleBorder(),
                                         color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                        padding: const EdgeInsets.all(8),
-                                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.white, size: 20),
+                                        padding: const EdgeInsets.all(10),
+                                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.black, size: 20),
                                       ),
                                     ),
                                   ),
@@ -179,11 +234,14 @@ class ProfileFormState extends State<ProfileForm> {
                 _buildProfileInfo(Icons.person_outline_rounded, S.of(context).name, APIs.me.name, ChatifyColors.darkGrey, () {
                   showEnterNameBottomDialog(
                     context,
-                    APIs.me.name,
-                    (newName) {
-                      setState(() {
-                        APIs.me.name = newName;
-                      });
+                    APIs.me.name, (newName) async {
+                      APIs.me.name = newName;
+
+                      await APIs.updateUserInfo();
+
+                      if (mounted) {
+                        setState(() {});
+                      }
                     },
                   );
                 }),
@@ -225,8 +283,10 @@ class ProfileFormState extends State<ProfileForm> {
       color: ChatifyColors.transparent,
       child: InkWell(
         onTap: onTap,
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(

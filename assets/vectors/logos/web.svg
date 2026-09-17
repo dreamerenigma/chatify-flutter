@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="web.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.55726091"
+     inkscape:cx="323.00848"
+     inkscape:cy="510.53285"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4" />
+  <defs
+     id="defs1">
+    <circle
+       id="webpound-a"
+       cx="24"
+       cy="24"
+       r="24" />
+  </defs>
+  <g
+     fill="none"
+     fill-rule="evenodd"
+     id="g4">
+    <g
+       transform="matrix(2.080815,0,0,2.080815,0.02077815,0.02500201)"
+       id="g2">
+      <mask
+         id="webpound-b"
+         fill="#ffffff">
+        <use
+           xlink:href="#webpound-a"
+           id="use1" />
+      </mask>
+      <use
+         fill="#5ea7ff"
+         xlink:href="#webpound-a"
+         id="use2" />
+      <path
+         fill="#e8e8e8"
+         d="m 36.666113,17.005196 c 0,0 -5.82802,-2.378462 -7.563957,-1.189231 -1.735936,1.189231 -0.808572,6.804608 -0.808572,6.804608 0,0 -2.587168,3.707873 -1.293584,5.658036 1.293584,1.950163 4.886874,1.279802 6.905679,2.999987 2.018805,1.720184 1.180043,4.80746 1.180043,4.80746 l -0.488294,3.604446 c 0,0 5.407326,-2.423091 6.965403,-5.913996 1.558077,-3.490905 1.053375,-8.963863 1.053375,-8.963863 L 45.772394,21.951138 48.547838,12.950512 38.808304,9.8006946 37.735239,5 l -6.964746,1.9741762 -0.6294,5.2360298 5.349371,1.771141 z m -38.4768989,3.03511 c 0,0 1.9699412,-1.255984 2.23287067,-1.275971 C 2.4392489,18.611 9.4683796,19.03982 11.306232,16.375377 13.383642,13.363634 15.115339,9.3755591 15.115339,9.3755591 L 15.045758,6.3070857 4.1835504,3.6413691 Z"
+         mask="url(#webpound-b)"
+         id="path2" />
+    </g>
+    <path
+       fill="#e8e8e8"
+       d="M 26.759408,87.466836 28.487885,68.377654 14.601598,57.747067 c 0,0 -0.801965,-8.507202 9.27727,-9.70939 10.079236,-1.202188 16.289143,5.032024 16.289143,5.032024 0,0 4.00147,6.192324 2.509177,10.398958 -1.492291,4.206634 -5.353264,10.506037 -5.353264,10.506037 0,0 -0.306264,7.156473 -2.92307,10.498444 -2.616805,3.341971 -7.641446,2.993696 -7.641446,2.993696 z"
+       id="path3"
+       style="stroke-width:2.08082" />
+  </g>
+</svg>

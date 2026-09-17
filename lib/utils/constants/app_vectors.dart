@@ -145,6 +145,7 @@ class ChatifyVectors {
   static const String vk = "assets/vectors/vk.svg";
   static const String ok = "assets/vectors/ok.svg";
   static const String megaphone = "assets/vectors/megaphone.svg";
+  static const String megaphoneOutline = "assets/vectors/megaphone_outline.svg";
   static const String communityMessage = "assets/vectors/community_message.svg";
   static const String userAdd = "assets/vectors/user_add.svg";
   static const String arrowReload = "assets/vectors/arrow_reload.svg";
@@ -166,7 +167,7 @@ class ChatifyVectors {
   static const String networkThreeReference = "assets/vectors/network_three_reference.svg";
   static const String userListFilled = "assets/vectors/user_list_filled.svg";
   static const String close = "assets/vectors/close.svg";
-  static const String circleClose = "assets/vectors/circle_close.svg";
+  static const String closeCircle = "assets/vectors/close_circle.svg";
   static const String playFilled = "assets/vectors/play_filled.svg";
   static const String pauseFilled = "assets/vectors/pause_filled.svg";
   static const String pauseOutline = "assets/vectors/pause_outline.svg";
@@ -221,6 +222,7 @@ class ChatifyVectors {
   static const String wizard = "assets/vectors/wizard.svg";
   static const String resize = "assets/vectors/resize.svg";
   static const String microphone = "assets/vectors/microphone.svg";
+  static const String microphoneFilled = "assets/vectors/microphone_filled.svg";
   static const String createdCommunity = "assets/vectors/created_community.svg";
   static const String refresh = "assets/vectors/refresh.svg";
 

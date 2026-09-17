@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../api/group_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../personalization/controllers/user_controller.dart';
-import '../controllers/photo_newsletter_controller.dart';
+import '../../home/controllers/photo_newsletter_controller.dart';
 
 class PhotoNewsletterScreen extends StatefulWidget {
   final String id;
@@ -31,7 +31,7 @@ class PhotoNewsletterScreenState extends State<PhotoNewsletterScreen> {
 
   Future<void> deleteGroupPhoto() async {
     try {
-      await APIs.deleteGroupPicture(widget.id, widget.imageNewsletter);
+      await GroupApi.deleteGroupPicture(widget.id, widget.imageNewsletter);
 
       Get.find<UserController>().clearUserImage();
 

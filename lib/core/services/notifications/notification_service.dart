@@ -10,11 +10,7 @@ class NotificationService {
     String generatedGuid = uuid.v4();
 
     var initializationSettings = InitializationSettings(
-      windows: WindowsInitializationSettings(
-        appName: 'Chatify',
-        appUserModelId: 'com.inputstudios.chatify',
-        guid: generatedGuid,
-      ),
+      windows: WindowsInitializationSettings(appName: 'Chatify', appUserModelId: 'com.inputstudios.chatify', guid: generatedGuid),
     );
 
     await flutterLocalNotificationsPlugin.initialize(

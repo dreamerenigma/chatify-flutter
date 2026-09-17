@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
@@ -13,9 +12,9 @@ import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/user_model.dart';
 
 class PhotoProfileController extends GetxController {
-  RxString image = RxString('');
   final UserModel user;
   final GetStorage storage = GetStorage();
+  RxString image = RxString('');
 
   PhotoProfileController({required String image, required this.user}) {
     this.image.value = image;
@@ -28,7 +27,6 @@ class PhotoProfileController extends GetxController {
   void onInit() {
     super.onInit();
     _loadImageFromStorage();
-
     ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
       if (value.isNotEmpty) {
         sharedImagePath.value = value.first.path;
@@ -36,7 +34,6 @@ class PhotoProfileController extends GetxController {
     }, onError: (err) {
       log("getMediaStream error: $err");
     });
-
     ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
       if (value.isNotEmpty) {
         sharedImagePath.value = value.first.path;
@@ -67,29 +64,70 @@ class PhotoProfileController extends GetxController {
     }
   }
 
-  void shareImage(BuildContext context) async {
-    if (kIsWeb) {
-      if (image.isNotEmpty) SharePlus.instance.share(ShareParams(text: image.value));
-      return;
-    }
+  Future<void> shareImage(BuildContext context) async {
+    try {
+      String imageUrl = image.value;
 
-    if (image.isEmpty) return;
+      log('SHARE: initial image = $imageUrl');
 
-    final uri = Uri.parse(image.value);
-    final response = await http.get(uri);
-    final documentDirectory = await getApplicationDocumentsDirectory();
-    final file = File('${documentDirectory.path}/shared_image.png');
-    file.writeAsBytesSync(response.bodyBytes);
+      // Если в controller попал логический путь Yandex Disk,
+      // сначала получаем временный URL.
+      if (!imageUrl.startsWith('http://') &&
+          !imageUrl.startsWith('https://')) {
+        log('SHARE: resolving Yandex path...');
 
-    final box = context.findRenderObject() as RenderBox?;
-    final params = ShareParams(text: S.of(context).herePicture, files: [XFile(file.path)], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+        final resolvedUrl = await APIs.getMediaUrl(imageUrl);
 
-    final result = await SharePlus.instance.share(params);
+        if (resolvedUrl == null || resolvedUrl.isEmpty) {
+          log('SHARE: failed to resolve image URL');
+          return;
+        }
 
-    if (result.status == ShareResultStatus.success) {
-      log(S.of(context).imageSentSuccess);
-    } else if (result.status == ShareResultStatus.dismissed) {
-      log(S.of(context).userCancelSubmission);
+        imageUrl = resolvedUrl;
+
+        log('SHARE: resolved image URL = $imageUrl');
+      }
+
+      final response = await http.get(Uri.parse(imageUrl));
+
+      log('SHARE: response = ${response.statusCode}');
+
+      if (response.statusCode != 200) {
+        log('SHARE: failed to download image');
+        return;
+      }
+
+      final directory = await getTemporaryDirectory();
+
+      final file = File(
+        '${directory.path}/chatify_profile_photo.jpg',
+      );
+
+      await file.writeAsBytes(response.bodyBytes);
+
+      log('SHARE: file = ${file.path}');
+
+      final box = context.findRenderObject() as RenderBox?;
+
+      final params = ShareParams(
+        text: S.of(context).herePicture,
+        files: [
+          XFile(
+            file.path,
+            mimeType: 'image/jpeg',
+          ),
+        ],
+        sharePositionOrigin: box != null
+            ? box.localToGlobal(Offset.zero) & box.size
+            : null,
+      );
+
+      final result = await SharePlus.instance.share(params);
+
+      log('SHARE: result = ${result.status}');
+    } catch (e, stackTrace) {
+      log('SHARE ERROR: $e');
+      log('SHARE STACK: $stackTrace');
     }
   }
 

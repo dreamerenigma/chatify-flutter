@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/access_keys_screen.dart';
 import 'package:chatify/features/personalization/screens/account/email_address_screen.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
+import '../../../../api/apis.dart';
 import '../../../../data/settings_data.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -43,7 +45,10 @@ class SettingsScreenState extends State<SettingsScreen> {
   bool isSearching = false;
   bool showFirst = true;
   bool showSecond = true;
+  bool isLoadingProfileImage = false;
+  String? _profileImageUrl;
 
+  List<String> filteredSettingsOptions = [];
   List<String> settingsOptions = [
     'Account',
     'Privacy',
@@ -58,13 +63,13 @@ class SettingsScreenState extends State<SettingsScreen> {
     'Report a bug',
     'Invite friend',
   ];
-  List<String> filteredSettingsOptions = [];
 
   @override
   void initState() {
     super.initState();
     filteredSettingsOptions.addAll(settingsOptions);
     _loadState();
+    _loadProfileImage();
   }
 
   void onSearchChanged(String query) {
@@ -94,6 +99,49 @@ class SettingsScreenState extends State<SettingsScreen> {
       showFirst = emailConfirmVisible;
       showSecond = secondBlockVisible;
     });
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image;
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = imagePath;
+      });
+
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.mediaService.getUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        isLoadingProfileImage = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoadingProfileImage = false;
+      });
+
+      log('PROFILE IMAGE URL ERROR: $e');
+    }
   }
 
   Future<void> _hideFirstShowSecond() async {
@@ -168,28 +216,32 @@ class SettingsScreenState extends State<SettingsScreen> {
                     ),
                     ...[
                       if (showFirst)
-                        _buildEmailConfirm(
-                          context,
-                          title: S.of(context).confirmByEmail,
-                          subtitle: S.of(context).useYourEmailSignInAccountRecover,
-                          actionText: S.of(context).addEmailAddress,
-                          onActionTap: () async {
-                            await Navigator.push(context, createPageRoute(EmailAddressScreen()));
-                            _hideFirstShowSecond();
-                          },
-                          onClose: _hideFirstShowSecond,
+                        Obx(() =>
+                          _buildEmailConfirm(
+                            context,
+                            title: S.of(context).confirmByEmail,
+                            subtitle: S.of(context).useYourEmailSignInAccountRecover,
+                            actionText: S.of(context).addEmailAddress,
+                            onActionTap: () async {
+                              await Navigator.push(context, createPageRoute(EmailAddressScreen()));
+                              _hideFirstShowSecond();
+                            },
+                            onClose: _hideFirstShowSecond,
+                          ),
                         )
                       else if (showSecond)
-                        _buildEmailConfirm(
-                          context,
-                          title: S.of(context).protectYourAccount,
-                          subtitle: S.of(context).signInFaceRecognitionFingerprint,
-                          actionText: S.of(context).createAccessKey,
-                          onActionTap: () async {
-                            await Navigator.push(context, createPageRoute(AccessKeysScreen()));
-                            _hideSecond();
-                          },
-                          onClose: _hideSecond,
+                        Obx(() =>
+                          _buildEmailConfirm(
+                            context,
+                            title: S.of(context).protectYourAccount,
+                            subtitle: S.of(context).signInFaceRecognitionFingerprint,
+                            actionText: S.of(context).createAccessKey,
+                            onActionTap: () async {
+                              await Navigator.push(context, createPageRoute(AccessKeysScreen()));
+                              _hideSecond();
+                            },
+                            onClose: _hideSecond,
+                          ),
                         ),
                     ],
                     SizedBox(height: 10),
@@ -208,14 +260,19 @@ class SettingsScreenState extends State<SettingsScreen> {
                               child: CachedNetworkImage(
                                 width: DeviceUtils.getScreenHeight(context) * .08,
                                 height: DeviceUtils.getScreenHeight(context) * .08,
-                                imageUrl: widget.user.image,
+                                imageUrl: _profileImageUrl ?? '',
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
-                                errorWidget: (context, url, error) => CircleAvatar(
-                                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .08, height: DeviceUtils.getScreenHeight(context) * .08),
-                                ),
+                                errorWidget: (context, url, error) {
+                                  return CircleAvatar(
+                                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                    child: SvgPicture.asset(
+                                      ChatifyVectors.profile,
+                                      width: DeviceUtils.getScreenHeight(context) * .08,
+                                      height: DeviceUtils.getScreenHeight(context) * .08,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             const SizedBox(width: 16),

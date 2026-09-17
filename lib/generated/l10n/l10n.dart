@@ -6364,11 +6364,21 @@ class S {
     );
   }
 
-  /// `Members can propose existing groups to admins for review and add new groups themselves. Open community settings`
+  /// `Members can propose existing groups to admins for review and add new groups themselves. Open`
   String get membersCanProposeExistingGroups {
     return Intl.message(
-      'Members can propose existing groups to admins for review and add new groups themselves. Open community settings',
+      'Members can propose existing groups to admins for review and add new groups themselves. Open',
       name: 'membersCanProposeExistingGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` community settings`
+  String get openCommunitySettings {
+    return Intl.message(
+      ' community settings',
+      name: 'openCommunitySettings',
       desc: '',
       args: [],
     );

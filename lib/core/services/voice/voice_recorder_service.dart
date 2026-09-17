@@ -1,5 +1,6 @@
-import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import '../../../stubs/sound_real.dart';
+import '../../../utils/constants/app_directories.dart';
 
 class VoiceRecorderService {
   final AudioRecorder _recorder = AudioRecorder();
@@ -7,14 +8,19 @@ class VoiceRecorderService {
   String? get recordedFilePath => _recordedFilePath;
 
   Future<String> start() async {
-    final directory = await getTemporaryDirectory();
-    final path = '${directory.path}/chatify_voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    final voiceDirectory = await AppDirectories.getVoiceDirectory();
 
-    await _recorder.start(const RecordConfig(encoder: AudioEncoder.aacLc), path: path);
+    if (voiceDirectory == null) {
+      throw Exception('Voice directory is unavailable');
+    }
 
-    _recordedFilePath = path;
+    final filePath = path.join(voiceDirectory, 'voice_${DateTime.now().millisecondsSinceEpoch}.m4a');
 
-    return path;
+    await _recorder.start(const RecordConfig(encoder: AudioEncoder.aacLc), path: filePath);
+
+    _recordedFilePath = filePath;
+
+    return filePath;
   }
 
   Future<void> pause() async {

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,6 +19,7 @@ import '../../../../core/enums/message_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../community/widgets/shimmers/shimmer_effect.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
 import '../../../home/widgets/dialogs/profile_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -45,8 +47,57 @@ class ChatUserCard extends StatefulWidget {
 }
 
 class ChatUserCardState extends State<ChatUserCard> {
-  MessageModel? message;
+  bool isLoadingProfileImage = false;
   bool isLongPressed = false;
+  MessageModel? message;
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = imagePath;
+      });
+
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.mediaService.getUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        isLoadingProfileImage = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoadingProfileImage = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,35 +180,50 @@ class ChatUserCardState extends State<ChatUserCard> {
                             },
                             mouseCursor: SystemMouseCursors.basic,
                             borderRadius: BorderRadius.circular(30),
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                                height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                                imageUrl: widget.user.image,
-                                fit: BoxFit.cover,
-                                errorWidget: (context, url, error) => CircleAvatar(
-                                  backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                                  foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                                  child: SvgPicture.asset(ChatifyVectors.person, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
-                                ),
-                              ),
+                            child: FutureBuilder<String?>(
+                              future: APIs.mediaService.getUrl(widget.user.image),
+                              builder: (context, snapshot) {
+                                final size = isWindows ? 46.0 : DeviceUtils.getScreenHeight(context) * .055;
+
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return ClipOval(child: ShimmerEffect(width: size, height: size, borderRadius: size, angle: -0.16));
+                                }
+
+                                final url = snapshot.data;
+
+                                if (url == null || url.isEmpty) {
+                                  return ClipOval(child: _profileImageError(context, size));
+                                }
+
+                                return ClipOval(
+                                  child: CachedNetworkImage(
+                                    width: size,
+                                    height: size,
+                                    imageUrl: url,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, url, error) {
+                                      return _profileImageError(context, size);
+                                    },
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           if (!isWindows && widget.isSelected)
-                          Positioned(
-                            bottom: -3,
-                            right: -2,
-                            child: Container(
-                              width: 23,
-                              height: 23,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                            Positioned(
+                              bottom: -3,
+                              right: -2,
+                              child: Container(
+                                width: 23,
+                                height: 23,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                  border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                                ),
+                                child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                               ),
-                              child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                             ),
-                          ),
                         ],
                       ),
                       const SizedBox(width: 16),
@@ -170,8 +236,14 @@ class ChatUserCardState extends State<ChatUserCard> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${widget.user.name}${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
-                                    style: TextStyle(fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Helvetica', fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold),
+                                    widget.user.id == FirebaseAuth.instance.currentUser?.uid
+                                      ? '${widget.user.phoneNumber} (Вы)'
+                                      : '${widget.user.name}${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
+                                    style: TextStyle(
+                                      fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                      fontFamily: 'Helvetica',
+                                      fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -216,6 +288,21 @@ class ChatUserCardState extends State<ChatUserCard> {
     );
   }
 
+  Widget _profileImageError(BuildContext context, double size) {
+    return Container(
+      width: size,
+      height: size,
+      color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+      alignment: Alignment.center,
+      child: SvgPicture.asset(
+        ChatifyVectors.person,
+        width: 22,
+        height: 22,
+        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
+      ),
+    );
+  }
+
   Widget _buildCallPreview(BuildContext context) {
     final call = message!;
     final isMyCall = call.fromId == APIs.user.uid;
@@ -243,12 +330,7 @@ class ChatUserCardState extends State<ChatUserCard> {
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-              fontSize: ChatifySizes.fontSizeSm,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Roboto',
-            ),
+            style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
           ),
         ),
       ],
@@ -340,12 +422,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                         ),
                         TextSpan(
                           text: message!.msg,
-                          style: TextStyle(
-                            color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-                            fontWeight: FontWeight.w400,
-                            fontSize: ChatifySizes.fontSizeSm,
-                            fontFamily: 'Roboto',
-                          ),
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontSize: ChatifySizes.fontSizeSm),
                         ),
                       ],
                     ),

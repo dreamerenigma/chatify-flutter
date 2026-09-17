@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../provider/wallpaper_provider.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -167,7 +168,7 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (widget.imagePath.isEmpty) {
-                      Dialogs.showSnackbar(context, S.of(context).wallpaperImageSelected);
+                      CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).wallpaperImageSelected, icon: const Icon(Icons.check_circle_rounded), iconColor: ChatifyColors.success, position: SnackBarPositionType.bottom);
                       return;
                     }
 
@@ -177,7 +178,7 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
 
                     if (!context.mounted) return;
 
-                    Dialogs.showSnackbar(context, S.of(context).wallpaperInstalled);
+                    CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).wallpaperInstalled, icon: const Icon(Icons.check_circle_rounded), iconColor: ChatifyColors.success,  position: SnackBarPositionType.bottom);
 
                     Navigator.pop(context, true);
                   },

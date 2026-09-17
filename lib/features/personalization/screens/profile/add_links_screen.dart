@@ -28,14 +28,7 @@ class AddLinksScreenState extends State<AddLinksScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).links, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
@@ -87,12 +80,12 @@ class AddLinksScreenState extends State<AddLinksScreen> {
           child: Text(
             S.of(context).addingLinksAppProfileContacts,
             style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 40),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             children: [
               _buildSocialLinkRow(
@@ -116,14 +109,12 @@ class AddLinksScreenState extends State<AddLinksScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
-        const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: RichText(
             text: TextSpan(
               children: [
-                TextSpan(text: S.of(context).controlWhoSeeYourLinks, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.7)),
+                TextSpan(text: S.of(context).controlWhoSeeYourLinks, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.6)),
                 TextSpan(
                   text: S.of(context).privacySettings,
                   style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
@@ -131,10 +122,7 @@ class AddLinksScreenState extends State<AddLinksScreen> {
                     Navigator.push(context, createPageRoute(LinksScreen()));
                   },
                 ),
-                TextSpan(
-                  text: '.',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
-                ),
+                TextSpan(text: '.', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400)),
               ],
             ),
           ),
@@ -154,8 +142,8 @@ class AddLinksScreenState extends State<AddLinksScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SvgPicture.asset(iconAsset, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-            const SizedBox(width: 28),
+            SvgPicture.asset(iconAsset, width: 25, height: 25, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+            const SizedBox(width: 30),
             Expanded(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500))),
             Icon(Icons.add, size: 22, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
           ],

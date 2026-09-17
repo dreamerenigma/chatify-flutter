@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:just_audio/just_audio.dart';
+import '../../../../api/apis.dart';
 import '../../../../core/services/voice/voice_recorder_service.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../models/user_model.dart';
 import '../controls/voice_recording_control.dart';
 import '../widget/voice_record_track_widget.dart';
 
-void voiceRecordBottomSheetDialog(BuildContext context) {
+void showVoiceRecordBottomSheetDialog(BuildContext context, UserModel user) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -20,13 +22,25 @@ void voiceRecordBottomSheetDialog(BuildContext context) {
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
     builder: (_) {
-      return const VoiceRecordBottomSheetContent();
+      return VoiceRecordBottomSheetContent(
+        user: user,
+        onRecordingFinished: (String localPath) async {
+          await APIs.sendVoiceMessage(user, localPath);
+        },
+      );
     },
   );
 }
 
 class VoiceRecordBottomSheetContent extends StatefulWidget {
-  const VoiceRecordBottomSheetContent({super.key});
+  final UserModel user;
+  final Future<void> Function(String localPath) onRecordingFinished;
+
+  const VoiceRecordBottomSheetContent({
+    super.key,
+    required this.user,
+    required this.onRecordingFinished,
+  });
 
   @override
   State<VoiceRecordBottomSheetContent> createState() => _VoiceRecordBottomSheetContentState();
@@ -385,6 +399,76 @@ class _VoiceRecordBottomSheetContentState extends State<VoiceRecordBottomSheetCo
     log('==========================================');
   }
 
+  Future<void> _sendVoiceMessage() async {
+    log('========== SEND VOICE MESSAGE ==========');
+
+    try {
+      final isRecording = await _recorderService.isRecording();
+
+      log('isRecording before send: $isRecording');
+      log('Current recorded path: $_recordedFilePath');
+
+      _recordTimer?.cancel();
+      _recordTimer = null;
+
+      _waveController.stop();
+
+      if (isRecording) {
+        log('Stopping recorder before sending...');
+
+        final stoppedPath = await _recorderService.stop();
+
+        log('Recorder stopped. Path: $stoppedPath');
+
+        if (stoppedPath != null && stoppedPath.isNotEmpty) {
+          _recordedFilePath = stoppedPath;
+        }
+      }
+
+      final path = _recordedFilePath;
+
+      log('Final voice path: $path');
+
+      if (path == null || path.isEmpty) {
+        log('❌ Voice path is null or empty');
+        return;
+      }
+
+      final file = File(path);
+      final exists = await file.exists();
+
+      log('Voice file exists: $exists');
+
+      if (!exists) {
+        log('❌ Voice file does not exist: $path');
+        return;
+      }
+
+      final fileSize = await file.length();
+
+      log('Voice file size: $fileSize bytes');
+
+      if (fileSize == 0) {
+        log('❌ Voice file is empty');
+        return;
+      }
+
+      log('Voice file is ready to upload: $path');
+
+      if (!mounted) return;
+
+      await widget.onRecordingFinished(path);
+
+      if (!mounted) return;
+
+      Navigator.pop(context);
+    } catch (e, stack) {
+      log('❌ SEND VOICE MESSAGE ERROR: $e', stackTrace: stack);
+    }
+
+    log('==========================================');
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -423,6 +507,7 @@ class _VoiceRecordBottomSheetContentState extends State<VoiceRecordBottomSheetCo
                   _pauseRecording();
                 }
               },
+              onSend: _sendVoiceMessage,
             ),
           ],
         ),

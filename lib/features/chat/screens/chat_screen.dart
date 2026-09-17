@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
 import '../../../core/enums/call_type.dart';
+import '../../../core/enums/message_type.dart';
 import '../../../core/enums/selection_action_mode_type.dart';
 import '../../../core/services/calls/agora_call_service.dart';
 import '../../../generated/l10n/l10n.dart';
@@ -543,7 +544,19 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                 _buildReplyPreview(replyMessage!, replyUser!),
               Padding(
                 padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
-                child: ChatInput(focusNode: inputFocusNode, user: widget.user, onToggleEmojiKeyboard: toggleEmojiKeyboard, isReplyVisible: replyMessage != null),
+                child: ChatInput(
+                  focusNode: inputFocusNode,
+                  user: widget.user,
+                  onToggleEmojiKeyboard: toggleEmojiKeyboard,
+                  isReplyVisible: replyMessage != null,
+                  onSendMessage: (text) async {
+                    if (list.isEmpty) {
+                      APIs.sendFirstMessage(widget.user, text, MessageType.text);
+                    } else {
+                      APIs.sendMessage(widget.user, text, MessageType.text);
+                    }
+                  },
+                ),
               ),
             ],
           ),

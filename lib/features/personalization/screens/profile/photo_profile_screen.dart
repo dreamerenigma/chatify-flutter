@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera/camera.dart';
 import 'package:chatify/utils/popups/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'dart:developer';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
@@ -13,10 +19,14 @@ import '../../controllers/user_controller.dart';
 import '../../widgets/dialogs/edit_image_bottom_dialog.dart';
 
 class PhotoProfileScreen extends StatefulWidget {
-  final String image;
+  final String? image;
   final UserModel user;
 
-  const PhotoProfileScreen({super.key, required this.image, required this.user});
+  const PhotoProfileScreen({
+    super.key,
+    required this.image,
+    required this.user,
+  });
 
   @override
   State<PhotoProfileScreen> createState() => PhotoProfileScreenState();
@@ -29,7 +39,14 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
 
   Future<void> deleteProfilePhoto() async {
     try {
-      await APIs.deleteProfilePhoto(widget.user.id, widget.image);
+      final image = widget.image;
+
+      if (image == null || image.isEmpty) {
+        log('Profile photo path is empty');
+        return;
+      }
+
+      await APIs.deleteProfilePhoto(widget.user.id, image);
 
       Get.find<UserController>().clearUserImage();
 
@@ -67,9 +84,39 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
     }
   }
 
+  Future<void> _shareProfilePhoto() async {
+    try {
+      final imageUrl = widget.image;
+
+      if (imageUrl == null || imageUrl.isEmpty) {
+        log('Share profile photo: image URL is empty');
+        return;
+      }
+
+      final response = await http.get(Uri.parse(imageUrl));
+
+      if (response.statusCode != 200) {
+        log('Share profile photo: failed to download image: ${response.statusCode}');
+        return;
+      }
+
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/profile_photo.jpg');
+
+      await file.writeAsBytes(response.bodyBytes);
+
+      final xFile = XFile(file.path, mimeType: 'image/jpeg');
+
+      await SharePlus.instance.share(ShareParams(files: [xFile], text: S.of(context).profilePhoto));
+    } catch (e, stackTrace) {
+      log('Share profile photo error: $e');
+      log('$stackTrace');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PhotoProfileController(image: widget.user.image, user: widget.user));
+    final controller = Get.put(PhotoProfileController(image: widget.image ?? '', user: widget.user));
     final currentUser = APIs.auth.currentUser;
 
     return Scaffold(
@@ -79,18 +126,12 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: ChatifyColors.black,
-                boxShadow: [
-                  BoxShadow(
-                    color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
               ),
               child: AppBar(
+                titleSpacing: 10,
                 backgroundColor: ChatifyColors.transparent,
-                title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
@@ -100,13 +141,13 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
                 actions: [
                   if (currentUser != null && currentUser.uid == widget.user.id)
                   IconButton(
-                    icon: const Icon(Icons.edit),
+                    icon: const Icon(Icons.mode_edit_outlined),
                     onPressed: () {
                       showEditPhotoBottomSheet(context, controller.onImagePicked, () => deleteProfilePhoto());
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.share),
+                    icon: const Icon(Icons.share_outlined, size: 26),
                     onPressed: () {
                       controller.shareImage(context);
                     },
@@ -119,31 +160,28 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
       body: Container(
         color: ChatifyColors.black,
         child: Center(
-          child: Obx(() {
-            final image = controller.image.value;
-            final hasImage = controller.sharedImagePath.value.isNotEmpty || image.isNotEmpty;
+          child: Builder(
+            builder: (context) {
+              final imageUrl = widget.image;
+              final hasImage = imageUrl != null && imageUrl.isNotEmpty;
 
-            return GestureDetector(
-              onDoubleTapDown: (details) => _doubleTapDetails = details,
-              onDoubleTap: _handleDoubleTap,
-              child: InteractiveViewer(
-                panEnabled: true,
-                scaleEnabled: true,
-                transformationController: transformationController,
-                minScale: 1.0,
-                maxScale: 4.0,
-                child: hasImage
-                  ? CachedNetworkImage(
-                      imageUrl: widget.user.image,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      height: double.infinity,
-                    )
-                  : Text(S.of(context).noProfilePhoto, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd),
+              return GestureDetector(
+                onDoubleTapDown: (details) => _doubleTapDetails = details,
+                onDoubleTap: _handleDoubleTap,
+                child: InteractiveViewer(
+                  panEnabled: true,
+                  scaleEnabled: true,
+                  transformationController: transformationController,
+                  minScale: 1,
+                  maxScale: 4,
+                  child: hasImage
+                    ? CachedNetworkImage(imageUrl: widget.image!, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
+                    : Text(S.of(context).noProfilePhoto, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ),
       ),
     );

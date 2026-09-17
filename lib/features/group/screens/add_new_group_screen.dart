@@ -13,6 +13,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../api/group_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../../utils/popups/dialogs.dart';
@@ -159,8 +160,8 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                                     controller.image.value = '';
                                   }
                                 },
-                                    () {
-                                  APIs.deleteGroupPicture('temporaryId', imageUrl);
+                                () {
+                                  GroupApi.deleteGroupPicture('temporaryId', imageUrl);
                                 },
                                 'temporaryId',
                                 imageUrl,
@@ -360,7 +361,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
               lastMessageTimestamp: 0,
             );
 
-            final success = await APIs.createGroup(context, newGroup, File(imagePath!));
+            final success = await GroupApi.createGroup(context, newGroup, File(imagePath!));
 
             if (success) {
               Navigator.pop(context);

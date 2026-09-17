@@ -3,10 +3,10 @@
 /// This class contains all the App Images in String formats.
 class ChatifyImages {
   /// -- App Logos
-  static const String appLogoSplash = "assets/logos/chatify-splash-logo.png";
-  static const String appLogoLight = "assets/logos/chatify-logo-light.png";
-  static const String appLogoDark = "assets/logos/chatify-logo-dark.png";
-  static const String appLogoGrey = "assets/logos/chatify-logo-grey.png";
+  static const String appLogoSplash = "assets/images/logos/chatify-splash-logo.png";
+  static const String appLogoLight = "assets/images/logos/chatify-logo-light.png";
+  static const String appLogoDark = "assets/images/logos/chatify-logo-dark.png";
+  static const String appLogoGrey = "assets/images/logos/chatify-logo-grey.png";
 
   /// -- Logos
   static const String google = "assets/icons/auth/google.png";
@@ -18,14 +18,14 @@ class ChatifyImages {
   static const String camera = "assets/images/camera.png";
 
   /// -- Background images
-  static const String helpBackgroundDarkV1 = "assets/background/bg_help_dark_v1.png";
-  static const String helpBackgroundDarkV2 = "assets/background/bg_help_dark_v2.png";
-  static const String videoCallBackground = "assets/background/bg_video_call.png";
-  static const String chatBackgroundLight = "assets/background/bg_chat_light.png";
-  static const String chatBackgroundDark = "assets/background/bg_chat_dark.png";
-  static const String groupBackgroundLight = "assets/background/bg_group_light.png";
-  static const String groupBackgroundDark = "assets/background/bg_group_dark.png";
-  static const String callBackgroundDark = "assets/background/bg_call_dark.png";
+  static const String helpBackgroundDarkV1 = "assets/images/background/bg_help_dark_v1.png";
+  static const String helpBackgroundDarkV2 = "assets/images/background/bg_help_dark_v2.png";
+  static const String videoCallBackground = "assets/images/background/bg_video_call.png";
+  static const String chatBackgroundLight = "assets/images/background/bg_chat_light.png";
+  static const String chatBackgroundDark = "assets/images/background/bg_chat_dark.png";
+  static const String groupBackgroundLight = "assets/images/background/bg_group_light.png";
+  static const String groupBackgroundDark = "assets/images/background/bg_group_dark.png";
+  static const String callBackgroundDark = "assets/images/background/bg_call_dark.png";
 
   /// -- Other
   static const String community = "assets/images/community.png";

@@ -143,15 +143,7 @@ class SelectionChatAppBar extends StatelessWidget implements PreferredSizeWidget
                           if (selectedMessages.isNotEmpty) {
                             final message = list[selectedMessages.first];
 
-                            Navigator.push(
-                              context,
-                              createPageRoute(
-                                MessageDetailsScreen(
-                                  message: message,
-                                  messages: list.cast<MessageModel>(),
-                                ),
-                              ),
-                            );
+                            Navigator.push(context, createPageRoute(MessageDetailsScreen(message: message, messages: list.cast<MessageModel>())));
                           }
                         },
                       ),

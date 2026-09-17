@@ -4,7 +4,7 @@ import 'package:chatify/features/calls/screens/schedule_call_screen.dart';
 import 'package:chatify/features/calls/screens/scheduled_calls_screen.dart';
 import 'package:chatify/features/calls/screens/select_contact_screen.dart';
 import 'package:chatify/features/calls/widgets/dialog/clear_calls_dialog.dart';
-import 'package:chatify/features/community/screens/community_screen.dart';
+import 'package:chatify/features/community/screens/communities_screen.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,7 +63,7 @@ class CallsScreenState extends State<CallsScreen> {
         Navigator.push(context, createPageRoute(StatusScreen(user: APIs.me)));
         break;
       case 2:
-        Navigator.push(context, createPageRoute(CommunityScreen(user: APIs.me)));
+        Navigator.push(context, createPageRoute(CommunitiesScreen(user: APIs.me)));
         break;
       case 3:
         break;

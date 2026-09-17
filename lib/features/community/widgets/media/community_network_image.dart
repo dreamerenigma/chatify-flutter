@@ -22,7 +22,7 @@ class CommunityNetworkImage extends StatelessWidget {
     required this.height,
     required this.isWindows,
     this.borderRadius,
-    this.angle = -0.15,
+    this.angle = -0.16,
   });
 
   @override

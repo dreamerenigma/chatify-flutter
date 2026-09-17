@@ -44,13 +44,13 @@ class CreatedCommunityScreen extends StatelessWidget {
                   SizedBox(height: DeviceUtils.getScreenHeight(context) * .15),
                   Center(child: SvgPicture.asset(ChatifyVectors.createdCommunity, height: 150)),
                   const SizedBox(height: 20),
-                  Text(S.of(context).createNewCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.bold,), textAlign: TextAlign.center),
+                  Text(S.of(context).createNewCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                   const SizedBox(height: 10),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       S.of(context).organizeCommunicationEducational,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey),
+                      style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -67,7 +67,7 @@ class CreatedCommunityScreen extends StatelessWidget {
                         const SizedBox(width: 5),
                         Padding(
                           padding: const EdgeInsets.only(top: 2),
-                          child: const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.blue, size: 13),
+                          child: Icon(Icons.arrow_forward_ios_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 13),
                         ),
                       ],
                     ),
@@ -83,7 +83,7 @@ class CreatedCommunityScreen extends StatelessWidget {
                           Navigator.push(context, createPageRoute(NewCommunityScreen(onCommunitySelected: onCommunitySelected)));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: ChatifyColors.blue,
+                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           side: BorderSide.none,

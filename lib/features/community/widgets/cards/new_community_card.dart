@@ -15,9 +15,11 @@ class NewCommunityCard extends StatelessWidget {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
         onTap: onTap,
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           child: Row(
@@ -51,7 +53,7 @@ class NewCommunityCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              Text(S.of(context).newCommunity, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+              Text(S.of(context).newCommunity, style: TextStyle(color: ChatifyColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
             ],
           ),
         ),

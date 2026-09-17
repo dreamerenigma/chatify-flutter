@@ -3,13 +3,14 @@ import 'package:chatify/features/community/models/community_model.dart';
 import '../../../home/widgets/cards/home_community_card.dart';
 import '../cards/community_card.dart';
 
-class CommunityList extends StatefulWidget {
+class CommunityList extends StatelessWidget {
   final List<CommunityModel> communities;
   final bool isHomeScreen;
   final bool isValidDate;
   final String fileToSend;
-  final Function(CommunityModel) onCommunitySelected;
-  final CommunityModel? selectedCommunity;
+  final bool isSelectionMode;
+  final Set<String> selectedCommunityIds;
+  final ValueChanged<CommunityModel> onCommunitySelected;
 
   const CommunityList({
     super.key,
@@ -18,66 +19,41 @@ class CommunityList extends StatefulWidget {
     this.isValidDate = false,
     this.fileToSend = '',
     required this.onCommunitySelected,
-    this.selectedCommunity,
+    this.isSelectionMode = false,
+    this.selectedCommunityIds = const {},
   });
 
   @override
-  State<CommunityList> createState() => _CommunityListState();
-}
-
-class _CommunityListState extends State<CommunityList> {
-  int? selectedIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.selectedCommunity != null) {
-      selectedIndex = widget.communities.indexWhere((c) => c.id == widget.selectedCommunity!.id);
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant CommunityList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.selectedCommunity?.id != oldWidget.selectedCommunity?.id) {
-      setState(() {
-        selectedIndex = widget.selectedCommunity != null ? widget.communities.indexWhere((c) => c.id == widget.selectedCommunity!.id) : null;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return widget.communities.isEmpty ? const SizedBox.shrink() : SingleChildScrollView(
+    if (communities.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SingleChildScrollView(
       child: ListView.builder(
-        itemCount: widget.communities.length,
+        itemCount: communities.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          final community = widget.communities[index];
-          final isSelected = selectedIndex == index;
+          final community = communities[index];
+          final isSelected = selectedCommunityIds.contains(community.id);
 
           return Padding(
-            padding: EdgeInsets.only(bottom: index == widget.communities.length - 1 ? 0 : 6),
-            child: widget.isHomeScreen
+            padding: EdgeInsets.only(bottom: index == communities.length - 1 ? 0 : 6),
+            child: isHomeScreen
               ? HomeCommunityCard(
                   community: community,
                   isSelected: isSelected,
-                  isValidDate: widget.isValidDate,
-                  fileToSend: widget.fileToSend,
-                  onCommunitySelected: (_) {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                    widget.onCommunitySelected(community);
-                  },
+                  isSelectionMode: isSelectionMode,
+                  isValidDate: isValidDate,
+                  fileToSend: fileToSend,
+                  onCommunitySelected: onCommunitySelected,
                 )
               : CommunityCard(
                   onTap: () {},
                   community: community,
-                  isValidDate: widget.isValidDate,
-                  fileToSend: widget.fileToSend,
+                  isValidDate: isValidDate,
+                  fileToSend: fileToSend,
                 ),
           );
         },

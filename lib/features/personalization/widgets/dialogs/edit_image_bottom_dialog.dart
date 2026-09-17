@@ -1,119 +1,90 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
-import '../../../../../utils/constants/app_images.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../controllers/user_controller.dart';
+import '../../../../utils/constants/app_vectors.dart';
+import '../../../community/widgets/dialogs/delete_confirmation_dialog.dart';
+import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import '../images/profile_photo_picker.dart';
+import '../options/profile_photo_option.dart';
 
 void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePicked, VoidCallback onDeletePressed) {
-  final mq = MediaQuery.of(context).size;
-
   showModalBottomSheet(
     context: context,
+    showDragHandle: false,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(26))),
     builder: (_) {
-      return ListView(
-        shrinkWrap: true,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: mq.height * .03, left: mq.height * .03),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          const SizedBox(height: 14),
+          Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: 18),
+          ScrollConfiguration(
+            behavior: NoGlowScrollBehavior(),
+            child: ListView(
+              shrinkWrap: true,
               children: [
-                Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context, onImagePicked, onDeletePressed);
-                  },
+                Padding(
+                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.height * .01, right: MediaQuery.of(context).size.height * .01, bottom: MediaQuery.of(context).size.height * .01),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: const Icon(FluentIcons.delete_24_regular),
+                            onPressed: () {
+                              showDeleteConfirmationDialog(context, onImagePicked, onDeletePressed);
+                            },
+                          ),
+                        ),
+                      ),
+                      Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: const Icon(FluentIcons.dismiss_24_regular, size: 26),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  children: [
+                    ProfilePhotoOption(
+                      icon: Icon(Icons.camera_alt_outlined, color: ChatifyColors.darkGrey, size: 24),
+                      label: S.of(context).camera,
+                      onTap: () => handleContainerTap,
+                    ),
+                    ProfilePhotoOption(
+                      icon: Icon(Icons.photo_outlined, color: ChatifyColors.darkGrey, size: 24),
+                      label: S.of(context).gallery,
+                      onTap: () => handleContainerTap,
+                    ),
+                    ProfilePhotoOption(
+                      icon: SvgPicture.asset(ChatifyVectors.avatar, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                      label: S.of(context).avatar,
+                      onTap: () => handleContainerTap,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          SizedBox(height: mq.height * .03),
-          Padding(
-            padding: EdgeInsets.only(bottom: mq.height * .05),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ChatifyColors.white,
-                    shape: const CircleBorder(),
-                    fixedSize: Size(mq.width * .1, mq.height * .1),
-                  ),
-                  onPressed: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      onImagePicked(image.path);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Image(image: AssetImage(ChatifyImages.gallery)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ChatifyColors.white,
-                    shape: const CircleBorder(),
-                    fixedSize: Size(mq.width * .1, mq.height * .1),
-                  ),
-                  onPressed: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
-                    if (image != null) {
-                      onImagePicked(image.path);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Image(image: AssetImage(ChatifyImages.camera)),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showDeleteConfirmationDialog(BuildContext context, Function(String?) onImagePicked, VoidCallback onDeletePressed) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(S.of(context).deleteProfilePhoto),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: ChatifyColors.blue,
-              backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            ),
-            child: Text(S.of(context).cancel, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
-          ),
-          TextButton(
-            onPressed: () {
-              onImagePicked(null);
-              onDeletePressed();
-              Navigator.pop(context);
-              Navigator.pop(context);
-
-              Get.find<UserController>().clearUserImage();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: ChatifyColors.blue,
-              backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            ),
-            child: Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.blue, fontSize: ChatifySizes.fontSizeMd)),
           ),
         ],
       );

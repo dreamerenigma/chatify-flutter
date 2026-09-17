@@ -55,7 +55,7 @@ class _UserStatusScreenState extends State<UserStatusScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StatusHeaderWidget(user: widget.user, userStatus: widget.userStatus, statusImageUrl: widget.statusImageUrl, onAddStatus: () => showAddStatusBottomDialog(context)),
+          StatusHeaderWidget(user: widget.user, userStatus: widget.userStatus, statusImageUrl: widget.statusImageUrl, profileImageUrl: widget.statusImageUrl, onAddStatus: () => showAddStatusBottomDialog(context)),
           CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
           const SizedBox(height: 16),
           EncryptionInfoText(firstText: S.of(context).statusUpdatesEncryption, linkText: S.of(context).endToEndEncryption, thirdText: 'Они исчезнуть через 24 часа'),

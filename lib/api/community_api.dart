@@ -44,7 +44,7 @@ class CommunityApi {
           CustomIconSnackBar.showAnimatedSnackBar(
             context,
             S.of(context).profileUpdated,
-            icon: SvgPicture.asset(ChatifyVectors.circleClose, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+            icon: SvgPicture.asset(ChatifyVectors.closeCircle, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
             iconColor: ChatifyColors.error);
           Dialogs.showSnackbar(context, 'Failed to upload image.');
           return false;
@@ -67,7 +67,7 @@ class CommunityApi {
     try {
       final ext = file.path.split('.').last.toLowerCase();
       final path = 'communities/$communityId.$ext';
-      final imagePath = await mediaService.uploadImage(file: file, path: path);
+      final imagePath = await mediaService.uploadFile(file: file, path: path);
 
       if (imagePath == null) {
         log('Failed to upload community image: $path');

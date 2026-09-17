@@ -8,6 +8,7 @@ class ChatifyRoutes {
   static const calls = '/calls';
   static const chat = '/chat';
   static const community = '/community';
+  static const communities = '/communities';
   static const status = '/status';
   static const profile = '/profile';
   static const settings = '/settings';

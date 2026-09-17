@@ -1,6 +1,6 @@
 import 'package:chatify/features/authentication/screens/add_account_screen.dart';
 import 'package:chatify/features/authentication/screens/login_screen.dart';
-import 'package:chatify/features/community/screens/community_screen.dart';
+import 'package:chatify/features/community/screens/communities_screen.dart';
 import 'package:chatify/features/group/screens/new_group_screen.dart';
 import 'package:chatify/features/status/screens/status_screen.dart';
 import 'package:chatify/routes/routes.dart';
@@ -8,8 +8,9 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import '../api/apis.dart';
 import '../features/calls/screens/calls_screen.dart';
+import '../features/community/screens/community_screen.dart';
 import '../features/home/screens/home_screen.dart';
-import '../features/home/screens/new_newsletter_screen.dart';
+import '../features/newsletter/screens/new_newsletter_screen.dart';
 import '../features/personalization/screens/account/account_screen.dart';
 import '../features/personalization/screens/chats/chats_screen.dart';
 import '../features/personalization/screens/favorite/favorite_message_screen.dart';
@@ -27,6 +28,7 @@ class AppRoutes {
     GetPage(name: ChatifyRoutes.calls, page: () => CallsScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.chat, page: () => const ChatsScreen()),
     GetPage(name: ChatifyRoutes.community, page: () => CommunityScreen(user: APIs.me)),
+    GetPage(name: ChatifyRoutes.communities, page: () => CommunitiesScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.status, page: () => StatusScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.newGroup, page: () => const NewGroupScreen()),
     GetPage(name: ChatifyRoutes.newNewsletter, page: () => const NewNewsletterScreen(selectedUsers: [])),

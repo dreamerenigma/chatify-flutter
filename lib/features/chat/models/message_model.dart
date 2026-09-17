@@ -17,6 +17,7 @@ class MessageModel {
   late final List<String> deletedBy;
   late final Map<String, List<String>> reactions;
   late final DateTime? deletedAt;
+  late final int? audioDuration;
 
   MessageModel({
     required this.toId,
@@ -32,6 +33,7 @@ class MessageModel {
     required this.deletedBy,
     required this.reactions,
     required this.deletedAt,
+    this.audioDuration,
   });
 
   bool get isMe => fromId == APIs.user.uid;
@@ -64,6 +66,7 @@ class MessageModel {
     }
 
     deletedAt = json['deletedAt'] != null ? DateTime.tryParse(json['deletedAt'].toString()) : null;
+    audioDuration = json['audioDuration'] != null ? int.tryParse(json['audioDuration'].toString()) : null;
 
     switch (json['type'].toString()) {
       case 'image':
@@ -148,6 +151,10 @@ class MessageModel {
 
     if (deletedAt != null) {
       data['deletedAt'] = deletedAt!.toIso8601String();
+    }
+
+    if (audioDuration != null) {
+      data['audioDuration'] = audioDuration;
     }
 
     return data;

@@ -23,6 +23,7 @@ import '../features/utils/windows/window_util_desktop.dart';
 import 'package:chatify/utils/theme/theme.dart';
 import '../generated/l10n/l10n.dart';
 import '../routes/routes.dart';
+import '../utils/constants/app_directories.dart';
 
 Future<void> initApp() async {
   /// -- Widget Binding
@@ -63,7 +64,7 @@ Future<void> initApp() async {
   }
 
   /// -- Create app directories
-  await APIs.createDirectories();
+  await AppDirectories.createDirectories();
 
   /// -- Size window app
   setupWindow();

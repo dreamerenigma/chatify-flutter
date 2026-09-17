@@ -5,7 +5,6 @@ import 'package:chatify/features/community/controllers/photo_community_controlle
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -20,7 +19,7 @@ import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import '../models/community_model.dart';
 import '../widgets/dialogs/edit_image_community_bottom_dialog.dart';
-import 'community_screen.dart';
+import 'communities_screen.dart';
 import 'emoji_sticker_screen.dart';
 
 class NewCommunityScreen extends StatefulWidget {
@@ -155,7 +154,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
             elevation: 1,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 24),
               onPressed: () {
                 _hideKeyboard();
 
@@ -180,18 +179,21 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Center(
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: S.of(context).viewExamples,
-                                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w600),
-                                recognizer: TapGestureRecognizer()..onTap = () {},
-                              ),
-                              TextSpan(text: S.of(context).differentCommunities, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                            ],
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Center(
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: S.of(context).viewExamples,
+                                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 15, fontWeight: FontWeight.w600),
+                                  recognizer: TapGestureRecognizer()..onTap = () {},
+                                ),
+                                TextSpan(text: S.of(context).differentCommunities, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -199,7 +201,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
                   ],
                 ),
               ),
-              CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
+              CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 6),
               const SizedBox(height: 16),
               Center(
                 child: Column(
@@ -391,7 +393,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
               });
 
               Navigator.pop(context);
-              Navigator.pushReplacement(context, createPageRoute(CommunityScreen(user: APIs.me)));
+              Navigator.pushReplacement(context, createPageRoute(CommunitiesScreen(user: APIs.me)));
             }
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),

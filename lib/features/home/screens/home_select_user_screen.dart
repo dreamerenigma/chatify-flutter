@@ -28,7 +28,7 @@ import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../widgets/items/app_action_menu_item.dart';
 import 'contacts_screen.dart';
-import 'new_newsletter_screen.dart';
+import '../../newsletter/screens/new_newsletter_screen.dart';
 
 class HomeSelectUserScreen extends StatefulWidget {
   final bool isFavoritesMode;

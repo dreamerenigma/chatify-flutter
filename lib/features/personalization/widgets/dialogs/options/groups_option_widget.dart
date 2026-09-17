@@ -6,6 +6,7 @@ import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../../api/group_api.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/devices/device_utility.dart';
@@ -34,7 +35,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
   }
 
   void _fetchGroups() async {
-    List<GroupModel> fetchedGroups = await APIs.getGroups();
+    List<GroupModel> fetchedGroups = await GroupApi.getGroups();
     setState(() {
       groups = fetchedGroups;
     });

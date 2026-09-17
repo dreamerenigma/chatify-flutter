@@ -15,19 +15,19 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
-import '../../../../core/enums/message_type.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/user_model.dart';
 import '../dialogs/voice_record_bottom_sheet_dialog.dart';
-import 'buttons/chat_input_attachments_button.dart';
 import 'buttons/camera_button.dart';
+import 'buttons/chat_input_attachments_button.dart';
 
 class ChatInput extends StatefulWidget {
   final UserModel user;
   final FocusNode focusNode;
   final VoidCallback onToggleEmojiKeyboard;
   final bool isReplyVisible;
+  final Future<void> Function(String text) onSendMessage;
 
   const ChatInput({
     super.key,
@@ -35,6 +35,7 @@ class ChatInput extends StatefulWidget {
     required this.focusNode,
     required this.onToggleEmojiKeyboard,
     required this.isReplyVisible,
+    required this.onSendMessage,
   });
 
   @override
@@ -122,19 +123,18 @@ class ChatInputState extends State<ChatInput> {
     }
   }
 
-  void sendMessage() {
+  Future<void> sendMessage() async {
     if (!hasText) {
       Dialogs.showSnackbar(context, S.of(context).pleaseEnterTextMessage);
       return;
     }
 
-    if (list.isEmpty) {
-      APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
-    } else {
-      APIs.sendMessage(widget.user, textController.text, MessageType.text);
-    }
+    final text = textController.text.trim();
+
+    await widget.onSendMessage(text);
 
     textController.clear();
+
     playSendSound();
 
     if (mounted) {
@@ -210,6 +210,7 @@ class ChatInputState extends State<ChatInput> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 2, right: 2),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         IconButton(
                           onPressed: toggleEmojiKeyboard,
@@ -217,7 +218,7 @@ class ChatInputState extends State<ChatInput> {
                         ),
                         Expanded(
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 50, maxHeight: 120),
+                            constraints: const BoxConstraints(minHeight: 48, maxHeight: 120),
                             child: TextSelectionTheme(
                               data: TextSelectionThemeData(
                                 cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -240,7 +241,7 @@ class ChatInputState extends State<ChatInput> {
                                   contentPadding: EdgeInsets.only(top: 2)
                                 ),
                                 textCapitalization: TextCapitalization.sentences,
-                                style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                                style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400, height: 1.2),
                                 onTap: () {
                                   if (showEmoji) {
                                     setState(() {
@@ -266,7 +267,21 @@ class ChatInputState extends State<ChatInput> {
                             });
                           },
                         ),
-                        CameraButton(onImagePicked: handleImagePicked),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 220),
+                          reverseDuration: const Duration(milliseconds: 180),
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeInCubic,
+                          transitionBuilder: (child, animation) {
+                            final offsetAnimation = Tween<Offset>(begin: const Offset(0.6, 0), end: Offset.zero).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+
+                            return FadeTransition(opacity: animation, child: SlideTransition(position: offsetAnimation, child: child));
+                          },
+                          child: hasText
+                            ? const SizedBox(key: ValueKey('camera-hidden'), width: 0)
+                            : CameraButton(key: const ValueKey('camera-visible'), onImagePicked: handleImagePicked,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -277,7 +292,6 @@ class ChatInputState extends State<ChatInput> {
                 onPanStart: (_) {
                   _dragOffset = 0;
                 },
-
                 onPanUpdate: (details) {
                   if (!hasText) {
                     if (details.delta.dy < 0) {
@@ -285,7 +299,6 @@ class ChatInputState extends State<ChatInput> {
                     }
                   }
                 },
-
                 onPanEnd: (_) {
                   if (hasText) {
                     sendMessage();
@@ -295,22 +308,20 @@ class ChatInputState extends State<ChatInput> {
                   if (_dragOffset >= 80) {
                     _dragOffset = 0;
 
-                    voiceRecordBottomSheetDialog(context);
+                    showVoiceRecordBottomSheetDialog(context, widget.user);
 
                     return;
                   }
                   _dragOffset = 0;
-                  Dialogs.showSnackbarMargin(
-                    context,
-                    S.of(context).holdRecord,
-                    fontSize: ChatifySizes.fontSizeLm,
-                    margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10),
-                  );
+                  Dialogs.showSnackbarMargin(context, S.of(context).holdRecord, fontSize: ChatifySizes.fontSizeLm, margin: const EdgeInsets.only(bottom: 65, left: 10, right: 10));
                 },
-                child: CircleAvatar(
-                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  radius: 24,
-                  child: hasText ? const Icon(Icons.send, color: ChatifyColors.black, size: 21) : const Icon(Icons.mic, color: ChatifyColors.black, size: 25),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: CircleAvatar(
+                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    radius: 24,
+                    child: hasText ? const Icon(Icons.send, color: ChatifyColors.black, size: 21) : const Icon(Icons.mic, color: ChatifyColors.black, size: 25),
+                  ),
                 ),
               ),
             ],

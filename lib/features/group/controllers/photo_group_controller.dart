@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../api/apis.dart';
+import '../../../api/group_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../models/group_model.dart';
 
@@ -56,7 +56,7 @@ class PhotoGroupController extends GetxController {
       try {
         File imageFile = File(imagePath);
         if (group != null) {
-          await APIs.updateGroupPicture(group!.groupId, imageFile);
+          await GroupApi.updateGroupPicture(group!.groupId, imageFile);
         } else {
           log(S.of(context).groupNullCannotUpdateImage);
         }
@@ -70,7 +70,7 @@ class PhotoGroupController extends GetxController {
         if (group != null) {
           String? currentImageUrl = await _getCurrentImageUrlForCommunity(group!.groupId);
           if (currentImageUrl != null) {
-            await APIs.deleteGroupPicture(group!.groupId, currentImageUrl);
+            await GroupApi.deleteGroupPicture(group!.groupId, currentImageUrl);
             log(S.of(context).groupImageClearedSuccessDatabase);
           } else {
             log(S.of(context).noImageUrlDelete);

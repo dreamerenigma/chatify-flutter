@@ -138,10 +138,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             child: Stack(
               alignment: Alignment.centerLeft,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
-                ),
+                Padding(padding: const EdgeInsets.only(left: 4), child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))),
                 Positioned(
                   left: 55,
                   child: Opacity(

@@ -28,7 +28,7 @@ class MessageMeta extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorsController = Get.find<ColorsController>();
     final bool isRead = message.read.isNotEmpty;
-    final Color checkColor = isRead ? colorsController.getColor(colorsController.selectedColorScheme.value) : context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey;
+    final Color checkColor = isRead ? ChatifyColors.lightBlueLink : context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey;
 
     return Align(
       alignment: Alignment.centerRight,
@@ -39,7 +39,7 @@ class MessageMeta extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         message: '${DateUtil.getFormattedDateLabel(context: context, timestamp: message.sent)}, ' '${DateUtil.getFormattedTime(context: context, time: message.sent)}',
         textStyle: isSender
-          ? TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300,)
+          ? TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300)
           : null,
             decoration: isSender
             ? BoxDecoration(
@@ -54,7 +54,7 @@ class MessageMeta extends StatelessWidget {
           children: [
             Text(
               DateUtil.getFormattedTime(context: context, time: message.sent),
-              style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1.2),
             ),
             if (showCheck) ...[
               const SizedBox(width: 4),

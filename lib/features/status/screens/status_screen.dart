@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:chatify/features/status/screens/status_viewer_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../api/apis.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_keys.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../calls/screens/calls_screen.dart';
 import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../chat/models/user_model.dart';
 import '../../chat/models/user_status_model.dart';
-import '../../community/screens/community_screen.dart';
+import '../../community/screens/communities_screen.dart';
 import '../../home/screens/home_screen.dart';
 import '../../home/widgets/app_bars/home_app_bar.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
@@ -42,10 +48,13 @@ class StatusScreenState extends State<StatusScreen> {
   final RxList<String> viewedUserIds = <String>[].obs;
   bool isSearching = false;
   bool isLoadingStatus = true;
+  bool hasViewedLatestStatus = false;
+  bool isLatestStatusesExpanded = true;
   int selectedIndex = 1;
   List<UserModel> list = [];
   UserStatusModel? userStatus;
   String? _statusImageUrl;
+  String? _profileImageUrl;
   Timer? _statusExpirationTimer;
   Timer? _statusTimeUpdateTimer;
 
@@ -53,6 +62,7 @@ class StatusScreenState extends State<StatusScreen> {
   void initState() {
     super.initState();
     _loadStatusImage();
+    _loadLatestStatusesExpanded();
   }
 
   @override
@@ -62,8 +72,38 @@ class StatusScreenState extends State<StatusScreen> {
     super.dispose();
   }
 
+  Future<void> _loadLatestStatusesExpanded() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    setState(() {
+      isLatestStatusesExpanded = prefs.getBool(AppKeys.latestStatusesExpandedKey) ?? true;
+    });
+  }
+
+  Future<void> _toggleLatestStatuses() async {
+    final newValue = !isLatestStatusesExpanded;
+
+    setState(() {
+      isLatestStatusesExpanded = newValue;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool(AppKeys.latestStatusesExpandedKey, newValue);
+  }
+
   Future<void> _loadStatusImage() async {
     try {
+      String? profileImageUrl;
+
+      if (widget.user.image.trim().isNotEmpty) {
+        final result = await APIs.mediaService.getUrl(widget.user.image);
+
+        profileImageUrl = result;
+      }
+
       final status = await APIs.getUserStatus(widget.user.id);
 
       if (status == null || status.type != 'image') {
@@ -72,30 +112,20 @@ class StatusScreenState extends State<StatusScreen> {
         setState(() {
           userStatus = null;
           _statusImageUrl = null;
+          _profileImageUrl = profileImageUrl;
         });
 
         return;
       }
 
-      log('STATUS mediaPath: ${status.mediaPath}');
-      log('STATUS createdAt: ${status.createdAt}');
-      log('STATUS expiresAt: ${status.expiresAt}');
-
-      log('STATUS: начинаем получать URL');
-      log('STATUS: mediaPath перед getUrl = ${status.mediaPath}');
-
-      final imageUrl = await APIs.mediaService.getUrl(
-        status.mediaPath,
-      );
-
-      log('STATUS: getUrl завершён');
-      log('STATUS imageUrl: $imageUrl');
+      final imageUrl = await APIs.mediaService.getUrl(status.mediaPath);
 
       if (!mounted) return;
 
       setState(() {
         userStatus = status;
         _statusImageUrl = imageUrl;
+        _profileImageUrl = profileImageUrl; // ← ВАЖНО
       });
 
       _startStatusTimers(status);
@@ -165,7 +195,7 @@ class StatusScreenState extends State<StatusScreen> {
       case 1:
         break;
       case 2:
-        Navigator.push(context, createPageRoute(CommunityScreen(user: APIs.me)));
+        Navigator.push(context, createPageRoute(CommunitiesScreen(user: APIs.me)));
         break;
       case 3:
         Navigator.push(context, createPageRoute(CallsScreen(user: APIs.me)));
@@ -267,13 +297,108 @@ class StatusScreenState extends State<StatusScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StatusHeaderWidget(user: widget.user, userStatus: userStatus, statusImageUrl: _statusImageUrl, onAddStatus: () => showAddStatusBottomDialog(context)),
+            StatusHeaderWidget(user: widget.user, userStatus: userStatus, statusImageUrl: _statusImageUrl, profileImageUrl: _profileImageUrl, onAddStatus: () => showAddStatusBottomDialog(context)),
             Obx(() => viewedUserIds.isNotEmpty ? ViewedStatusWidget(expandController: expandController, colorsController: colorsController) : const SizedBox.shrink()),
-            CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
+            const SizedBox(height: 6),
+            _buildLatestStatuses(),
+            CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 0),
             const SizedBox(height: 16),
             EncryptionInfoText(firstText: S.of(context).statusUpdatesEncryption, linkText: S.of(context).endToEndEncryption),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLatestStatuses() {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Material(
+            color: ChatifyColors.transparent,
+            child: InkWell(
+              splashFactory: NoSplash.splashFactory,
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              onTap: _toggleLatestStatuses,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: Row(
+                  children: [
+                    Expanded(child: Text(hasViewedLatestStatus ? 'Просмотренные' : 'Последние', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400))),
+                    Icon(isLatestStatusesExpanded ? FluentIcons.chevron_up_24_regular : FluentIcons.chevron_down_24_regular, size: 18, color: ChatifyColors.darkGrey),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (isLatestStatusesExpanded)
+            Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                splashFactory: NoSplash.splashFactory,
+                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                onTap: () async {
+                  await Navigator.push(context, createPageRoute(const StatusViewerScreen()));
+
+                  if (!mounted) return;
+
+                  setState(() {
+                    hasViewedLatestStatus = true;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: hasViewedLatestStatus ? ChatifyColors.steelGrey : colorsController.getColor(colorsController.selectedColorScheme.value), width: 1.5),
+                        ),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                          child: SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Chatify', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 17, fontWeight: FontWeight.w400)),
+                              const SizedBox(width: 4),
+                              Icon(FluentIcons.checkmark_starburst_24_filled, size: 17, color: ChatifyColors.blue),
+                            ],
+                          ),
+                          Text('Сегодня, 13:15', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

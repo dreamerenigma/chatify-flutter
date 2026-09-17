@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/group_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -90,12 +91,12 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
 
   void _setMessagesStream() {
     cachedMessages.clear();
-    messageStream = APIs.getGroupAllMessages(widget.group);
+    messageStream = GroupApi.getGroupAllMessages(widget.group);
   }
 
   void sendMessage(String msg) {
     if (textController.text.isNotEmpty) {
-      APIs.sendGroupMessage(widget.group, textController.text, MessageType.text);
+      GroupApi.sendGroupMessage(widget.group, textController.text, MessageType.text);
 
       textController.clear();
       APIs.playSendSound();

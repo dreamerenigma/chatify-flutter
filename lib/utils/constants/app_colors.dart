@@ -29,6 +29,7 @@ class ChatifyColors {
   static const Color buttonDisabled = Color(0xFFC4C4C4);
   static const Color switcherPrimary = Color(0xff437967);
   static const Color buttonPrimary = Color(0xFF64BD9F);
+  static const Color buttonPrimaryLight = Color(0xFF74DAB8);
   static const Color buttonRed = Color(0xffff6b6b);
   static const Color buttonRedNight = Color(0xFFC82E40);
 
@@ -107,12 +108,12 @@ class ChatifyColors {
   // Message colors
   static const Color greenMessageLight = Color(0xFFDAFFB0);
   static const Color greenMessageBorder = Color(0xFFD1FF98);
+  static const Color greenMessageBorderDark = Color(0xFF005643);
+  static const Color greenMessageDivider = Color(0xFF175F53);
   static const Color greenMessageDark = Color(0xFF005C4B);
   static const Color greenMessageTriangleDark = Color(0xFF015646);
-  static const Color greenMessageBorderDark = Color(0xFF005643);
   static const Color greenMessageBorderLight = Color(0xFF1A6A5C);
   static const Color greenMessageButton = Color(0xFF277366);
-  static const Color greenMessageDivider = Color(0xFF175F53);
   static const Color blueMessageLight = Color(0xFFDDF5FF);
   static const Color blueMessageBorder = Color(0xFFCFF2FF);
 
@@ -159,6 +160,7 @@ class ChatifyColors {
     Color(0xFF555555),
   ];
 
+  //
   static final List<Color> colors = [
     Colors.red[200]!,
     Colors.orange[100]!,

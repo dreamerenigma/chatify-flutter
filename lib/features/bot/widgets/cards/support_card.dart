@@ -100,23 +100,23 @@ class _SupportCardState extends State<SupportCard> {
                         radius: 24,
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.logoApp, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
                       ),
                       if (!isWindows && isSelected)
-                      Positioned(
-                        bottom: -3,
-                        right: -2,
-                        child: Container(
-                          width: 23,
-                          height: 23,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                        Positioned(
+                          bottom: -3,
+                          right: -2,
+                          child: Container(
+                            width: 23,
+                            height: 23,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                            ),
+                            child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                           ),
-                          child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(width: 12),

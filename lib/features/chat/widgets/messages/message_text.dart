@@ -37,16 +37,14 @@ class MessageText extends StatelessWidget {
               child: SelectableText.rich(
                 TextSpan(
                   children: parseMessageText(message.msg, context),
-                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                 ),
                 contextMenuBuilder: (context, editableTextState,) =>
                 const SizedBox.shrink(),
               ),
             ),
           )
-        : RichText(
-        text: TextSpan(children: parseMessageText(message.msg, context)),
-      ),
+        : RichText(text: TextSpan(children: parseMessageText(message.msg, context))),
     );
   }
 }

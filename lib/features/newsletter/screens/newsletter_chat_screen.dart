@@ -5,8 +5,8 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
-import '../widgets/app_bars/newsletter_app_bar.dart';
-import '../widgets/dialogs/chats_calls_privacy_sheet_dialog.dart';
+import '../../home/widgets/app_bars/newsletter_app_bar.dart';
+import '../../home/widgets/dialogs/chats_calls_privacy_sheet_dialog.dart';
 
 class NewsletterChatScreen extends StatefulWidget {
   final List<String> newsletters;
@@ -23,9 +23,7 @@ class NewsletterChatScreen extends StatefulWidget {
 }
 
 class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
-
   String get formattedDate {
-
     if (widget.createdAt.isEmpty) {
       return S.of(context).dateNotSpecified;
     }
@@ -37,8 +35,8 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
       }
 
       final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
       final formatted = DateFormat('dd.MM.yyyy').format(date);
+
       return formatted;
     } catch (e) {
       return S.of(context).invalidDate;
@@ -55,23 +53,14 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
         child: Container(
           decoration: BoxDecoration(
           color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(automaticallyImplyLeading: false, flexibleSpace: NewsletterAppbar(newsletters: widget.newsletters)),
         ),
       ),
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)),
-          ),
+          Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover))),
           Positioned(
             top: 0,
             left: 0,
@@ -84,13 +73,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                 decoration: BoxDecoration(
                   color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                   borderRadius: BorderRadius.circular(9),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                      blurRadius: 3,
-                      spreadRadius: 1,
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
                 ),
                 child: Text(
                   formattedDate.isNotEmpty ? formattedDate : S.of(context).invalidDate,
@@ -106,11 +89,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                   const SizedBox(height: 22),
                   InkWell(
                     onTap: () {
-                      showChatsCallsPrivacyBottomSheet(
-                        context,
-                        headerText: S.of(context).chatsCallsConfidential,
-                        titleText: S.of(context).yourPrivateMessagesAndCalls,
-                      );
+                      showChatsCallsPrivacyBottomSheet(context, headerText: S.of(context).chatsCallsConfidential, titleText: S.of(context).yourPrivateMessagesAndCalls);
                     },
                     child: Container(
                       margin: const EdgeInsets.only(left: 40, right: 40, top: 14),
@@ -118,13 +97,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                       decoration: BoxDecoration(
                         color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                         borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                            blurRadius: 3,
-                            spreadRadius: 1,
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
                       ),
                       child: Center(
                         child: RichText(
@@ -134,12 +107,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                               const WidgetSpan(child: Icon(Icons.lock_outline, color: ChatifyColors.yellow, size: 16), alignment: PlaceholderAlignment.middle),
                               TextSpan(
                                 text: S.of(context).messagesCallsProtectedEncryption,
-                                style: TextStyle(
-                                  fontSize: ChatifySizes.fontSizeSm,
-                                  fontWeight: FontWeight.w400,
-                                  color: ChatifyColors.yellow,
-                                  height: 1.5,
-                                ),
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.yellow, height: 1.5),
                               ),
                             ],
                           ),
@@ -154,13 +122,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                     decoration: BoxDecoration(
                       color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                       borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha((0.1 * 255).toInt()),
-                          blurRadius: 3,
-                          spreadRadius: 1,
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
                     ),
                     child: Center(
                       child: Text(

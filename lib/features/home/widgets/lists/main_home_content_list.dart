@@ -3,6 +3,7 @@ import 'package:chatify/features/home/widgets/lists/support_list.dart';
 import 'package:chatify/features/home/widgets/lists/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/enums/selection_type.dart';
 import '../../../bot/models/info_app_model.dart';
 import '../../../bot/models/support_model.dart';
 import '../../../chat/models/user_model.dart';
@@ -24,11 +25,17 @@ class MainHomeContentList extends StatelessWidget {
   final bool isSearching;
   final bool isTabsVisible;
   final bool isAccessKeyVisible;
+  final bool isSelectionMode;
   final List<UserModel> searchList;
   final Set<String> selectedUserIds;
+  final Set<String> selectedNewsletterIds;
+  final Set<String> selectedCommunityIds;
   final Function(UserModel) onUserSelected;
   final ValueChanged<Set<String>>? onPinnedChatsChanged;
   final ValueChanged<Set<String>>? onMutedChatsChanged;
+  final ValueChanged<NewsletterModel>? onNewsletterSelected;
+  final ValueChanged<CommunityModel> onCommunitySelected;
+  final SelectionType selectionType;
 
   const MainHomeContentList({
     super.key,
@@ -44,13 +51,22 @@ class MainHomeContentList extends StatelessWidget {
     required this.searchList,
     required this.selectedUserIds,
     required this.onUserSelected,
+    required this.selectedNewsletterIds,
+    required this.selectedCommunityIds,
+    required this.selectionType,
+    required this.onCommunitySelected,
     this.onPinnedChatsChanged,
     this.onMutedChatsChanged,
+    this.isSelectionMode = false,
+    this.onNewsletterSelected,
   });
 
   @override
   Widget build(BuildContext context) {
     final currentUserName = Get.find<UserController>().currentUser.name;
+    final isNewsletterSelection = selectionType == SelectionType.newsletters;
+    final isCommunitySelection = selectionType == SelectionType.communities;
+    final isChatSelection = selectionType == SelectionType.chats;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -58,26 +74,46 @@ class MainHomeContentList extends StatelessWidget {
         if (!isTabsVisible && !isAccessKeyVisible)
           const SizedBox(height: 6),
         if (groups.isNotEmpty)
-          GroupList(groups: groups, currentUser: currentUserName, onGroupSelected: (group) {}),
+          IgnorePointer(ignoring: isSelectionMode, child: GroupList(groups: groups, currentUser: currentUserName, onGroupSelected: (group) {})),
         if (newsletters.isNotEmpty)
-          NewsletterList(newsletters: newsletters, onNewsletterSelected: (newsletter) {}),
-        if (communities.isNotEmpty)
-          CommunityList(communities: communities, isHomeScreen: true, onCommunitySelected: (community) {}),
-        if (users.isEmpty)
-          UserList(
-            isSearching: isSearching,
-            searchList: searchList,
-            list: users,
-            isSharing: false,
-            onUserSelected: onUserSelected,
-            selectedUserIds: selectedUserIds,
-            onPinnedChatsChanged: onPinnedChatsChanged,
-            onMutedChatsChanged: onMutedChatsChanged,
+          IgnorePointer(
+            ignoring: selectionType != SelectionType.none && !isNewsletterSelection,
+            child: NewsletterList(
+              newsletters: newsletters,
+              isSelectionMode: selectionType == SelectionType.newsletters,
+              selectedNewsletterIds: selectedNewsletterIds,
+              onNewsletterSelected: onNewsletterSelected,
+            ),
           ),
-        if (supports.isEmpty)
-          SupportList(supports: supports, onSupportSelected: (support) {}),
-        if (infosApp.isEmpty)
-          InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {}),
+        if (communities.isNotEmpty)
+          IgnorePointer(
+            ignoring: selectionType != SelectionType.none && !isCommunitySelection,
+            child: CommunityList(
+              communities: communities,
+              isHomeScreen: true,
+              isSelectionMode: selectionType == SelectionType.communities,
+              selectedCommunityIds: selectedCommunityIds,
+              onCommunitySelected: onCommunitySelected,
+            ),
+          ),
+        if (users.isEmpty)
+          IgnorePointer(
+            ignoring: selectionType != SelectionType.none && !isChatSelection,
+            child: UserList(
+              isSearching: isSearching,
+              searchList: searchList,
+              list: users,
+              isSharing: false,
+              onUserSelected: onUserSelected,
+              selectedUserIds: selectedUserIds,
+              onPinnedChatsChanged: onPinnedChatsChanged,
+              onMutedChatsChanged: onMutedChatsChanged,
+            ),
+          ),
+        if (supports.isNotEmpty)
+          IgnorePointer(ignoring: isSelectionMode, child: SupportList(supports: supports, onSupportSelected: (support) {})),
+        if (infosApp.isNotEmpty)
+          IgnorePointer(ignoring: isSelectionMode, child: InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {})),
         const SizedBox(height: 8),
       ],
     );

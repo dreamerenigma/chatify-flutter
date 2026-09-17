@@ -10,6 +10,7 @@ class VoiceRecordingControls extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback onCancel;
   final VoidCallback onTogglePause;
+  final VoidCallback onSend;
 
   const VoiceRecordingControls({
     super.key,
@@ -17,6 +18,7 @@ class VoiceRecordingControls extends StatelessWidget {
     required this.isDarkMode,
     required this.onCancel,
     required this.onTogglePause,
+    required this.onSend,
   });
 
   @override
@@ -82,7 +84,7 @@ class VoiceRecordingControls extends StatelessWidget {
           backgroundColor: ChatifyColors.green,
           iconColor: ChatifyColors.black,
           iconPadding: const EdgeInsets.only(left: 6),
-          onTap: () {},
+          onTap: onSend,
         ),
       ],
     );

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:chatify/api/apis.dart';
+import 'package:chatify/features/chat/widgets/messages/voice_record_message.dart';
 import 'package:chatify/utils/platforms/platform_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +138,7 @@ class RecipientMessageState extends State<RecipientMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Platform.isWindows && widget.message.type != MessageType.call)
+          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.audio)
             Center(
               child: Container(
                 width: 35,
@@ -164,10 +166,11 @@ class RecipientMessageState extends State<RecipientMessage> {
     switch (widget.message.type) {
       case MessageType.call:
         return _buildCallMessage();
+      case MessageType.audio:
+        return _buildVoiceRecordMessage();
       case MessageType.image:
       case MessageType.gif:
       case MessageType.video:
-      case MessageType.audio:
       case MessageType.document:
         return _buildMediaMessage();
       default:
@@ -249,11 +252,52 @@ class RecipientMessageState extends State<RecipientMessage> {
     );
   }
 
+  Widget _buildVoiceRecordMessage() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: (_) {},
+      onExit: (_) {},
+      child: GestureDetector(
+        onTap: () {},
+        onSecondaryTap: _handleSecondaryTap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                MessageBubble(
+                  key: _containerKey,
+                  message: widget.message,
+                  isWebOrWindows: isWebOrWindows,
+                  isPressed: isPressed,
+                  onSecondaryTap: _handleSecondaryTap,
+                  showInnerContainer: false,
+                  showMetaCheck: true,
+                  type: MessageBubbleType.recipient,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 250),
+                    child: VoiceRecordMessage(message: widget.message, isSender: false, user: APIs.me),
+                  ),
+                ),
+                _buildMessageTail(),
+              ],
+            ),
+
+            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+              _buildHoverActions(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildMessageTail() {
     final isCall = widget.message.type == MessageType.call;
+    final isVoice = widget.message.type == MessageType.audio;
 
     return Positioned(
-      top: isWebOrWindows ? 6 : isCall ? 3.5 : 5.5,
+      top: isWebOrWindows ? 6 : isCall ? 3.5 : isVoice ? 5.5 : 5.5,
       right: 7,
       child: CustomPaint(
         size: const Size(10, 10),
@@ -380,12 +424,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                       children: [
                         Text(
                           DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                          style: TextStyle(
-                            color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
-                            fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Roboto',
-                          ),
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                         ),
                         const SizedBox(width: 4),
                         SvgPicture.asset(

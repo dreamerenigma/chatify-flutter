@@ -2,7 +2,15 @@
 
 Chatify — это современное приложение для обмена сообщениями, аудио и видео-звонков, вдохновлённое WhatsApp. Создавайте группы, общайтесь в реальном времени и синхронизируйте свои устройства между платформами: Android, Windows и Web.
 
-![Chatify Logo](/assets/logos/chatify-logo-light.png)
+<br>
+<br>
+
+<p style="text-align: center;">
+  <img src="/assets/logos/chatify-logo-light.png" alt="Chatify Logo">
+</p>
+
+<br>
+<br>
 
 ---
 
@@ -27,6 +35,17 @@ Chatify — это современное приложение для обмен
 |-----------------------------------|-----------------------------------|-------------------------------------|
 | ![](/assets/screenshots/chat.png) | ![](/assets/screenshots/call.png) | ![](/assets/screenshots/groups.png) |
 
+## 📱 Поддерживаемые платформы
+
+| Платформа                                | Статус | Заметки         |
+|------------------------------------------|--------|-----------------|
+| ![](/assets/vectors/logos/android.svg)   | ✅      | Fully supported |
+| ![](/assets/vectors/logos/web.svg)       | ✅      | Fully supported |
+| ![](/assets/vectors/logos/microsoft.svg) | ✅      | Fully supported |
+| ![](/assets/vectors/logos/ios.svg)       | 🚧     | Planned         |
+| ![](/assets/vectors/logos/macos.svg)     | 🚧     | Planned         |
+| ![](/assets/vectors/logos/linux.svg)     | ✅      | Fully supported |
+
 ---
 
 ## 🛠 Установка
@@ -40,7 +59,8 @@ cd chatify-flutter
 
 ### 2. Установка зависимостей
 
-```flutter pub get
+```bash
+flutter pub get
 ```
 
 ### 3. Добавление конфигураций
@@ -62,3 +82,7 @@ const String googleClientSecret = 'ВАШ_GOOGLE_CLIENT_SECRET';
 Для Android APK: flutter build apk --release
 
 Для Web: flutter build web
+
+### Licenses
+
+See [Third-Party Notices](docs/THIRD_PARTY_NOTICES.md).

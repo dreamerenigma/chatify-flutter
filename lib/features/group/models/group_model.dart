@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../../api/apis.dart';
+import '../../../api/group_api.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../domain/entities/chat_target.dart';
 
@@ -86,21 +85,21 @@ class GroupModel implements ChatTarget {
 
   @override
   Future<void> sendImage(File file) async {
-    await APIs.sendGroupImage(this, file);
+    await GroupApi.sendGroupImage(this, file);
   }
 
   @override
   Future<void> sendVideo(File file) async {
-    await APIs.sendGroupVideo(this, members, file);
+    await GroupApi.sendGroupVideo(this, members, file);
   }
 
   @override
   Future<void> sendDocument(File file) async {
-    await APIs.sendGroupDocument(this, members, file);
+    await GroupApi.sendGroupDocument(this, members, file);
   }
 
   @override
   Future<void> sendAudio(File file, String fileName) async {
-    await APIs.sendGroupAudio(this, file, fileName);
+    await GroupApi.sendGroupAudio(this, file, fileName);
   }
 }

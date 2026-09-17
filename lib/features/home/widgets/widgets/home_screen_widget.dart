@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/features/home/widgets/panels/side_panel_widget.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/foundation.dart';
@@ -9,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../api/apis.dart';
 import '../../../../core/enums/chat_list_type.dart';
+import '../../../../core/enums/selection_type.dart';
 import '../../../../core/services/dialogs/dialog_manager.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -23,7 +23,7 @@ import '../../../calls/screens/add_favorite_screen.dart';
 import '../../../calls/screens/calls_screen.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
-import '../../../community/screens/community_screen.dart';
+import '../../../community/screens/communities_screen.dart';
 import '../../../group/models/group_model.dart';
 import '../../../personalization/controllers/seasons_controller.dart';
 import '../../../personalization/controllers/user_controller.dart';
@@ -56,12 +56,17 @@ class HomeScreenWidget extends StatefulWidget {
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
   final Set<String> selectedChats;
+  final Set<String> selectedNewsletterIds;
+  final Set<String> selectedCommunityIds;
+  final SelectionType selectionType;
   final Function(int) onPageChanged;
   final Function(int) onItemTapped;
   final Function(GroupModel) onGroupSelected;
   final Function(UserModel) onUserSelected;
   final ValueChanged<Set<String>>? onPinnedChatsChanged;
   final ValueChanged<Set<String>>? onMutedChatsChanged;
+  final ValueChanged<NewsletterModel> onNewsletterSelected;
+  final ValueChanged<CommunityModel> onCommunitySelected;
 
   const HomeScreenWidget({
     super.key,
@@ -78,10 +83,15 @@ class HomeScreenWidget extends StatefulWidget {
     required this.supports,
     required this.infosApp,
     required this.selectedChats,
+    required this.selectedNewsletterIds,
+    required this.selectedCommunityIds,
+    required this.selectionType,
     required this.onPageChanged,
     required this.onItemTapped,
     required this.onGroupSelected,
     required this.onUserSelected,
+    required this.onNewsletterSelected,
+    required this.onCommunitySelected,
     this.onPinnedChatsChanged,
     this.onMutedChatsChanged,
   });
@@ -153,8 +163,6 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
     _tabController.dispose();
     super.dispose();
   }
-
-
 
   void _loadAccessKeyVisibility() {
     final hiddenUntil = storage.read<int>(_accessKeyHiddenUntilKey);
@@ -309,14 +317,16 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                         isTabsVisible: showTabBar,
                                                         isAccessKeyVisible: showPasskeyCard,
                                                         searchList: widget.searchList,
-                                                        onUserSelected: (user) {
-                                                          log('🔥 HomeScreen: received ${user.name}');
-
-                                                          widget.onUserSelected(user);
-                                                        },
+                                                        onUserSelected: widget.onUserSelected,
                                                         selectedUserIds: widget.selectedChats,
                                                         onPinnedChatsChanged: widget.onPinnedChatsChanged,
                                                         onMutedChatsChanged: widget.onMutedChatsChanged,
+                                                        isSelectionMode: widget.selectionType != SelectionType.none,
+                                                        selectedNewsletterIds: widget.selectedNewsletterIds,
+                                                        onNewsletterSelected: widget.onNewsletterSelected,
+                                                        selectionType: widget.selectionType,
+                                                        selectedCommunityIds: widget.selectedCommunityIds,
+                                                        onCommunitySelected: widget.onCommunitySelected,
                                                       ),
                                                       StreamBuilder<int>(
                                                         stream: APIs.getArchivedUsersCount(widget.user.id),
@@ -345,13 +355,13 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                     ],
                                   ),
                                   StatusScreen(user: userController.currentUser),
-                                  CommunityScreen(user: userController.currentUser),
+                                  CommunitiesScreen(user: userController.currentUser),
                                   CallsScreen(user: userController.currentUser),
                                 ],
                               ),
                             ),
                             StatusScreen(user: userController.currentUser),
-                            CommunityScreen(user: userController.currentUser),
+                            CommunitiesScreen(user: userController.currentUser),
                             CallsScreen(user: userController.currentUser),
                           ],
                         ),

@@ -8,7 +8,7 @@ import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/devices/device_utility.dart';
-import '../../screens/newsletter_settings_screen.dart';
+import '../../../newsletter/screens/newsletter_settings_screen.dart';
 
 class NewsletterAppbar extends StatefulWidget {
   final List<String> newsletters;
