@@ -1,87 +1,84 @@
-# 📱 Chatify — Flutter-мессенджер
+# 📱 Chatify — Flutter-messenger
 
-Chatify — это современное приложение для обмена сообщениями, аудио и видео-звонков, вдохновлённое WhatsApp. Создавайте группы, общайтесь в реальном времени и синхронизируйте свои устройства между платформами: Android, Windows и Web.
+Chatify is a modern messaging, audio, and video calling app inspired by WhatsApp. Create groups, chat in real time, and sync your devices across platforms: Android, Windows, and Web.
 
-<br>
-<br>
-
-<p style="text-align: center;">
-  <img src="/assets/logos/chatify-logo-light.png" alt="Chatify Logo">
+<p align="center">
+  <img src="/assets/images/logos/chatify-logo-blue.png" width="250"  alt="Chatify Logo">
 </p>
 
-<br>
-<br>
+---
+
+## 🚀 Key Features
+
+- 💬 Real-time messaging
+- 📞 Audio and video calls (WebRTC)
+- 👥 Group chat creation and management
+- 📷 Image and file sharing
+- 🖥 Support for Android, Web, and Windows
+- 🔐 Firebase authentication (Google Sign-In)
+- ☁️ Data storage in Firestore
+- 🔔 Real-time notifications
+- 🌓 Light and dark theme support
+- 🎨 Customizable interface color
 
 ---
 
-## 🚀 Основные возможности
+## 🧪 Demonstration (screenshots)
 
-- 💬 Обмен сообщениями в реальном времени
-- 📞 Аудио- и видео- звонки (WebRTC)
-- 👥 Создание и управление групповыми чатами
-- 📷 Отправка изображений и файлов
-- 🖥 Поддержка Android, Web и Windows
-- 🔐 Firebase аутентификация (Google Sign-In)
-- ☁️ Хранение данных в Firestore
-- 🔔 Уведомления в реальном времени
-- 🌓 Поддержка светлой и тёмной темы
-- 🎨 Возможность выбора цвета интерфейса
-
----
-
-## 🧪 Демонстрация (скриншоты)
-
-| Чат                               | Звонок                            | Группы                              |
+| Chat                              | Call                              | Group                               |
 |-----------------------------------|-----------------------------------|-------------------------------------|
-| ![](/assets/screenshots/chat.png) | ![](/assets/screenshots/call.png) | ![](/assets/screenshots/groups.png) |
+| ![](/assets/screenshots/chat.png) | ![](/assets/screenshots/call.png) | ![](/assets/screenshots/group.png) |
 
-## 📱 Поддерживаемые платформы
+## 📱 Supported platforms
 
-| Платформа                                | Статус | Заметки         |
-|------------------------------------------|--------|-----------------|
-| ![](/assets/vectors/logos/android.svg)   | ✅      | Fully supported |
-| ![](/assets/vectors/logos/web.svg)       | ✅      | Fully supported |
-| ![](/assets/vectors/logos/microsoft.svg) | ✅      | Fully supported |
-| ![](/assets/vectors/logos/ios.svg)       | 🚧     | Planned         |
-| ![](/assets/vectors/logos/macos.svg)     | 🚧     | Planned         |
-| ![](/assets/vectors/logos/linux.svg)     | ✅      | Fully supported |
+| Planform | Status | Notes |
+|---|:---:|---|
+| <img src="/assets/vectors/logos/android.svg" width="24"> | ✅ | Fully supported |
+| <img src="/assets/vectors/logos/web.svg" width="24"> | ✅ | Fully supported |
+| <img src="/assets/vectors/logos/microsoft.svg" width="24"> | ✅ | Fully supported |
+| <img src="/assets/vectors/logos/ios.svg" width="24"> | 🚧 | Planned |
+| <img src="/assets/vectors/logos/macos.svg" width="24"> | 🚧 | Planned |
+| <img src="/assets/vectors/logos/linux.svg" width="24"> | ✅ | Fully supported |
 
 ---
 
-## 🛠 Установка
+## 🛠 Installation
 
-### 1. Клонирование проекта
+### 1. Cloning the project
 
-```bash
+```dart
 git clone https://github.com/dreamerenigma/chatify-flutter.git
 cd chatify-flutter
 ```
 
-### 2. Установка зависимостей
+### 2. Installing dependencies
 
-```bash
+```dart
 flutter pub get
 ```
 
-### 3. Добавление конфигураций
-Создайте файл в каталоге lib/config.dart и добавьте туда свои ключи API, токены и другие настройки:
+### 3. Adding configurations
 
-const String googleClientId = 'ВАШ_GOOGLE_CLIENT_ID';
-const String googleClientSecret = 'ВАШ_GOOGLE_CLIENT_SECRET';
+Create a file in the `lib/config.dart` directory and add your API keys, tokens, and other settings:
 
-### 4. Запуск приложения
+```dart
+const String googleClientId = 'YOUR_GOOGLE_CLIENT_ID';
+const String googleClientSecret = 'YOUR_GOOGLE_CLIENT_SECRET';
+```
 
-Для Android: flutter run -d android
+### 4. Launching the application
 
-Для Web: flutter run -d chrome
+For Android: ```dart flutter run -d android```
 
-Для Windows: flutter run -d windows
+For Web: ```dart flutter run -d chrome```
 
-### 5. Сборка релиза
+For Windows: ```dart flutter run -d windows```
 
-Для Android APK: flutter build apk --release
+### 5. Release build
 
-Для Web: flutter build web
+For Android APK: ```dart flutter build apk --release```
+
+For Web: ```dart flutter build web```
 
 ### Licenses
 
