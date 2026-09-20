@@ -34,8 +34,50 @@ class PhotoProfileScreen extends StatefulWidget {
 
 class PhotoProfileScreenState extends State<PhotoProfileScreen> {
   bool _isAppBarVisible = true;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
   TransformationController transformationController = TransformationController();
   TapDownDetails _doubleTapDetails = TapDownDetails();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
+  }
 
   Future<void> deleteProfilePhoto() async {
     try {
@@ -84,35 +126,7 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
     }
   }
 
-  Future<void> _shareProfilePhoto() async {
-    try {
-      final imageUrl = widget.image;
 
-      if (imageUrl == null || imageUrl.isEmpty) {
-        log('Share profile photo: image URL is empty');
-        return;
-      }
-
-      final response = await http.get(Uri.parse(imageUrl));
-
-      if (response.statusCode != 200) {
-        log('Share profile photo: failed to download image: ${response.statusCode}');
-        return;
-      }
-
-      final tempDir = await getTemporaryDirectory();
-      final file = File('${tempDir.path}/profile_photo.jpg');
-
-      await file.writeAsBytes(response.bodyBytes);
-
-      final xFile = XFile(file.path, mimeType: 'image/jpeg');
-
-      await SharePlus.instance.share(ShareParams(files: [xFile], text: S.of(context).profilePhoto));
-    } catch (e, stackTrace) {
-      log('Share profile photo error: $e');
-      log('$stackTrace');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +176,7 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
         child: Center(
           child: Builder(
             builder: (context) {
-              final imageUrl = widget.image;
+              final imageUrl = _profileImageUrl;
               final hasImage = imageUrl != null && imageUrl.isNotEmpty;
 
               return GestureDetector(
@@ -175,7 +189,7 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
                   minScale: 1,
                   maxScale: 4,
                   child: hasImage
-                    ? CachedNetworkImage(imageUrl: widget.image!, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
+                    ? CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
                     : Text(S.of(context).noProfilePhoto, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                   ),
                 ),

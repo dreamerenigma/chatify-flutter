@@ -5,12 +5,18 @@ import '../../../../api/apis.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../screens/enter_status_screen.dart';
 import '../dialogs/add_status_bottom_dialog.dart';
 
 class StatusFAB extends StatefulWidget {
-  const StatusFAB({super.key});
+  final UserModel user;
+
+  const StatusFAB({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<StatusFAB> createState() => _StatusFABState();
@@ -102,7 +108,7 @@ class _StatusFABState extends State<StatusFAB> with SingleTickerProviderStateMix
           child: FloatingActionButton(
             heroTag: 'status',
             onPressed: () {
-              showAddStatusBottomDialog(context);
+              showAddStatusBottomDialog(context, widget.user);
             },
             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
             foregroundColor: ChatifyColors.white,

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -14,8 +15,8 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../stubs/sound_real.dart';
 import '../../../utils/constants/app_colors.dart';
-import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../widgets/dialog/time_remaining_dialog.dart';
@@ -206,7 +207,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
             children: [
               SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, top: 16),
+                padding: const EdgeInsets.only(left: 16, top: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -219,9 +220,9 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Image(image: AssetImage(ChatifyImages.appLogoLight), width: 16, color: ChatifyColors.white),
+                  SvgPicture.asset(ChatifyVectors.appLogoLight, width: 16, height: 16, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                   const SizedBox(width: 6),
-                  Text(S.of(context).callLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.white)),
+                  Text(S.of(context).callLink, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeLg)),
                 ],
               ),
               const Spacer(),
@@ -273,7 +274,7 @@ class LinkVideoScreenState extends State<LinkVideoScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Container(
                   decoration: BoxDecoration(
                     color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,

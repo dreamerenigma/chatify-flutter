@@ -381,6 +381,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
               createdAt: DateTime.now(),
               creatorName: '${APIs.me.name}${APIs.me.surname.isNotEmpty ? ' ${APIs.me.surname}' : ''}',
               creatorId: APIs.me.id,
+              members: [APIs.me.id],
             );
 
             final success = await CommunityApi.createCommunity(context, community, File(imagePath!));

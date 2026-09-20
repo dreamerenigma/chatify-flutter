@@ -7,6 +7,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../authentication/widgets/lists/country_list.dart';
 import '../../../community/controllers/country_controller.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
@@ -85,23 +86,26 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
     return Scaffold(
       appBar: _isSearching ? null : PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          titleSpacing: 0,
-          backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+        child: Container(
+          decoration: BoxDecoration(
+            color: ChatifyColors.white,
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
-          title: Text(S.of(context).selectCountry, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
-          elevation: 1,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: _toggleSearch,
+          child: AppBar(
+            titleSpacing: 5,
+            elevation: 0,
+            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-          ],
+            title: Text(S.of(context).selectCountry, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            actions: [
+              IconButton(icon: const Icon(Icons.search), onPressed: _toggleSearch),
+            ],
+          ),
         ),
       ),
       body: Column(
@@ -153,52 +157,62 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
                   behavior: NoGlowScrollBehavior(),
                   child: ListView.separated(
                     itemCount: _filteredCountries.length,
-                    separatorBuilder: (context, index) => Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey),
+                    separatorBuilder: (context, index) => CustomDivider(indent: 20, endIndent: 20, left: 0, right: 0, top: 0, bottom: 0),
                     itemBuilder: (context, index) {
                       final country = _filteredCountries[index];
                       final isSelected = country == countryController.selectedCountry.value;
+                      final accentColor = colorsController.getColor(colorsController.selectedColorScheme.value);
 
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
-                        child: ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(2),
-                            child: SvgPicture.asset(country.flag, width: 40, height: 20, fit: BoxFit.cover),
-                          ),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                country.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value) : context.isDarkMode
-                                    ? ChatifyColors.white
-                                    : ChatifyColors.black,
-                                ),
-                              ),
-                              if (country.nativeName.isNotEmpty)
-                                Text(country.nativeName, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.normal)),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: isSelected ? 10 : 28),
-                                child: Text(country.code, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg)),
-                              ),
-                              if (isSelected)
-                              Icon(Icons.check, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 18),
-                            ],
-                          ),
+                      return Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                           onTap: () {
                             setState(() {
                               countryController.selectCountry(country);
                               _filterCountries();
-                              Navigator.pop(context, country);
                             });
+
+                            Navigator.pop(context, country);
                           },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            child: Row(
+                              children: [
+                                ClipRRect(borderRadius: BorderRadius.circular(2), child: SvgPicture.asset(country.flag, width: 40, height: 20, fit: BoxFit.cover)),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        country.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: isSelected ? accentColor : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.3),
+                                      ),
+                                      if (country.nativeName.isNotEmpty) ...[
+                                        const SizedBox(height: 2),
+                                        Text(country.nativeName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400, height: 1.2)),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(country.code, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
+                                if (isSelected) ...[
+                                  const SizedBox(width: 10),
+                                  Icon(Icons.check, color: accentColor, size: 18),
+                                ] else
+                                  const SizedBox(width: 28),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     },

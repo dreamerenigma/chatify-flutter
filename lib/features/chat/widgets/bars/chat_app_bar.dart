@@ -90,6 +90,18 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  void updateDuration(int duration) {
+    setState(() {
+      selectedDuration = duration;
+    });
+  }
+
+  void clearSelection() {
+    setState(() {
+      selectedChats.clear();
+    });
+  }
+
   Future<void> _muteChats() async {
     final initialDuration = await APIs.getChatMutedDuration(selectedChats.first);
 
@@ -110,18 +122,6 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
         }
       },
     );
-  }
-
-  void updateDuration(int duration) {
-    setState(() {
-      selectedDuration = duration;
-    });
-  }
-
-  void clearSelection() {
-    setState(() {
-      selectedChats.clear();
-    });
   }
 
   @override

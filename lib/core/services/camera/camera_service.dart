@@ -14,10 +14,7 @@ class CameraService {
         return false;
       }
 
-      _cameraController = CameraController(
-        _cameras.first,
-        ResolutionPreset.medium,
-      );
+      _cameraController = CameraController(_cameras.first, ResolutionPreset.medium);
 
       await _cameraController!.initialize();
       isCameraInitialized = true;

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/helper/date_util.dart';
-import '../../../personalization/controllers/colors_controller.dart';
 import '../../models/message_model.dart';
 
 class MessageMeta extends StatelessWidget {
@@ -15,6 +12,7 @@ class MessageMeta extends StatelessWidget {
   final bool isWebOrWindows;
   final bool showCheck;
   final bool isSender;
+  final bool fitContent;
 
   const MessageMeta({
     super.key,
@@ -22,16 +20,17 @@ class MessageMeta extends StatelessWidget {
     required this.isWebOrWindows,
     this.showCheck = true,
     this.isSender = false,
+    this.fitContent = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colorsController = Get.find<ColorsController>();
     final bool isRead = message.read.isNotEmpty;
     final Color checkColor = isRead ? ChatifyColors.lightBlueLink : context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey;
 
     return Align(
       alignment: Alignment.centerRight,
+      widthFactor: fitContent ? 1 : null,
       child: Tooltip(
         verticalOffset: -50,
         waitDuration: const Duration(milliseconds: 800),

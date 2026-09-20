@@ -37,6 +37,8 @@ class SidePanelWidget extends StatefulWidget {
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
   final Set<String> selectedUserIds;
+  final Set<String> pinnedChats;
+  final Set<String> mutedChats;
   final bool isSearching;
   final List<UserModel> searchList;
   final int selectedIndex;
@@ -57,6 +59,8 @@ class SidePanelWidget extends StatefulWidget {
     required this.supports,
     required this.infosApp,
     required this.selectedUserIds,
+    required this.pinnedChats,
+    required this.mutedChats,
     required this.isSearching,
     required this.searchList,
     required this.selectedIndex,
@@ -139,6 +143,8 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                             isSearching: widget.isSearching,
                             searchList: widget.searchList,
                             selectedUser: selectedUser,
+                            pinnedChats: widget.pinnedChats,
+                            mutedChats: widget.mutedChats,
                             onGroupSelected: (group) {
                               setState(() {
                                 selectedGroup = group;

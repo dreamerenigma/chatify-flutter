@@ -6,6 +6,7 @@ import '../../../../utils/constants/app_sizes.dart';
 class AppActionMenuItem extends StatelessWidget {
   final Widget icon;
   final String title;
+  final String? subtitle;
   final VoidCallback onTap;
   final Widget? trailing;
 
@@ -14,6 +15,7 @@ class AppActionMenuItem extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
+    this.subtitle,
     this.trailing,
   });
 
@@ -23,8 +25,9 @@ class AppActionMenuItem extends StatelessWidget {
       color: ChatifyColors.transparent,
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -32,7 +35,19 @@ class AppActionMenuItem extends StatelessWidget {
             children: [
               icon,
               const SizedBox(width: 16),
-              Expanded(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400))),
+              Expanded(
+                child: subtitle != null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                        Text(subtitle!, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),
+                      ],
+                    )
+                  : Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                ),
+              ),
               if (trailing != null) ...[
                 trailing!,
               ],

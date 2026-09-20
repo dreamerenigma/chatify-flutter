@@ -196,8 +196,9 @@ class GroupInputState extends State<GroupInput> {
                               isUploading = value;
                             });
                           },
+                          user: APIs.me,
                         ),
-                        CameraButton(onImagePicked: handleImagePicked),
+                        CameraButton(onImagePicked: handleImagePicked, user: APIs.me),
                       ],
                     ),
                   ),

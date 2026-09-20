@@ -55,33 +55,16 @@ class AgoraTokenService {
 
   static Future<void> testServer() async {
     try {
-      final url = Uri.parse(
-        'https://chatify-agora-server.onrender.com',
-      );
+      final url = Uri.parse('https://chatify-agora-server.onrender.com');
 
-      log(
-        '[AGORA_TEST] 🌐 Testing URL: $url',
-        name: 'AgoraTokenService',
-      );
+      log('[AGORA_TEST] 🌐 Testing URL: $url', name: 'AgoraTokenService');
 
       final response = await http.get(url);
 
-      log(
-        '[AGORA_TEST] 📥 status=${response.statusCode}',
-        name: 'AgoraTokenService',
-      );
-
-      log(
-        '[AGORA_TEST] 📄 body=${response.body}',
-        name: 'AgoraTokenService',
-      );
+      log('[AGORA_TEST] 📥 status=${response.statusCode}', name: 'AgoraTokenService');
+      log('[AGORA_TEST] 📄 body=${response.body}', name: 'AgoraTokenService');
     } catch (e, stackTrace) {
-      log(
-        '[AGORA_TEST] ❌ $e',
-        name: 'AgoraTokenService',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      log('[AGORA_TEST] ❌ $e', name: 'AgoraTokenService', error: e, stackTrace: stackTrace);
     }
   }
 }

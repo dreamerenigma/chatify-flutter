@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
@@ -9,6 +10,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_sounds.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../widgets/dialog/time_remaining_dialog.dart';
 import '../widgets/dialog/waiting_other_participant_sheet_dialog.dart';
@@ -70,12 +72,12 @@ class LinkAudioScreenState extends State<LinkAudioScreen> {
               children: [
                 SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 16),
+                  padding: const EdgeInsets.only(left: 16, top: 16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.bold)),
-                      const SizedBox(width: 16.0),
+                      const SizedBox(width: 16),
                     ],
                   ),
                 ),
@@ -83,26 +85,19 @@ class LinkAudioScreenState extends State<LinkAudioScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Image(image: AssetImage(ChatifyImages.appLogoLight), width: 16, color: ChatifyColors.darkGrey),
+                    SvgPicture.asset(ChatifyVectors.appLogoLight, width: 16, colorFilter: const ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                     const SizedBox(width: 6),
-                    Text(S.of(context).callLink, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.darkGrey)),
+                    Text(S.of(context).callLink, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg)),
                   ],
                 ),
                 const Spacer(),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Container(
                     decoration: BoxDecoration(
                       color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                          spreadRadius: 5,
-                          blurRadius: 10,
-                          offset: const Offset(0, -3),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 5, blurRadius: 10, offset: const Offset(0, -3))],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -122,10 +117,7 @@ class LinkAudioScreenState extends State<LinkAudioScreen> {
                                 side: BorderSide.none,
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                               ),
-                              child: Text(
-                                S.of(context).skip,
-                                style: TextStyle(fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                              ),
+                              child: Text(S.of(context).skip, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w500)),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -145,11 +137,7 @@ class LinkAudioScreenState extends State<LinkAudioScreen> {
                               ),
                               child: Text(
                                 S.of(context).join,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                style: TextStyle(fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, overflow: TextOverflow.ellipsis),
                               ),
                             ),
                           ),

@@ -4,10 +4,11 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../status/widgets/images/camera_screen.dart';
 import 'light_dialog.dart';
 
-void showImageGroupBottomSheet(BuildContext context) {
+void showImageGroupBottomSheet(BuildContext context, UserModel user) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -37,31 +38,27 @@ void showImageGroupBottomSheet(BuildContext context) {
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 40,
-              mainAxisSpacing: 18,
-            ),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 40, mainAxisSpacing: 18),
             itemCount: 4,
             itemBuilder: (context, index) {
               return _buildRoundedIconContainer(
                 icon: index == 0
                   ? Icons.camera_alt_outlined
-                  : index == 1
-                  ? Icons.photo_outlined
-                  : index == 2
-                  ? Icons.emoji_emotions_outlined
+                    : index == 1
+                    ? Icons.photo_outlined
+                      : index == 2
+                      ? Icons.emoji_emotions_outlined
                   : Icons.search,
                 backgroundColor: ChatifyColors.transparent,
                 borderColor: ChatifyColors.popupColor,
                 label: index == 0
                   ? S.of(context).camera
-                  : index == 1
-                  ? S.of(context).gallery
-                  : index == 2
-                  ? S.of(context).emoticonsStickers
+                    : index == 1
+                    ? S.of(context).gallery
+                      : index == 2
+                      ? S.of(context).emoticonsStickers
                   : S.of(context).searchInternet,
-                onTap: () => handleContainerTap(context, index),
+                onTap: () => handleContainerTap(context, index, user),
                 context: context,
               );
             },
@@ -92,32 +89,22 @@ Widget _buildRoundedIconContainer({
         child: Container(
           width: 60,
           height: 60,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            shape: BoxShape.circle,
-            border: Border.all(color: borderColor, width: 2),
-          ),
+          decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle, border: Border.all(color: borderColor, width: 2)),
           child: Icon(icon, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 24),
         ),
       ),
       const SizedBox(height: 8),
       Flexible(
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-          softWrap: true,
-          overflow: TextOverflow.visible,
-        ),
+        child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400), softWrap: true, overflow: TextOverflow.visible),
       ),
     ],
   );
 }
 
-void handleContainerTap(BuildContext context, int index) {
+void handleContainerTap(BuildContext context, int index, UserModel user) {
   switch (index) {
     case 0:
-      Navigator.push(context, createPageRoute(const CameraScreen()));
+      Navigator.push(context, createPageRoute(CameraScreen(user: user)));
       break;
     case 1:
       break;

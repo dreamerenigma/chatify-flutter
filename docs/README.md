@@ -3,7 +3,7 @@
 Chatify is a modern messaging, audio, and video calling app inspired by WhatsApp. Create groups, chat in real time, and sync your devices across platforms: Android, Windows, and Web.
 
 <p align="center">
-  <img src="/assets/images/logos/chatify-logo-blue.png" width="250"  alt="Chatify Logo">
+  <img src="/assets/vectors/logos/chatify_logo_blue.svg" width="250" alt="Chatify Logo">
 </p>
 
 ---

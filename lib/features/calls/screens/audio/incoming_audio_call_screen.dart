@@ -222,9 +222,9 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Image(image: AssetImage(ChatifyImages.appLogoLight), width: 16, color: ChatifyColors.darkGrey),
+                  SvgPicture.asset(ChatifyVectors.appLogoLight, width: 16, height: 16, colorFilter: const ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                   const SizedBox(width: 6),
-                  Text(widget.user.phoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: ChatifyColors.darkGrey)),
+                  Text(widget.user.phoneNumber, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
                 ],
               ),
               const Spacer(),

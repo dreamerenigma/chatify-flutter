@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 50 50"
+   data-name="Layer 1"
+   id="Layer_1"
+   version="1.1"
+   sodipodi:docname="google.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.78808594"
+     inkscape:cx="474.56753"
+     inkscape:cy="443.47955"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <path
+     d="m 39.59326,25.00124 a 14.581847,14.581847 0 0 1 -28.303426,4.944151 l -8.3462561,6.67693 A 24.936342,24.936342 0 0 0 49.948884,25.00124"
+     fill="#00ac47"
+     id="path1"
+     style="stroke-width:1.88284" />
+  <path
+     d="m 39.59326,25.00124 a 14.570739,14.570739 0 0 1 -6.122245,11.859448 l 8.251361,6.601051 A 24.861405,24.861405 0 0 0 49.948884,25.00124"
+     fill="#4285f4"
+     id="path2"
+     style="stroke-width:1.88284" />
+  <path
+     d="m 10.409229,25.00124 a 14.494108,14.494108 0 0 1 0.880605,-4.944152 L 2.9435779,13.380159 a 24.810192,24.810192 0 0 0 0,23.242162 l 8.3462561,-6.67693 A 14.494108,14.494108 0 0 1 10.409229,25.00124 Z"
+     fill="#ffba00"
+     id="path3"
+     style="stroke-width:1.88284" />
+  <polygon
+     fill="#2ab2db"
+     points=""
+     id="polygon3" />
+  <path
+     d="m 25.001245,10.409224 a 14.495991,14.495991 0 0 1 8.581988,2.816354 L 41.227566,6.0909294 A 24.882116,24.882116 0 0 0 2.9435779,13.380159 l 8.3462561,6.676929 a 14.603312,14.603312 0 0 1 13.711411,-9.647864 z"
+     fill="#ea4435"
+     id="path4"
+     style="stroke-width:1.88284" />
+  <polygon
+     fill="#2ab2db"
+     points=""
+     id="polygon4" />
+  <path
+     d="m 49.948884,23.118399 v 1.882841 l -4.236392,6.589942 H 25.942665 V 21.235559 h 22.123378 a 1.8828407,1.8828407 0 0 1 1.882841,1.88284 z"
+     fill="#4285f4"
+     id="path5"
+     style="stroke-width:1.88284" />
+</svg>

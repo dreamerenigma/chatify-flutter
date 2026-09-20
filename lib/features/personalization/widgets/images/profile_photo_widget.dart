@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../../api/apis.dart';
 import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -26,6 +29,48 @@ class ProfilePhotoWidget extends StatefulWidget {
 
 class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
   bool _isLoaded = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
+  }
 
   @override
   void didUpdateWidget(covariant ProfilePhotoWidget oldWidget) {
@@ -61,7 +106,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
             width: MediaQuery.of(context).size.height * .15,
             height: MediaQuery.of(context).size.height * .15,
             fit: BoxFit.cover,
-            imageUrl: widget.user.image,
+            imageUrl: _profileImageUrl ?? '',
             errorWidget: (context, url, error) => CircleAvatar(
               backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
               foregroundColor: ChatifyColors.white,

@@ -9,8 +9,8 @@ import '../../../../../routes/custom_page_route.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
-import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../../status/widgets/images/camera_screen.dart';
+import '../../../models/user_model.dart';
 import '../../../screens/contact_seeding_screen.dart';
 import '../../../screens/create_survey_screen.dart';
 import '../../../../../domain/entities/chat_target.dart';
@@ -18,12 +18,14 @@ import '../../dialogs/add_geolocation_dialog.dart';
 import 'circle_split_painter.dart';
 
 class ChatInputAttachments extends StatelessWidget {
+  final UserModel user;
   final ChatTarget chatTarget;
   final bool isUploading;
   final ValueChanged<bool> setUploading;
 
   const ChatInputAttachments({
     super.key,
+    required this.user,
     required this.chatTarget,
     required this.isUploading,
     required this.setUploading,
@@ -101,7 +103,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 color2: ChatifyColors.pink,
                                 label: S.of(context).camera,
                                 onTap: () {
-                                  Navigator.push(context, createPageRoute(const CameraScreen()));
+                                  Navigator.push(context, createPageRoute(CameraScreen(user: user)));
                                 },
                               ),
                             ),
@@ -217,7 +219,7 @@ class ChatInputAttachments extends StatelessWidget {
               ),
             );
           },
-          icon: Icon(Icons.attach_file, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
+          icon: Icon(Icons.attach_file, color: ChatifyColors.textSecondary, size: 26),
         ),
       ],
     );

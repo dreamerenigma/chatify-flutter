@@ -1,6 +1,5 @@
 import 'package:chatify/features/personalization/screens/help/search_help_center_screen.dart';
 import 'package:chatify/features/personalization/screens/help/write_to_us/write_to_us_screen.dart';
-import 'package:chatify/utils/constants/app_images.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -43,7 +42,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final logoAsset = context.isDarkMode ? ChatifyImages.appLogoLight : ChatifyImages.appLogoDark;
+    final logoAsset = context.isDarkMode ? ChatifyVectors.appLogoLight : ChatifyVectors.appLogoDark;
 
     final helpTopics = [
       {'icon': Icons.flag, 'title': S.of(context).beginningWork},

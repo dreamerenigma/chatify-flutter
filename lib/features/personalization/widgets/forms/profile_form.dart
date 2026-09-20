@@ -94,25 +94,20 @@ class ProfileFormState extends State<ProfileForm> {
   }
 
   Future<void> _loadProfileImage() async {
-    final imagePath = widget.user.image;
+    final imagePath = widget.user.image.trim();
 
     if (imagePath.isEmpty) {
       return;
     }
 
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    if (mounted) {
       setState(() {
-        _profileImageUrl = imagePath;
+        _isLoadingProfileImage = true;
       });
-      return;
     }
 
-    setState(() {
-      _isLoadingProfileImage = true;
-    });
-
     try {
-      final url = await APIs.mediaService.getUrl(imagePath);
+      final url = await APIs.getMediaUrl(imagePath);
 
       if (!mounted) return;
 
@@ -120,14 +115,15 @@ class ProfileFormState extends State<ProfileForm> {
         _profileImageUrl = url;
         _isLoadingProfileImage = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
       if (!mounted) return;
 
       setState(() {
+        _profileImageUrl = null;
         _isLoadingProfileImage = false;
       });
-
-      log('PROFILE IMAGE URL ERROR: $e');
     }
   }
 

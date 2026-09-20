@@ -20,6 +20,8 @@ class MainHomeContentList extends StatelessWidget {
   final List<NewsletterModel> newsletters;
   final List<CommunityModel> communities;
   final List<UserModel> users;
+  final Set<String> pinnedChats;
+  final Set<String> mutedChats;
   final List<SupportAppModel> supports;
   final List<InfoAppModel> infosApp;
   final bool isSearching;
@@ -31,8 +33,6 @@ class MainHomeContentList extends StatelessWidget {
   final Set<String> selectedNewsletterIds;
   final Set<String> selectedCommunityIds;
   final Function(UserModel) onUserSelected;
-  final ValueChanged<Set<String>>? onPinnedChatsChanged;
-  final ValueChanged<Set<String>>? onMutedChatsChanged;
   final ValueChanged<NewsletterModel>? onNewsletterSelected;
   final ValueChanged<CommunityModel> onCommunitySelected;
   final SelectionType selectionType;
@@ -43,6 +43,8 @@ class MainHomeContentList extends StatelessWidget {
     required this.newsletters,
     required this.communities,
     required this.users,
+    required this.pinnedChats,
+    required this.mutedChats,
     required this.supports,
     required this.infosApp,
     required this.isSearching,
@@ -55,8 +57,6 @@ class MainHomeContentList extends StatelessWidget {
     required this.selectedCommunityIds,
     required this.selectionType,
     required this.onCommunitySelected,
-    this.onPinnedChatsChanged,
-    this.onMutedChatsChanged,
     this.isSelectionMode = false,
     this.onNewsletterSelected,
   });
@@ -96,7 +96,7 @@ class MainHomeContentList extends StatelessWidget {
               onCommunitySelected: onCommunitySelected,
             ),
           ),
-        if (users.isEmpty)
+        if (users.isNotEmpty)
           IgnorePointer(
             ignoring: selectionType != SelectionType.none && !isChatSelection,
             child: UserList(
@@ -106,12 +106,15 @@ class MainHomeContentList extends StatelessWidget {
               isSharing: false,
               onUserSelected: onUserSelected,
               selectedUserIds: selectedUserIds,
-              onPinnedChatsChanged: onPinnedChatsChanged,
-              onMutedChatsChanged: onMutedChatsChanged,
+              pinnedChats: pinnedChats,
+              mutedChats: mutedChats,
             ),
           ),
-        if (supports.isNotEmpty)
+        if (supports.isNotEmpty) ...[
+          if (users.isEmpty)
+            const SizedBox(height: 8),
           IgnorePointer(ignoring: isSelectionMode, child: SupportList(supports: supports, onSupportSelected: (support) {})),
+        ],
         if (infosApp.isNotEmpty)
           IgnorePointer(ignoring: isSelectionMode, child: InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {})),
         const SizedBox(height: 8),

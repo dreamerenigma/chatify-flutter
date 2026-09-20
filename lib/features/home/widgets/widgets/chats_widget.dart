@@ -38,6 +38,8 @@ class ChatsWidget extends StatefulWidget {
   final ValueChanged<CommunityModel> onCommunitySelected;
   final UserModel? selectedUser;
   final Set<String> selectedUserIds;
+  final Set<String> pinnedChats;
+  final Set<String> mutedChats;
   final CommunityModel? selectedCommunity;
   final Function(UserModel) onUserSelected;
   final Function(SupportAppModel) onSupportSelected;
@@ -59,6 +61,8 @@ class ChatsWidget extends StatefulWidget {
     required this.onNewsletterSelected,
     required this.onCommunitySelected,
     required this.selectedUserIds,
+    required this.pinnedChats,
+    required this.mutedChats,
     required this.onUserSelected,
     required this.onSupportSelected,
     required this.onInfoAppSelected,
@@ -347,7 +351,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                           ),
                         ),
                         Visibility(
-                          visible: widget.users.isEmpty,
+                          visible: widget.users.isNotEmpty,
                           replacement: const SizedBox.shrink(),
                           child: UserList(
                             isSearching: widget.isSearching,
@@ -355,6 +359,8 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                             list: widget.users,
                             isSharing: false,
                             selectedUserIds: widget.selectedUserIds,
+                            pinnedChats: widget.pinnedChats,
+                            mutedChats: widget.mutedChats,
                             onUserSelected: (user) {
                               setState(() {
                                 selectedUser = user;

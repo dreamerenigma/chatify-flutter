@@ -122,7 +122,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                             padding: EdgeInsets.only(top: DeviceUtils.getScreenHeight(context) * .01),
                             physics: const ClampingScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return MessageCard(message: list[index], isSelected: false, onLongPress: () {}, onTap: () {}, messages: messages);
+                              return MessageCard(message: list[index], isSelected: false, onLongPress: () {}, onTap: () {}, messages: messages, user: APIs.me);
                             },
                           );
                         } else {

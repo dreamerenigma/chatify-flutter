@@ -167,7 +167,7 @@ class NewsletterInputState extends State<NewsletterInput> {
                         //     });
                         //   }, // Update isUploading state
                         // ),
-                        CameraButton(onImagePicked: handleImagePicked),
+                        CameraButton(onImagePicked: handleImagePicked, user: user),
                       ],
                     ),
                   ),

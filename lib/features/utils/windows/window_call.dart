@@ -103,22 +103,12 @@ class _WindowCallState extends State<WindowCall>
                   ),
                 ),
 
-                // Кнопки окна
-                WindowButtons(
-                  isMaximizedNotifier: isMaximizedNotifier,
-                  iconColor: iconColor,
-                ),
+                WindowButtons(isMaximizedNotifier: isMaximizedNotifier, iconColor: iconColor),
               ],
             ),
           ),
-
-          // Содержимое звонка
           Expanded(
-            child: Center(
-              child: Text(
-                '${S.of(context).callFrom} ${widget.user.name}',
-              ),
-            ),
+            child: Center(child: Text('${S.of(context).callFrom} ${widget.user.name}')),
           ),
         ],
       ),

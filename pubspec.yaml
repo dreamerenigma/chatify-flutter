@@ -134,7 +134,6 @@ flutter:
   #-------------------- LOCAL ASSETS --------------------#
   assets:
     - assets/fonts/
-    - assets/icons/auth/
     - assets/images/
     - assets/images/background/
     - assets/images/logos/
@@ -143,7 +142,7 @@ flutter:
     - assets/sounds/
     - assets/vectors/
     - assets/vectors/flags/
-    - assets/licenses/
+    - assets/vectors/logos/
 
   #-------------------- LOCAL FONTS --------------------#
   fonts:

@@ -1,12 +1,15 @@
+import 'dart:developer';
+import 'dart:math' hide log;
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:camera/camera.dart';
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'dart:math';
+import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -33,12 +36,15 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
   late String shareLink;
   CameraController? _cameraController;
   bool _isFlashOn = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
 
   @override
   void initState() {
     super.initState();
     _generateQrCode();
     _initializeCamera();
+    _loadProfileImage();
     _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialIndex);
     _tabController.addListener(() {
       setState(() {});
@@ -57,13 +63,6 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
     shareLink = 'Добавьте меня в список контактов Chatify. https://chat.chatify.ru/qr/$shareId';
   }
 
-  Future<void> _initializeCamera() async {
-    final cameras = await availableCameras();
-    _cameraController = CameraController(cameras.first, ResolutionPreset.high);
-    await _cameraController!.initialize();
-    setState(() {});
-  }
-
   void _toggleFlash() {
     setState(() {
       _isFlashOn = !_isFlashOn;
@@ -71,9 +70,44 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
     _cameraController?.setFlashMode(_isFlashOn ? FlashMode.torch : FlashMode.off);
   }
 
-  void _switchToTab(int index) {
-    if (_tabController.index != index) {
-      _tabController.animateTo(index);
+  Future<void> _initializeCamera() async {
+    final cameras = await availableCameras();
+    _cameraController = CameraController(cameras.first, ResolutionPreset.high);
+    await _cameraController!.initialize();
+    setState(() {});
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
     }
   }
 
@@ -86,80 +120,84 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
           titleSpacing: 0,
           title: Text(S.of(context).qrCode, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           actions: _tabController.index == 0
-          ? <Widget>[
-            IconButton(
-              icon: const Icon(Icons.share_outlined),
-              onPressed: () {
-                Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
-                Future.delayed(const Duration(milliseconds: 200), () {
-                  Navigator.pop(context);
-                  SharePlus.instance.share(ShareParams(text: shareLink));
-                });
-              },
-            ),
-            TooltipTheme(
-              data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
-              child: Theme(
-                data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
-                child: PopupMenuButton<int>(
-                  tooltip: S.of(context).more,
-                  position: PopupMenuPosition.under,
-                  offset: const Offset(-8, 0),
-                  menuPadding: EdgeInsets.symmetric(vertical: 4),
-                  constraints: const BoxConstraints(minWidth: 0, maxWidth: 250),
-                  icon: const Icon(Icons.more_vert),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
-                      }
-                      return ChatifyColors.transparent;
-                    }),
-                    shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                    overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
-                  ),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 1,
-                      child: AppPopupMenuItem(
-                        text: S.of(context).resetQrCode,
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showResetDialog();
-                        },
-                      ),
+            ? <Widget>[
+              IconButton(
+                icon: const Icon(Icons.share_outlined),
+                onPressed: () {
+                  Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
+                  Future.delayed(const Duration(milliseconds: 200), () {
+                    Navigator.pop(context);
+                    SharePlus.instance.share(ShareParams(text: shareLink));
+                  });
+                },
+              ),
+              TooltipTheme(
+                data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+                child: Theme(
+                  data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+                  child: PopupMenuButton<int>(
+                    tooltip: S.of(context).more,
+                    position: PopupMenuPosition.under,
+                    offset: const Offset(-8, 0),
+                    menuPadding: EdgeInsets.symmetric(vertical: 4),
+                    constraints: const BoxConstraints(minWidth: 0, maxWidth: 250),
+                    icon: const Icon(Icons.more_vert),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.white,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith((states) {
+                        if (states.contains(WidgetState.pressed)) {
+                          return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                        }
+                        return ChatifyColors.transparent;
+                      }),
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                      overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
                     ),
-                  ],
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 1,
+                        child: AppPopupMenuItem(
+                          text: S.of(context).resetQrCode,
+                          onTap: () {
+                            Navigator.pop(context);
+                            _showResetDialog();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ]
+            ]
           : null,
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48.0),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              labelColor: ChatifyColors.white,
-              unselectedLabelColor: ChatifyColors.darkGrey,
-              indicatorSize: TabBarIndicatorSize.tab,
-              overlayColor: WidgetStateProperty.all(ChatifyColors.darkerGrey),
-              dividerColor: ChatifyColors.transparent,
-              tabs: [
-                Tab(text: S.of(context).myCode),
-                Tab(text: S.of(context).scanCode),
-              ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48.0),
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                labelColor: ChatifyColors.white,
+                splashFactory: NoSplash.splashFactory,
+                unselectedLabelColor: ChatifyColors.darkGrey.withValues(alpha: 0.7),
+                indicatorSize: TabBarIndicatorSize.tab,
+                overlayColor: WidgetStateProperty.all(ChatifyColors.softNight),
+                dividerColor: ChatifyColors.transparent,
+                tabs: [
+                  Tab(text: S.of(context).myCode),
+                  Tab(text: S.of(context).scanCode),
+                ],
+              ),
             ),
           ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildQrCodeTab(),
-            _buildCameraView(),
-          ],
+        body: ScrollConfiguration(
+          behavior: NoGlowScrollBehavior(),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildQrCodeTab(),
+              _buildCameraView(),
+            ],
+          ),
         ),
       ),
     );
@@ -172,7 +210,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             width: 350,
             decoration: BoxDecoration(color: ChatifyColors.blackGrey, borderRadius: BorderRadius.circular(12)),
             child: Column(
@@ -187,14 +225,8 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                         alignment: Alignment.center,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: QrImageView(
-                              data: shareLink,
-                              version: QrVersions.auto,
-                              size: 180,
-                              gapless: false,
-                              backgroundColor: ChatifyColors.white,
-                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            child: QrImageView(data: shareLink, version: QrVersions.auto, size: 180, gapless: false, backgroundColor: ChatifyColors.white),
                           ),
                           SvgPicture.asset(ChatifyVectors.logo, height: 35),
                         ],
@@ -213,20 +245,14 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                             child: CircleAvatar(
                               radius: 24,
                               backgroundColor: ChatifyColors.transparent,
-                              child: widget.user.image.isNotEmpty
-                                ? CircleAvatar(
-                                    radius: 24,
-                                    backgroundImage:
-                                    NetworkImage(widget.user.image),
-                                    backgroundColor: ChatifyColors.darkerGrey,
-                                  )
+                              child: _profileImageUrl != null && _profileImageUrl!.isNotEmpty
+                                ? CircleAvatar(radius: 24, backgroundImage: NetworkImage(_profileImageUrl!), backgroundColor: ChatifyColors.darkerGrey)
                                 : SvgPicture.asset(ChatifyVectors.profile, height: 40, width: 40),
                             ),
                           ),
-                          const SizedBox(height: 8.0),
-                          Text(widget.user.name, style: const TextStyle(color: ChatifyColors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 4.0),
-                          Text(S.of(context).contactApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm)),
+                          const SizedBox(height: 18),
+                          Text(widget.user.name, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 17, fontWeight: FontWeight.w400)),
+                          Text(S.of(context).contactApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1.2)),
                         ],
                       ),
                     )
@@ -320,16 +346,16 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
           left: 0,
           right: 0,
           child: Center(
-            child: Text(S.of(context).scanAppQrCode,style: TextStyle(color: ChatifyColors.white,fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
+            child: Text(S.of(context).scanAppQrCode,style: TextStyle(color: ChatifyColors.white, fontSize: 13, fontWeight: FontWeight.w400)),
           ),
         ),
         Positioned(
           left: 16,
           bottom: 16,
           child: IconButton(
-            icon: const Icon(BootstrapIcons.images, color: Colors.white),
+            icon: const Icon(BootstrapIcons.images, color: ChatifyColors.white),
             onPressed: () {
-              Navigator.push(context, createPageRoute(const GalleryScreen()));
+              Navigator.push(context, createPageRoute(GalleryScreen(title: 'Недавние')));
             },
           ),
         ),
@@ -337,10 +363,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
           right: 16,
           bottom: 16,
           child: IconButton(
-            icon: Icon(
-              _isFlashOn ? Icons.flash_on_outlined : Icons.flash_off_outlined,
-              color: ChatifyColors.white,
-            ),
+            icon: Icon(_isFlashOn ? Icons.flash_on_outlined : Icons.flash_off_outlined, color: ChatifyColors.white),
             onPressed: _toggleFlash,
           ),
         ),

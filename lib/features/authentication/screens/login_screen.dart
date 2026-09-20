@@ -7,13 +7,14 @@ import 'package:chatify/routes/custom_page_route.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../api/apis.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
-import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_sounds.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
 import '../../../utils/popups/custom_tooltip.dart';
 import '../../../utils/popups/dialogs.dart';
@@ -95,7 +96,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
-    final logoAsset = context.isDarkMode ? ChatifyImages.appLogoLight : ChatifyImages.appLogoDark;
+    final logoAsset = context.isDarkMode ? ChatifyVectors.appLogoLight : ChatifyVectors.appLogoDark;
 
     return Scaffold(
       backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
@@ -182,7 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
                     Container(
                       height: mq.height * 0.25,
                       alignment: Alignment.center,
-                      child: AnimatedContainer(duration: const Duration(seconds: 1), width: isAnimate ? mq.width * 0.5 : 0, child: Image.asset(logoAsset)),
+                      child: AnimatedContainer(duration: const Duration(seconds: 1), width: isAnimate ? mq.width * 0.5 : 0, child: SvgPicture.asset(logoAsset)),
                     ),
                     SizedBox(height: mq.height * .06),
                     Padding(
@@ -211,7 +212,7 @@ class LoginScreenState extends State<LoginScreen> {
                                   handleGoogleBtnClick();
                                 }
                               },
-                              icon: Image.asset(ChatifyImages.google, height: mq.height * 0.03),
+                              icon: SvgPicture.asset(ChatifyVectors.google, height: mq.height * 0.03),
                               label: RichText(
                                 text: TextSpan(
                                   style: const TextStyle(color: ChatifyColors.white, fontSize: 16),

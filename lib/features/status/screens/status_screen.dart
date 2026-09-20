@@ -125,7 +125,7 @@ class StatusScreenState extends State<StatusScreen> {
       setState(() {
         userStatus = status;
         _statusImageUrl = imageUrl;
-        _profileImageUrl = profileImageUrl; // ← ВАЖНО
+        _profileImageUrl = profileImageUrl;
       });
 
       _startStatusTimers(status);
@@ -293,11 +293,11 @@ class StatusScreenState extends State<StatusScreen> {
             ),
           ),
         ),
-        floatingActionButton: selectedIndex == 1 ? const StatusFAB() : null,
+        floatingActionButton: selectedIndex == 1 ? StatusFAB(user: widget.user) : null,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StatusHeaderWidget(user: widget.user, userStatus: userStatus, statusImageUrl: _statusImageUrl, profileImageUrl: _profileImageUrl, onAddStatus: () => showAddStatusBottomDialog(context)),
+            StatusHeaderWidget(user: widget.user, userStatus: userStatus, statusImageUrl: _statusImageUrl, profileImageUrl: _profileImageUrl, onAddStatus: () => showAddStatusBottomDialog(context, widget.user)),
             Obx(() => viewedUserIds.isNotEmpty ? ViewedStatusWidget(expandController: expandController, colorsController: colorsController) : const SizedBox.shrink()),
             const SizedBox(height: 6),
             _buildLatestStatuses(),

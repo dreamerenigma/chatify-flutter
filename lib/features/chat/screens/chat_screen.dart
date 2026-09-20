@@ -40,7 +40,11 @@ class ChatScreen extends StatefulWidget {
   final UserModel user;
   final File? fileToSend;
 
-  const ChatScreen({super.key, required this.user, this.fileToSend});
+  const ChatScreen({
+    super.key,
+    required this.user,
+    this.fileToSend,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -489,6 +493,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                                       MessageCard(
                                         key: ValueKey(message.sent),
                                         message: message,
+                                        user: widget.user,
                                         isSelected: selectedMessages.contains(index),
                                         onLongPress: () {
                                           _startSelection();

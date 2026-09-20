@@ -18,6 +18,7 @@ import '../../../core/enums/selection_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
 import '../../bot/models/info_app_model.dart';
@@ -74,6 +75,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _myUsersSubscription;
 
   bool get isSelecting => selectionType != SelectionType.none;
+  bool get isEmpty => users.isEmpty && groups.isEmpty && communities.isEmpty;
 
   @override
   void initState() {
@@ -240,21 +242,66 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void _listenToMyUsers() {
     _myUsersSubscription = APIs.getMyUsersId().listen((snapshot) {
-      userLastMessageTimes.clear();
+        final userIds = snapshot.docs.map((doc) => doc.id).toList();
+        userLastMessageTimes.clear();
 
-      for (final doc in snapshot.docs) {
-        final data = doc.data();
-        final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
+        final newPinnedChats = <String>{};
+        final newMutedChats = <String>{};
 
-        userLastMessageTimes[doc.id] = lastMessageTime;
-      }
+        for (final doc in snapshot.docs) {
+          final data = doc.data();
 
-      _rebuildHomeItems();
+          final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
 
-      if (mounted) {
-        setState(() {});
-      }
-    });
+          userLastMessageTimes[doc.id] = lastMessageTime;
+
+          if (data['pinned'] == true) {
+            newPinnedChats.add(doc.id);
+          }
+
+          if (data['muted'] == true) {
+            newMutedChats.add(doc.id);
+          }
+        }
+
+        if (userIds.isEmpty) {
+          if (mounted) {
+            setState(() {
+              users = [];
+              _rebuildHomeItems();
+            });
+          }
+          return;
+        }
+
+        APIs.getAllUsers(userIds).listen((
+          usersSnapshot) {
+
+            final loadedUsers = usersSnapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+
+            if (!mounted) return;
+
+            setState(() {
+              users = loadedUsers;
+              _rebuildHomeItems();
+            });
+          },
+          onError: (error, stackTrace) {
+            log('========== USERS STREAM ERROR ==========');
+            log('ERROR: $error');
+            log('STACK: $stackTrace');
+          },
+        );
+      },
+      onError: (error, stackTrace) {
+        log('========== MY_USERS STREAM ERROR ==========');
+        log('ERROR: $error');
+        log('STACK: $stackTrace');
+      },
+      onDone: () {
+        log('========== MY_USERS STREAM DONE ==========');
+      },
+    );
   }
 
   void onItemTapped(int index) {
@@ -502,25 +549,49 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   });
                 },
                 onCameraPressed: () {
-                  Navigator.push(context, createPageRoute(const CameraScreen()));
+                  Navigator.push(context, createPageRoute(CameraScreen(user: widget.user)));
                 },
                 hintText: S.of(context).search,
               )
             : null,
-        floatingActionButton: defaultTargetPlatform == TargetPlatform.windows ? null : selectedIndex == 0
-          ? Padding(padding: const EdgeInsets.only(bottom: 5),
-              child: FloatingActionButton(
+        floatingActionButton: defaultTargetPlatform == TargetPlatform.windows
+          ? null
+          : selectedIndex == 0
+            ? isEmpty
+              ? FloatingActionButton.extended(
+                  heroTag: 'home',
+                  onPressed: () {
+                    Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
+                  },
+                  elevation: 2,
+                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value,),
+                  foregroundColor: ChatifyColors.white,
+                  icon: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                  label: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Text('Отправить сообщение', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.black, fontWeight: FontWeight.w400)),
+                  ),
+                )
+              : FloatingActionButton(
+                  heroTag: 'home',
+                  onPressed: () {
+                    Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
+                  },
+                  elevation: 2,
+                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  foregroundColor: ChatifyColors.white,
+                  child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                )
+            : FloatingActionButton(
                 heroTag: 'home',
-                onPressed: () async {
+                onPressed: () {
                   Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
                 },
                 elevation: 2,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 foregroundColor: ChatifyColors.white,
-                child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
-              ),
-            )
-          : null,
+                child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+            ),
         body: HomeScreenWidget(
           selectedIndex: selectedIndex,
           pageController: _pageController,
@@ -538,24 +609,14 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           onPageChanged: _onPageChanged,
           onItemTapped: onItemTapped,
           onGroupSelected: (group) {},
-          onUserSelected: (user) {
-            _toggleChatSelection(user);
-          },
-          onPinnedChatsChanged: (value) {
-            setState(() {
-              pinnedChats..clear()..addAll(value);
-            });
-          },
-          onMutedChatsChanged: (value) {
-            setState(() {
-              mutedChats..clear()..addAll(value);
-            });
-          },
+          onUserSelected: (user) => _toggleChatSelection(user),
           user: widget.user,
           selectedNewsletterIds: selectedNewsletterIds,
           selectionType: selectionType,
           selectedCommunityIds: selectedCommunityIds,
           onCommunitySelected: onCommunitySelected,
+          pinnedChats: pinnedChats,
+          mutedChats: mutedChats,
         ),
         bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped) : null,
       ),

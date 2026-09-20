@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -12,14 +13,18 @@ import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/helper/date_util.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../models/message_model.dart';
+import '../../models/user_model.dart';
 import '../dialogs/items/menu_item.dart';
 import '../dialogs/reaction_bottom_sheet_dialog.dart';
 import '../dialogs/select_message_dialog.dart';
 import '../messages/recipient_message.dart';
+import '../messages/recipient_video_message.dart';
 import '../messages/sender_message.dart';
+import '../messages/sender_video_message.dart';
 import '../painters/triangle_painter.dart';
 
 class MessageCard extends StatefulWidget {
+  final UserModel user;
   final MessageModel message;
   final bool isSelected;
   final VoidCallback onLongPress;
@@ -30,6 +35,7 @@ class MessageCard extends StatefulWidget {
 
   const MessageCard({
     super.key,
+    required this.user,
     required this.message,
     required this.onLongPress,
     required this.onTap,
@@ -47,6 +53,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
   late final AnimationController _swipeController;
   Animation<double>? _swipeAnimation;
   bool isPressed = false;
+  bool _isVideoMessageExpanded = false;
   double _swipeOffset = 0;
 
   static const double _replyIconDistance = 50;
@@ -93,13 +100,25 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
     bool isMe = APIs.user.uid == widget.message.fromId;
     bool isDeletedByMe = widget.message.deletedBy.contains(APIs.user.uid);
 
+    log('MESSAGE CARD: ''type=${widget.message.type}, ''fromId=${widget.message.fromId}, ''myUid=${APIs.user.uid}, ''isMe=$isMe');
+
     if (isDeletedByMe) {
       final deletedTime = widget.message.deletedAt ?? DateTime.tryParse(widget.message.sent);
       final backgroundColor = isMe ? (context.isDarkMode ? ChatifyColors.greenMessageDark : ChatifyColors.greenMessageLight) : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight);
       final borderColor = isMe ? (context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.blueMessageBorder);
 
       return GestureDetector(
-        onTap: widget.onTap,
+        onTap: () {
+          if (widget.message.type == MessageType.videoMessage && _isVideoMessageExpanded) {
+            setState(() {
+              _isVideoMessageExpanded = false;
+            });
+
+            return;
+          }
+
+          widget.onTap();
+        },
         onLongPress: widget.onLongPress,
         onSecondaryTapDown: (TapDownDetails details) {
           final tapPosition = details.globalPosition;
@@ -216,7 +235,18 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
       },
       onHorizontalDragCancel: _animateSwipeBack,
       child: InkWell(
-        onTap: widget.onTap,
+        onTap: () {
+          if (widget.message.type == MessageType.videoMessage &&
+              _isVideoMessageExpanded) {
+            setState(() {
+              _isVideoMessageExpanded = false;
+            });
+
+            return;
+          }
+
+          widget.onTap();
+        },
         onLongPress: widget.onLongPress,
         mouseCursor: SystemMouseCursors.basic,
         child: Container(
@@ -226,27 +256,23 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Positioned(
-                left: 8,
-                top: 0,
-                bottom: 0,
-                child: _buildReplyIcon(),
-              ),
+              Positioned(left: 8, top: 0, bottom: 0, child: _buildReplyIcon()),
               Transform.translate(
                 offset: Offset(_swipeOffset, 0),
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0),
+                  padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0,),
                   child: Align(
                     alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: IntrinsicWidth(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (widget.message.type == MessageType.call ? 0.85 : 0.8)),
-                        child: isMe
-                          ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
-                          : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction,
+                    child: widget.message.type == MessageType.videoMessage
+                      ? _buildVideoMessageCard(isMe: isMe)
+                      : IntrinsicWidth(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (widget.message.type == MessageType.call ? 0.85 : 0.8)),
+                            child: isMe
+                              ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
+                              : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, user: widget.user),
+                          ),
                         ),
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -318,6 +344,30 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildVideoMessageCard({required bool isMe}) {
+    if (isMe) {
+      return RecipientVideoMessage(
+        message: widget.message,
+        isExpanded: _isVideoMessageExpanded,
+        onExpandedChanged: (expanded) {
+          setState(() {
+            _isVideoMessageExpanded = expanded;
+          });
+        },
+      );
+    }
+
+    return SenderVideoMessage(
+      message: widget.message,
+      isExpanded: _isVideoMessageExpanded,
+      onExpandedChanged: (expanded) {
+        setState(() {
+          _isVideoMessageExpanded = expanded;
+        });
+      },
     );
   }
 }

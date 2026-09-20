@@ -67,17 +67,17 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
                 Column(
                   children: [
                     ProfilePhotoOption(
-                      icon: Icon(Icons.camera_alt_outlined, color: ChatifyColors.darkGrey, size: 24),
+                      icon: Icon(Icons.camera_alt_outlined, color: ChatifyColors.darkGrey, size: 26),
                       label: S.of(context).camera,
                       onTap: () => handleContainerTap,
                     ),
                     ProfilePhotoOption(
-                      icon: Icon(Icons.photo_outlined, color: ChatifyColors.darkGrey, size: 24),
+                      icon: Icon(Icons.photo_outlined, color: ChatifyColors.darkGrey, size: 26),
                       label: S.of(context).gallery,
                       onTap: () => handleContainerTap,
                     ),
                     ProfilePhotoOption(
-                      icon: SvgPicture.asset(ChatifyVectors.avatar, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                      icon: SvgPicture.asset(ChatifyVectors.avatar, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                       label: S.of(context).avatar,
                       onTap: () => handleContainerTap,
                     ),

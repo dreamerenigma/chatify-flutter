@@ -11,6 +11,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import 'package:unicons/unicons.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../screens/add_detail_image_screen.dart';
 import '../../screens/enter_status_screen.dart';
@@ -19,18 +20,23 @@ import '../options/action_option.dart';
 import 'create_maket_bottom_dialog.dart';
 import 'overlays/albums_overlay.dart';
 
-void showAddStatusBottomDialog(BuildContext context) {
+void showAddStatusBottomDialog(BuildContext context, UserModel user) {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
     isScrollControlled: true,
-    builder: (_) => const AddStatusBottomSheet(),
+    builder: (_) => AddStatusBottomSheet(user: user),
   );
 }
 
 class AddStatusBottomSheet extends StatefulWidget {
-  const AddStatusBottomSheet({super.key});
+  final UserModel user;
+
+  const AddStatusBottomSheet({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<AddStatusBottomSheet> createState() => _AddStatusBottomSheetState();
@@ -339,7 +345,7 @@ class _AddStatusBottomSheetState extends State<AddStatusBottomSheet> {
         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {
-          Navigator.push(context, createPageRoute(const CameraScreen()));
+          Navigator.push(context, createPageRoute(CameraScreen(user: widget.user)));
         },
         child: Container(
           decoration: BoxDecoration(color: ChatifyColors.transparent, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1)),

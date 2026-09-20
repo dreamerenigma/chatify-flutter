@@ -103,7 +103,7 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
           ],
         ),
       ),
-      WallpaperItem(imagePath: ChatifyImages.photo, title: S.of(context).myPhotos, destinationScreen: const GalleryScreen()),
+      WallpaperItem(imagePath: ChatifyImages.photo, title: S.of(context).myPhotos, destinationScreen: const GalleryScreen(title: 'Недавние')),
     ];
   }
 

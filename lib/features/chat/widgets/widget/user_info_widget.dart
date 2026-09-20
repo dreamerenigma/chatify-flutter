@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/api/apis.dart';
@@ -17,7 +18,7 @@ import '../../../personalization/screens/profile/view_profile_screen.dart';
 import '../../models/user_model.dart';
 import '../dialogs/chat_settings_dialog.dart';
 
-class UserInfoWidget extends StatelessWidget {
+class UserInfoWidget extends StatefulWidget {
   final UserModel user;
   final bool showStatusText;
 
@@ -28,47 +29,98 @@ class UserInfoWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      mouseCursor: SystemMouseCursors.basic,
-      splashFactory: NoSplash.splashFactory,
-      borderRadius: BorderRadius.circular(8),
-      splashColor: ChatifyColors.transparent,
-      highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
-      onTap: () {
-        if (Platform.isWindows) {
-          final renderBox = context.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
+  State<UserInfoWidget> createState() => _UserInfoWidgetState();
+}
 
-          showChatSettingsDialog(context, user, position, initialIndex: 0);
-        } else {
-          Navigator.push(context, createPageRoute(ViewProfileScreen(user: user)));
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildAvatar(context),
-            SizedBox(width: Platform.isWindows ? 14 : 10),
-            Flexible(child: _buildUserText(context)),
-          ],
+class _UserInfoWidgetState extends State<UserInfoWidget> {
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        mouseCursor: SystemMouseCursors.basic,
+        splashFactory: NoSplash.splashFactory,
+        borderRadius: BorderRadius.circular(8),
+        splashColor: ChatifyColors.transparent,
+        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
+        onTap: () {
+          if (Platform.isWindows) {
+            final renderBox = context.findRenderObject() as RenderBox;
+            final position = renderBox.localToGlobal(Offset.zero);
+
+            showChatSettingsDialog(context, widget.user, position, initialIndex: 0);
+          } else {
+            Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildAvatar(context),
+              SizedBox(width: Platform.isWindows ? 14 : 10),
+              Flexible(child: _buildUserText(context)),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildAvatar(BuildContext context) {
-    final avatarColors = AvatarColorUtil.get(user.id);
+    final avatarColors = AvatarColorUtil.get(widget.user.id);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .04),
       child: CachedNetworkImage(
         width: 40,
         height: 40,
-        imageUrl: user.image,
+        imageUrl: _profileImageUrl ?? '',
         fit: BoxFit.cover,
         placeholder: (context, url) {
           return Container(width: 40, height: 40, color: ChatifyColors.blackGrey);
@@ -92,7 +144,7 @@ class UserInfoWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '${user.name}${user.surname.isNotEmpty ? ' ${user.surname}' : ''}',
+          '${widget.user.name}${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
@@ -105,7 +157,7 @@ class UserInfoWidget extends StatelessWidget {
 
   Widget _buildStatus(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: APIs.firestore.collection('Users').doc(user.id).snapshots(),
+      stream: APIs.firestore.collection('Users').doc(widget.user.id).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
@@ -126,7 +178,7 @@ class UserInfoWidget extends StatelessWidget {
             alignment: Alignment.centerLeft,
             children: [
               AnimatedOpacity(
-                opacity: showStatusText ? 0.0 : 1.0,
+                opacity: widget.showStatusText ? 0.0 : 1.0,
                 duration: const Duration(milliseconds: 600),
                 curve: Curves.easeInCubic,
                 child: Text(
@@ -137,7 +189,7 @@ class UserInfoWidget extends StatelessWidget {
                 ),
               ),
               AnimatedOpacity(
-                opacity: showStatusText ? 1.0 : 0.0,
+                opacity: widget.showStatusText ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 600),
                 curve: Curves.easeInCubic,
                 child: Text(

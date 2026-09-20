@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/constants/app_vectors.dart';
 
 void showImageOptionsBottomSheet(BuildContext context, int index, List<AssetEntity> selectedImages, void Function(int) onRemoveImage) {
   if (selectedImages.isNotEmpty) {
@@ -32,7 +33,7 @@ void showImageOptionsBottomSheet(BuildContext context, int index, List<AssetEnti
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Image.asset(ChatifyImages.appLogoSplash, height: 40, alignment: Alignment.center),
+                      child: SvgPicture.asset(ChatifyVectors.appLogoSplash, height: 40, alignment: Alignment.center),
                     ),
                     const SizedBox(height: 5),
                     Text(S.of(context).appName, style: TextStyle(fontSize: ChatifySizes.fontSizeSm), textAlign: TextAlign.center),

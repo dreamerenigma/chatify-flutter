@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
@@ -47,10 +48,16 @@ class ChatUserCard extends StatefulWidget {
 }
 
 class ChatUserCardState extends State<ChatUserCard> {
-  bool isLoadingProfileImage = false;
+  bool _isLoadingProfileImage = false;
   bool isLongPressed = false;
-  MessageModel? message;
   String? _profileImageUrl;
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   void initState() {
@@ -65,36 +72,29 @@ class ChatUserCardState extends State<ChatUserCard> {
       return;
     }
 
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      if (!mounted) return;
-
-      setState(() {
-        _profileImageUrl = imagePath;
-      });
-
-      return;
-    }
-
     if (mounted) {
       setState(() {
-        isLoadingProfileImage = true;
+        _isLoadingProfileImage = true;
       });
     }
 
     try {
-      final url = await APIs.mediaService.getUrl(imagePath);
+      final url = await APIs.getMediaUrl(imagePath);
 
       if (!mounted) return;
 
       setState(() {
         _profileImageUrl = url;
-        isLoadingProfileImage = false;
+        _isLoadingProfileImage = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
       if (!mounted) return;
 
       setState(() {
-        isLoadingProfileImage = false;
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
       });
     }
   }
@@ -159,10 +159,7 @@ class ChatUserCardState extends State<ChatUserCard> {
               builder: (context, snapshot) {
                 final data = snapshot.data?.docs;
                 final list = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
-
-                if (list.isNotEmpty && (message == null || message!.toId != list[0].toId)) {
-                  message = list[0];
-                }
+                final message = list.isNotEmpty ? list.first : null;
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -250,7 +247,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 SizedBox(width: 16),
                                 if (message != null) ...[
                                   Text(
-                                    DateUtil.getLastMessageTime(context: context, time: DateTime.fromMillisecondsSinceEpoch(int.parse(message!.sent)), formatType: DateFormatType.numeric),
+                                    DateUtil.getLastMessageTime(context: context, time: DateTime.fromMillisecondsSinceEpoch(int.parse(message.sent)), formatType: DateFormatType.numeric),
                                     style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                                   ),
                                 ],
@@ -258,10 +255,10 @@ class ChatUserCardState extends State<ChatUserCard> {
                             ),
                             const SizedBox(height: 4),
                             message != null
-                              ? message!.type == MessageType.call
-                                ? _buildCallPreview(context)
-                                : message != null && message!.msg.isNotEmpty
-                                  ? _buildMessagePreview(context)
+                              ? message.type == MessageType.call
+                                ? _buildCallPreview(context, message)
+                                : message.msg.isNotEmpty
+                                  ? _buildMessagePreview(context, message)
                                   : Text(
                                       widget.user.about,
                                       style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
@@ -303,8 +300,7 @@ class ChatUserCardState extends State<ChatUserCard> {
     );
   }
 
-  Widget _buildCallPreview(BuildContext context) {
-    final call = message!;
+  Widget _buildCallPreview(BuildContext context, MessageModel call) {
     final isMyCall = call.fromId == APIs.user.uid;
     final isVideo = call.callType == CallType.video;
     final isMissed = call.callStatus == CallStatusType.missed || call.callStatus == CallStatusType.noAnswer;
@@ -337,13 +333,13 @@ class ChatUserCardState extends State<ChatUserCard> {
     );
   }
 
-  Widget _buildMessagePreview(BuildContext context) {
+  Widget _buildMessagePreview(BuildContext context, MessageModel message) {
     return Row(
       children: [
         Expanded(
           child: Row(
             children: [
-              if (message!.type == MessageType.gif) ...[
+              if (message.type == MessageType.gif) ...[
                 HeroIcon(HeroIcons.gif, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
                 const SizedBox(width: 4),
                 Flexible(
@@ -354,7 +350,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                   ),
                 ),
-              ] else if (message!.type == MessageType.image) ...[
+              ] else if (message.type == MessageType.image) ...[
                 Icon(Icons.image, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                 const SizedBox(width: 4),
                 Flexible(
@@ -365,7 +361,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                   ),
                 ),
-              ] else if (message!.type == MessageType.video) ...[
+              ] else if (message.type == MessageType.video) ...[
                 Icon(Icons.videocam, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                 const SizedBox(width: 4),
                 Flexible(
@@ -376,7 +372,18 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                   ),
                 ),
-              ] else if (message!.type == MessageType.audio) ...[
+              ] else if (message.type == MessageType.videoMessage) ...[
+                Icon(Icons.video_camera_front_outlined, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    'Видеозаметка (${message.videoDuration != null ? _formatDuration(message.videoDuration!) : '0:00'})',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                  ),
+                ),
+              ] else if (message.type == MessageType.audio) ...[
                 Icon(Icons.audiotrack, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                 const SizedBox(width: 4),
                 Flexible(
@@ -387,7 +394,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
                   ),
                 ),
-              ] else if (message!.type == MessageType.document) ...[
+              ] else if (message.type == MessageType.document) ...[
                 Icon(
                   FluentIcons.document_16_filled,
                   color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
@@ -395,7 +402,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    message!.documentName ?? S.of(context).unknownDocument,
+                    message.documentName ?? S.of(context).unknownDocument,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
@@ -421,7 +428,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                           child: SizedBox(width: 4),
                         ),
                         TextSpan(
-                          text: message!.msg,
+                          text: message.msg,
                           style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontSize: ChatifySizes.fontSizeSm),
                         ),
                       ],

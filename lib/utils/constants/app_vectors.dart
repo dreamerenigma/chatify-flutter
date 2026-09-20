@@ -7,6 +7,16 @@ class ChatifyVectors {
   static const String pathFlags = '${basePath}flags/';
   static const String format = '.svg';
 
+  /// -- App Logos
+  static const String appLogoSplash = "assets/vectors/logos/chatify_splash_logo.svg";
+  static const String appLogoLight = "assets/vectors/logos/chatify_logo_light.svg";
+  static const String appLogoDark = "assets/vectors/logos/chatify_logo_dark.svg";
+  static const String appLogoGrey = "assets/vectors/logos/chatify_logo_grey.svg";
+  static const String appLogoBlue = "assets/vectors/logos/chatify_logo_blue.svg";
+
+  /// -- Brands Logos
+  static const String google = "assets/vectors/logos/google.svg";
+
   /// -- Vectors
   static const String status = "assets/vectors/status.svg";
   static const String profile = "assets/vectors/profile.svg";
@@ -39,6 +49,7 @@ class ChatifyVectors {
   static const String geolocation = "assets/vectors/geolocation.svg";
   static const String message = "assets/vectors/message.svg";
   static const String messageFilled = "assets/vectors/message_filled.svg";
+  static const String messageOutline = "assets/vectors/message_outline.svg";
   static const String lock = "assets/vectors/lock.svg";
   static const String lockOutline = "assets/vectors/lock_outline.svg";
   static const String user = "assets/vectors/user.svg";
@@ -225,8 +236,10 @@ class ChatifyVectors {
   static const String microphoneFilled = "assets/vectors/microphone_filled.svg";
   static const String createdCommunity = "assets/vectors/created_community.svg";
   static const String refresh = "assets/vectors/refresh.svg";
+  static const String videoMessage = "assets/vectors/video_message.svg";
+  static const String speakerOff = "assets/vectors/speaker_off.svg";
 
-  /// -- Flags country
+  /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';
   static const String afg = '${pathFlags}afg$format';
   static const String ago = '${pathFlags}ago$format';

@@ -1587,7 +1587,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "muteUnknownNumbers": MessageLookupByLibrary.simpleMessage(
       "Отключить звук для \n неизвестных номеров",
     ),
-    "myCode": MessageLookupByLibrary.simpleMessage("Мой код"),
+    "myCode": MessageLookupByLibrary.simpleMessage("МОЙ КОД"),
     "myContacts": MessageLookupByLibrary.simpleMessage("Мои контакты"),
     "myContactsAll": MessageLookupByLibrary.simpleMessage("Мои контакты, Все"),
     "myPhotos": MessageLookupByLibrary.simpleMessage("Мои фото"),
@@ -2108,7 +2108,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "scanAppQrCode": MessageLookupByLibrary.simpleMessage(
       "Сканировать QR-код Chatify",
     ),
-    "scanCode": MessageLookupByLibrary.simpleMessage("Сканировать код"),
+    "scanCode": MessageLookupByLibrary.simpleMessage("СКАНИРОВАТЬ КОД"),
     "scanCodeUse": MessageLookupByLibrary.simpleMessage(
       "Сканируйте код, чтобы использовать Chatify на нескольких телефонах. Входите в приложение на вашем основном телефоне каждые 14 дней, чтобы этот телефон оставался подключенным.",
     ),

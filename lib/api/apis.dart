@@ -64,8 +64,15 @@ class APIs {
   /// -- Accessing media service.
   static MediaService get mediaService => Get.find<MediaService>();
 
+  /// -- .
   static Future<String?> getMediaUrl(String path) async {
-    return await mediaService.getUrl(path);
+    final mediaPath = path.trim();
+
+    if (mediaPath.isEmpty) {
+      return null;
+    }
+
+    return await mediaService.getUrl(mediaPath);
   }
 
   ///******************* User Related APIs *******************
@@ -228,7 +235,9 @@ class APIs {
       if (userDoc.exists) {
         final data = userDoc.data();
         if (data != null) {
+          log('FIRESTORE IMAGE: ${data['image']}');
           me = UserModel.fromJson(data);
+          log('APIs.me.image = ${me.image}');
           await getFirebaseMessagingToken();
         } else {
           log("User data is null in Firestore");
@@ -441,7 +450,7 @@ class APIs {
 
       log('UPDATE PROFILE: imagePath = $imagePath');
 
-      if (imagePath == null) {
+      if (imagePath == null || imagePath.isEmpty){
         log('UPDATE PROFILE: upload failed');
         return false;
       }
@@ -848,17 +857,10 @@ class APIs {
   }
 
   /// -- Send voice message.
-  static Future<String> sendVoiceMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize,}) async {
-    log('========== API: SEND VOICE MESSAGE ==========');
-
+  static Future<String> sendVoiceMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize}) async {
     try {
       final time = DateTime.now().millisecondsSinceEpoch.toString();
       final conversationId = getConversationId(chatUser.id);
-
-      log('Message ID: $time');
-      log('Conversation ID: $conversationId');
-      log('Local audio path: $localPath');
-
       final file = File(localPath);
 
       if (!await file.exists()) {
@@ -871,21 +873,12 @@ class APIs {
         throw Exception('Voice file is empty: $localPath');
       }
 
-      log('Local voice file exists');
-      log('Local voice file size: $localFileSize bytes');
-
       final yandexPath = YandexDiskPaths.messageAudio(conversationId, time);
-
-      log('Yandex Disk path: $yandexPath');
-
       final uploadedPath = await mediaService.uploadFile(file: file, path: yandexPath);
 
       if (uploadedPath == null || uploadedPath.isEmpty) {
         throw Exception('Failed to upload voice message to Yandex Disk');
       }
-
-      log('✅ Voice uploaded to Yandex Disk');
-      log('Uploaded path: $uploadedPath');
 
       final message = MessageModel(
         toId: chatUser.id,
@@ -902,36 +895,68 @@ class APIs {
       );
 
       final data = message.toJson();
-
-      log('---------- MESSAGE DATA ----------');
-      log('toId: ${data['toId']}');
-      log('msg: ${data['msg']}');
-      log('type: ${data['type']}');
-      log('fromId: ${data['fromId']}');
-      log('sent: ${data['sent']}');
-      log('fileSize: ${data['fileSize']}');
-      log('----------------------------------');
-
       final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(time);
 
-      log('Firestore path: ${ref.path}');
-      log('Writing message to Firestore...');
-
       await ref.set(data);
-
-      log('✅ Message successfully written to Firestore');
-
-      log('Sending push notification...');
-
       await sendPushNotification(chatUser, 'Голосовое сообщение');
-
-      log('✅ Push notification sent');
-
-      log('========== API: SEND VOICE MESSAGE DONE ==========');
 
       return time;
     } catch (e, stack) {
       log('❌ SEND VOICE MESSAGE ERROR: $e');
+      log('$stack');
+      rethrow;
+    }
+  }
+
+  /// -- Send video message.
+  static Future<String> sendVideoMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize, int? videoDuration}) async {
+    try {
+      final time = DateTime.now().millisecondsSinceEpoch.toString();
+      final conversationId = getConversationId(chatUser.id);
+      final file = File(localPath);
+
+      if (!await file.exists()) {
+        throw Exception('Video file does not exist: $localPath');
+      }
+
+      final localFileSize = await file.length();
+
+      if (localFileSize == 0) {
+        throw Exception('Video file is empty: $localPath');
+      }
+
+      final yandexPath = YandexDiskPaths.messageVideo(conversationId, time);
+      final uploadedPath = await mediaService.uploadFile(file: file, path: yandexPath);
+
+      if (uploadedPath == null || uploadedPath.isEmpty) {
+        throw Exception('Failed to upload video message to Yandex Disk');
+      }
+
+      final message = MessageModel(
+        toId: chatUser.id,
+        msg: uploadedPath,
+        read: '',
+        type: MessageType.videoMessage,
+        fromId: user.uid,
+        sent: time,
+        documentName: fileName,
+        fileSize: fileSize ?? localFileSize.toString(),
+        videoDuration: videoDuration,
+        deletedBy: [],
+        reactions: {},
+        deletedAt: null,
+      );
+
+      final data = message.toJson();
+
+      final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(time);
+
+      await ref.set(data);
+      await sendPushNotification(chatUser, 'Видеосообщение');
+
+      return time;
+    } catch (e, stack) {
+      log('❌ SEND VIDEO MESSAGE ERROR: $e');
       log('$stack');
       rethrow;
     }
@@ -1237,9 +1262,6 @@ class APIs {
     return users;
   }
 
-  /// -- Audio recordings message.
-  static Future<void> audioRecording() async {}
-
   /// -- Get archived chat users.
   static Stream<List<UserModel>> getArchivedUsers(String userId) {
     return firestore.collection('Users').doc(userId).collection('my_users').where('archived', isEqualTo: true).snapshots().asyncMap((snapshot) async {
@@ -1376,10 +1398,16 @@ class APIs {
     });
   }
 
-  /// -- Method to fetch support from Firestore.
+  /// -- Method to fetch support chat from Firestore.
   static Future<List<SupportAppModel>> getSupportChat() async {
     try {
-      final querySnapshot = await firestore.collection('SupportChats').get();
+      final uid = APIs.me.id;
+
+      if (uid.isEmpty) {
+        return [];
+      }
+
+      final querySnapshot = await firestore.collection('SupportChats').where('userId', isEqualTo: uid).get();
 
       final supports = querySnapshot.docs.map((doc) {
         return SupportAppModel.fromMap(doc.data());

@@ -18,6 +18,7 @@ class MessageModel {
   late final Map<String, List<String>> reactions;
   late final DateTime? deletedAt;
   late final int? audioDuration;
+  late final int? videoDuration;
 
   MessageModel({
     required this.toId,
@@ -34,6 +35,7 @@ class MessageModel {
     required this.reactions,
     required this.deletedAt,
     this.audioDuration,
+    this.videoDuration,
   });
 
   bool get isMe => fromId == APIs.user.uid;
@@ -67,6 +69,7 @@ class MessageModel {
 
     deletedAt = json['deletedAt'] != null ? DateTime.tryParse(json['deletedAt'].toString()) : null;
     audioDuration = json['audioDuration'] != null ? int.tryParse(json['audioDuration'].toString()) : null;
+    videoDuration = json['videoDuration'] != null ? int.tryParse(json['videoDuration'].toString()) : null;
 
     switch (json['type'].toString()) {
       case 'image':
@@ -77,6 +80,9 @@ class MessageModel {
         break;
       case 'video':
         type = MessageType.video;
+        break;
+      case 'videoMessage':
+        type = MessageType.videoMessage;
         break;
       case 'audio':
         type = MessageType.audio;
@@ -155,6 +161,10 @@ class MessageModel {
 
     if (audioDuration != null) {
       data['audioDuration'] = audioDuration;
+    }
+
+    if (videoDuration != null) {
+      data['videoDuration'] = videoDuration;
     }
 
     return data;

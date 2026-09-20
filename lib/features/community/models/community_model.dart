@@ -13,6 +13,7 @@ class CommunityModel implements BaseChatEntity {
   late DateTime createdAt;
   late String creatorName;
   late String creatorId;
+  late List<String> members;
 
   CommunityModel({
     required this.id,
@@ -22,6 +23,7 @@ class CommunityModel implements BaseChatEntity {
     required this.createdAt,
     required this.creatorName,
     required this.creatorId,
+    required this.members,
   });
 
   bool get isCreated => name.isNotEmpty;
@@ -35,6 +37,7 @@ class CommunityModel implements BaseChatEntity {
       'createdAt': Timestamp.fromDate(createdAt),
       'creatorName': creatorName,
       'creatorId': creatorId,
+      'members': members,
     };
   }
 
@@ -46,18 +49,20 @@ class CommunityModel implements BaseChatEntity {
     createdAt = DateUtil.parseDateTime(json['createdAt']);
     creatorName = json['creatorName'] ?? '';
     creatorId = json['creatorId'] ?? '';
+    members = List<String>.from(json['members'] ?? []);
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['image'] = image;
-    data['description'] = description;
-    data['name'] = name;
-    data['created_at'] = Timestamp.fromDate(createdAt);
-    data['creatorName'] = creatorName;
-    data['creatorId'] = creatorId;
-    return data;
+    return {
+      'id': id,
+      'image': image,
+      'description': description,
+      'name': name,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'creatorName': creatorName,
+      'creatorId': creatorId,
+      'members': members,
+    };
   }
 
   @override

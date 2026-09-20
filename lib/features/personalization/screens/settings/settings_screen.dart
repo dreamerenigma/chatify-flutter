@@ -45,7 +45,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   bool isSearching = false;
   bool showFirst = true;
   bool showSecond = true;
-  bool isLoadingProfileImage = false;
+  bool _isLoadingProfileImage = false;
   String? _profileImageUrl;
 
   List<String> filteredSettingsOptions = [];
@@ -102,45 +102,36 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadProfileImage() async {
-    final imagePath = widget.user.image;
+    final imagePath = widget.user.image.trim();
 
     if (imagePath.isEmpty) {
       return;
     }
 
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      if (!mounted) return;
-
-      setState(() {
-        _profileImageUrl = imagePath;
-      });
-
-      return;
-    }
-
     if (mounted) {
       setState(() {
-        isLoadingProfileImage = true;
+        _isLoadingProfileImage = true;
       });
     }
 
     try {
-      final url = await APIs.mediaService.getUrl(imagePath);
+      final url = await APIs.getMediaUrl(imagePath);
 
       if (!mounted) return;
 
       setState(() {
         _profileImageUrl = url;
-        isLoadingProfileImage = false;
+        _isLoadingProfileImage = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
       if (!mounted) return;
 
       setState(() {
-        isLoadingProfileImage = false;
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
       });
-
-      log('PROFILE IMAGE URL ERROR: $e');
     }
   }
 
@@ -292,7 +283,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                                   return IconButton(
                                     onPressed: () {
                                       Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
+
                                       Future.delayed(const Duration(seconds: 2), () {
+                                        if (!mounted) return;
+
                                         Navigator.pop(context);
                                         Navigator.push(context, createPageRoute(QrCodeScreen(user: widget.user)));
                                       });

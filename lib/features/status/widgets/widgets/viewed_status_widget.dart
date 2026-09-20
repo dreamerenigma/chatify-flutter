@@ -5,7 +5,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
@@ -72,7 +71,7 @@ class _ViewedStatusWidgetState extends State<ViewedStatusWidget> {
                           width: DeviceUtils.getScreenHeight(context) * .07,
                           height: DeviceUtils.getScreenHeight(context) * .07,
                           decoration: BoxDecoration(color: widget.colorsController.getColor(widget.colorsController.selectedColorScheme.value), shape: BoxShape.circle),
-                          child: Center(child: Image.asset(ChatifyImages.appLogoLight, width: 34, height: 34, fit: BoxFit.contain)),
+                          child: Center(child: SvgPicture.asset(ChatifyVectors.appLogoLight, width: 34, height: 34, fit: BoxFit.contain)),
                         ),
                       ),
                     ],

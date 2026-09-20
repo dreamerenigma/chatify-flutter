@@ -47,6 +47,7 @@ class MessageBubble extends StatelessWidget {
       : child;
 
     return Container(
+      clipBehavior: Clip.none,
       padding: isWebOrWindows
         ? EdgeInsets.symmetric(horizontal: 12, vertical: isSender ? 4 : 8)
         : showInnerContainer

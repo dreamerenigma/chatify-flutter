@@ -248,7 +248,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
         }).toList();
 
         if (filteredMessages.isNotEmpty) {
-          return CommunityMessageListView(messages: filteredMessages, scrollController: scrollController);
+          return CommunityMessageListView(messages: filteredMessages, scrollController: scrollController, user: widget.user);
         } else {
           return const SizedBox();
         }

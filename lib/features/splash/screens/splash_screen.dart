@@ -2,12 +2,14 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
 import '../../personalization/screens/send/send_file_screen.dart';
 import '../../authentication/screens/add_account_screen.dart';
@@ -87,7 +89,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    final logoAsset = context.isDarkMode ? ChatifyImages.appLogoLight : ChatifyImages.appLogoDark;
+    final logoAsset = context.isDarkMode ? ChatifyVectors.appLogoLight : ChatifyVectors.appLogoDark;
 
     return Scaffold(
       backgroundColor: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
@@ -95,12 +97,7 @@ class SplashScreenState extends State<SplashScreen> {
         children: [
           if (isWebOrWindows) Center(child: Image.asset(logoAsset, width: mq.size.width * .15))
           else
-            Positioned(
-              top: mq.size.height * 0.35,
-              left: 0,
-              right: 0,
-              child: Center(child: Image.asset(logoAsset, width: mq.size.width * .5)),
-            ),
+            Positioned(top: mq.size.height * 0.35, left: 0, right: 0, child: Center(child: SvgPicture.asset(logoAsset, width: mq.size.width * .5, height: mq.size.width * .5))),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(

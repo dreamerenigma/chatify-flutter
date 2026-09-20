@@ -20,7 +20,7 @@ class AboutAppScreen extends StatelessWidget {
           Positioned.fill(child: Image.asset(context.isDarkMode ? ChatifyImages.helpBackgroundDarkV1 : ChatifyImages.helpBackgroundDarkV1 , fit: BoxFit.cover)),
           Positioned(
             top: 40,
-            left: 16,
+            left: 5,
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
               onPressed: () {
@@ -37,7 +37,7 @@ class AboutAppScreen extends StatelessWidget {
                   Text('$appName ${'Messenger'}', style: TextStyle(color: ChatifyColors.white, fontSize: 23, fontWeight: FontWeight.w400, height: 1.4)),
                   Text('${S.of(context).version} $appVersion.$appBuildNumber', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 17, fontWeight: FontWeight.w400)),
                   const SizedBox(height: 30),
-                  Image.asset(ChatifyImages.appLogoLight, height: 90),
+                  SvgPicture.asset(ChatifyVectors.appLogoLight, width: 90, height: 90),
                   const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

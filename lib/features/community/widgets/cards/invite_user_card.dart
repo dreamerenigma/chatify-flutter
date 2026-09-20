@@ -37,7 +37,12 @@ class InviteUserCardState extends State<InviteUserCard> {
       elevation: isSelected ? 4 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
-      child: GestureDetector(
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        borderRadius: BorderRadius.circular(15),
+        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
         onLongPress: () {
           setState(() {
             isSelected = !isSelected;
@@ -49,6 +54,11 @@ class InviteUserCardState extends State<InviteUserCard> {
         child: Ink(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey),
           child: InkWell(
+            splashFactory: NoSplash.splashFactory,
+            borderRadius: BorderRadius.circular(15),
+            splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
             onTap: () async {
               await _showLoadingAndSendInvite(context, widget.contact);
               setState(() {
@@ -58,9 +68,6 @@ class InviteUserCardState extends State<InviteUserCard> {
                 }
               });
             },
-            borderRadius: BorderRadius.circular(15),
-            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
             child: Padding(
               padding: EdgeInsets.all(12),
               child: Row(

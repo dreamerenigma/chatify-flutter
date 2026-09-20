@@ -101,46 +101,39 @@ class SelectChatScreenState extends State<SelectChatScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
             ),
             child: AppBar(
               titleSpacing: 0,
               title: isSearching
-                  ? TextSelectionTheme(
-                data: TextSelectionThemeData(
-                  cursorColor: Colors.blue,
-                  selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
-                  selectionHandleColor: Colors.blue,
-                ),
-                child: TextField(
-                  focusNode: searchFocusNode,
-                  cursorColor: ChatifyColors.blue,
-                  controller: searchController,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-                  decoration: InputDecoration(
-                    hintText: S.of(context).settingsSearch,
-                    hintStyle:
-                    TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
+                ? TextSelectionTheme(
+                    data: TextSelectionThemeData(
+                      cursorColor: Colors.blue,
+                      selectionColor: Colors.blue.withAlpha((0.3 * 255).toInt()),
+                      selectionHandleColor: Colors.blue,
+                    ),
+                    child: TextField(
+                      focusNode: searchFocusNode,
+                      cursorColor: ChatifyColors.blue,
+                      controller: searchController,
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                      decoration: InputDecoration(
+                        hintText: S.of(context).settingsSearch,
+                        hintStyle:
+                        TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
+                      onChanged: onSearchChanged,
+                    ),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(S.of(context).selectChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+                    ],
                   ),
-                  onChanged: onSearchChanged,
-                ),
-              )
-                  : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(S.of(context).selectChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-                ],
-              ),
               centerTitle: false,
               actions: [
                 IconButton(

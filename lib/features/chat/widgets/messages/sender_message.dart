@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/helper/date_util.dart';
-import '../../../../api/apis.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -19,6 +18,7 @@ import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/message_model.dart';
+import '../../models/user_model.dart';
 import '../../screens/forward_message_screen.dart';
 import '../buttons/emoji_hover_button.dart';
 import '../dialogs/call_modal_bottom_sheet.dart';
@@ -31,12 +31,14 @@ import 'message_bubble.dart';
 import 'message_text.dart';
 
 class SenderMessage extends StatefulWidget {
+  final UserModel user;
   final MessageModel message;
   final List<MessageModel> messages;
   final bool hasReaction;
 
   const SenderMessage({
     super.key,
+    required this.user,
     required this.message,
     required this.messages,
     required this.hasReaction,
@@ -146,7 +148,7 @@ class SenderMessageState extends State<SenderMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Platform.isWindows && widget.message.type != MessageType.call)
+          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.audio)
             Center(
               child: Container(
                 width: 35,
@@ -160,9 +162,7 @@ class SenderMessageState extends State<SenderMessage> {
                   onPressed: () {
                     Navigator.push(context, createPageRoute(ForwardMessageScreen()));
                   },
-                  icon: SvgPicture.asset(
-                    ChatifyVectors.arrowBendDoubleUpRight, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn),
-                  ),
+                  icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                 ),
               ),
             ),
@@ -312,10 +312,10 @@ class SenderMessageState extends State<SenderMessage> {
                   onSecondaryTap: _handleSecondaryTap,
                   showInnerContainer: false,
                   showMetaCheck: true,
-                  type: MessageBubbleType.recipient,
+                  type: MessageBubbleType.sender,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minWidth: 250),
-                    child: VoiceRecordMessage(message: widget.message, isSender: false, user: APIs.me),
+                    child: VoiceRecordMessage(message: widget.message, isSender: true, user: widget.user),
                   ),
                 ),
                 _buildMessageTail(),

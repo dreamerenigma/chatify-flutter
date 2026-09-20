@@ -45,7 +45,7 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
   late List<GroupModel> groups;
-  bool isLoadingProfileImage = false;
+  bool _isLoadingProfileImage = false;
   bool isCloseChatEnabled = false;
   int _selectedTab = 0;
   String? _profileImageUrl;
@@ -94,45 +94,36 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
   }
 
   Future<void> _loadProfileImage() async {
-    final imagePath = widget.user.image;
+    final imagePath = widget.user.image.trim();
 
     if (imagePath.isEmpty) {
       return;
     }
 
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      if (!mounted) return;
-
-      setState(() {
-        _profileImageUrl = imagePath;
-      });
-
-      return;
-    }
-
     if (mounted) {
       setState(() {
-        isLoadingProfileImage = true;
+        _isLoadingProfileImage = true;
       });
     }
 
     try {
-      final url = await APIs.mediaService.getUrl(imagePath);
+      final url = await APIs.getMediaUrl(imagePath);
 
       if (!mounted) return;
 
       setState(() {
         _profileImageUrl = url;
-        isLoadingProfileImage = false;
+        _isLoadingProfileImage = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
       if (!mounted) return;
 
       setState(() {
-        isLoadingProfileImage = false;
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
       });
-
-      log('PROFILE IMAGE URL ERROR: $e');
     }
   }
 

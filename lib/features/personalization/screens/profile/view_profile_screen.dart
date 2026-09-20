@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
@@ -34,6 +36,7 @@ import '../../widgets/images/profile_photo_widget.dart';
 import '../../widgets/items/profile_settings_item.dart';
 import '../../widgets/lists/group_list.dart';
 import '../notifications/user_notifications_screen.dart';
+import 'change_contact_screen.dart';
 
 class ViewProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -50,6 +53,8 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   late List<GroupModel> groups;
   bool isCloseChatEnabled = false;
   bool isProfilePhotoLoaded = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
 
   @override
   void initState() {
@@ -61,6 +66,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         _scrollOffset.value = _scrollController.offset;
       });
     });
+    _loadProfileImage();
   }
 
   @override
@@ -72,6 +78,40 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
   void _openProfilePhoto(UserModel user, BuildContext context) {
     Navigator.push(context, createPageRoute(PhotoProfileScreen(image: user.image, user: user)));
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
   }
 
   @override
@@ -98,7 +138,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              buildProfileInfo(widget.user, context),
+                              _buildProfileInfo(widget.user, context),
                               _buildMedia(),
                               _buildInfo(),
                               _buildChat(),
@@ -148,7 +188,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(21),
                           child: CachedNetworkImage(
-                            imageUrl: widget.user.image,
+                            imageUrl: _profileImageUrl ?? '',
                             width: 42,
                             height: 42,
                             fit: BoxFit.cover,
@@ -211,6 +251,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                           text: 'Изменить',
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.push(context, createPageRoute(ChangeContactScreen()));
                           },
                         ),
                       ),
@@ -253,7 +294,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     );
   }
 
-  Widget buildProfileInfo(UserModel user, BuildContext context) {
+  Widget _buildProfileInfo(UserModel user, BuildContext context) {
     final double imageSize = MediaQuery.of(context).size.height * .15;
     List<Widget> profileInfoWidgets = [];
 
@@ -334,7 +375,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ActionOption(
-            icon: Icons.message,
+            svgAsset: ChatifyVectors.messageOutline,
             label: S.of(context).write,
             onTap: () {
               Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
@@ -674,7 +715,6 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           onTap: () {},
         ),
-        const SizedBox(height: 10),
       ],
     );
   }

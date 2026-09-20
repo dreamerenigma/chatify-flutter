@@ -65,8 +65,7 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
       log('Audio duration: $duration');
     });
     _audioPlayer.playerStateStream.listen((state) async {
-      log('Player state: ''playing=${state.playing}, ' 'processing=${state.processingState}',
-      );
+      log('Player state: ''playing=${state.playing}, ' 'processing=${state.processingState}');
 
       if (!mounted) return;
 
@@ -166,17 +165,9 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
   Future<void> _loadProfileImage() async {
     final imagePath = widget.user.image.trim();
 
+    log('PROFILE IMAGE INPUT: $imagePath');
+
     if (imagePath.isEmpty) {
-      return;
-    }
-
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      if (!mounted) return;
-
-      setState(() {
-        _profileImageUrl = imagePath;
-      });
-
       return;
     }
 
@@ -187,7 +178,9 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
     }
 
     try {
-      final url = await APIs.mediaService.getUrl(imagePath);
+      final url = await APIs.getMediaUrl(imagePath);
+
+      log('PROFILE IMAGE: resolved URL = $url');
 
       if (!mounted) return;
 
@@ -195,10 +188,18 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
         _profileImageUrl = url;
         isLoadingProfileImage = false;
       });
-    } catch (e) {
+
+      log('PROFILE IMAGE URL: $_profileImageUrl');
+    } catch (e, stackTrace) {
+      log(
+        'PROFILE IMAGE URL ERROR: $e',
+        stackTrace: stackTrace,
+      );
+
       if (!mounted) return;
 
       setState(() {
+        _profileImageUrl = null;
         isLoadingProfileImage = false;
       });
     }
@@ -207,53 +208,62 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
+      textDirection: widget.isSender ? TextDirection.rtl : TextDirection.ltr,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-          child: Center(
-            child: GestureDetector(
-              onTap: _changePlaybackSpeed,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: _isPlaying
-                  ? Padding(
+          child: GestureDetector(
+            onTap: _changePlaybackSpeed,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: _isPlaying
+                ? Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Container(
-                        key: const ValueKey('speed'),
-                        width: 60,
-                        height: 33,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
-                        child: Text(
-                          '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
-                        ),
+                      key: const ValueKey('speed'),
+                      width: 60,
+                      height: 33,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
+                      child: Text(
+                        '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                       ),
+                    ),
                   )
-                  : SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Container(
+                : SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Align(
+                          alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
+                          child: Container(
                             width: 50,
                             height: 50,
                             decoration: const BoxDecoration(shape: BoxShape.circle),
                             clipBehavior: Clip.antiAlias,
                             child: Image.network(
-                              widget.message.msg,
+                              _profileImageUrl ?? '',
                               fit: BoxFit.cover,
                               errorBuilder: (_, _, _) {
                                 return Container(color: ChatifyColors.grey, child: SvgPicture.asset(ChatifyVectors.profile, width: 50, height: 50));
                               },
                             ),
                           ),
-                          Positioned(right: -6, bottom: -2, child: SvgPicture.asset(ChatifyVectors.microphoneFilled, width: 21, height: 21)),
-                        ],
-                      ),
-                ),
+                        ),
+                        Positioned(
+                          left: widget.isSender ? -6 : null,
+                          right: widget.isSender ? null : -6,
+                          bottom: -2,
+                          child: SvgPicture.asset(ChatifyVectors.microphoneFilled, width: 21, height: 21),
+                        ),
+                      ],
+                    ),
               ),
             ),
           ),

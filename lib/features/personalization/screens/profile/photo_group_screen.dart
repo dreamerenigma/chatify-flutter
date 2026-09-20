@@ -79,19 +79,12 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
-                boxShadow: [
-                  BoxShadow(
-                    color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
+                color: ChatifyColors.black,
+                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
               ),
               child: AppBar(
                 backgroundColor: ChatifyColors.transparent,
-                title: Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                title: Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
@@ -124,15 +117,10 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
                 panEnabled: true,
                 scaleEnabled: true,
                 transformationController: transformationController,
-                minScale: 1.0,
-                maxScale: 4.0,
+                minScale: 1,
+                maxScale: 4,
                 child: hasImage
-                  ? CachedNetworkImage(
-                      imageUrl: image,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      height: double.infinity,
-                    )
+                  ? CachedNetworkImage(imageUrl: image, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
                   : Center(child: Text(S.of(context).noGroupPicture, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd))),
               ),
             );

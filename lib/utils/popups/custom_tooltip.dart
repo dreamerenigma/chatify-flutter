@@ -11,6 +11,7 @@ class CustomTooltip extends StatefulWidget {
   final double horizontalOffset;
   final bool disableOnTap;
   final bool disableTooltipOnLongPress;
+  final bool showOnTap;
 
   const CustomTooltip({
     super.key,
@@ -20,6 +21,7 @@ class CustomTooltip extends StatefulWidget {
     this.horizontalOffset = 0,
     this.disableOnTap = false,
     this.disableTooltipOnLongPress = false,
+    this.showOnTap = false,
   });
 
   @override
@@ -74,6 +76,26 @@ class _CustomTooltipState extends State<CustomTooltip> with TickerProviderStateM
     }
   }
 
+  void _showTooltipOnTap() {
+    if (_isDisposed || !mounted) return;
+
+    if (_overlayEntry != null) {
+      _removeTooltip();
+    }
+
+    _showTooltip = true;
+
+    _insertTooltip();
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted || _isDisposed) return;
+      if (!_showTooltip) return;
+
+      _showTooltip = false;
+      _removeTooltip();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -104,7 +126,10 @@ class _CustomTooltipState extends State<CustomTooltip> with TickerProviderStateM
           }
         });
       },
-      child: RepaintBoundary(key: _key, child: widget.child),
+      child: GestureDetector(
+        onTap: widget.showOnTap && !widget.disableOnTap ? _showTooltipOnTap : null,
+        child: RepaintBoundary(key: _key, child: widget.child),
+      ),
     );
   }
 
@@ -142,24 +167,13 @@ class _CustomTooltipState extends State<CustomTooltip> with TickerProviderStateM
                         color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.white.withAlpha((0.5 * 255).toInt()),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
-                            spreadRadius: 1,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
                       ),
                       child: Text(
                         widget.message,
                         softWrap: true,
                         overflow: TextOverflow.visible,
-                        style: TextStyle(
-                          color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                          fontSize: ChatifySizes.fontSizeLm,
-                          fontWeight: FontWeight.w300,
-                        ),
+                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
                       ),
                     ),
                   ),

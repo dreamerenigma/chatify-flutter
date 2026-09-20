@@ -2,16 +2,8 @@
 
 /// This class contains all the App Images in String formats.
 class ChatifyImages {
-  /// -- App Logos
-  static const String appLogoSplash = "assets/images/logos/chatify-splash-logo.png";
-  static const String appLogoLight = "assets/images/logos/chatify-logo-light.png";
-  static const String appLogoDark = "assets/images/logos/chatify-logo-dark.png";
-  static const String appLogoGrey = "assets/images/logos/chatify-logo-grey.png";
-
-  /// -- Logos
-  static const String google = "assets/icons/auth/google.png";
-  static const String logoIS = "assets/logos/logo-input-studios.png";
-  static const String logoBlue = "assets/logos/chatify-logo-blue.png";
+  /// -- Brands Logos
+  static const String logoIS = "assets/images/logos/logo-input-studios.png";
 
   /// -- Profile
   static const String gallery = "assets/images/gallery.png";

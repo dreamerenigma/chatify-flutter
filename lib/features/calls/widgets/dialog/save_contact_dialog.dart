@@ -2,9 +2,11 @@ import 'package:chatify/api/apis.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../core/enums/radio_position_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../personalization/widgets/dialogs/custom_radio_list_tile.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class SaveContactController extends GetxController {
@@ -49,64 +51,87 @@ class SaveContactController extends GetxController {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return Dialog(
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          title: Text('${S.of(context).save}:', style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
-          contentPadding: EdgeInsets.zero,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Obx(() => RadioGroup<int>(
-                groupValue: selectedOption.value,
-                onChanged: (value) {
-                  if (value != null) {
-                    setOption(context, value);
-                  }
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    RadioListTile<int>(
-                      title: Text(APIs.me.email),
-                      value: 1,
-                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      contentPadding: const EdgeInsets.only(left: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: SizedBox(
+            width: 320,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Text('Синхронизация:', style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+                  ),
+                  const SizedBox(height: 16),
+                  Obx(() => RadioGroup<int>(
+                    groupValue: selectedOption.value,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setOption(context, value);
+                      }
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CustomRadioListTile<int>(
+                          value: 1,
+                          radioScale: 1.15,
+                          radioPosition: RadioPositionType.left,
+                          padding: const EdgeInsets.only(left: 12, right: 12),
+                          title: Text(APIs.me.email),
+                          iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        ),
+                        CustomRadioListTile<int>(
+                          value: 2,
+                          radioScale: 1.15,
+                          radioPosition: RadioPositionType.left,
+                          padding: const EdgeInsets.only(left: 12, right: 12),
+                          title: Text(S.of(context).phone),
+                          iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        ),
+                      ],
                     ),
-                    RadioListTile<int>(
-                      title: Text(S.of(context).phone),
-                      value: 2,
-                      activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      contentPadding: const EdgeInsets.only(left: 12),
+                  )),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                        ),
+                        SizedBox(width: 10),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                            backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                          child: Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )),
-            ],
+                  ),
+                ],
+              ),
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              ),
-              child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              ),
-              child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ),
-          ],
         );
       },
     );

@@ -6,10 +6,12 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/date_util.dart';
 import '../../../../utils/popups/custom_tooltip.dart';
 import '../../models/message_model.dart';
+import '../../models/user_model.dart';
 import '../cards/message_card.dart';
 import '../dialogs/calendar_dialog.dart';
 
 class MessageListView extends StatefulWidget {
+  final UserModel user;
   final List<MessageModel> messages;
   final bool isHovered;
   final bool isInside;
@@ -20,6 +22,7 @@ class MessageListView extends StatefulWidget {
 
   const MessageListView({
     super.key,
+    required this.user,
     required this.messages,
     required this.isHovered,
     required this.isInside,
@@ -37,6 +40,7 @@ class _MessageListViewState extends State<MessageListView> {
   bool isInside = false;
   bool isHovered = false;
   List<bool> isHoveredList = [];
+
   bool isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
   }
@@ -131,7 +135,7 @@ class _MessageListViewState extends State<MessageListView> {
                       widget.toggleMessageSelection(index);
                     }
                   },
-                  onTap: () => widget.toggleMessageSelection(index), messages: widget.messages,
+                  onTap: () => widget.toggleMessageSelection(index), messages: widget.messages, user: widget.user,
                 ),
               ),
             ],

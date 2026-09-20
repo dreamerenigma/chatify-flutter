@@ -395,6 +395,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
             selectedMessages: selectedMessages,
             startSelection: _startSelection,
             toggleMessageSelection: _toggleMessageSelection,
+            user: widget.user,
           );
         } else {
           return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));

@@ -5,15 +5,18 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
+import '../models/user_model.dart';
 import '../widgets/cards/message_card.dart';
 import '../models/message_model.dart';
 
 class MessageDetailsScreen extends StatelessWidget {
+  final UserModel user;
   final MessageModel message;
   final List<MessageModel> messages;
 
   const MessageDetailsScreen({
     super.key,
+    required this.user,
     required this.message,
     required this.messages,
   });
@@ -42,6 +45,7 @@ class MessageDetailsScreen extends StatelessWidget {
                 onLongPress: () {},
                 onTap: () {},
                 messages: messages,
+                user: user,
               ),
             ),
           ),

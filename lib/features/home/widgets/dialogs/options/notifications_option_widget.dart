@@ -10,7 +10,6 @@ import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
-import '../../../../../utils/constants/app_images.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -840,7 +839,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.dark : ChatifyColors.white, borderRadius: BorderRadius.circular(4)),
-                      child: Center(child: Image.asset(ChatifyImages.logoBlue, width: 20, height: 20)),
+                      child: Center(child: SvgPicture.asset(ChatifyVectors.appLogoBlue, width: 20, height: 20)),
                     ),
                     Positioned(
                       top: -2,

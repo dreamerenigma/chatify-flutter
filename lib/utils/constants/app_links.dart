@@ -15,6 +15,6 @@ class AppLinks {
   static const String addSocialLink = 'https://faq.chatify.ru/490705150777195';
   static const String advancedChatPrivacy = 'https://faq.chatify.ru/715385484388016';
   static const String agoraServer = 'https://chatify-agora-server.onrender.com';
-  static const String baseUrl = 'https://chatify-yandex-disk-server.onrender.com';
-  static const String yandexDiskServer = 'https://chatify-yandex-disk-server.onrender.com';
+  static const String baseUrl = 'https://api.phocherry.ru';
+  static const String yandexDiskServer = 'https://api.phocherry.ru';
 }

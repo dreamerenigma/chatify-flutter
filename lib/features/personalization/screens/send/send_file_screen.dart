@@ -173,6 +173,8 @@ class SendFileScreenState extends State<SendFileScreen> {
             isSharing: true,
             onUserSelected: _onUserSelected,
             selectedUserIds: {},
+            pinnedChats: const {},
+            mutedChats: const {},
           ),
           if (selectedUser != null)
           Align(

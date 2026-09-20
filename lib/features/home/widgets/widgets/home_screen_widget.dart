@@ -58,13 +58,13 @@ class HomeScreenWidget extends StatefulWidget {
   final Set<String> selectedChats;
   final Set<String> selectedNewsletterIds;
   final Set<String> selectedCommunityIds;
+  final Set<String> pinnedChats;
+  final Set<String> mutedChats;
   final SelectionType selectionType;
   final Function(int) onPageChanged;
   final Function(int) onItemTapped;
   final Function(GroupModel) onGroupSelected;
   final Function(UserModel) onUserSelected;
-  final ValueChanged<Set<String>>? onPinnedChatsChanged;
-  final ValueChanged<Set<String>>? onMutedChatsChanged;
   final ValueChanged<NewsletterModel> onNewsletterSelected;
   final ValueChanged<CommunityModel> onCommunitySelected;
 
@@ -85,6 +85,8 @@ class HomeScreenWidget extends StatefulWidget {
     required this.selectedChats,
     required this.selectedNewsletterIds,
     required this.selectedCommunityIds,
+    required this.pinnedChats,
+    required this.mutedChats,
     required this.selectionType,
     required this.onPageChanged,
     required this.onItemTapped,
@@ -92,8 +94,6 @@ class HomeScreenWidget extends StatefulWidget {
     required this.onUserSelected,
     required this.onNewsletterSelected,
     required this.onCommunitySelected,
-    this.onPinnedChatsChanged,
-    this.onMutedChatsChanged,
   });
 
   @override
@@ -248,6 +248,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final hasChats = widget.users.isNotEmpty;
+    final bool isEmpty = widget.users.isEmpty && widget.groups.isEmpty && widget.communities.isEmpty;
     final userController = Get.find<UserController>();
     double screenWidth = MediaQuery.of(context).size.width;
     adjustSidePanelSize(screenWidth);
@@ -291,7 +293,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                             return [
                                               SliverToBoxAdapter(child: SizedBox(height: 6)),
                                               SliverToBoxAdapter(child: _buildAccessKey()),
-                                              SliverToBoxAdapter(child: _buildCategoryMessages()),
+                                              if (hasChats)
+                                                SliverToBoxAdapter(child: _buildCategoryMessages()),
                                             ];
                                           },
                                           body: Obx(() => TabBarView(
@@ -319,8 +322,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                         searchList: widget.searchList,
                                                         onUserSelected: widget.onUserSelected,
                                                         selectedUserIds: widget.selectedChats,
-                                                        onPinnedChatsChanged: widget.onPinnedChatsChanged,
-                                                        onMutedChatsChanged: widget.onMutedChatsChanged,
+                                                        pinnedChats: widget.pinnedChats,
+                                                        mutedChats: widget.mutedChats,
                                                         isSelectionMode: widget.selectionType != SelectionType.none,
                                                         selectedNewsletterIds: widget.selectedNewsletterIds,
                                                         onNewsletterSelected: widget.onNewsletterSelected,
@@ -340,7 +343,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                           return ArchivePrivacySection(user: widget.user);
                                                         },
                                                       ),
-                                                      ChatInfoSection(),
+                                                      if (hasChats)
+                                                        ChatInfoSection(),
                                                     ],
                                                   ),
                                                 ),
@@ -366,6 +370,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                           ],
                         ),
                   ),
+                  if (widget.selectedIndex == 0 && isEmpty)
+                    Positioned.fill(child: _buildEmptyContent()),
                   Positioned(
                     top: widget.isHomeScreen ? 0 : 85,
                     left: 0,
@@ -416,6 +422,8 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                       selectedIndex: widget.selectedIndex,
                       user: widget.user,
                       selectedUserIds: widget.selectedChats,
+                      pinnedChats: widget.pinnedChats,
+                      mutedChats: widget.mutedChats,
                     ),
                 ],
               ),
@@ -423,6 +431,79 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
           ],
         );
       },
+    );
+  }
+
+  Widget _buildEmptyContent() {
+    final availableUsers = widget.users.where((user) => user.id.isNotEmpty).toList();
+
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Начните переписку', textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text('Общайтесь с 1 контактом в Chatify или пригласите в Chatify друзей.', textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+            ),
+            const SizedBox(height: 24),
+            if (availableUsers.isNotEmpty)
+              SizedBox(
+                height: 100,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: availableUsers.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 16),
+                  itemBuilder: (context, index) {
+                    final user = availableUsers[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        widget.onUserSelected(user);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: user.image.isNotEmpty ? NetworkImage(user.image) : null,
+                            child: user.image.isEmpty ? const Icon(Icons.person) : null,
+                          ),
+                          const SizedBox(height: 6),
+                          SizedBox(
+                            width: 70,
+                            child: Text(user.name, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            if (availableUsers.isEmpty) ...[
+              const SizedBox(height: 24),
+              SizedBox(
+                height: 44,
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    side: const BorderSide(color: ChatifyColors.softNight, width: 1),
+                    backgroundColor: ChatifyColors.transparent,
+                    foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                  ),
+                  child: Text('Пригласить друга', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -650,24 +731,32 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                 const SizedBox(height: 8),
                 Text('Убедитесь, что вы сможете выполнять вход ''на случай, если будут проблемы с SMS.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, height: 1.4, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black), textAlign: TextAlign.center),
                 const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 32,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      splashFactory: NoSplash.splashFactory,
-                      foregroundColor: ChatifyColors.black,
-                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      side: BorderSide.none,
-                      elevation: 2,
-                      shadowColor: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
-                    ).copyWith(
-                      mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                GestureDetector(
+                  onTapDown: (_) {},
+                  child: AnimatedScale(
+                    scale: 1.0,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeOut,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 32,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          splashFactory: NoSplash.splashFactory,
+                          foregroundColor: ChatifyColors.black,
+                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          side: BorderSide.none,
+                          elevation: 2,
+                          shadowColor: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
+                        ).copyWith(
+                          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                        ),
+                        child: Text(S.of(context).createAccessKey, style: TextStyle(color: ChatifyColors.black, fontSize: 15, fontWeight: FontWeight.w400)),
+                      ),
                     ),
-                    child: Text(S.of(context).createAccessKey, style: TextStyle(color: ChatifyColors.white, fontSize: 15, fontWeight: FontWeight.w400)),
                   ),
                 ),
               ],

@@ -51,6 +51,7 @@ class ChatInputState extends State<ChatInput> {
   bool isUploading = false;
   bool sendWithEnter = false;
   bool isTyping = false;
+  bool showVideoToast = false;
   double _dragOffset = 0;
   Timer? typingTimer;
   List<MessageModel> list = [];
@@ -214,11 +215,11 @@ class ChatInputState extends State<ChatInput> {
                       children: [
                         IconButton(
                           onPressed: toggleEmojiKeyboard,
-                          icon: SvgPicture.asset(ChatifyVectors.emojiSticker, width: 24, height: 24, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+                          icon: SvgPicture.asset(ChatifyVectors.emojiSticker, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.textSecondary, BlendMode.srcIn)),
                         ),
                         Expanded(
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 48, maxHeight: 120),
+                            constraints: const BoxConstraints(minHeight: 50, maxHeight: 120),
                             child: TextSelectionTheme(
                               data: TextSelectionThemeData(
                                 cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -234,7 +235,7 @@ class ChatInputState extends State<ChatInput> {
                                 cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                 decoration: InputDecoration(
                                   hintText: S.of(context).message,
-                                  hintStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.8 * 255).toInt()), fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                                  hintStyle: TextStyle(color: ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -260,6 +261,7 @@ class ChatInputState extends State<ChatInput> {
                         ),
                         ChatInputAttachments(
                           chatTarget: user,
+                          user: user,
                           isUploading: isUploading,
                           setUploading: (value) {
                             setState(() {
@@ -279,9 +281,8 @@ class ChatInputState extends State<ChatInput> {
                           },
                           child: hasText
                             ? const SizedBox(key: ValueKey('camera-hidden'), width: 0)
-                            : CameraButton(key: const ValueKey('camera-visible'), onImagePicked: handleImagePicked,
-                          ),
-                        ),
+                            : CameraButton(key: const ValueKey('camera-visible'), onImagePicked: handleImagePicked, user: user),
+                        )
                       ],
                     ),
                   ),

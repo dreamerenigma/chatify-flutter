@@ -9819,14 +9819,14 @@ class S {
     );
   }
 
-  /// `My code`
+  /// `MY CODE`
   String get myCode {
-    return Intl.message('My code', name: 'myCode', desc: '', args: []);
+    return Intl.message('MY CODE', name: 'myCode', desc: '', args: []);
   }
 
-  /// `Scan code`
+  /// `SCAN CODE`
   String get scanCode {
-    return Intl.message('Scan code', name: 'scanCode', desc: '', args: []);
+    return Intl.message('SCAN CODE', name: 'scanCode', desc: '', args: []);
   }
 
   /// `Chatify contact`

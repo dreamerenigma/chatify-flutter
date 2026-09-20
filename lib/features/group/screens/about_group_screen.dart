@@ -48,11 +48,11 @@ class AboutGroupScreen extends StatefulWidget {
 }
 
 class AboutGroupScreenState extends State<AboutGroupScreen> {
+  final storage = GetStorage();
   late List<String> mediaThumbnails;
   List<GroupModel> groups = [];
-  bool isCloseChatEnabled = false;
-  final storage = GetStorage();
   Map<String, UserModel> user = {};
+  bool isCloseChatEnabled = false;
   bool isFavorite = false;
 
   @override
@@ -68,15 +68,13 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
   }
 
   Future<void> loadUsers(List<String> memberIds) async {
-    final querySnapshot = await FirebaseFirestore.instance
-      .collection('Users')
-      .where(FieldPath.documentId, whereIn: memberIds)
-      .get();
+    final querySnapshot = await FirebaseFirestore.instance.collection('Users').where(FieldPath.documentId, whereIn: memberIds).get();
 
     for (var doc in querySnapshot.docs) {
       final userId = doc.id;
       final userData = doc.data();
-      widget.user[userId] = APIs.createChatUserFromData(userData);
+
+      user[userId] = APIs.createChatUserFromData(userData);
     }
 
     setState(() {});
@@ -84,7 +82,6 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var mq = MediaQuery.of(context).size;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -92,7 +89,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: mq.width, height: mq.height * .03),
+            SizedBox(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height * .03),
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Container(
@@ -174,14 +171,12 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
   }
 
   Widget buildProfileInfo(GroupModel group, BuildContext context) {
-    var mq = MediaQuery.of(context).size;
-
     List<Widget> profileInfoWidgets = [];
 
     profileInfoWidgets.add(
       GestureDetector(
         onTap: () {
-          showImageGroupBottomSheet(context);
+          showImageGroupBottomSheet(context, APIs.me);
         },
         child: Center(
           child: ClipRRect(
@@ -201,13 +196,13 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
         ),
       ),
     );
-    profileInfoWidgets.add(SizedBox(height: mq.height * .02));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .02));
     profileInfoWidgets.add(Center(child: Text(group.groupName, style: TextStyle(fontSize: ChatifySizes.fontSizeMg))));
-    profileInfoWidgets.add(SizedBox(height: mq.height * .01));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .01));
     profileInfoWidgets.add(
       Center(child:  Text('${S.of(context).aboutGroups} • ${widget.members.length} ${S.of(context).aboutGroups}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey))),
     );
-    profileInfoWidgets.add(SizedBox(height: mq.height * .02));
+    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .02));
 
     profileInfoWidgets.add(
       Padding(
@@ -240,7 +235,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 ),
               ),
             ),
-            SizedBox(width: mq.width * 0.03),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             SizedBox(
               width: 80,
               height: 80,
@@ -266,7 +261,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 ),
               ),
             ),
-            SizedBox(width: mq.width * 0.03),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             SizedBox(
               width: 80,
               height: 80,
@@ -294,7 +289,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 ),
               ),
             ),
-            SizedBox(width: mq.width * 0.03),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             SizedBox(
               width: 80,
               height: 80,

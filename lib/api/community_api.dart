@@ -14,6 +14,7 @@ import '../utils/constants/app_colors.dart';
 import '../utils/constants/app_vectors.dart';
 import '../utils/popups/app_loaders.dart';
 import '../utils/popups/dialogs.dart' hide CustomIconSnackBar;
+import 'apis.dart';
 
 class CommunityApi {
   /// -- Authentication.
@@ -83,10 +84,16 @@ class CommunityApi {
     }
   }
 
-  /// -- Method to fetch community from Firestore.
+  /// -- Method to fetch communities available for current user.
   static Future<List<CommunityModel>> getCommunity() async {
     try {
-      final querySnapshot = await firestore.collection('Communities').get();
+      final uid = APIs.me.id;
+
+      if (uid.isEmpty) {
+        return [];
+      }
+
+      final querySnapshot = await firestore.collection('Communities').where('members', arrayContains: uid).get();
       final communities = querySnapshot.docs.map((doc) => CommunityModel.fromJson(doc.data())).toList();
 
       return communities;

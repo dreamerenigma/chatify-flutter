@@ -260,18 +260,26 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${selectedUsers.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w600)),
+                Text('${selectedUsers.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
                 TextButton(
-                  child: Text(S.of(context).newMailing, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.white)),
                   onPressed: () {
                     Navigator.push(context, createPageRoute(const NewNewsletterScreen(selectedUsers: [])));
                   },
+                  style: TextButton.styleFrom(foregroundColor: ChatifyColors.steelGrey, splashFactory: NoSplash.splashFactory),
+                  child: Text(
+                    S.of(context).newMailing,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                  ),
                 ),
                 TextButton(
-                  child: Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.white)),
                   onPressed: () {
                     Navigator.push(context, createPageRoute(const NewGroupScreen()));
                   },
+                  style: TextButton.styleFrom(foregroundColor: ChatifyColors.steelGrey, splashFactory: NoSplash.splashFactory),
+                  child: Text(
+                    S.of(context).newGroup,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                  ),
                 ),
               ],
             )
@@ -434,6 +442,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                       AppActionMenuItem(
                         icon: _buildIconContainer(Icons.groups, iconSize: 26, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newCommunity,
+                        subtitle: 'Объединяйте группы по темам',
                         onTap: () {
                           Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
                         },
@@ -443,7 +452,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 if (matchedChatUsers.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ...chatUsers.map((chatUser) =>
                   UseAppUserCard(
@@ -456,7 +465,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+                  child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ),
                 ...filteredContacts.map((contact) =>
                   InviteUserCard(
@@ -464,6 +473,16 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                     onInvite: () {},
                     onContactSelected: (Contact selectedContact) {},
                   ),
+                ),
+                _buildOptionItem(
+                  icon: Icons.share,
+                  text: S.of(context).newMailing,
+                  onTap: () {},
+                ),
+                _buildOptionItem(
+                  icon: Icons.question_mark_rounded,
+                  text: S.of(context).newMailing,
+                  onTap: () {},
                 ),
               ],
             ),
@@ -505,6 +524,29 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
       height: 45,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
       child: Icon(icon, color: ChatifyColors.black, size: iconSize),
+    );
+  }
+
+  Widget _buildOptionItem({required IconData icon, required String text, required VoidCallback onTap}) {
+    return InkWell(
+      splashFactory: NoSplash.splashFactory,
+      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 16),
+        child: Row(
+          children: [
+            Icon(icon, size: 25, color: ChatifyColors.darkGrey),
+            const SizedBox(width: 25),
+            Expanded(
+              child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

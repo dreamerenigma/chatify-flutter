@@ -60,7 +60,7 @@ class _StatusHeaderWidgetState extends State<StatusHeaderWidget> {
 
             SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: ChatifyColors.transparent, statusBarIconBrightness: Brightness.dark, statusBarBrightness: Brightness.light));
           } else {
-            showAddStatusBottomDialog(context);
+            showAddStatusBottomDialog(context, widget.user);
           }
         },
         child: Padding(

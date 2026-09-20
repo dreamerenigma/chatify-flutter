@@ -1534,7 +1534,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "muteUnknownNumbers": MessageLookupByLibrary.simpleMessage(
       "Mute unknown \nnumbers",
     ),
-    "myCode": MessageLookupByLibrary.simpleMessage("My code"),
+    "myCode": MessageLookupByLibrary.simpleMessage("MY CODE"),
     "myContacts": MessageLookupByLibrary.simpleMessage("My contacts"),
     "myContactsAll": MessageLookupByLibrary.simpleMessage("My Contacts, All"),
     "myPhotos": MessageLookupByLibrary.simpleMessage("My Photos"),
@@ -2029,7 +2029,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "scanAppQrCode": MessageLookupByLibrary.simpleMessage(
       "Scan Chatify QR code",
     ),
-    "scanCode": MessageLookupByLibrary.simpleMessage("Scan code"),
+    "scanCode": MessageLookupByLibrary.simpleMessage("SCAN CODE"),
     "scanCodeUse": MessageLookupByLibrary.simpleMessage(
       "Scan this code to use Chatify on multiple phones. Sign in to your primary phone every 14 days to keep that phone connected.",
     ),

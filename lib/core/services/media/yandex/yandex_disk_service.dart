@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/core/services/media/yandex/yandex_disk_api.dart';
 import '../media_service.dart';
@@ -19,11 +20,18 @@ class YandexDiskService implements MediaService {
 
   @override
   Future<String?> getUrl(String path) async {
+    log('YANDEX getUrl INPUT: $path');
+
     if (path.startsWith('http://') || path.startsWith('https://')) {
+      log('YANDEX getUrl: INPUT IS ALREADY URL');
       return path;
     }
 
+    log('YANDEX getUrl: requesting Yandex URL for path: $path');
+
     final result = await _api.getDownloadUrl(path);
+
+    log('YANDEX getUrl: RESULT: $result');
 
     return result;
   }

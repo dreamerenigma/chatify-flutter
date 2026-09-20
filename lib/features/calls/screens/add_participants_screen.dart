@@ -108,14 +108,7 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3,offset: const Offset(0, 1))],
             ),
             child: AppBar(
               titleSpacing: 0,
