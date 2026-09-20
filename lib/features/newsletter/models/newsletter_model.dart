@@ -5,7 +5,7 @@ class NewsletterModel {
   String newsletterImage;
   String newsletterName;
   String creatorName;
-  List<String> newsletters;
+  List<String> members;
   String createdAt;
 
   NewsletterModel({
@@ -13,7 +13,7 @@ class NewsletterModel {
     required this.newsletterImage,
     required this.newsletterName,
     required this.creatorName,
-    required this.newsletters,
+    required this.members,
     required this.createdAt,
   });
 
@@ -24,7 +24,7 @@ class NewsletterModel {
       newsletterImage: data['newsletterImage'] ?? '',
       newsletterName: data['newsletterName'] ?? '',
       creatorName: data['creatorName'] ?? '',
-      newsletters: List<String>.from(data['newsletters'] ?? []),
+      members: List<String>.from(data['members'] ?? []),
       createdAt: data['createdAt'] ?? '',
     );
   }
@@ -34,7 +34,7 @@ class NewsletterModel {
       'newsletterImage': newsletterImage,
       'newsletterName': newsletterName,
       'creatorName': creatorName,
-      'newsletters': newsletters,
+      'members': members,
       'createdAt': createdAt,
     };
   }

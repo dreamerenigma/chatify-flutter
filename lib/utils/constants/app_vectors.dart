@@ -37,6 +37,7 @@ class ChatifyVectors {
   static const String envelopeOrange = "assets/vectors/envelope_orange.svg";
   static const String simCard = "assets/vectors/sim_card.svg";
   static const String document = "assets/vectors/document.svg";
+  static const String documentOutline = "assets/vectors/document_outline.svg";
   static const String documentBlue = "assets/vectors/document_blue.svg";
   static const String documentRed = "assets/vectors/document_red.svg";
   static const String documentGreen = "assets/vectors/document_green.svg";
@@ -168,6 +169,7 @@ class ChatifyVectors {
   static const String basketball = "assets/vectors/basketball.svg";
   static const String exitRight = "assets/vectors/exit_right.svg";
   static const String camera = "assets/vectors/camera.svg";
+  static const String cameraFilled = "assets/vectors/camera_filled.svg";
   static const String list = "assets/vectors/list.svg";
   static const String imagePlus = "assets/vectors/image_plus.svg";
   static const String devices = "assets/vectors/devices.svg";
@@ -238,6 +240,7 @@ class ChatifyVectors {
   static const String refresh = "assets/vectors/refresh.svg";
   static const String videoMessage = "assets/vectors/video_message.svg";
   static const String speakerOff = "assets/vectors/speaker_off.svg";
+  static const String lamp = "assets/vectors/lamp.svg";
 
   /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';

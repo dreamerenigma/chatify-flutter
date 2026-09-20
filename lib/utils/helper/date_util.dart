@@ -8,11 +8,16 @@ import '../platforms/platform_utils.dart';
 
 class DateUtil {
   /// -- Getting formatted time from milliSecondsSinceEpochs string.
-  static String getFormattedTime({required BuildContext context, required String time}) {
-    final date = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
+  static String getFormattedTime({
+    required BuildContext context,
+    required Timestamp time,
+  }) {
+    final date = time.toDate();
+
     return TimeOfDay.fromDateTime(date).format(context);
   }
 
+  /// -- .
   static String getFormattedTimeFromDateTime({required BuildContext context, required DateTime time}) {
     return TimeOfDay.fromDateTime(time).format(context);
   }
@@ -51,6 +56,7 @@ class DateUtil {
     }
   }
 
+  /// -- .
   static String getCallDateTime({required BuildContext context, required DateTime time, bool showTime = true}) {
     const months = [
       'января',
@@ -79,6 +85,7 @@ class DateUtil {
     return '$day $month, $formattedTime';
   }
 
+  /// -- .
   static String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
   /// -- Get formatted creation date of the community.
@@ -106,14 +113,9 @@ class DateUtil {
   }
 
   /// -- Formats a timestamp string into a readable date format.
-  static String formatTimestampToDate({required BuildContext context, required String timestamp}) {
-    if (timestamp.isEmpty) {
-      log('Timestamp string: $timestamp');
-      return 'Invalid date';
-    }
-
+  static String formatTimestampToDate({required BuildContext context, required Timestamp timestamp}) {
     try {
-      final DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
+      final DateTime date = timestamp.toDate();
       final DateTime now = DateTime.now();
 
       if (now.day == date.day && now.month == date.month && now.year == date.year) {
@@ -223,22 +225,21 @@ class DateUtil {
   }
 
   /// -- Returns a string with a date, depending on whether it is today.
-  static String getDayLabel({required BuildContext context, required String timestamp}) {
-    if (timestamp.isEmpty) {
-      return 'Invalid date';
-    }
-
+  static String getDayLabel({
+    required BuildContext context,
+    required Timestamp timestamp,
+  }) {
     try {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
-      DateTime now = DateTime.now();
-
-      Duration difference = now.difference(date);
+      final date = timestamp.toDate();
+      final now = DateTime.now();
+      final difference = now.difference(date);
 
       if (now.year == date.year && now.month == date.month && now.day == date.day) {
         return 'Сегодня';
       }
 
-      DateTime yesterday = now.subtract(Duration(days: 1));
+      final yesterday = now.subtract(const Duration(days: 1));
+
       if (yesterday.year == date.year && yesterday.month == date.month && yesterday.day == date.day) {
         return 'Вчера';
       }
@@ -247,7 +248,7 @@ class DateUtil {
         return getDayOfWeekName(date.weekday);
       }
 
-      return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+      return '${date.day.toString().padLeft(2, '0')}.''${date.month.toString().padLeft(2, '0')}.''${date.year}';
     } catch (e) {
       log('Error formatting day label: $e');
       return 'Invalid date';
@@ -255,15 +256,16 @@ class DateUtil {
   }
 
   /// -- Formats a date stamp derived from timestamp as capitalized.
-  static String getFormattedDateLabel({required BuildContext context, required String timestamp}) {
-    String dayLabel = getDayLabel(context: context, timestamp: timestamp);
+  static String getFormattedDateLabel({required BuildContext context, required Timestamp timestamp}) {
+    final dayLabel = getDayLabel(context: context, timestamp: timestamp);
 
     return '${dayLabel[0].toUpperCase()}${dayLabel.substring(1)}';
   }
 
-  static String getFullFormattedDate({required BuildContext context, required String timestamp}) {
+  /// -- .
+  static String getFullFormattedDate({required BuildContext context, required Timestamp timestamp}) {
     try {
-      final date = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
+      final date = timestamp.toDate();
       final locale = Localizations.localeOf(context).toLanguageTag();
 
       return DateFormat.yMMMMd(locale).format(date);
@@ -273,6 +275,7 @@ class DateUtil {
     }
   }
 
+  /// -- .
   static DateTime parseDateTime(dynamic value) {
     if (value is Timestamp) return value.toDate();
     if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
@@ -293,6 +296,7 @@ class DateUtil {
     return DateTime.now();
   }
 
+  /// -- .
   static String formatDateTime(DateTime dateTime) {
     if (dateTime == DateTime(0)) {
       return 'Дата не указана';
@@ -305,6 +309,7 @@ class DateUtil {
     }
   }
 
+  /// -- .
   static String formatStatusTime(DateTime createdAt) {
     final difference = DateTime.now().difference(createdAt);
 
@@ -327,6 +332,7 @@ class DateUtil {
     return '${difference.inDays} ${plural(difference.inDays, 'день', 'дня', 'дней')} назад';
   }
 
+  /// -- .
   static String plural(int value, String one, String few, String many) {
     final lastTwo = value % 100;
     final last = value % 10;

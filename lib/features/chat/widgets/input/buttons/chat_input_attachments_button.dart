@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -75,9 +76,10 @@ class ChatInputAttachments extends StatelessWidget {
                               icon: Icon(BootstrapIcons.file_earmark, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 30),
                               color1: ChatifyColors.violetDark,
                               color2: ChatifyColors.violet,
-                              label: S.of(context).documents,
+                              label: 'Документ',
                               onTap: () async {
-                                final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'apk', 'zip', 'rar']);
+                                final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'doc', 'docx', 'odt', 'rtf', 'txt', 'xls', 'xlsx', 'ods', 'csv', 'ppt', 'pptx', 'odp', 'zip', 'rar', '7z', 'tar', 'gz', 'apk']);
+
                                 if (result.isNotEmpty) {
                                   setUploading(true);
 
@@ -114,7 +116,7 @@ class ChatInputAttachments extends StatelessWidget {
                               color2: ChatifyColors.purple,
                               label: S.of(context).gallery,
                               onTap: () async {
-                                final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['gif', 'jpg', 'jpeg', 'png']);
+                                final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['gif', 'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif']);
 
                                 if (result.isNotEmpty) {
                                   for (var file in result) {
@@ -138,7 +140,7 @@ class ChatInputAttachments extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 20),
+                              padding: const EdgeInsets.only(left: 10),
                               child: _buildIconButton(
                                 context,
                                 icon: Icon(Icons.headphones, color: ChatifyColors.white, size: 30),
@@ -146,7 +148,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 color2: ChatifyColors.orange,
                                 label: S.of(context).audio,
                                 onTap: () async {
-                                  final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'aac', 'wav', 'm4a', 'ogg', 'flac', 'wma']);
+                                  final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'aac', 'm4a', 'wav', 'ogg', 'opus', 'flac', 'wma', 'aiff', 'alac']);
 
                                   if (result.isNotEmpty) {
                                     setUploading(true);
@@ -169,7 +171,7 @@ class ChatInputAttachments extends StatelessWidget {
                                 icon: Icon(Icons.location_on, color: ChatifyColors.white, size: 30),
                                 color1: ChatifyColors.greenDark,
                                 color2: ChatifyColors.green,
-                                label: S.of(context).location,
+                                label: 'Геопозиция',
                                 onTap: () {
                                   Navigator.pop(context);
                                   showAddGeolocationDialog(context);
@@ -219,7 +221,10 @@ class ChatInputAttachments extends StatelessWidget {
               ),
             );
           },
-          icon: Icon(Icons.attach_file, color: ChatifyColors.textSecondary, size: 26),
+          icon: Transform.rotate(
+            angle: -45 * math.pi / 180,
+            child: SvgPicture.asset(ChatifyVectors.attach, width: 25, height: 25, colorFilter: const ColorFilter.mode(ChatifyColors.textSecondary, BlendMode.srcIn)),
+          ),
         ),
       ],
     );
@@ -237,7 +242,7 @@ class ChatInputAttachments extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+        Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
       ],
     );
   }

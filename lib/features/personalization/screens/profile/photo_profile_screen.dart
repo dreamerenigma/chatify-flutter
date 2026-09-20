@@ -1,17 +1,12 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:camera/camera.dart';
 import 'package:chatify/utils/popups/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'dart:developer';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 import '../../controllers/photo_profile_controller.dart';
@@ -88,7 +83,7 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
         return;
       }
 
-      await APIs.deleteProfilePhoto(widget.user.id, image);
+      await ChatApi.deleteProfilePhoto(widget.user.id, image);
 
       Get.find<UserController>().clearUserImage();
 
@@ -112,9 +107,8 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
         _isAppBarVisible = true;
       });
     } else {
-      final position = _doubleTapDetails.localPosition;
       const scale = 2.0;
-
+      final position = _doubleTapDetails.localPosition;
       final x = -position.dx * (scale - 1);
       final y = -position.dy * (scale - 1);
 
@@ -125,8 +119,6 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
       });
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {

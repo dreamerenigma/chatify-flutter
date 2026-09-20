@@ -237,7 +237,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
 
         if (!isHovered && snapshot.hasData) {
           final data = snapshot.data?.docs;
-          list = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+          list = data?.map((e) => MessageModel.fromJson(e.data(), id: e.id)).toList() ?? [];
           cachedMessages = list;
         }
 

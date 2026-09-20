@@ -13,6 +13,7 @@ import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helper/date_util.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../common/enums/date_format_type.dart';
 import '../../../../core/enums/call_status_type.dart';
 import '../../../../core/enums/call_type.dart';
@@ -52,11 +53,13 @@ class ChatUserCardState extends State<ChatUserCard> {
   bool isLongPressed = false;
   String? _profileImageUrl;
 
-  String _formatDuration(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSeconds = seconds % 60;
+  String _formatDuration(int milliseconds) {
+    final duration = Duration(milliseconds: milliseconds);
 
-    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -155,10 +158,10 @@ class ChatUserCardState extends State<ChatUserCard> {
             highlightColor: ChatifyColors.transparent,
             hoverColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
             child: StreamBuilder(
-              stream: APIs.getLastMessage(widget.user),
+              stream: ChatApi.getLastMessage(widget.user),
               builder: (context, snapshot) {
                 final data = snapshot.data?.docs;
-                final list = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+                final list = data?.map((e) => MessageModel.fromJson(e.data(), id: e.id)).toList() ?? [];
                 final message = list.isNotEmpty ? list.first : null;
 
                 return Padding(
@@ -191,6 +194,15 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 if (url == null || url.isEmpty) {
                                   return ClipOval(child: _profileImageError(context, size));
                                 }
+
+                                debugPrint(
+                                  'PREVIEW CONDITION: '
+                                      'user=${widget.user.id} | '
+                                      'messageId=${message?.id} | '
+                                      'type=${message?.type} | '
+                                      'msg="${message?.msg}" | '
+                                      'isEmpty=${message?.msg.isEmpty}',
+                                );
 
                                 return ClipOval(
                                   child: CachedNetworkImage(
@@ -247,7 +259,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                 SizedBox(width: 16),
                                 if (message != null) ...[
                                   Text(
-                                    DateUtil.getLastMessageTime(context: context, time: DateTime.fromMillisecondsSinceEpoch(int.parse(message.sent)), formatType: DateFormatType.numeric),
+                                    DateUtil.getLastMessageTime(context: context, time: message.sent.toDate(), formatType: DateFormatType.numeric),
                                     style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
                                   ),
                                 ],
@@ -347,7 +359,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     S.of(context).gif,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ] else if (message.type == MessageType.image) ...[
@@ -358,7 +370,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     S.of(context).photo,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ] else if (message.type == MessageType.video) ...[
@@ -369,7 +381,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     S.of(context).video,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ] else if (message.type == MessageType.videoMessage) ...[
@@ -380,7 +392,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     'Видеозаметка (${message.videoDuration != null ? _formatDuration(message.videoDuration!) : '0:00'})',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ] else if (message.type == MessageType.audio) ...[
@@ -391,7 +403,18 @@ class ChatUserCardState extends State<ChatUserCard> {
                     S.of(context).audio,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ] else if (message.type == MessageType.voice) ...[
+                Icon(Icons.mic_rounded, size: 18, color: ChatifyColors.green),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    'Голосовое сообщение (${message.audioDuration != null ? _formatDuration(message.audioDuration!) : '0:00'})',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ] else if (message.type == MessageType.document) ...[
@@ -405,7 +428,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                     message.documentName ?? S.of(context).unknownDocument,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ] else ...[

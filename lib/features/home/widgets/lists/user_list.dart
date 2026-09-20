@@ -1,10 +1,6 @@
-import 'package:chatify/utils/popups/app_loaders.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import '../../../../../api/apis.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/cards/chat_user_card.dart';
 import '../../../community/widgets/cards/invite_user_card.dart';

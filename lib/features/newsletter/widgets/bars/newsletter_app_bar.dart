@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/newsletter_api.dart';
 import '../../../../common/widgets/buttons/custom_search_button.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -58,7 +59,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
 
   void _loadNewsletters() async {
     try {
-      final data = await APIs.getNewsletter();
+      final data = await NewsletterApi.getNewsletter();
       setState(() {
         _newsletters = data;
         _isLoading = false;
@@ -78,7 +79,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
 
     NewsletterModel community = _newsletters.isNotEmpty
       ? _newsletters[0]
-      : NewsletterModel(id: '', newsletterName: S.of(context).noNewsletter, newsletterImage: '', createdAt: '', creatorName: '', newsletters: []);
+      : NewsletterModel(id: '', newsletterName: S.of(context).noNewsletter, newsletterImage: '', createdAt: '', creatorName: '', members: []);
 
     return _buildAppBar(context, community);
   }
@@ -125,6 +126,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
       onTap: () {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
         final position = renderBox.localToGlobal(Offset.zero);
+
         showChatSettingsDialog(context, widget.user, position, initialIndex: 0);
       },
       mouseCursor: SystemMouseCursors.basic,
@@ -187,11 +189,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
                       return Text(
                         newsletterNames,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                          fontFamily: 'Roboto',
-                          fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400,
-                        ),
+                        style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
                       );
                     } else {
                       return Text(S.of(context).noMembers, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: ChatifyColors.white));

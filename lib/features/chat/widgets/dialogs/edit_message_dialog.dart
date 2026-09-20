@@ -17,10 +17,10 @@ OverlayEntry? currentOverlayEntry;
 Future<void> showEditMessageDialog(
   BuildContext context,
   Offset position,
-  GlobalKey containerKey,
-  {bool openAbove = false,
-  VoidCallback? onDialogClosed}
-) async {
+  GlobalKey containerKey, {
+  bool openAbove = false,
+  VoidCallback? onDialogClosed,
+}) async {
   final RenderBox renderBox = containerKey.currentContext!.findRenderObject() as RenderBox;
   final containerOffset = renderBox.localToGlobal(Offset.zero);
   final screenWidth = MediaQuery.of(context).size.width;
@@ -156,7 +156,7 @@ Widget _buildEditMessage({required BuildContext context, required String iconPat
               else
                 Icon(icon ?? Icons.image_not_supported, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
               SizedBox(width: 10),
-              Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+              Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
             ],
           ),
         ),

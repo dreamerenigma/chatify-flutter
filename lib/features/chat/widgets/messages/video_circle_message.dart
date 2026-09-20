@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:chatify/features/personalization/widgets/dialogs/light_dialog.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,10 @@ class _VideoCircleMessageState extends State<VideoCircleMessage> {
                       child: Transform(
                         alignment: Alignment.center,
                         transform: widget.isFrontCamera ? (Matrix4.identity()..scaleByDouble(-1.0, 1.0, 1.0, 1.0)) : Matrix4.identity(),
-                        child: VideoPlayer(widget.controller),
+                        child: ImageFiltered(
+                          imageFilter: ImageFilter.blur(sigmaX: widget.isPlaying ? 0 : 6, sigmaY: widget.isPlaying ? 0 : 6),
+                          child: VideoPlayer(widget.controller),
+                        ),
                       ),
                     ),
                   ),

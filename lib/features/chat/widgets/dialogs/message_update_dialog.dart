@@ -1,8 +1,8 @@
-import 'package:chatify/api/apis.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -69,7 +69,7 @@ class ShowMessageUpdateDialog {
               Navigator.pop(context);
 
               try {
-                await APIs.updateMessage(message, updateMsg);
+                await ChatApi.updateMessage(message, updateMsg);
                 onUpdate();
               } catch (e, stackTrace) {
                 debugPrint('❌ Ошибка обновления сообщения: $e');

@@ -21,11 +21,9 @@ class ChangeContactScreen extends StatelessWidget {
           child: AppBar(
             title: Text('Изменить контакт', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
-              actions: [
-                TooltipTheme(
-                  data: TooltipThemeData(
-                  decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
-                ),
+            actions: [
+              TooltipTheme(
+                data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
                 child: Theme(
                   data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
                   child: PopupMenuButton<int>(

@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../api/apis.dart';
+
+import '../../../api/newsletter_api.dart';
 import '../../../generated/l10n/l10n.dart';
 
 class PhotoNewsletterController extends GetxController {
@@ -55,7 +56,7 @@ class PhotoNewsletterController extends GetxController {
       try {
         File imageFile = File(imagePath);
         if (newsletter != null) {
-          await APIs.updateNewsletterPicture(newsletter!.id, imageFile);
+          await NewsletterApi.updateNewsletterPicture(newsletter!.id, imageFile);
           log(S.of(context).newsletterImageUpdatedSuccessDatabase);
         } else {
           log(S.of(context).newsletterNullCannotUpdateImage);
@@ -70,7 +71,7 @@ class PhotoNewsletterController extends GetxController {
         if (newsletter != null) {
           String? currentImageUrl = await _getCurrentImageUrlForCommunity(newsletter!.id);
           if (currentImageUrl != null) {
-            await APIs.deleteNewsletterPicture(newsletter!.id, currentImageUrl);
+            await NewsletterApi.deleteNewsletterPicture(newsletter!.id, currentImageUrl);
           } else {
             log(S.of(context).noImageUrlDelete);
           }

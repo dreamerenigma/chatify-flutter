@@ -214,74 +214,88 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                           }
                         },
                       ),
-                      InkWell(
-                        onTap: () {
-                          _toggleSwitch(!isReadingReportsEnabled);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 25, right: 20, top: 16, bottom: 25),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context).readingReports, style: TextStyle(fontSize: ChatifySizes.fontSizeMd),),
-                                    Text(S.of(context).disableReadReceiptsSendReceiveNotify, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.3)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 40),
-                              isLoading
-                                ? SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 3),
-                                  )
-                                : CustomSwitch(
-                                    value: isReadingReportsEnabled,
-                                    onChanged: _toggleSwitch,
-                                    switchWidth: 58,
-                                    switchHeight: 35,
-                                    thumbSize: 27,
-                                    thumbPadding: 3,
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                          onTap: () {
+                            _toggleSwitch(!isReadingReportsEnabled);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 25, right: 20, top: 16, bottom: 25),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(S.of(context).readingReports, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      Text(S.of(context).disableReadReceiptsSendReceiveNotify, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3)),
+                                    ],
                                   ),
-                            ],
+                                ),
+                                const SizedBox(width: 40),
+                                isLoading
+                                  ? SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 3),
+                                    )
+                                  : CustomSwitch(
+                                      value: isReadingReportsEnabled,
+                                      onChanged: _toggleSwitch,
+                                      switchWidth: 58,
+                                      switchHeight: 35,
+                                      thumbSize: 27,
+                                      thumbPadding: 3,
+                                    ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
+                      CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                       _buildSectionHeader(S.of(context).disappearingMessages, padding: const EdgeInsets.only(left: 25, right: 25, top: 20)),
-                      InkWell(
-                        onTap: () async {
-                          final result = await Navigator.push(context, createPageRoute(const AutomaticTimerScreen()));
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                          onTap: () async {
+                            final result = await Navigator.push(context, createPageRoute(const AutomaticTimerScreen()));
 
-                          if (result != null && result is String) {
-                            setState(() {
-                              selectedTimerOption = result;
-                              storage.write('selected_automatic_timer_label', result);
-                            });
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 25, right: 20, top: 16, bottom: 25),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(child: Text(S.of(context).automaticMessageTimer, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(child: Text(S.of(context).newChatsMessagesDisappearAccording, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey))),
-                                  Text(selectedTimerOption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
-                                ],
-                              ),
-                            ],
+                            if (result != null && result is String) {
+                              setState(() {
+                                selectedTimerOption = result;
+                                storage.write('selected_automatic_timer_label', result);
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 25, right: 20, top: 16, bottom: 25),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(child: Text(S.of(context).automaticMessageTimer, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(child: Text(S.of(context).newChatsMessagesDisappearAccording, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400))),
+                                    Text(selectedTimerOption, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -298,16 +312,21 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                           }
                         },
                       ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(context, createPageRoute(const GeolocationScreen()));
-                        },
-                        splashColor: context.isDarkMode ? ChatifyColors.darkSlate.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkSlate.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                          child: Text(S.of(context).geodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                          onTap: () {
+                            Navigator.push(context, createPageRoute(const GeolocationScreen()));
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            child: Text(S.of(context).geodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                          ),
                         ),
                       ),
                       _buildPrivacyItem(S.of(context).calls, S.of(context).turnOffSoundUnknownNum,
@@ -321,60 +340,74 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                       _buildPrivacyItem(S.of(context).blockingApp, S.of(context).disabled, onTap: () {
                         Navigator.push(context, createPageRoute(const PrivacyBlockedAppScreen()));
                       }),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(context, createPageRoute(const ClosingChatScreen()));
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                          child: Text(S.of(context).closingChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                          onTap: () {
+                            Navigator.push(context, createPageRoute(const ClosingChatScreen()));
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            child: Text(S.of(context).closingChat, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                          ),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          _toggleEffectCamera(!isEffectCameraEnabled);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 25, right: 20, top: 16, bottom: 25),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context).allowCameraEffects, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: S.of(context).useEffectsDuringVideoCalls,
-                                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
-                                        children: [
-                                          TextSpan(
-                                            text: S.of(context).readMore,
-                                            style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                            recognizer: TapGestureRecognizer()..onTap = () {},
-                                          ),
-                                        ],
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                          onTap: () {
+                            _toggleEffectCamera(!isEffectCameraEnabled);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 25, right: 20, top: 16, bottom: 25),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(S.of(context).allowCameraEffects, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: S.of(context).useEffectsDuringVideoCalls,
+                                          style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                                          children: [
+                                            TextSpan(
+                                              text: S.of(context).readMore,
+                                              style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                              recognizer: TapGestureRecognizer()..onTap = () {},
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                alignment: Alignment.topRight,
-                                child: CustomSwitch(
-                                  value: isEffectCameraEnabled,
-                                  onChanged: (value) {
-                                    _toggleEffectCamera(value);
-                                  },
-                                  switchWidth: 58,
-                                  switchHeight: 35,
-                                  thumbSize: 27,
-                                  thumbPadding: 3,
+                                Container(
+                                  alignment: Alignment.topRight,
+                                  child: CustomSwitch(
+                                    value: isEffectCameraEnabled,
+                                    onChanged: (value) {
+                                      _toggleEffectCamera(value);
+                                    },
+                                    switchWidth: 58,
+                                    switchHeight: 35,
+                                    thumbSize: 27,
+                                    thumbPadding: 3,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -385,13 +418,12 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                       ),
                       const SizedBox(height: 5),
                       CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
-                      const SizedBox(height: 5),
                       _buildPrivacyItem(S.of(context).privacyCheck, S.of(context).manageYourPrivacyChooseSettings,
                         onTap: () {
                           Navigator.push(context, createPageRoute(const PrivacyCheckScreen()));
                         },
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ],
@@ -442,14 +474,14 @@ class PrivacyScreenState extends State<PrivacyScreen> {
     required VoidCallback onClose,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: 8, right: 8, top: 8),
+      padding: EdgeInsets.only(left: 12, right: 12, top: 8),
       child: Container(
         padding: EdgeInsets.only(left: 10, right: 8, top: 10, bottom: 10),
-        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()), borderRadius: BorderRadius.circular(16)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.asset(ChatifyVectors.lockCheck, width: 38, height: 38, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+            SvgPicture.asset(ChatifyVectors.lockCheck, width: 34, height: 34, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
             SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -457,17 +489,17 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 24),
-                    child: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.3)),
+                    child: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, height: 1.3)),
                   ),
                   SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: RichText(
                       text: TextSpan(
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.2, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.4, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                         children: [
                           TextSpan(text: subtitle),
-                          TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
+                          TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
                         ],
                       ),
                     ),

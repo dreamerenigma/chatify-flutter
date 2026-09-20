@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
+import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import '../screens/community_info_screen.dart';
 import '../screens/community_screen.dart';
@@ -46,6 +48,8 @@ class CommunityWidgets extends StatefulWidget {
 }
 
 class _CommunityWidgetsState extends State<CommunityWidgets> {
+  bool _showEventManagement = true;
+
   static String getCommunityCreationDate({required BuildContext context, required DateTime creationDate}) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -82,6 +86,29 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            reverseDuration: const Duration(milliseconds: 250),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return SizeTransition(sizeFactor: animation, alignment: Alignment.topCenter, child: FadeTransition(opacity: animation, child: child));
+            },
+            child: _showEventManagement
+              ? _buildEventManagement(
+                  context,
+                  subtitle:
+                  'Создавайте мероприятия и управляйте ими внутри вашего сообщества. ',
+                  actionText: 'Подробнее',
+                  onActionTap: () {},
+                  onClose: () {
+                    setState(() {
+                      _showEventManagement = false;
+                    });
+                  },
+                )
+              : const SizedBox.shrink(),
+          ),
           Material(
             color: ChatifyColors.transparent,
             child: InkWell(
@@ -155,8 +182,6 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
   }
 
   Widget _buildAds(BuildContext context) {
-    final createdAt = widget.community.createdAt;
-
     return Flexible(
       child: SizedBox(
         height: 45,
@@ -185,7 +210,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Text(
-                  getCommunityCreationDate(context: context, creationDate: createdAt),
+                  getCommunityCreationDate(context: context, creationDate: widget.community.createdAt),
                   style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                 ),
               ),
@@ -251,6 +276,49 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
               Text(S.of(context).all, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventManagement(
+    BuildContext context, {
+    required String subtitle,
+    required String actionText,
+    required VoidCallback onActionTap,
+    required VoidCallback onClose,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.buttonDisabled, width: 1)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.calendar_month_outlined, size: 30, color: ChatifyColors.borderSecondary),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.5, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                      children: [
+                        TextSpan(text: subtitle),
+                        TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: onClose,
+              child: Icon(Icons.close_rounded, size: 22, color: ChatifyColors.borderSecondary),
+            ),
+          ],
         ),
       ),
     );

@@ -6,9 +6,11 @@ import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
+import '../../../api/chat_api.dart';
 import '../../../core/enums/call_type.dart';
 import '../../../core/enums/message_type.dart';
 import '../../../core/enums/selection_action_mode_type.dart';
@@ -18,6 +20,7 @@ import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../utils/popups/app_loaders.dart';
@@ -35,6 +38,7 @@ import '../widgets/dialogs/delete_sender_message_dialog.dart';
 import '../widgets/dialogs/message_update_dialog.dart';
 import '../widgets/input/chat_input.dart';
 import '../widgets/toolbar/emoji_toolbar.dart';
+import '../widgets/widget/reply_video_preview_widget.dart';
 
 class ChatScreen extends StatefulWidget {
   final UserModel user;
@@ -78,10 +82,28 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   bool _isDifferentDay(MessageModel current, MessageModel? previous) {
     if (previous == null) return true;
 
-    final currentDate = DateTime.fromMillisecondsSinceEpoch(int.parse(current.sent));
-    final previousDate = DateTime.fromMillisecondsSinceEpoch(int.parse(previous.sent));
+    final currentDate = current.sent.toDate();
+    final previousDate = previous.sent.toDate();
 
     return currentDate.year != previousDate.year || currentDate.month != previousDate.month || currentDate.day != previousDate.day;
+  }
+
+  String _formatDuration(int milliseconds) {
+    final duration = Duration(milliseconds: milliseconds);
+
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  String _formatVideoDuration(int seconds) {
+    final duration = Duration(seconds: seconds);
+
+    final minutes = duration.inMinutes;
+    final remainingSeconds = duration.inSeconds % 60;
+
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   SelectionActionModeType get selectionActionMode {
@@ -119,7 +141,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
-    messagesStream = APIs.getAllMessages(widget.user);
+    messagesStream = ChatApi.getAllMessages(widget.user);
     scrollController.addListener(onScroll);
     animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(animationController);
@@ -149,7 +171,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
 
     try {
       for (final message in selected) {
-        final deleted = await APIs.deleteMessageDocument(message);
+        final deleted = await ChatApi.deleteMessageDocument(message);
 
         if (!deleted) {
           log('❌ Не удалось удалить документ: ${message.sent}');
@@ -166,7 +188,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   }
 
   Future<void> _handleReaction(MessageModel message, String reaction) async {
-    await APIs.updateMessageReaction(message, reaction);
+    await ChatApi.updateMessageReaction(message, reaction);
   }
 
   Future<void> _handleReactionForSelectedMessages(String reaction) async {
@@ -186,7 +208,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   }
 
   Future<void> _onCallFinished(CallResult result) async {
-    await APIs.sendCallMessage(widget.user, result.type, result.status);
+    await ChatApi.sendCallMessage(widget.user, result.type, result.status);
   }
 
   Future<void> _endActiveCall() async {
@@ -449,12 +471,14 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                         }
 
                         final data = snapshot.data?.docs;
-                        final newList = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+                        final newList = data?.map((e) => MessageModel.fromJson(e.data(), id: e.id)).toList() ?? [];
+
+                        newList.sort((a, b) => b.sent.compareTo(a.sent));
 
                         list = newList;
 
                         if (list.isNotEmpty) {
-                          APIs.markMessagesAsRead(list);
+                          ChatApi.markMessagesAsRead(list);
                         }
 
                         if (list.isEmpty) {
@@ -491,7 +515,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                                       if (showDateSeparator)
                                         _buildDateSeparator(context, message),
                                       MessageCard(
-                                        key: ValueKey(message.sent),
+                                        key: ValueKey(message.id),
                                         message: message,
                                         user: widget.user,
                                         isSelected: selectedMessages.contains(index),
@@ -558,7 +582,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     if (list.isEmpty) {
                       APIs.sendFirstMessage(widget.user, text, MessageType.text);
                     } else {
-                      APIs.sendMessage(widget.user, text, MessageType.text);
+                      ChatApi.sendMessage(widget.user, text, MessageType.text);
                     }
                   },
                 ),
@@ -633,33 +657,46 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                                 style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 15, fontWeight: FontWeight.w400),
                               ),
                               const SizedBox(height: 2),
-                              Text(
-                                message.msg,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, height: 1.3),
-                              ),
+                              _buildReplyMessagePreview(message),
                             ],
                           ),
                         ),
-                        Positioned(
-                          top: -2,
-                          right: -2,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                replyMessage = null;
-                                replyUser = null;
-                              });
-                            },
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              alignment: Alignment.center,
-                              child: Icon(Icons.close, size: 17, color: ChatifyColors.darkGrey),
+                        if (message.type == MessageType.videoMessage)
+                          Positioned(right: 8, top: 4, child: ReplyVideoPreviewWidget(videoPath: message.msg)),
+                        if (message.type == MessageType.videoMessage)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  replyMessage = null;
+                                  replyUser = null;
+                                });
+                              },
+                              child: Container(
+                                width: 17,
+                                height: 17,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(shape: BoxShape.circle, color: context.isDarkMode ? ChatifyColors.darkGrey.withValues(alpha: 0.8) : ChatifyColors.white),
+                                child: Icon(Icons.close, size: 15, color: ChatifyColors.darkerGrey),
+                              ),
+                            ),
+                          )
+                        else
+                          Positioned(
+                            top: -2,
+                            right: -2,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  replyMessage = null;
+                                  replyUser = null;
+                                });
+                              },
+                              child: Container(width: 32, height: 32, alignment: Alignment.center, child: Icon(Icons.close, size: 17, color: ChatifyColors.darkGrey)),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -672,8 +709,52 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     );
   }
 
+  Widget _buildReplyMessagePreview(MessageModel message) {
+    switch (message.type) {
+      case MessageType.text:
+        return Text(message.msg, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, height: 1.3));
+      case MessageType.voice:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.mic_none_outlined, size: 16, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey),
+            const SizedBox(width: 4),
+            Text('Голосовое сообщение (${message.audioDuration != null ? _formatDuration(message.audioDuration!) : '0:00'})', style: TextStyle(color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+          ],
+        );
+      case MessageType.videoMessage:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(ChatifyVectors.videoCameraOutline, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, BlendMode.srcIn)),
+            const SizedBox(width: 5),
+            Text(
+              'Видеозаметка (${message.videoDuration != null ? _formatVideoDuration(message.videoDuration!) : '0:00'})',
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+            ),
+          ],
+        );
+      case MessageType.image:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.image, size: 16, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey),
+            const SizedBox(width: 5),
+            Text('Фото', style: TextStyle(color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+          ],
+        );
+      default:
+        return Text(
+          message.msg,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
+        );
+    }
+  }
+
   Widget _buildDateSeparator(BuildContext context, MessageModel message) {
-    final date = DateTime.fromMillisecondsSinceEpoch(int.parse(message.sent));
+    final date = message.sent.toDate();
 
     return Center(
       child: Container(
@@ -682,7 +763,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
         decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220), borderRadius: BorderRadius.circular(12)),
         child: Text(
           DateUtil.getCallDateTime(context: context, time: date, showTime: false),
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey),
+          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w500),
         ),
       ),
     );

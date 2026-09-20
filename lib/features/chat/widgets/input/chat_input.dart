@@ -15,6 +15,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/user_model.dart';
@@ -100,19 +101,19 @@ class ChatInputState extends State<ChatInput> {
 
   void handleImagePicked(File image) async {
     setState(() => isUploading = true);
-    await APIs.sendChatImage(widget.user, image);
+    await ChatApi.sendChatImage(widget.user, image);
     setState(() => isUploading = false);
   }
 
   Future<void> sendGif(File file) async {
     setState(() => isUploading = true);
-    await APIs.sendChatImage(widget.user, file);
+    await ChatApi.sendChatImage(widget.user, file);
     setState(() => isUploading = false);
   }
 
   Future<void> sendVideo(File file) async {
     setState(() => isUploading = true);
-    await APIs.sendChatVideo(widget.user, file);
+    await ChatApi.sendChatVideo(widget.user, file);
     setState(() => isUploading = false);
   }
 

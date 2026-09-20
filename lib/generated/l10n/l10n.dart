@@ -8029,20 +8029,20 @@ class S {
     );
   }
 
-  /// `Get notified when the security code \n changes on your phone and the phone of a \n end-to-end encrypted chat contact. If you have \n multiple devices, you must enable this setting \n separately on each device you want to \n receive notifications on. `
+  /// `Get notified when the security code changes on your phone and the phone of a end-to-end encrypted chat contact. If you have multiple devices, you must enable this setting separately on each device you want to \n receive notifications on.`
   String get notifySecurityCodeEndToEndEncrypted {
     return Intl.message(
-      'Get notified when the security code \n changes on your phone and the phone of a \n end-to-end encrypted chat contact. If you have \n multiple devices, you must enable this setting \n separately on each device you want to \n receive notifications on. ',
+      'Get notified when the security code changes on your phone and the phone of a end-to-end encrypted chat contact. If you have multiple devices, you must enable this setting separately on each device you want to \n receive notifications on.',
       name: 'notifySecurityCodeEndToEndEncrypted',
       desc: '',
       args: [],
     );
   }
 
-  /// `Generate a report of your Chatify account \n information and settings that you can \n view or export to another app. This report does not \n include your messages. `
+  /// `Generate a report of your Chatify account information and settings that you can view or export to another app. This report does not include your messages. `
   String get generateReportAppAccountInfo {
     return Intl.message(
-      'Generate a report of your Chatify account \n information and settings that you can \n view or export to another app. This report does not \n include your messages. ',
+      'Generate a report of your Chatify account information and settings that you can view or export to another app. This report does not include your messages. ',
       name: 'generateReportAppAccountInfo',
       desc: '',
       args: [],
@@ -8069,10 +8069,10 @@ class S {
     );
   }
 
-  /// `Generate a report of your Chatify account \n information and settings that you can \n view or export to another app. This report does not \n include your messages. `
+  /// `Generate a report of your Chatify account information and settings that you can view or export to another app. This report does not include your messages. `
   String get generateReportInfoSettings {
     return Intl.message(
-      'Generate a report of your Chatify account \n information and settings that you can \n view or export to another app. This report does not \n include your messages. ',
+      'Generate a report of your Chatify account information and settings that you can view or export to another app. This report does not include your messages. ',
       name: 'generateReportInfoSettings',
       desc: '',
       args: [],
@@ -9179,30 +9179,30 @@ class S {
     );
   }
 
-  /// `When enabled, Chatify \nwill need to be \nunlocked with your face, \nfingerprint, or other \nunique identifier. You \ncan still receive calls even if Chatify \nis blocked. \n`
+  /// `When enabled, Chatify will need to be unlocked with your face, fingerprint, or other unique identifier. You can still receive calls even if Chatify is blocked.`
   String get enabledAppUnlockedFingerprint {
     return Intl.message(
-      'When enabled, Chatify \nwill need to be \nunlocked with your face, \nfingerprint, or other \nunique identifier. You \ncan still receive calls even if Chatify \nis blocked. \n',
+      'When enabled, Chatify will need to be unlocked with your face, fingerprint, or other unique identifier. You can still receive calls even if Chatify is blocked.',
       name: 'enabledAppUnlockedFingerprint',
       desc: '',
       args: [],
     );
   }
 
-  /// `Mute unknown \nnumbers`
+  /// `Mute unknown numbers`
   String get muteUnknownNumbers {
     return Intl.message(
-      'Mute unknown \nnumbers',
+      'Mute unknown numbers',
       name: 'muteUnknownNumbers',
       desc: '',
       args: [],
     );
   }
 
-  /// `Calls from unknown \nnumbers will be muted. They \nwill still appear in the Calls tab and in notifications. `
+  /// `Calls from unknown numbers will be muted. They will still appear in the Calls tab and in notifications. `
   String get callsUnknownNumMutedNotify {
     return Intl.message(
-      'Calls from unknown \nnumbers will be muted. They \nwill still appear in the Calls tab and in notifications. ',
+      'Calls from unknown numbers will be muted. They will still appear in the Calls tab and in notifications. ',
       name: 'callsUnknownNumMutedNotify',
       desc: '',
       args: [],
@@ -9289,10 +9289,10 @@ class S {
     );
   }
 
-  /// `To protect your account and improve your device experience, Chatify will block messages from unknown accounts if they \nexceed a certain threshold. \n`
+  /// `To protect your account and improve your device experience, Chatify will block messages from unknown accounts if they exceed a certain threshold.`
   String get protectYourAccountAppMessages {
     return Intl.message(
-      'To protect your account and improve your device experience, Chatify will block messages from unknown accounts if they \nexceed a certain threshold. \n',
+      'To protect your account and improve your device experience, Chatify will block messages from unknown accounts if they exceed a certain threshold.',
       name: 'protectYourAccountAppMessages',
       desc: '',
       args: [],
@@ -9309,30 +9309,30 @@ class S {
     );
   }
 
-  /// `To make it harder to determine \nyour location, calls \nfrom this device will be routed securely \nthrough Chatify's servers. \nThis will reduce the quality of your calls. \n`
+  /// `To make it harder to determine your location, calls from this device will be routed securely through Chatify's servers. This will reduce the quality of your calls.`
   String get difficultDetermineLocationSecurely {
     return Intl.message(
-      'To make it harder to determine \nyour location, calls \nfrom this device will be routed securely \nthrough Chatify\'s servers. \nThis will reduce the quality of your calls. \n',
+      'To make it harder to determine your location, calls from this device will be routed securely through Chatify\'s servers. This will reduce the quality of your calls.',
       name: 'difficultDetermineLocationSecurely',
       desc: '',
       args: [],
     );
   }
 
-  /// `Disable link \npreviews`
+  /// `Disable link previews`
   String get disableLinkPreview {
     return Intl.message(
-      'Disable link \npreviews',
+      'Disable link previews',
       name: 'disableLinkPreview',
       desc: '',
       args: [],
     );
   }
 
-  /// `To prevent your IP address from being \ndetected by third-party websites, \npreviews of links you share in chats will be \ndisabled. `
+  /// `To prevent your IP address from being detected by third-party websites, previews of links you share in chats will be disabled. `
   String get preventIpAddressWebsites {
     return Intl.message(
-      'To prevent your IP address from being \ndetected by third-party websites, \npreviews of links you share in chats will be \ndisabled. ',
+      'To prevent your IP address from being detected by third-party websites, previews of links you share in chats will be disabled. ',
       name: 'preventIpAddressWebsites',
       desc: '',
       args: [],

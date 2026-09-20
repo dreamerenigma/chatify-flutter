@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:just_audio/just_audio.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../core/services/voice/voice_recorder_service.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../models/user_model.dart';
@@ -24,8 +24,8 @@ void showVoiceRecordBottomSheetDialog(BuildContext context, UserModel user) {
     builder: (_) {
       return VoiceRecordBottomSheetContent(
         user: user,
-        onRecordingFinished: (String localPath) async {
-          await APIs.sendVoiceMessage(user, localPath);
+        onRecordingFinished: (String localPath, int audioDuration) async {
+          await ChatApi.sendVoiceMessage(user, localPath, audioDuration: audioDuration);
         },
       );
     },
@@ -34,7 +34,7 @@ void showVoiceRecordBottomSheetDialog(BuildContext context, UserModel user) {
 
 class VoiceRecordBottomSheetContent extends StatefulWidget {
   final UserModel user;
-  final Future<void> Function(String localPath) onRecordingFinished;
+  final Future<void> Function(String localPath, int audioDuration) onRecordingFinished;
 
   const VoiceRecordBottomSheetContent({
     super.key,
@@ -457,7 +457,7 @@ class _VoiceRecordBottomSheetContentState extends State<VoiceRecordBottomSheetCo
 
       if (!mounted) return;
 
-      await widget.onRecordingFinished(path);
+      await widget.onRecordingFinished(path, _recordDuration.inMilliseconds);
 
       if (!mounted) return;
 

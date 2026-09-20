@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/cards/chat_user_card.dart';
@@ -36,7 +36,7 @@ class _ArchiveListState extends State<ArchiveList> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<UserModel>>(
-      stream: APIs.getArchivedUsers(widget.user.id),
+      stream: ChatApi.getArchivedUsers(widget.user.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingIndicator();

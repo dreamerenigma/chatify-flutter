@@ -6,15 +6,18 @@ import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../api/apis.dart';
 import '../../../../core/services/media/yandex/yandex_disk_api.dart';
+import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../models/message_model.dart';
+import '../../screens/video_message_screen.dart';
 import 'message_meta.dart';
 import 'video_circle_message.dart';
 
 class SenderVideoMessage extends StatefulWidget {
   final MessageModel message;
   final bool isExpanded;
+  final double swipeProgress;
   final VoidCallback? onCollapse;
   final ValueChanged<bool> onExpandedChanged;
 
@@ -22,6 +25,7 @@ class SenderVideoMessage extends StatefulWidget {
     super.key,
     required this.message,
     required this.isExpanded,
+    required this.swipeProgress,
     required this.onExpandedChanged,
     this.onCollapse,
   });
@@ -54,65 +58,29 @@ class _SenderVideoMessageState extends State<SenderVideoMessage> {
     try {
       final path = widget.message.msg;
 
-      log('══════════════════════════════════════');
-      log('SENDER VIDEO: INITIALIZATION START');
-      log('SENDER VIDEO: message path = $path');
-      log('SENDER VIDEO: path empty = ${path.isEmpty}');
-
       if (path.isEmpty) {
-        log('SENDER VIDEO ERROR: path is empty');
         return;
       }
 
-      log('SENDER VIDEO: requesting Yandex download URL...');
-
       final videoUrl = await _yandexDiskApi.getDownloadUrl(path);
 
-      log('SENDER VIDEO: download URL received');
-      log('SENDER VIDEO: videoUrl = $videoUrl');
-      log('SENDER VIDEO: url length = ${videoUrl?.length}');
-
       if (videoUrl == null || videoUrl.isEmpty) {
-        log('SENDER VIDEO ERROR: videoUrl is null or empty');
         return;
       }
 
       final uri = Uri.tryParse(videoUrl);
 
-      log('SENDER VIDEO: parsed URI = $uri');
-      log('SENDER VIDEO: scheme = ${uri?.scheme}');
-      log('SENDER VIDEO: host = ${uri?.host}');
-
       if (uri == null || uri.scheme.isEmpty || uri.host.isEmpty) {
-        log('SENDER VIDEO ERROR: invalid video URI');
         return;
       }
 
-      log('SENDER VIDEO: creating VideoPlayerController...');
-
       final controller = VideoPlayerController.networkUrl(uri);
 
-      log('SENDER VIDEO: controller created');
-      log('SENDER VIDEO: initializing controller...');
-
       await controller.initialize();
-
-      log('SENDER VIDEO: controller initialized successfully');
-      log('SENDER VIDEO: isInitialized = ${controller.value.isInitialized}');
-      log('SENDER VIDEO: hasError = ${controller.value.hasError}');
-      log('SENDER VIDEO: errorDescription = ${controller.value.errorDescription}');
-      log('SENDER VIDEO: size = ${controller.value.size}');
-      log('SENDER VIDEO: aspectRatio = ${controller.value.aspectRatio}');
-      log('SENDER VIDEO: duration = ${controller.value.duration}');
-      log('SENDER VIDEO: position = ${controller.value.position}');
-      log('SENDER VIDEO: isPlaying = ${controller.value.isPlaying}');
-      log('SENDER VIDEO: volume = ${controller.value.volume}');
-      log('SENDER VIDEO: buffering = ${controller.value.isBuffering}');
 
       controller.addListener(_videoListener);
 
       if (!mounted) {
-        log('SENDER VIDEO: widget unmounted, disposing controller');
         await controller.dispose();
         return;
       }
@@ -122,21 +90,9 @@ class _SenderVideoMessageState extends State<SenderVideoMessage> {
         videoProgress = 0.0;
       });
 
-      log('SENDER VIDEO: controller assigned to state');
-      log('SENDER VIDEO: state controller initialized = ${_videoController?.value.isInitialized}');
-
       _updateVideoVolume();
-
-      log('SENDER VIDEO: volume after update = ${controller.value.volume}');
-      log('SENDER VIDEO: INITIALIZATION COMPLETE');
-      log('══════════════════════════════════════');
     } catch (e, stackTrace) {
-      log('══════════════════════════════════════');
-      log('SENDER VIDEO INIT ERROR: $e');
-      log('SENDER VIDEO ERROR TYPE: ${e.runtimeType}');
-      log('SENDER VIDEO STACKTRACE:');
       log('$stackTrace');
-      log('══════════════════════════════════════');
     }
   }
 
@@ -259,19 +215,7 @@ class _SenderVideoMessageState extends State<SenderVideoMessage> {
             Padding(padding: const EdgeInsets.only(left: 10), child: _buildVideoCircleMessage()),
             const SizedBox(width: 8),
             if (!Platform.isWindows)
-              Container(
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: context.isDarkMode ? ChatifyColors.softNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey.withAlpha((0.7 * 255).toInt()),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
-                ),
-              ),
+              _buildCameraButton(),
           ],
         ),
         const SizedBox(height: 4),
@@ -284,6 +228,34 @@ class _SenderVideoMessageState extends State<SenderVideoMessage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCameraButton() {
+    final progress = widget.swipeProgress.clamp(0.0, 1.0);
+
+    return Opacity(
+      opacity: 1.0 - progress,
+      child: Container(
+        width: 35,
+        height: 35,
+        decoration: BoxDecoration(
+          color: context.isDarkMode ? ChatifyColors.softNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey.withAlpha((0.7 * 255).toInt()),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: SvgPicture.asset(
+            ChatifyVectors.cameraFilled,
+            width: 18,
+            height: 18,
+            colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn),
+          ),
+          onPressed: () {
+            Navigator.push(context, createPageRoute(const VideoMessageScreen()));
+          },
+        ),
+      ),
     );
   }
 }

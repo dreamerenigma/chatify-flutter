@@ -8,12 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
-import '../../../../../utils/helper/date_util.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/formatters/formatter.dart';
@@ -25,9 +23,10 @@ import 'call_message.dart';
 import 'message_bubble.dart';
 import '../buttons/emoji_hover_button.dart';
 import '../dialogs/edit_message_dialog.dart';
-import '../media/media_widget.dart';
+import '../widget/media_widget.dart';
 import '../painters/triangle_painter.dart';
 import 'emoji_message.dart';
+import 'message_meta.dart';
 import 'message_text.dart';
 
 class RecipientMessage extends StatefulWidget {
@@ -138,7 +137,7 @@ class RecipientMessageState extends State<RecipientMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.audio)
+          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.voice)
             Center(
               child: Container(
                 width: 35,
@@ -166,7 +165,7 @@ class RecipientMessageState extends State<RecipientMessage> {
     switch (widget.message.type) {
       case MessageType.call:
         return _buildCallMessage();
-      case MessageType.audio:
+      case MessageType.voice:
         return _buildVoiceRecordMessage();
       case MessageType.image:
       case MessageType.gif:
@@ -294,7 +293,7 @@ class RecipientMessageState extends State<RecipientMessage> {
 
   Widget _buildMessageTail() {
     final isCall = widget.message.type == MessageType.call;
-    final isVoice = widget.message.type == MessageType.audio;
+    final isVoice = widget.message.type == MessageType.voice;
 
     return Positioned(
       top: isWebOrWindows ? 6 : isCall ? 3.5 : isVoice ? 5.5 : 5.5,
@@ -348,7 +347,7 @@ class RecipientMessageState extends State<RecipientMessage> {
       case MessageType.video:
         bottomOffset = 1;
         break;
-      case MessageType.audio:
+      case MessageType.voice:
         bottomOffset = -3;
         break;
       default:
@@ -420,21 +419,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                   Positioned(
                     bottom: bottomOffset,
                     right: 2,
-                    child: Row(
-                      children: [
-                        Text(
-                          DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
-                        ),
-                        const SizedBox(width: 4),
-                        SvgPicture.asset(
-                          ChatifyVectors.doubleCheck,
-                          width: isWebOrWindows ? 13 : 19,
-                          height: isWebOrWindows ? 13 : 19,
-                          colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, BlendMode.srcIn),
-                        ),
-                      ],
-                    ),
+                    child: MessageMeta(message: widget.message, isWebOrWindows: isWebOrWindows, showCheck: true),
                   ),
                 ],
               ),

@@ -8,7 +8,7 @@ import '../platforms/platform_utils.dart';
 final ValueNotifier<String> linkHoverNotifier = ValueNotifier('');
 
 List<InlineSpan> parseMessageText(String text, BuildContext context) {
-  final urlRegex = RegExp(r'(https?:\/\/[^\s]+)');
+  final urlRegex = RegExp(r'(https?://\S+)');
   final matches = urlRegex.allMatches(text);
   List<InlineSpan> spans = [];
   int lastEnd = 0;
@@ -43,8 +43,7 @@ List<InlineSpan> parseMessageText(String text, BuildContext context) {
                   url,
                   style: TextStyle(
                     fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                    fontWeight: FontWeight.w300,
-                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w400,
                     color: linkColor,
                     decoration: underline ? TextDecoration.underline : TextDecoration.none,
                     decorationColor: linkColor,

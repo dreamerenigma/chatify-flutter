@@ -167,11 +167,10 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
           case ConnectionState.waiting:
           case ConnectionState.none:
             return const SizedBox();
-
           case ConnectionState.active:
           case ConnectionState.done:
             final data = snapshot.data?.docs;
-            list = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+            list = data?.map((e) => MessageModel.fromJson(e.data(), id: e.id)).toList() ?? [];
 
             if (list.isNotEmpty) {
               return ListView.builder(

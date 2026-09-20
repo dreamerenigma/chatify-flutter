@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 37.5 37.5"
+   fill="none"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="lamp.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.55726091"
+     inkscape:cx="52.040255"
+     inkscape:cy="420.80827"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2">
+    <sodipodi:guide
+       position="25.36803,8.4442379"
+       orientation="1,0"
+       id="guide2"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="12.104089,11.120818"
+       orientation="1,0"
+       id="guide3"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <path
+     d="M 13.246452,24.744747 C 9.6550245,22.574275 6.7038073,18.342635 6.7038073,13.845513 c 0,-7.7293813 7.1047837,-13.78796523 15.1309257,-12.0390957 3.528967,0.7807454 6.620718,3.1229816 8.229053,6.3552672 3.263517,6.5582925 -0.171764,13.5225405 -5.215379,16.5674495 -1.075378,0 -10.001043,0.01136 -11.601955,0.01561 z"
+     stroke="#292d32"
+     stroke-width="2.5104"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path1"
+     sodipodi:nodetypes="cscccc"
+     style="fill:none;stroke:#000000;stroke-width:2.91712;stroke-dasharray:none;stroke-opacity:1" />
+  <rect
+     style="fill:#000000;stroke:none;stroke-width:2.8125;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke markers fill"
+     id="rect2"
+     width="13.260412"
+     height="3.259527"
+     x="12.080496"
+     y="28.74181"
+     rx="1.6297635"
+     ry="1.6297635" />
+  <rect
+     style="fill:#000000;stroke:none;stroke-width:2.8125;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke markers fill"
+     id="rect2-9"
+     width="9.1265831"
+     height="3.0662167"
+     x="14.218889"
+     y="34.421471"
+     rx="1.5331084"
+     ry="1.5331084" />
+</svg>

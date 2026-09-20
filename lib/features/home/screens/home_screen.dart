@@ -13,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../api/apis.dart';
 import '../../../api/community_api.dart';
 import '../../../api/group_api.dart';
+import '../../../api/newsletter_api.dart';
 import '../../../core/enums/chat_list_type.dart';
 import '../../../core/enums/selection_type.dart';
 import '../../../generated/l10n/l10n.dart';
@@ -225,7 +226,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _fetchNewsletters() async {
-    List<NewsletterModel> fetchedNewsletters = await APIs.getNewsletter();
+    List<NewsletterModel> fetchedNewsletters = await NewsletterApi.getNewsletter();
     setState(() {
       newsletters = fetchedNewsletters;
       _rebuildHomeItems();
@@ -242,66 +243,62 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void _listenToMyUsers() {
     _myUsersSubscription = APIs.getMyUsersId().listen((snapshot) {
-        final userIds = snapshot.docs.map((doc) => doc.id).toList();
-        userLastMessageTimes.clear();
+      final userIds = snapshot.docs.map((doc) => doc.id).toList();
+      userLastMessageTimes.clear();
 
-        final newPinnedChats = <String>{};
-        final newMutedChats = <String>{};
+      final newPinnedChats = <String>{};
+      final newMutedChats = <String>{};
 
-        for (final doc in snapshot.docs) {
-          final data = doc.data();
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
 
-          final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
+        final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
 
-          userLastMessageTimes[doc.id] = lastMessageTime;
+        userLastMessageTimes[doc.id] = lastMessageTime;
 
-          if (data['pinned'] == true) {
-            newPinnedChats.add(doc.id);
-          }
-
-          if (data['muted'] == true) {
-            newMutedChats.add(doc.id);
-          }
+        if (data['pinned'] == true) {
+          newPinnedChats.add(doc.id);
         }
 
-        if (userIds.isEmpty) {
-          if (mounted) {
-            setState(() {
-              users = [];
-              _rebuildHomeItems();
-            });
-          }
-          return;
+        if (data['muted'] == true) {
+          newMutedChats.add(doc.id);
         }
+      }
 
-        APIs.getAllUsers(userIds).listen((
-          usersSnapshot) {
+      if (userIds.isEmpty) {
+        if (mounted) {
+          setState(() {
+            users = [];
+            _rebuildHomeItems();
+          });
+        }
+        return;
+      }
 
-            final loadedUsers = usersSnapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+      APIs.getAllUsers(userIds).listen((usersSnapshot) {
+        final loadedUsers = usersSnapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
 
-            if (!mounted) return;
+        if (!mounted) return;
 
-            setState(() {
-              users = loadedUsers;
-              _rebuildHomeItems();
-            });
-          },
-          onError: (error, stackTrace) {
-            log('========== USERS STREAM ERROR ==========');
-            log('ERROR: $error');
-            log('STACK: $stackTrace');
-          },
-        );
+        setState(() {
+          users = loadedUsers;
+          _rebuildHomeItems();
+        });
       },
       onError: (error, stackTrace) {
-        log('========== MY_USERS STREAM ERROR ==========');
+        log('========== USERS STREAM ERROR ==========');
         log('ERROR: $error');
         log('STACK: $stackTrace');
-      },
-      onDone: () {
-        log('========== MY_USERS STREAM DONE ==========');
-      },
-    );
+      });
+    },
+    onError: (error, stackTrace) {
+      log('========== MY_USERS STREAM ERROR ==========');
+      log('ERROR: $error');
+      log('STACK: $stackTrace');
+    },
+    onDone: () {
+      log('========== MY_USERS STREAM DONE ==========');
+    });
   }
 
   void onItemTapped(int index) {

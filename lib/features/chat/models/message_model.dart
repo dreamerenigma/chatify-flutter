@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../api/apis.dart';
 import '../../../core/enums/call_status_type.dart';
 import '../../../core/enums/call_type.dart';
 import '../../../core/enums/message_type.dart';
 
 class MessageModel {
+  late final String id;
   late final String toId;
   late final String msg;
   late final String read;
   late final String fromId;
-  late final String sent;
+  late final Timestamp sent;
   late final MessageType type;
   late final CallType? callType;
   late final CallStatusType? callStatus;
@@ -21,6 +23,7 @@ class MessageModel {
   late final int? videoDuration;
 
   MessageModel({
+    required this.id,
     required this.toId,
     required this.msg,
     required this.read,
@@ -40,12 +43,59 @@ class MessageModel {
 
   bool get isMe => fromId == APIs.user.uid;
 
-  MessageModel.fromJson(Map<String, dynamic> json) {
+  MessageModel.fromJson(Map<String, dynamic> json, {required this.id}) {
     toId = json['toId'].toString();
     msg = json['msg'].toString();
     read = json['read'].toString();
     fromId = json['fromId'].toString();
-    sent = json['sent'].toString();
+
+    switch (json['type'].toString()) {
+      case 'image':
+        type = MessageType.image;
+        break;
+      case 'gif':
+        type = MessageType.gif;
+        break;
+      case 'video':
+        type = MessageType.video;
+        break;
+      case 'videoMessage':
+        type = MessageType.videoMessage;
+        break;
+      case 'audio':
+        type = MessageType.audio;
+        break;
+      case 'voice':
+        type = MessageType.voice;
+        break;
+      case 'document':
+        type = MessageType.document;
+        break;
+      case 'call':
+        type = MessageType.call;
+        break;
+      default:
+        type = MessageType.text;
+    }
+
+    final sentValue = json['sent'];
+
+    if (sentValue is Timestamp) {
+      sent = sentValue;
+    } else if (sentValue is String) {
+      final milliseconds = int.tryParse(sentValue);
+
+      if (milliseconds != null) {
+        sent = Timestamp.fromMillisecondsSinceEpoch(milliseconds);
+      } else {
+        sent = Timestamp.now();
+      }
+    } else if (sentValue is int) {
+      sent = Timestamp.fromMillisecondsSinceEpoch(sentValue);
+    } else {
+      sent = Timestamp.now();
+    }
+
     documentName = json['documentName'] as String?;
     fileSize = json['fileSize'] as String?;
     deletedBy = List<String>.from(json['deletedBy'] ?? []);
@@ -68,33 +118,25 @@ class MessageModel {
     }
 
     deletedAt = json['deletedAt'] != null ? DateTime.tryParse(json['deletedAt'].toString()) : null;
-    audioDuration = json['audioDuration'] != null ? int.tryParse(json['audioDuration'].toString()) : null;
-    videoDuration = json['videoDuration'] != null ? int.tryParse(json['videoDuration'].toString()) : null;
 
-    switch (json['type'].toString()) {
-      case 'image':
-        type = MessageType.image;
-        break;
-      case 'gif':
-        type = MessageType.gif;
-        break;
-      case 'video':
-        type = MessageType.video;
-        break;
-      case 'videoMessage':
-        type = MessageType.videoMessage;
-        break;
-      case 'audio':
-        type = MessageType.audio;
-        break;
-      case 'document':
-        type = MessageType.document;
-        break;
-      case 'call':
-        type = MessageType.call;
-        break;
-      default:
-        type = MessageType.text;
+    final audioDurationValue = json['audioDuration'];
+
+    if (audioDurationValue is int) {
+      audioDuration = audioDurationValue;
+    } else if (audioDurationValue is num) {
+      audioDuration = audioDurationValue.toInt();
+    } else {
+      audioDuration = int.tryParse(audioDurationValue?.toString() ?? '');
+    }
+
+    final videoDurationValue = json['videoDuration'];
+
+    if (videoDurationValue is int) {
+      videoDuration = videoDurationValue;
+    } else if (videoDurationValue is num) {
+      videoDuration = videoDurationValue.toInt();
+    } else {
+      videoDuration = int.tryParse(videoDurationValue?.toString() ?? '');
     }
 
     final callTypeValue = json['callType'];

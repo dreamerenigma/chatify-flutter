@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -48,24 +49,14 @@ class PrivacyCallsScreenState extends State<PrivacyCallsScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black..withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black..withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
-            title: Text(
-              S.of(context).calls,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
-            ),
+            title: Text(S.of(context).calls, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -84,23 +75,32 @@ class PrivacyCallsScreenState extends State<PrivacyCallsScreen> {
                 Row(
                   children: [
                     Expanded(child: Text(S.of(context).muteUnknownNumbers, style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
-                    Container(
-                      alignment: Alignment.topRight,
-                      child: isLoading ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)),
-                          strokeWidth: 3,
+                    Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        onTap: () {},
+                        child: Container(
+                          alignment: Alignment.topRight,
+                          child: isLoading
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 3))
+                                  : CustomSwitch(
+                                      value: isMuted,
+                                      onChanged: (value) {
+                                        toggleSwitch(value);
+                                      },
+                                      switchWidth: 58,
+                                      switchHeight: 35,
+                                      thumbSize: 27,
+                                      thumbPadding: 3,
+                                    ),
                         ),
-                      )
-                          : Switch(
-                        value: isMuted,
-                        onChanged: (value) {
-                          toggleSwitch(value);
-                        },
-                        activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
                       ),
                     ),
                   ],

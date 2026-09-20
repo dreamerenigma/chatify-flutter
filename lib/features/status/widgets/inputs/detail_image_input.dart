@@ -10,6 +10,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
@@ -72,7 +73,7 @@ class DetailImageInputState extends State<DetailImageInput> {
       if (list.isEmpty) {
         APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
       } else {
-        APIs.sendMessage(widget.user, textController.text, MessageType.text);
+        ChatApi.sendMessage(widget.user, textController.text, MessageType.text);
       }
       textController.clear();
       setState(() {

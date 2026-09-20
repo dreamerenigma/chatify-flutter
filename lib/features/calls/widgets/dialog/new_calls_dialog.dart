@@ -6,7 +6,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -188,7 +188,7 @@ Future<void> showNewCallDialog(BuildContext context, Offset position) async {
     });
   }
 
-  APIs.getCommunicateOftenUsers(userController.currentUser).then((users) {
+  ChatApi.getCommunicateOftenUsers(userController.currentUser).then((users) {
     communicateOftenUsers = users;
     insertOverlay();
   });

@@ -3,8 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../home/widgets/dialogs/profile_dialog.dart';
@@ -52,7 +52,7 @@ class ShareUserCardState extends State<ShareUserCard> {
               });
             },
             child: StreamBuilder(
-              stream: APIs.getLastMessage(widget.user),
+              stream: ChatApi.getLastMessage(widget.user),
               builder: (context, snapshot) {
                 return ListTile(
                   leading: Stack(

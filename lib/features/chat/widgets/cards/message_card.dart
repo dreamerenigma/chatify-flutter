@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -100,10 +99,8 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
     bool isMe = APIs.user.uid == widget.message.fromId;
     bool isDeletedByMe = widget.message.deletedBy.contains(APIs.user.uid);
 
-    log('MESSAGE CARD: ''type=${widget.message.type}, ''fromId=${widget.message.fromId}, ''myUid=${APIs.user.uid}, ''isMe=$isMe');
-
     if (isDeletedByMe) {
-      final deletedTime = widget.message.deletedAt ?? DateTime.tryParse(widget.message.sent);
+      final deletedTime = widget.message.deletedAt ?? widget.message.sent.toDate();
       final backgroundColor = isMe ? (context.isDarkMode ? ChatifyColors.greenMessageDark : ChatifyColors.greenMessageLight) : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight);
       final borderColor = isMe ? (context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.blueMessageBorder);
 
@@ -168,7 +165,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                           const SizedBox(width: 8),
                           Text(S.of(context).messageHasBeenRemoved, style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, fontStyle: FontStyle.italic)),
                           Text(
-                            deletedTime != null ? DateUtil.getFormattedTimeFromDateTime(context: context, time: deletedTime) : '',
+                            DateUtil.getFormattedTimeFromDateTime(context: context, time: deletedTime),
                             style: TextStyle(fontSize: 10, color: context.isDarkMode ? ChatifyColors.buttonDisabled.withAlpha((0.7 * 255).toInt()) : ChatifyColors.darkGrey.withAlpha((0.7 * 255).toInt())),
                           ),
                         ],
@@ -236,8 +233,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
       onHorizontalDragCancel: _animateSwipeBack,
       child: InkWell(
         onTap: () {
-          if (widget.message.type == MessageType.videoMessage &&
-              _isVideoMessageExpanded) {
+          if (widget.message.type == MessageType.videoMessage && _isVideoMessageExpanded) {
             setState(() {
               _isVideoMessageExpanded = false;
             });
@@ -286,10 +282,10 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                     child: Material(
                       color: ChatifyColors.transparent,
                       child: InkWell(
+                        borderRadius: BorderRadius.circular(14),
                         onTap: () {
                           showReactionBottomSheetDialog(context, message: widget.message);
                         },
-                        borderRadius: BorderRadius.circular(14),
                         child: Container(
                           constraints: const BoxConstraints(minWidth: 32, minHeight: 26),
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -368,6 +364,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
           _isVideoMessageExpanded = expanded;
         });
       },
+      swipeProgress: (_swipeOffset / _replyIconDistance).clamp(0.0, 1.0),
     );
   }
 }

@@ -147,9 +147,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           '${widget.user.name}${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
-          style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
+          style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeLg, fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400, height: 1.2),
         ),
-        const SizedBox(height: 2),
         _buildStatus(context),
       ],
     );
@@ -183,7 +182,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                 curve: Curves.easeInCubic,
                 child: Text(
                   S.of(context).contactDetails,
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400, height: 1.2),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),

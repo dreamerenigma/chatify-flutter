@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -452,7 +453,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
 
       log('VIDEO SEND: calling APIs.sendVideoMessage()');
 
-      final messageId = await APIs.sendVideoMessage(widget.user,
+      final messageId = await ChatApi.sendVideoMessage(widget.user,
         localPath,
         fileName: 'video_message.mp4',
         fileSize: fileSize.toString(),
@@ -675,7 +676,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
     if (isRecording) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(color: ChatifyColors.red, borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(color: ChatifyColors.danger, borderRadius: BorderRadius.circular(20)),
         child: Text(_formatVideoMessageDuration(), style: const TextStyle(color: ChatifyColors.white, fontSize: 15, fontWeight: FontWeight.w400)),
       );
     }
@@ -910,7 +911,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
                     key: const ValueKey('recording'),
                     width: 32,
                     height: 34,
-                    decoration: BoxDecoration(color: ChatifyColors.red, borderRadius: BorderRadius.circular(8)),
+                    decoration: BoxDecoration(color: ChatifyColors.danger, borderRadius: BorderRadius.circular(8)),
                   )
                 : Container(
                     key: const ValueKey('idle'),

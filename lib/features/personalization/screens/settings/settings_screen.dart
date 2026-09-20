@@ -20,6 +20,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/user_model.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/language_controller.dart';
 import '../../widgets/dialogs/add_user_bottom_dialog.dart';
@@ -161,28 +162,28 @@ class SettingsScreenState extends State<SettingsScreen> {
         appBar: AppBar(
           titleSpacing: 0,
           title: isSearching
-              ? TextSelectionTheme(
-            data: TextSelectionThemeData(
-              cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-              selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            ),
-            child: TextField(
-              focusNode: searchFocusNode,
-              cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              controller: searchController,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-              decoration: InputDecoration(
-                hintText: S.of(context).settingsSearch,
-                hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-              ),
-              onChanged: onSearchChanged,
-            ),
-          )
-          : Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            ? TextSelectionTheme(
+                data: TextSelectionThemeData(
+                  cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                  selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                ),
+                child: TextField(
+                  focusNode: searchFocusNode,
+                  cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  controller: searchController,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                  decoration: InputDecoration(
+                    hintText: S.of(context).settingsSearch,
+                    hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  onChanged: onSearchChanged,
+                ),
+              )
+            : Text(S.of(context).settings, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           actions: [
             IconButton(
               icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
@@ -203,7 +204,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     Container(
-                      decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))]),
+                      decoration: BoxDecoration(
+                        color: ChatifyColors.white,
+                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
+                      ),
                     ),
                     ...[
                       if (showFirst)
@@ -236,84 +240,85 @@ class SettingsScreenState extends State<SettingsScreen> {
                         ),
                     ],
                     SizedBox(height: 10),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(context, createPageRoute(ProfileScreen(user: widget.user)));
-                      },
-                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8, right: 6, top: 8, bottom: 8),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .05),
-                              child: CachedNetworkImage(
-                                width: DeviceUtils.getScreenHeight(context) * .08,
-                                height: DeviceUtils.getScreenHeight(context) * .08,
-                                imageUrl: _profileImageUrl ?? '',
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
-                                errorWidget: (context, url, error) {
-                                  return CircleAvatar(
-                                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                    child: SvgPicture.asset(
-                                      ChatifyVectors.profile,
-                                      width: DeviceUtils.getScreenHeight(context) * .08,
-                                      height: DeviceUtils.getScreenHeight(context) * .08,
-                                    ),
-                                  );
-                                },
+                    Material(
+                      color: ChatifyColors.transparent,
+                      child: InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        onTap: () {
+                          Navigator.push(context, createPageRoute(ProfileScreen(user: widget.user)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8, right: 6, top: 8, bottom: 8),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .05),
+                                child: CachedNetworkImage(
+                                  width: DeviceUtils.getScreenHeight(context) * .08,
+                                  height: DeviceUtils.getScreenHeight(context) * .08,
+                                  imageUrl: _profileImageUrl ?? '',
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
+                                  errorWidget: (context, url, error) {
+                                    return CircleAvatar(
+                                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                      child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .08, height: DeviceUtils.getScreenHeight(context) * .08),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                                    const SizedBox(height: 4),
+                                    Text(widget.user.status, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                  ],
+                                ),
+                              ),
+                              Row(
                                 children: [
-                                  Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
-                                  const SizedBox(height: 4),
-                                  Text(widget.user.status, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                                  Obx(() {
+                                    return IconButton(
+                                      onPressed: () {
+                                        Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
+
+                                        Future.delayed(const Duration(seconds: 2), () {
+                                          if (!mounted) return;
+
+                                          Navigator.pop(context);
+                                          Navigator.push(context, createPageRoute(QrCodeScreen(user: widget.user)));
+                                        });
+                                      },
+                                      icon: Icon(Icons.qr_code, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                    );
+                                  }),
+                                  Obx(() {
+                                    return IconButton(
+                                      onPressed: () {
+                                        showAddUserBottomSheet(context, widget.user.image, widget.user.name, widget.user.phoneNumber);
+                                      },
+                                      icon: Icon(Icons.add_circle_outline_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
+                                    );
+                                  }),
                                 ],
                               ),
-                            ),
-                            Row(
-                              children: [
-                                Obx(() {
-                                  return IconButton(
-                                    onPressed: () {
-                                      Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
-
-                                      Future.delayed(const Duration(seconds: 2), () {
-                                        if (!mounted) return;
-
-                                        Navigator.pop(context);
-                                        Navigator.push(context, createPageRoute(QrCodeScreen(user: widget.user)));
-                                      });
-                                    },
-                                    icon: Icon(Icons.qr_code, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                  );
-                                }),
-                                Obx(() {
-                                  return IconButton(
-                                    onPressed: () {
-                                      showAddUserBottomSheet(context, widget.user.image, widget.user.name, widget.user.phoneNumber);
-                                    },
-                                    icon: Icon(Icons.add_circle_outline_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
-                                  );
-                                }),
-                              ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(height: 10),
-                    Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
+                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
                       itemCount: filteredSettingsOptions.length,
                       itemBuilder: (context, index) {
                         final optionKey = filteredSettingsOptions[index];
@@ -327,7 +332,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                         });
                       },
                     ),
-                    Divider(height: 10, thickness: 1, color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey),
+                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 5, bottom: 0),
                     _buildCenterAccounts(),
                   ],
                 ),
@@ -350,13 +355,13 @@ class SettingsScreenState extends State<SettingsScreen> {
     return Padding(
       padding: EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Container(
-        padding: EdgeInsets.only(left: 2, right: 8, top: 10, bottom: 10),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(FluentIcons.shield_task_16_regular, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 48),
-            SizedBox(width: 6),
+            Icon(FluentIcons.shield_task_16_regular, size: 42, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,7 +382,7 @@ class SettingsScreenState extends State<SettingsScreen> {
             ),
             GestureDetector(
               onTap: onClose,
-              child: Icon(Icons.close, color: ChatifyColors.grey, size: 22),
+              child: Icon(Icons.close_rounded, size: 22, color: ChatifyColors.borderSecondary),
             ),
           ],
         ),
@@ -389,12 +394,17 @@ class SettingsScreenState extends State<SettingsScreen> {
     final backgroundColor = context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 12),
       child: Container(
         decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(12)),
         child: Material(
           color: ChatifyColors.transparent,
           child: InkWell(
+            splashFactory: NoSplash.splashFactory,
+            borderRadius: BorderRadius.circular(12),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             onTap: () {
               Dialogs.showCustomDialog(context: context, message: S.of(context).accountDownloadCenter, duration: const Duration(seconds: 1));
 
@@ -404,9 +414,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                 Future.microtask(() => showCenterAccountsBottomDialog(context));
               });
             },
-            borderRadius: BorderRadius.circular(12),
-            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(

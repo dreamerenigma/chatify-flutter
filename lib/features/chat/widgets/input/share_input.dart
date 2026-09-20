@@ -10,6 +10,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/devices/device_utility.dart';
@@ -84,7 +85,7 @@ class ShareInputState extends State<ShareInput> {
 
     if (fileToSend != null) {
       try {
-        await APIs.sendChatImage(user, fileToSend!);
+        await ChatApi.sendChatImage(user, fileToSend!);
       } catch (e) {
         log('Error sending image: $e');
         return;
@@ -93,7 +94,7 @@ class ShareInputState extends State<ShareInput> {
       if (list.isEmpty) {
         await APIs.sendFirstMessage(user, messageText, MessageType.text);
       } else {
-        await APIs.sendMessage(user, messageText, MessageType.text);
+        await ChatApi.sendMessage(user, messageText, MessageType.text);
       }
     }
 

@@ -10,6 +10,7 @@ class CustomRadioListTile<T> extends StatelessWidget {
   final Widget title;
   final T value;
   final Color iconColor;
+  final Color? inactiveIconColor;
   final RadioPositionType radioPosition;
   final EdgeInsetsGeometry padding;
   final double radioScale;
@@ -20,6 +21,7 @@ class CustomRadioListTile<T> extends StatelessWidget {
     required this.title,
     required this.value,
     required this.iconColor,
+    this.inactiveIconColor,
     this.radioPosition = RadioPositionType.right,
     this.padding = const EdgeInsets.only(left: 20, right: 12, top: 8, bottom: 8),
     this.radioScale = 1.0,
@@ -27,11 +29,15 @@ class CustomRadioListTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radioGroup = RadioGroup.maybeOf<T>(context);
+    final isSelected = radioGroup?.groupValue == value;
+    final currentIconColor = isSelected ? iconColor : inactiveIconColor ?? iconColor;
     final radio = Transform.scale(scale: radioScale, child: Radio<T>(value: value, activeColor: colorsController.getColor(colorsController.selectedColorScheme.value), overlayColor: WidgetStateProperty.all(ChatifyColors.transparent)));
+
     final titleWidget = Row(
       children: [
         if (icon != null) ...[
-          CustomIcon(icon: icon, color: iconColor, size: 24),
+          CustomIcon(icon: icon, color: currentIconColor, size: 24),
           const SizedBox(width: 16),
         ],
         title,

@@ -196,7 +196,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
               surfaceTintColor: ChatifyColors.transparent,
               backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
               elevation: 0,
-              title: Padding(padding: const EdgeInsets.only(top: 10, bottom: 10,),
+              title: Padding(padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
                   children: [
                     Expanded(child: UserInfoWidget(user: widget.user, showStatusText: showStatusText)),

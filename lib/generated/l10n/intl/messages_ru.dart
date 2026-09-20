@@ -400,7 +400,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Сообщения и звонки защищены сквозным шифрованием. Нажмите, чтобы подтвердить.",
     ),
     "callsUnknownNumMutedNotify": MessageLookupByLibrary.simpleMessage(
-      "Звук звонков с неизвестных \n номеров будет отключен. Они \n будут по-прежнему отображаться \n на вкладке Звонки \n и в уведомлениях. ",
+      "Звук звонков с неизвестных номеров будет отключен. Они будут по-прежнему отображаться на вкладке Звонки и в уведомлениях. ",
     ),
     "camera": MessageLookupByLibrary.simpleMessage("Камера"),
     "cameraNotFound": MessageLookupByLibrary.simpleMessage("Камера не найдена"),
@@ -824,10 +824,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "различных сообществ",
     ),
     "difficultDetermineLocationSecurely": MessageLookupByLibrary.simpleMessage(
-      "Чтобы затруднить определение \nвашего местоположения, звонки \nс этого устройства будут \nпередаваться в защищенном \nрежиме через серверы Chatify. \nЭто снизит качество звонков. \n",
+      "Чтобы затруднить определение вашего местоположения, звонки с этого устройства будут передаваться в защищенном режиме через серверы Chatify. Это снизит качество звонков.",
     ),
     "disableLinkPreview": MessageLookupByLibrary.simpleMessage(
-      "Отключить предпросмотр \nссылок",
+      "Отключить предпросмотр ссылок",
     ),
     "disableReadReceiptsSendReceiveNotify": MessageLookupByLibrary.simpleMessage(
       "Если вы отключите отчёты о прочтении, то не сможете отправлять и получать эти отчёты. Данные уведомления нельзя отключить для групповых чатов.",
@@ -914,7 +914,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Если эта функция \n включена, админам \n потребуется \n подтверждать все\n запросы на вступление в\n группу. ",
     ),
     "enabledAppUnlockedFingerprint": MessageLookupByLibrary.simpleMessage(
-      "Если этот параметр включён, \n Chatify нужно будет \nразблокировать с помощью лица \nотпечатка пальца или другого \nуникального идентификатора. Вы \nможете принимать звонки, даже \nесли Chatify заблокирован. \n",
+      "Если этот параметр включён, Chatify нужно будет разблокировать с помощью лица отпечатка пальца или другого уникального идентификатора. Вы можете принимать звонки, даже если Chatify заблокирован.",
     ),
     "encryption": MessageLookupByLibrary.simpleMessage("Шифрование"),
     "encryptionKeepsYourMessages": MessageLookupByLibrary.simpleMessage(
@@ -1585,7 +1585,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "muteChat": MessageLookupByLibrary.simpleMessage("Отключение звука в чате"),
     "muteUnknownNumbers": MessageLookupByLibrary.simpleMessage(
-      "Отключить звук для \n неизвестных номеров",
+      "Отключить звук для неизвестных номеров",
     ),
     "myCode": MessageLookupByLibrary.simpleMessage("МОЙ КОД"),
     "myContacts": MessageLookupByLibrary.simpleMessage("Мои контакты"),
@@ -1901,7 +1901,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нажмите еще раз чтобы выйти",
     ),
     "preventIpAddressWebsites": MessageLookupByLibrary.simpleMessage(
-      "Чтобы ваш IP-адрес не смогли \nвычислить сторонние веб-сайты, \nпредпросмотр ссылок, которыми \nвы делитесь в чатах, будет \nотключен. ",
+      "Чтобы ваш IP-адрес не смогли вычислить сторонние веб-сайты, предпросмотр ссылок, которыми вы делитесь в чатах, будет отключен. ",
     ),
     "previewText": MessageLookupByLibrary.simpleMessage("Предпросмотр текста"),
     "previousChat": MessageLookupByLibrary.simpleMessage("Предыдущий чат"),
@@ -1954,7 +1954,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Защитите свой аккаунт",
     ),
     "protectYourAccountAppMessages": MessageLookupByLibrary.simpleMessage(
-      "Для защиты вашего аккаунта \nи улучшения работы устройства \nChatify будет блокировать \nсообщения от неизвестных \nаккаунтов, если их количество \nпревысит определыннй порог. \n",
+      "Для защиты вашего аккаунта и улучшения работы устройства Chatify будет блокировать сообщения от неизвестных аккаунтов, если их количество превысит определыннй порог.",
     ),
     "protectYourIpAddressCalls": MessageLookupByLibrary.simpleMessage(
       "Защитить IP-адрес во время звонков",

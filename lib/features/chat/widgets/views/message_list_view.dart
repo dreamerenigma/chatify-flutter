@@ -67,8 +67,8 @@ class _MessageListViewState extends State<MessageListView> {
         itemBuilder: (context, index) {
           final currentMessage = widget.messages[index];
           final prevMessage = index > 0 ? widget.messages[index - 1] : null;
-          final currentDate = DateTime.fromMillisecondsSinceEpoch(int.parse(currentMessage.sent));
-          final prevDate = prevMessage != null ? DateTime.fromMillisecondsSinceEpoch(int.parse(prevMessage.sent)) : null;
+          final currentDate = currentMessage.sent.toDate();
+          final prevDate = prevMessage?.sent.toDate();
           final isNewDay = prevMessage == null || !isSameDay(currentDate, prevDate!);
           final showDay = isNewDay && lastDisplayedDay != currentDate.toIso8601String();
 
@@ -85,7 +85,7 @@ class _MessageListViewState extends State<MessageListView> {
             children: [
               if (showDay)
               CustomTooltip(
-                message: DateUtil.getFullFormattedDate(context: context, timestamp: currentDate.millisecondsSinceEpoch.toString()),
+                message: DateUtil.getFullFormattedDate(context: context, timestamp: currentMessage.sent),
                 child: MouseRegion(
                   onEnter: (_) {
                     setState(() {
@@ -103,6 +103,7 @@ class _MessageListViewState extends State<MessageListView> {
                         onTap: () {
                           final RenderBox renderBox = innerContext.findRenderObject() as RenderBox;
                           final position = renderBox.localToGlobal(Offset.zero);
+
                           showCalendarDialog(context, position, currentDate, hoveredDate: currentDate);
                         },
                         mouseCursor: SystemMouseCursors.basic,
@@ -115,7 +116,7 @@ class _MessageListViewState extends State<MessageListView> {
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(color: isHoveredList[index] ? hoverColor : baseColor.withAlpha((0.7 * 255).toInt()), borderRadius: BorderRadius.circular(6)),
                           child: Text(
-                            DateUtil.getDayLabel(context: context, timestamp: currentDate.millisecondsSinceEpoch.toString()),
+                            DateUtil.getDayLabel(context: context, timestamp: currentMessage.sent),
                             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                           ),
                         ),

@@ -119,7 +119,7 @@ class _SupportCardState extends State<SupportCard> {
                         ),
                     ],
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +146,6 @@ class _SupportCardState extends State<SupportCard> {
                                 fontSize: ChatifySizes.fontSizeLm,
                                 color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
                                 fontWeight: FontWeight.w300,
-                                fontFamily: 'Roboto',
                               ),
                             ),
                           ],
@@ -155,7 +154,7 @@ class _SupportCardState extends State<SupportCard> {
                         if (widget.support.lastMessage != null && widget.support.lastMessage!.isNotEmpty)
                         Text(
                           widget.support.lastMessage!,
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

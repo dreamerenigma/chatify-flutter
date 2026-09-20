@@ -33,7 +33,7 @@ class NewsletterList extends StatelessWidget {
             newsletterName: newsletter.newsletterName,
             newsletterImage: newsletter.newsletterImage,
             createdAt: newsletter.createdAt,
-            newsletters: newsletter.newsletters.map((id) => id).toList(),
+            newsletters: newsletter.members.map((id) => id).toList(),
             isSelectionMode: isSelectionMode,
             isSelected: isSelected,
             onNewsletterSelected: (_) {

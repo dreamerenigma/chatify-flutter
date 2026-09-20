@@ -4,7 +4,7 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -155,7 +155,7 @@ void showAddUserCallDialog(BuildContext context, Offset position) {
     animationController.forward();
   }
 
-  APIs.getCommunicateOftenUsers(userController.currentUser).then((users) {
+  ChatApi.getCommunicateOftenUsers(userController.currentUser).then((users) {
     communicateOftenUsers = users;
     insertOverlay();
   });

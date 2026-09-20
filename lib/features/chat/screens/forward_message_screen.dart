@@ -152,45 +152,38 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: shadowColor,
-                spreadRadius: 0,
-                blurRadius: 0.5,
-                offset: const Offset(0, 0.5),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: shadowColor, spreadRadius: 0, blurRadius: 0.5, offset: const Offset(0, 0.5))],
           ),
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
             titleSpacing: 0,
             title: isSearching
-                ? TextSelectionTheme(
-              data: TextSelectionThemeData(
-                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              ),
-              child: TextField(
-                key: textFieldKey,
-                focusNode: searchFocusNode,
-                cursorColor: Colors.blue,
-                controller: searchController,
-                keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-                decoration: InputDecoration(
-                  hintText: S.of(context).searchByNameOrPhoneNumber,
-                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                ),
-                onChanged: (value) {
-                  onSearchChanged();
-                },
-              ),
-            )
-            : Text(S.of(context).forward,
+              ? TextSelectionTheme(
+                  data: TextSelectionThemeData(
+                    cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                    selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  ),
+                  child: TextField(
+                    key: textFieldKey,
+                    focusNode: searchFocusNode,
+                    cursorColor: Colors.blue,
+                    controller: searchController,
+                    keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                    decoration: InputDecoration(
+                      hintText: S.of(context).searchByNameOrPhoneNumber,
+                      hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      onSearchChanged();
+                    },
+                  ),
+                )
+              : Text(S.of(context).forward,
             style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -203,24 +196,24 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
               },
             ),
             actions: isSearching
-                ? [
-              IconButton(
-                icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad),
-                onPressed: _toggleInputMode,
-              ),
-            ]
-                : [
-              IconButton(
-                icon: const Icon(Icons.group_add_outlined, size: 23),
-                onPressed: () {
-                  Navigator.push(context, createPageRoute(const NewGroupScreen()));
-                },
-              ),
-              IconButton(
-                icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
-                onPressed: _toggleSearch,
-              ),
-            ],
+              ? [
+                  IconButton(
+                    icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad),
+                    onPressed: _toggleInputMode,
+                  ),
+                ]
+              : [
+                  IconButton(
+                    icon: const Icon(Icons.group_add_outlined, size: 23),
+                    onPressed: () {
+                      Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                    onPressed: _toggleSearch,
+                  ),
+                ],
           ),
         ),
       ),

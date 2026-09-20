@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -42,7 +43,7 @@ void showDeleteSenderMessageDialog(BuildContext context, List<int> messageIndice
             onPressed: () async {
               try {
                 for (final index in messageIndices) {
-                  await APIs.deleteMessage(list[index]);
+                  await ChatApi.deleteMessage(list[index]);
                 }
 
                 if (context.mounted) {

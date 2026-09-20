@@ -6,7 +6,7 @@ import '../../../api/group_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../personalization/controllers/user_controller.dart';
-import '../../home/controllers/photo_newsletter_controller.dart';
+import '../controllers/photo_newsletter_controller.dart';
 
 class PhotoNewsletterScreen extends StatefulWidget {
   final String id;

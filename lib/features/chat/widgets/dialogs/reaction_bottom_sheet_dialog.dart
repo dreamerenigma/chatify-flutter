@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/helper/avatar_color_util.dart';
@@ -79,14 +80,14 @@ class _ReactionBottomSheetContentState extends State<ReactionBottomSheetContent>
         localReactions[reaction]?.remove(currentUserId);
       });
 
-      await APIs.deleteReactions(widget.message, reaction);
+      await ChatApi.deleteReactions(widget.message, reaction);
     } else {
       setState(() {
         localReactions.putIfAbsent(reaction, () => []);
         localReactions[reaction]!.add(currentUserId);
       });
 
-      await APIs.updateMessageReaction(widget.message, reaction);
+      await ChatApi.updateMessageReaction(widget.message, reaction);
     }
   }
 
@@ -220,7 +221,7 @@ class _ReactionBottomSheetContentState extends State<ReactionBottomSheetContent>
                               localReactions[reaction]?.remove(APIs.user.uid);
                             });
 
-                            await APIs.deleteReactions(widget.message, reaction);
+                            await ChatApi.deleteReactions(widget.message, reaction);
                           }
                         : null,
                       child: Padding(

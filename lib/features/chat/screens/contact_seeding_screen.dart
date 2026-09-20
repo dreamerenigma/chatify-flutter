@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
+import '../../../api/newsletter_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/devices/device_utility.dart';
@@ -53,7 +54,6 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
     super.initState();
     _fetchNewsletter();
     _fetchChatUsers();
-
     _searchController.addListener(() {
       _filterContacts();
     });
@@ -319,7 +319,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
           heroTag: 'newsletterList',
           onPressed: () async {
             final newsletterName = textController.text.trim();
-            final newsletters = selectedUsers.map((user) => user.id).toList();
+            final members = selectedUsers.map((user) => user.id).toList();
 
             if (selectedUsers.length < 2) {
               Dialogs.showSnackbar(context, S.of(context).atLeastTwoContactsSelected);
@@ -332,11 +332,11 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
               newsletterImage: '',
               newsletterName: newsletterName,
               creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
-              newsletters: newsletters,
+              members: members,
               createdAt: createdAt,
             );
 
-            bool isSuccess = await APIs.createNewsletter(context, newsletter);
+            bool isSuccess = await NewsletterApi.createNewsletter(context, newsletter);
 
             if (isSuccess) {
               Navigator.pop(context, newsletter);

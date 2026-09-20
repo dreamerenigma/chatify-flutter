@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../models/user_model.dart';
 
@@ -20,8 +20,8 @@ void showVideoMessageBottomSheetDialog(BuildContext context, UserModel user) {
     builder: (_) {
       return VideoMessageBottomSheetContent(
         user: user,
-        onRecordingFinished: (String localPath) async {
-          await APIs.sendVoiceMessage(user, localPath);
+        onRecordingFinished: (String localPath, int videoDuration) async {
+          await ChatApi.sendVideoMessage(user, localPath, videoDuration: videoDuration);
         },
       );
     },
@@ -30,7 +30,7 @@ void showVideoMessageBottomSheetDialog(BuildContext context, UserModel user) {
 
 class VideoMessageBottomSheetContent extends StatefulWidget {
   final UserModel user;
-  final Future<void> Function(String localPath) onRecordingFinished;
+  final Future<void> Function(String localPath, int videoDuration) onRecordingFinished;
 
   const VideoMessageBottomSheetContent({
     super.key,

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../api/apis.dart';
+import '../../../api/chat_api.dart';
 import '../../../common/entities/base_chat_entity.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../domain/entities/chat_target.dart';
@@ -142,21 +142,21 @@ class UserModel implements ChatTarget, BaseChatEntity {
 
   @override
   Future<void> sendImage(File file) async {
-    await APIs.sendChatImage(this, file);
+    await ChatApi.sendChatImage(this, file);
   }
 
   @override
   Future<void> sendVideo(File file) async {
-    await APIs.sendChatVideo(this, file);
+    await ChatApi.sendChatVideo(this, file);
   }
 
   @override
   Future<void> sendDocument(File file) async {
-    await APIs.sendChatDocument(this, file);
+    await ChatApi.sendChatDocument(this, file);
   }
 
   @override
   Future<void> sendAudio(File file, String fileName) async {
-    await APIs.sendChatAudio(this, file, fileName);
+    await ChatApi.sendChatAudio(this, file, fileName);
   }
 }

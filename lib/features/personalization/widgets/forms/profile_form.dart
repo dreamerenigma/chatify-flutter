@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/edit_phone_screen.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -227,6 +228,19 @@ class ProfileFormState extends State<ProfileForm> {
                   ],
                 ),
                 SizedBox(height: 18),
+                Obx(() =>
+                  _buildAddLink(
+                    context,
+                    title: 'Добавьте ссылки на подтвержденый профиль',
+                    subtitle: 'Помогите людям связаться с вами ВКонтакте и в Одноклассники. ',
+                    actionText: 'Добавить ссылку',
+                    onActionTap: () async {},
+                    onClose: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                SizedBox(height: 18),
                 _buildProfileInfo(Icons.person_outline_rounded, S.of(context).name, APIs.me.name, ChatifyColors.darkGrey, () {
                   showEnterNameBottomDialog(
                     context,
@@ -305,6 +319,52 @@ class ProfileFormState extends State<ProfileForm> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddLink(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String actionText,
+    required VoidCallback onActionTap,
+    required VoidCallback onClose,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20, top: 8),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SvgPicture.asset(ChatifyVectors.lamp, width: 30, height: 30, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold, height: 1.3)),
+                  SizedBox(height: 4),
+                  RichText(
+                    text: TextSpan(
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.2, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                      children: [
+                        TextSpan(text: subtitle),
+                        TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: onClose,
+              child: Icon(Icons.close_rounded, size: 22, color: ChatifyColors.borderSecondary),
+            ),
+          ],
         ),
       ),
     );

@@ -6,15 +6,22 @@ import '../../../../../utils/constants/app_sizes.dart';
 class AppPopupMenuItem extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
+  final Widget? icon;
+  final Color? color;
 
   const AppPopupMenuItem({
     super.key,
     required this.text,
     this.onTap,
+    this.icon,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
+    final defaultColor = context.isDarkMode ? ChatifyColors.white : ChatifyColors.black;
+    final itemColor = color ?? defaultColor;
+
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
@@ -27,7 +34,15 @@ class AppPopupMenuItem extends StatelessWidget {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
-          child: Text(text, textAlign: TextAlign.left, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 17, fontWeight: FontWeight.w400)),
+          child: Row(
+            children: [
+              if (icon != null) ...[
+                IconTheme(data: IconThemeData(color: itemColor, size: 22), child: icon!),
+                const SizedBox(width: 12),
+              ],
+              Expanded(child: Text(text, textAlign: TextAlign.left, style: TextStyle(color: itemColor, fontSize: 17, fontWeight: FontWeight.w400))),
+            ],
+          ),
         ),
       ),
     );

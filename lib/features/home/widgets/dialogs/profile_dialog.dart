@@ -144,7 +144,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  SizedBox(width: !isMe ? 34 : 17),
+                  SizedBox(width: isMe ? 34 : 17),
                   IconButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -180,7 +180,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                     },
                     icon: Icon(Icons.info_outline, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 28),
                   ),
-                  SizedBox(width: !isMe ? 34 : 17),
+                  SizedBox(width: isMe ? 34 : 17),
                 ],
               ),
             ),

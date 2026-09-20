@@ -14,6 +14,7 @@ import '../features/group/models/group_model.dart';
 import '../utils/popups/dialogs.dart';
 import 'access_firebase_token.dart';
 import 'apis.dart';
+import 'chat_api.dart';
 
 ///******************* Group Screen Related APIs *******************
 class GroupApi {
@@ -131,15 +132,17 @@ class GroupApi {
 
     log('Sending message to group with groupId: ${group.groupId}');
 
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final now = Timestamp.now();
+    final messageId = DateTime.now().millisecondsSinceEpoch.toString();
 
     final message = MessageModel(
+      id: messageId,
       toId: group.groupId,
       msg: msg,
       read: '',
       type: type,
       fromId: user.uid,
-      sent: time,
+      sent: now,
       documentName: fileName,
       fileSize: fileSize,
       deletedBy: [],
@@ -151,10 +154,8 @@ class GroupApi {
     log('Firestore path for messages: ${ref.path}');
 
     try {
-      await ref.doc(time).set(message.toJson()).then((value) => sendGroupPushNotification(group, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
-      await firestore.collection('Groups').doc(group.groupId).update({
-        'lastMessageTimestamp': int.parse(time),
-      });
+      await ref.doc(messageId).set(message.toJson()).then((value) => sendGroupPushNotification(group, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
+      await firestore.collection('Groups').doc(group.groupId).update({'lastMessageTimestamp': int.parse(messageId)});
     } catch (e) {
       log('Error sending group message: $e');
     }
@@ -212,7 +213,7 @@ class GroupApi {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = storage.ref().child('audio/${APIs.getConversationId(group.groupId)}/$fileName');
+    final ref = storage.ref().child('audio/${ChatApi.getConversationId(group.groupId)}/$fileName');
     final contentType = 'audio/$ext';
 
     await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {

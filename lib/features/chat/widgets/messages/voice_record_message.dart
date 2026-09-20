@@ -47,17 +47,16 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
   void initState() {
     super.initState();
     _audioPlayer.positionStream.listen((position) {
-      final duration = _audioPlayer.duration;
+      if (!mounted) return;
 
-      if (!mounted) {
-        return;
-      }
+      final playerDuration = _audioPlayer.duration;
+      final totalDuration = playerDuration ?? Duration(milliseconds: widget.message.audioDuration ?? 0);
 
       setState(() {
         _currentPosition = position;
 
-        if (duration != null && duration.inMilliseconds > 0) {
-          _progress = (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
+        if (totalDuration.inMilliseconds > 0) {
+          _progress = (position.inMilliseconds / totalDuration.inMilliseconds).clamp(0.0, 1.0);
         }
       });
     });
@@ -65,8 +64,6 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
       log('Audio duration: $duration');
     });
     _audioPlayer.playerStateStream.listen((state) async {
-      log('Player state: ''playing=${state.playing}, ' 'processing=${state.processingState}');
-
       if (!mounted) return;
 
       if (state.processingState == ProcessingState.completed) {
@@ -103,50 +100,38 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
 
   Future<void> _togglePlayback() async {
     try {
-
       if (_audioPlayer.playing) {
         await _audioPlayer.pause();
         return;
       }
 
       if (_audioPlayer.processingState == ProcessingState.ready) {
+        await _audioPlayer.setSpeed(_playbackSpeed);
         await _audioPlayer.play();
         return;
       }
 
       final yandexPath = widget.message.msg;
-
-      log('========== VOICE PLAYBACK ==========');
-      log('Yandex Disk path: $yandexPath');
-
       final url = await APIs.mediaService.getUrl(yandexPath);
 
       if (url == null || url.isEmpty) {
-        throw Exception('Failed to get fresh Yandex Disk download URL');
+        throw Exception(
+          'Failed to get Yandex Disk download URL',
+        );
       }
 
-      log('Fresh download URL received');
-
-      final duration = await _audioPlayer.setUrl(url);
-
-      log('Loaded duration: $duration');
-      log('Player duration: ${_audioPlayer.duration}');
-
+      await _audioPlayer.setUrl(url);
       await _audioPlayer.setSpeed(_playbackSpeed);
 
-      log('Starting playback...');
-
       await _audioPlayer.play();
+    } catch (e, stackTrace) {
+      log('VOICE PLAYBACK ERROR: $e', stackTrace: stackTrace);
 
-      log('Playback started');
-    } catch (e, stack) {
-      log('Voice playback error: $e', stackTrace: stack);
+      if (!mounted) return;
 
-      if (mounted) {
-        setState(() {
-          _isPlaying = false;
-        });
-      }
+      setState(() {
+        _isPlaying = false;
+      });
     }
   }
 
@@ -164,8 +149,6 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
 
   Future<void> _loadProfileImage() async {
     final imagePath = widget.user.image.trim();
-
-    log('PROFILE IMAGE INPUT: $imagePath');
 
     if (imagePath.isEmpty) {
       return;
@@ -191,10 +174,7 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
 
       log('PROFILE IMAGE URL: $_profileImageUrl');
     } catch (e, stackTrace) {
-      log(
-        'PROFILE IMAGE URL ERROR: $e',
-        stackTrace: stackTrace,
-      );
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
 
       if (!mounted) return;
 
@@ -207,92 +187,96 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      textDirection: widget.isSender ? TextDirection.rtl : TextDirection.ltr,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-          child: GestureDetector(
-            onTap: _changePlaybackSpeed,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: _isPlaying
-                ? Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Container(
-                      key: const ValueKey('speed'),
-                      width: 60,
-                      height: 33,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
-                      child: Text(
-                        '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
+    final duration = Duration(milliseconds: widget.message.audioDuration ?? 0);
+
+    return SizedBox(
+      height: 54,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        textDirection: widget.isSender ? TextDirection.rtl : TextDirection.ltr,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+            child: GestureDetector(
+              onTap: _changePlaybackSpeed,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: _isPlaying
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Container(
+                        key: const ValueKey('speed'),
+                        width: 60,
+                        height: 33,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
+                        child: Text(
+                          '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
+                        ),
                       ),
-                    ),
-                  )
-                : SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Align(
-                          alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: const BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAlias,
-                            child: Image.network(
-                              _profileImageUrl ?? '',
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) {
-                                return Container(color: ChatifyColors.grey, child: SvgPicture.asset(ChatifyVectors.profile, width: 50, height: 50));
-                              },
+                    )
+                  : SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Align(
+                            alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: const BoxDecoration(shape: BoxShape.circle),
+                              clipBehavior: Clip.antiAlias,
+                              child: Image.network(
+                                _profileImageUrl ?? '',
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) {
+                                  return Container(color: ChatifyColors.grey, child: SvgPicture.asset(ChatifyVectors.profile, width: 50, height: 50));
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          left: widget.isSender ? -6 : null,
-                          right: widget.isSender ? null : -6,
-                          bottom: -2,
-                          child: SvgPicture.asset(ChatifyVectors.microphoneFilled, width: 21, height: 21),
-                        ),
-                      ],
-                    ),
+                          Positioned(
+                            left: widget.isSender ? -6 : null,
+                            right: widget.isSender ? null : -6,
+                            bottom: -2,
+                            child: SvgPicture.asset(ChatifyVectors.microphoneFilled, width: 21, height: 21),
+                          ),
+                        ],
+                      ),
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(onTap: _togglePlayback,child: SvgPicture.asset(_isPlaying ? ChatifyVectors.pauseFilled : ChatifyVectors.playFilled, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))),
-                  const SizedBox(width: 8),
-                  Expanded(child: _buildWaveform()),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 38),
-                child: Text(
-                  _formatDuration(_currentPosition),
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, height: 1),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(onTap: _togglePlayback,child: SvgPicture.asset(_isPlaying ? ChatifyVectors.pauseFilled : ChatifyVectors.playFilled, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))),
+                    const SizedBox(width: 8),
+                    Expanded(child: _buildWaveform()),
+                  ],
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 38),
+                  child: Text(
+                    _formatDuration(duration),
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, height: 1),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

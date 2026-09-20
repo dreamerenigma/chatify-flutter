@@ -6,7 +6,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -199,7 +199,7 @@ class _MediaContentBottomPanelState extends State<MediaContentBottomPanel> {
                     child: InkWell(
                       onTap: () async {
                         if (selectedGif != null) {
-                          await APIs.sendChatImage(widget.user, selectedGif!);
+                          await ChatApi.sendChatImage(widget.user, selectedGif!);
 
                           setState(() {
                             selectedGif = null;

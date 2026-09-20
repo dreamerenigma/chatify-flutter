@@ -5,6 +5,7 @@ import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
+import '../../../api/chat_api.dart';
 import '../../../core/enums/message_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../provider/wallpaper_provider.dart';
@@ -215,7 +216,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     if (list.isEmpty) {
                       APIs.sendFirstMessage(widget.user, text, MessageType.text);
                     } else {
-                      APIs.sendMessage(widget.user, text, MessageType.text);
+                      ChatApi.sendMessage(widget.user, text, MessageType.text);
                     }
                   },
                 ),

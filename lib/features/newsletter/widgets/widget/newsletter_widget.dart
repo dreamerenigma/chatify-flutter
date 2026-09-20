@@ -5,6 +5,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/newsletter_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
@@ -50,9 +51,8 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
   void initState() {
     super.initState();
     newsletter = widget.newsletter;
-    userNamesFuture = APIs.fetchUserNames(newsletter.newsletters, shortenNames: true);
+    userNamesFuture = APIs.fetchUserNames(newsletter.members, shortenNames: true);
     focusNode = FocusNode();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(focusNode);
     });
@@ -81,7 +81,7 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
     final text = textController.text.trim();
     if (text.isEmpty) return;
 
-    await APIs.sendMessageNewsletterChat(newsletterId: newsletter.id, chatId: 'main', text: text);
+    await NewsletterApi.sendMessageNewsletterChat(newsletterId: newsletter.id, chatId: 'main', text: text);
 
     setState(() {
       textController.clear();

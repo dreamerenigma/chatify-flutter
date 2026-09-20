@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../core/enums/chat_list_type.dart';
 import '../../../../core/enums/selection_type.dart';
 import '../../../../core/services/dialogs/dialog_manager.dart';
@@ -332,7 +332,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                         onCommunitySelected: widget.onCommunitySelected,
                                                       ),
                                                       StreamBuilder<int>(
-                                                        stream: APIs.getArchivedUsersCount(widget.user.id),
+                                                        stream: ChatApi.getArchivedUsersCount(widget.user.id),
                                                         builder: (context, snapshot) {
                                                           final count = snapshot.data ?? 0;
 

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -139,7 +140,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
 
   void _setMessagesStream() {
     cachedMessages.clear();
-    messageStream = APIs.getAllMessages(widget.user);
+    messageStream = ChatApi.getAllMessages(widget.user);
   }
 
   void _onTextChanged() {
@@ -195,7 +196,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
   }
 
   Future<void> _handleReaction(MessageModel message, String reaction) async {
-    await APIs.updateMessageReaction(message, reaction);
+    await ChatApi.updateMessageReaction(message, reaction);
 
     if (!mounted) return;
 
@@ -210,7 +211,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
       if (list.isEmpty) {
         APIs.sendFirstMessage(widget.user, textController.text, MessageType.text);
       } else {
-        APIs.sendMessage(widget.user, textController.text, MessageType.text);
+        ChatApi.sendMessage(widget.user, textController.text, MessageType.text);
       }
       textController.clear();
       APIs.playSendSound();
@@ -366,6 +367,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
     );
   }
 
+
   Widget _buildMessages() {
     return StreamBuilder(
       stream: messageStream,
@@ -374,13 +376,15 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
           return const SizedBox();
         }
 
-        if (!isHovered && snapshot.hasData) {
+        if (snapshot.hasData) {
           final data = snapshot.data?.docs;
-          list = data?.map((e) => MessageModel.fromJson(e.data())).toList() ?? [];
+
+          list = data?.map((e) => MessageModel.fromJson(e.data(), id: e.id)).toList() ?? [];
+
           cachedMessages = list;
         }
 
-        final messagesToShow = isHovered ? cachedMessages : list;
+        final messagesToShow = list;
         final currentUserId = widget.user.id;
         final filteredMessages = messagesToShow.where((message) {
           return message.fromId == currentUserId || message.toId == currentUserId;
@@ -398,7 +402,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
             user: widget.user,
           );
         } else {
-          return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
+          return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)));
         }
       },
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -40,7 +40,7 @@ class ArchivePrivacySection extends StatelessWidget {
                 Text(S.of(context).inArchive, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: color)),
                 const Spacer(),
                 StreamBuilder<int>(
-                  stream: APIs.getArchivedUsersCount(user.id),
+                  stream: ChatApi.getArchivedUsersCount(user.id),
                   builder: (context, snapshot) {
                     final count = snapshot.data ?? 0;
 

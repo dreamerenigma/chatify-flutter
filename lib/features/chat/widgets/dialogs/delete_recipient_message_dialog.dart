@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -48,7 +48,7 @@ void showDeleteRecipientMessageDialog(BuildContext context, List<int> messageInd
                       Navigator.of(dialogContext).pop();
 
                       try {
-                        await Future.wait(messageIndices.map((index) => APIs.deleteMessage(list[index])));
+                        await Future.wait(messageIndices.map((index) => ChatApi.deleteMessage(list[index])));
                       } catch (error) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).failedToDeleteMessage)));

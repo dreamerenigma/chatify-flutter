@@ -7,6 +7,7 @@ import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
+import '../../../api/newsletter_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
@@ -49,7 +50,6 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
     super.initState();
     _fetchNewsletter();
     _fetchChatUsers();
-
     _searchController.addListener(() {
       _filterContacts();
     });
@@ -301,11 +301,11 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
               newsletterImage: '',
               newsletterName: newsletterName,
               creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
-              newsletters: newsletters,
+              members: newsletters,
               createdAt: createdAt,
             );
 
-            bool isSuccess = await APIs.createNewsletter(context, newsletter);
+            bool isSuccess = await NewsletterApi.createNewsletter(context, newsletter);
 
             if (isSuccess) {
               Navigator.pop(context, newsletter);

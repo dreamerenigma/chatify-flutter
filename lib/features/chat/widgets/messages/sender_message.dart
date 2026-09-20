@@ -23,7 +23,7 @@ import '../../screens/forward_message_screen.dart';
 import '../buttons/emoji_hover_button.dart';
 import '../dialogs/call_modal_bottom_sheet.dart';
 import '../dialogs/edit_message_dialog.dart';
-import '../media/media_widget.dart';
+import '../widget/media_widget.dart';
 import '../painters/triangle_painter.dart';
 import 'call_message.dart';
 import 'emoji_message.dart';
@@ -148,7 +148,7 @@ class SenderMessageState extends State<SenderMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.audio)
+          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.voice)
             Center(
               child: Container(
                 width: 35,
@@ -176,7 +176,7 @@ class SenderMessageState extends State<SenderMessage> {
     switch (widget.message.type) {
       case MessageType.call:
         return _buildCallMessage();
-      case MessageType.audio:
+      case MessageType.voice:
         return _buildVoiceRecordMessage();
       case MessageType.image:
       case MessageType.gif:
@@ -481,7 +481,6 @@ class SenderMessageState extends State<SenderMessage> {
                         color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
                         fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
                         fontWeight: FontWeight.w400,
-                        fontFamily: 'Roboto',
                       ),
                     ),
                   ),

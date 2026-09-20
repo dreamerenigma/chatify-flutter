@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
@@ -25,8 +26,11 @@ class MessageMeta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Timestamp sent = message.sent;
     final bool isRead = message.read.isNotEmpty;
     final Color checkColor = isRead ? ChatifyColors.lightBlueLink : context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey;
+    final String formattedTime = DateUtil.getFormattedTime(context: context, time: sent);
+    final String formattedDate = DateUtil.getFormattedDateLabel(context: context, timestamp: sent);
 
     return Align(
       alignment: Alignment.centerRight,
@@ -36,24 +40,29 @@ class MessageMeta extends StatelessWidget {
         waitDuration: const Duration(milliseconds: 800),
         exitDuration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        message: '${DateUtil.getFormattedDateLabel(context: context, timestamp: message.sent)}, ' '${DateUtil.getFormattedTime(context: context, time: message.sent)}',
+        message: '$formattedDate, $formattedTime',
         textStyle: isSender
           ? TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300)
           : null,
-            decoration: isSender
-            ? BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()): ChatifyColors.buttonGrey),
-                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt(),), spreadRadius: 1, blurRadius: 8, offset: const Offset(0, 4))],
-              )
-            : null,
+        decoration: isSender
+          ? BoxDecoration(
+              color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey),
+              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: const Offset(0, 4))],
+            )
+          : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              DateUtil.getFormattedTime(context: context, time: message.sent),
-              style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1.2),
+              formattedTime,
+              style: TextStyle(
+                color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
+                fontWeight: FontWeight.w400,
+                height: 1.2,
+              ),
             ),
             if (showCheck) ...[
               const SizedBox(width: 4),

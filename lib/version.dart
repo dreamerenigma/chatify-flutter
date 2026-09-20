@@ -4,8 +4,8 @@
   const String appName = 'Chatify';
 
   /// The current version of the app.
-  const String appVersion = '1.4.7';
+  const String appVersion = '1.4.11';
 
   /// The current build number of the app.
-  const String appBuildNumber = '711';
+  const String appBuildNumber = '821';
   
