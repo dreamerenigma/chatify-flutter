@@ -171,12 +171,17 @@ class DetailImageInputState extends State<DetailImageInput> {
               EmojiPicker(
                 textEditingController: textController,
                 config: Config(
-                  height: DeviceUtils.getScreenHeight(context) * 0.35,
+                  height: MediaQuery.of(context).size.height * 0.35,
                   checkPlatformCompatibility: true,
-                  emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
-                  categoryViewConfig: const CategoryViewConfig(),
-                  bottomActionBarConfig: const BottomActionBarConfig(),
-                  skinToneConfig: const SkinToneConfig(),
+                  emojiViewConfig: EmojiViewConfig(
+                    columns: 8,
+                    emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+                    backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+                  ),
+                  categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
+                  bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
+                  skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
+                  customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
                 ),
               ),
           ],

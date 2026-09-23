@@ -91,7 +91,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
             'Нет фото профиля',
             icon: const Icon(Icons.warning_amber_rounded, size: 26),
             iconColor: ChatifyColors.yellow,
-            position: SnackBarPositionType.bottom
+            position: SnackBarPositionType.bottom,
           );
 
           return;

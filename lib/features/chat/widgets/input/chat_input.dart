@@ -15,7 +15,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
-import '../../../../api/chat_api.dart';
+import '../../../../domain/entities/chat_target.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/user_model.dart';
@@ -24,7 +24,7 @@ import 'buttons/camera_button.dart';
 import 'buttons/chat_input_attachments_button.dart';
 
 class ChatInput extends StatefulWidget {
-  final UserModel user;
+  final ChatTarget chatTarget;
   final FocusNode focusNode;
   final VoidCallback onToggleEmojiKeyboard;
   final bool isReplyVisible;
@@ -32,7 +32,7 @@ class ChatInput extends StatefulWidget {
 
   const ChatInput({
     super.key,
-    required this.user,
+    required this.chatTarget,
     required this.focusNode,
     required this.onToggleEmojiKeyboard,
     required this.isReplyVisible,
@@ -58,11 +58,11 @@ class ChatInputState extends State<ChatInput> {
   List<MessageModel> list = [];
 
   bool get hasText => textController.text.trim().isNotEmpty;
+  ChatTarget get chatTarget => widget.chatTarget;
 
   @override
   void initState() {
     super.initState();
-    user = widget.user;
     textController.addListener(_handleTyping);
     widget.focusNode.addListener(_onFocusChanged);
   }
@@ -99,22 +99,40 @@ class ChatInputState extends State<ChatInput> {
     });
   }
 
-  void handleImagePicked(File image) async {
+  Future<void> handleImagePicked(File image) async {
     setState(() => isUploading = true);
-    await ChatApi.sendChatImage(widget.user, image);
-    setState(() => isUploading = false);
+
+    try {
+      await widget.chatTarget.sendImage(image);
+    } finally {
+      if (mounted) {
+        setState(() => isUploading = false);
+      }
+    }
   }
 
   Future<void> sendGif(File file) async {
     setState(() => isUploading = true);
-    await ChatApi.sendChatImage(widget.user, file);
-    setState(() => isUploading = false);
+
+    try {
+      await widget.chatTarget.sendImage(file);
+    } finally {
+      if (mounted) {
+        setState(() => isUploading = false);
+      }
+    }
   }
 
   Future<void> sendVideo(File file) async {
     setState(() => isUploading = true);
-    await ChatApi.sendChatVideo(widget.user, file);
-    setState(() => isUploading = false);
+
+    try {
+      await widget.chatTarget.sendVideo(file);
+    } finally {
+      if (mounted) {
+        setState(() => isUploading = false);
+      }
+    }
   }
 
   Future<void> playSendSound() async {
@@ -133,7 +151,7 @@ class ChatInputState extends State<ChatInput> {
 
     final text = textController.text.trim();
 
-    await widget.onSendMessage(text);
+    await widget.chatTarget.sendText(text);
 
     textController.clear();
 
@@ -261,8 +279,7 @@ class ChatInputState extends State<ChatInput> {
                           ),
                         ),
                         ChatInputAttachments(
-                          chatTarget: user,
-                          user: user,
+                          chatTarget: widget.chatTarget,
                           isUploading: isUploading,
                           setUploading: (value) {
                             setState(() {
@@ -282,7 +299,7 @@ class ChatInputState extends State<ChatInput> {
                           },
                           child: hasText
                             ? const SizedBox(key: ValueKey('camera-hidden'), width: 0)
-                            : CameraButton(key: const ValueKey('camera-visible'), onImagePicked: handleImagePicked, user: user),
+                            : CameraButton(key: const ValueKey('camera-visible'), onImagePicked: handleImagePicked, chatTarget: chatTarget),
                         )
                       ],
                     ),
@@ -310,7 +327,7 @@ class ChatInputState extends State<ChatInput> {
                   if (_dragOffset >= 80) {
                     _dragOffset = 0;
 
-                    showVoiceRecordBottomSheetDialog(context, widget.user);
+                    showVoiceRecordBottomSheetDialog(context, widget.chatTarget);
 
                     return;
                   }
@@ -333,12 +350,17 @@ class ChatInputState extends State<ChatInput> {
           EmojiPicker(
             textEditingController: textController,
             config: Config(
-              height: DeviceUtils.getScreenHeight(context) * 0.35,
+              height: MediaQuery.of(context).size.height * 0.35,
               checkPlatformCompatibility: true,
-              emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
-              categoryViewConfig: const CategoryViewConfig(),
-              bottomActionBarConfig: const BottomActionBarConfig(),
-              skinToneConfig: const SkinToneConfig(),
+              emojiViewConfig: EmojiViewConfig(
+                columns: 8,
+                emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+                backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+              ),
+              categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
+              bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
+              skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
+              customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
             ),
           ),
       ],

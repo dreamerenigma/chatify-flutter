@@ -44,7 +44,7 @@ class _NewsletterAppbarState extends State<NewsletterAppbar> {
         Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },

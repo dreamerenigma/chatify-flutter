@@ -72,7 +72,7 @@ class _DetailsCallScreenState extends State<DetailsCallScreen> {
             titleSpacing: 15,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 if (selectionMode) {
                   _clearSelection();

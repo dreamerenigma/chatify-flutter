@@ -19,10 +19,6 @@ import '../dialogs/newsletter_dialog.dart';
 
 class NewsletterCard extends StatefulWidget {
   final NewsletterModel newsletter;
-  final String newsletterName;
-  final List<String> newsletters;
-  final String newsletterImage;
-  final String createdAt;
   final ValueChanged<NewsletterModel> onNewsletterSelected;
   final bool isSelected;
   final bool isSelectionMode;
@@ -30,10 +26,6 @@ class NewsletterCard extends StatefulWidget {
   const NewsletterCard({
     super.key,
     required this.newsletter,
-    required this.newsletterName,
-    required this.newsletterImage,
-    required this.createdAt,
-    required this.newsletters,
     required this.onNewsletterSelected,
     required this.isSelected,
     this.isSelectionMode = false,
@@ -48,11 +40,11 @@ class _NewsletterCardState extends State<NewsletterCard> {
   bool isLongPressed = false;
 
   String get formattedDate {
-    if (widget.createdAt.isEmpty) {
+    if (widget.newsletter.createdAt.isEmpty) {
       return S.of(context).dateNotSpecified;
     }
     try {
-      final timestamp = int.tryParse(widget.createdAt);
+      final timestamp = int.tryParse(widget.newsletter.createdAt);
       if (timestamp == null) {
         return S.of(context).invalidDate;
       }
@@ -68,7 +60,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
   @override
   void initState() {
     super.initState();
-    userNamesFuture = APIs.fetchUserNames(widget.newsletters, shortenNames: true);
+    userNamesFuture = APIs.fetchUserNames(widget.newsletter.members, shortenNames: true);
   }
 
   @override
@@ -77,6 +69,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
       margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
       elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onSecondaryTapDown: (details) {
@@ -125,7 +118,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
               if (isWindows) {
                 widget.onNewsletterSelected(widget.newsletter);
               } else {
-                Navigator.push(context, createPageRoute(NewsletterChatScreen(newsletters: widget.newsletters, createdAt: widget.createdAt)));
+                Navigator.push(context, createPageRoute(NewsletterChatScreen(newsletters: widget.newsletter.members, createdAt: widget.newsletter.createdAt)));
               }
             },
             splashFactory: NoSplash.splashFactory,
@@ -148,15 +141,15 @@ class _NewsletterCardState extends State<NewsletterCard> {
                             context: context,
                             builder: (_) => NewsletterDialog(
                               newsletterId: widget.newsletter.id,
-                              newsletterName: widget.newsletterName,
-                              newsletterImage: widget.newsletterImage,
-                              createdAt: widget.createdAt,
-                              newsletters: widget.newsletters,
+                              newsletterName: widget.newsletter.newsletterName,
+                              newsletterImage: widget.newsletter.newsletterImage,
+                              createdAt: widget.newsletter.createdAt,
+                              newsletters: widget.newsletter.members,
                             ),
                           );
                         },
                         child: CachedNetworkImage(
-                          imageUrl: widget.newsletterImage,
+                          imageUrl: widget.newsletter.newsletterImage,
                           width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                           height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
                           imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
@@ -184,7 +177,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                             ),
-                            child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
+                            child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
                           ),
                         ),
                     ],
@@ -213,7 +206,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                                   );
                                 }  else if (snapshot.hasData) {
                                   final userNames = snapshot.data!;
-                                  final newsletterNames = widget.newsletters.map((id) => userNames[id] ?? S.of(context).unknownUser).join(', ');
+                                  final newsletterNames = widget.newsletter.members.map((id) => userNames[id] ?? S.of(context).unknownUser).join(', ');
 
                                   return Expanded(
                                     child: Text(
@@ -238,7 +231,7 @@ class _NewsletterCardState extends State<NewsletterCard> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${S.of(context).youCreatedMailingList} ${widget.newsletters.length} ${S.of(context).recipients}',
+                          '${S.of(context).youCreatedMailingList} ${widget.newsletter.members.length} ${S.of(context).recipients}',
                           style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

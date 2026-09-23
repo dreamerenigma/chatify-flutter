@@ -61,9 +61,9 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
             splashFactory: NoSplash.splashFactory,
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(8),
-            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             child: Stack(
               children: [
                 FutureBuilder<Uint8List?>(
@@ -112,8 +112,9 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
               splashFactory: NoSplash.splashFactory,
               mouseCursor: SystemMouseCursors.basic,
               borderRadius: BorderRadius.circular(8),
-              splashColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey,
-              highlightColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.grey,
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               child: Ink(
                 width: 112,
                 height: 112,
@@ -127,7 +128,7 @@ class SupportImageSelectorState extends State<SupportImageSelector> {
                     height: 32,
                     decoration: const BoxDecoration(color: ChatifyColors.darkerGrey, shape: BoxShape.circle),
                     child: Center(
-                      child: Icon(Icons.add, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      child: Icon(Icons.add_rounded, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                     ),
                   ),
                 ),

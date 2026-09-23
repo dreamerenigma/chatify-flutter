@@ -32,9 +32,11 @@ class MainHomeContentList extends StatelessWidget {
   final Set<String> selectedUserIds;
   final Set<String> selectedNewsletterIds;
   final Set<String> selectedCommunityIds;
+  final Set<String> selectedGroupIds;
   final Function(UserModel) onUserSelected;
   final ValueChanged<NewsletterModel>? onNewsletterSelected;
   final ValueChanged<CommunityModel> onCommunitySelected;
+  final ValueChanged<GroupModel> onGroupSelected;
   final SelectionType selectionType;
 
   const MainHomeContentList({
@@ -55,8 +57,10 @@ class MainHomeContentList extends StatelessWidget {
     required this.onUserSelected,
     required this.selectedNewsletterIds,
     required this.selectedCommunityIds,
+    required this.selectedGroupIds,
     required this.selectionType,
     required this.onCommunitySelected,
+    required this.onGroupSelected,
     this.isSelectionMode = false,
     this.onNewsletterSelected,
   });
@@ -71,10 +75,33 @@ class MainHomeContentList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!isTabsVisible && !isAccessKeyVisible)
+        if (isTabsVisible && !isAccessKeyVisible)
           const SizedBox(height: 6),
+        if (users.isNotEmpty) ...[
+          IgnorePointer(
+            ignoring: selectionType != SelectionType.none && !isChatSelection,
+            child: UserList(
+              isSearching: isSearching,
+              searchList: searchList,
+              list: users,
+              isSharing: false,
+              onUserSelected: onUserSelected,
+              selectedUserIds: selectedUserIds,
+              pinnedChats: pinnedChats,
+              mutedChats: mutedChats,
+            ),
+          ),
+        ],
         if (groups.isNotEmpty)
-          IgnorePointer(ignoring: isSelectionMode, child: GroupList(groups: groups, currentUser: currentUserName, onGroupSelected: (group) {})),
+          IgnorePointer(
+            ignoring: isSelectionMode,
+            child: GroupList(
+              groups: groups,
+              currentUser: currentUserName,
+              selectedGroupIds: selectedGroupIds,
+              onGroupSelected: onGroupSelected,
+            ),
+          ),
         if (newsletters.isNotEmpty)
           IgnorePointer(
             ignoring: selectionType != SelectionType.none && !isNewsletterSelection,
@@ -96,28 +123,16 @@ class MainHomeContentList extends StatelessWidget {
               onCommunitySelected: onCommunitySelected,
             ),
           ),
-        if (users.isNotEmpty)
-          IgnorePointer(
-            ignoring: selectionType != SelectionType.none && !isChatSelection,
-            child: UserList(
-              isSearching: isSearching,
-              searchList: searchList,
-              list: users,
-              isSharing: false,
-              onUserSelected: onUserSelected,
-              selectedUserIds: selectedUserIds,
-              pinnedChats: pinnedChats,
-              mutedChats: mutedChats,
-            ),
-          ),
         if (supports.isNotEmpty) ...[
+            SizedBox(height: 6),
           if (users.isEmpty)
             const SizedBox(height: 8),
           IgnorePointer(ignoring: isSelectionMode, child: SupportList(supports: supports, onSupportSelected: (support) {})),
         ],
-        if (infosApp.isNotEmpty)
+        if (supports.isNotEmpty) ...[
+          const SizedBox(height: 6),
           IgnorePointer(ignoring: isSelectionMode, child: InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {})),
-        const SizedBox(height: 8),
+        ],
       ],
     );
   }

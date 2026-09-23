@@ -14,9 +14,9 @@ import '../../../generated/l10n/l10n.dart';
 import '../models/group_model.dart';
 
 class PhotoGroupController extends GetxController {
+  final GetStorage storage = GetStorage();
   RxString image = RxString('');
   GroupModel? group;
-  final GetStorage storage = GetStorage();
 
   PhotoGroupController({required this.image, this.group}) {
     _saveImageToStorage(image.value);
@@ -56,7 +56,7 @@ class PhotoGroupController extends GetxController {
       try {
         File imageFile = File(imagePath);
         if (group != null) {
-          await GroupApi.updateGroupPicture(group!.groupId, imageFile);
+          await GroupApi.updateGroupPicture(group!.id, imageFile);
         } else {
           log(S.of(context).groupNullCannotUpdateImage);
         }
@@ -68,9 +68,9 @@ class PhotoGroupController extends GetxController {
       _saveImageToStorage('');
       try {
         if (group != null) {
-          String? currentImageUrl = await _getCurrentImageUrlForCommunity(group!.groupId);
+          String? currentImageUrl = await _getCurrentImageUrlForCommunity(group!.id);
           if (currentImageUrl != null) {
-            await GroupApi.deleteGroupPicture(group!.groupId, currentImageUrl);
+            await GroupApi.deleteGroupPicture(group!.id, currentImageUrl);
             log(S.of(context).groupImageClearedSuccessDatabase);
           } else {
             log(S.of(context).noImageUrlDelete);
@@ -81,6 +81,50 @@ class PhotoGroupController extends GetxController {
       } catch (e) {
         log('${S.of(context).failedCleaGroupImageDatabase}: $e');
       }
+    }
+  }
+
+  Future<void> updateGroupImage(String groupId, String imagePath) async {
+    try {
+      final file = File(imagePath);
+
+      if (!await file.exists()) {
+        log('Group image file does not exist: $imagePath');
+        return;
+      }
+
+      final newImagePath = await GroupApi.updateGroupPicture(groupId, file);
+
+      if (newImagePath == null) {
+        log('Failed to update group image');
+        return;
+      }
+
+      image.value = newImagePath;
+      _saveImageToStorage(newImagePath);
+
+      log('Group image updated: $newImagePath');
+    } catch (e, stackTrace) {
+      log('Error updating group image: $e', stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> deleteGroupImage(String groupId) async {
+    try {
+      final imagePath = image.value;
+
+      if (imagePath.isEmpty || imagePath == 'null') {
+        return;
+      }
+
+      await GroupApi.deleteGroupPicture(groupId, imagePath);
+
+      image.value = '';
+      _saveImageToStorage('');
+
+      log('Group image deleted');
+    } catch (e, stackTrace) {
+      log('Error deleting group image: $e', stackTrace: stackTrace);
     }
   }
 
@@ -111,12 +155,7 @@ class PhotoGroupController extends GetxController {
     file.writeAsBytesSync(response.bodyBytes);
 
     final box = context.findRenderObject() as RenderBox?;
-    final params = ShareParams(
-      text: S.of(context).herePicture,
-      files: [XFile(file.path)],
-      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-    );
-
+    final params = ShareParams(text: S.of(context).herePicture, files: [XFile(file.path)], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
     final result = await SharePlus.instance.share(params);
 
     if (result.status == ShareResultStatus.success) {
@@ -135,5 +174,11 @@ class PhotoGroupController extends GetxController {
     if (savedImage != null && savedImage.isNotEmpty) {
       image.value = savedImage;
     }
+  }
+
+  void clearImage() {
+    image.value = '';
+    storage.remove('image');
+    sharedImagePath.value = '';
   }
 }

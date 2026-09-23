@@ -208,6 +208,7 @@ class APIs {
     await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).set({'muted': muted, 'mutedDuration': muted ? duration : 0, 'mutedUntil': mutedUntil}, SetOptions(merge: true));
   }
 
+  /// -- .
   static Future<int> getChatMutedDuration(String userId) async {
     final snapshot = await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).get();
     final data = snapshot.data();
@@ -370,12 +371,7 @@ class APIs {
 
   /// -- Updating user info.
   static Future<void> updateUserInfo() async {
-    await firestore.collection('Users').doc(user.uid).update({
-      'name' : me.name,
-      'about' : me.about,
-      'status' : me.status,
-      'phone_number' : me.phoneNumber,
-    });
+    await firestore.collection('Users').doc(user.uid).update({'name' : me.name, 'about' : me.about, 'status' : me.status, 'phone_number' : me.phoneNumber});
   }
 
   /// -- Load User Data From Firestore.
@@ -787,6 +783,26 @@ class APIs {
     return registeredUsers;
   }
 
+  /// -- .
+  static Future<bool> updateUsername(String username) async {
+    try {
+      final normalizedUsername = username.trim().toLowerCase();
+
+      if (normalizedUsername.isEmpty) {
+        return false;
+      }
+
+      await firestore.collection('Users').doc(user.uid).update({'username': normalizedUsername});
+
+      me.username = normalizedUsername;
+
+      return true;
+    } catch (e) {
+      log('UPDATE USERNAME: error = $e');
+      return false;
+    }
+  }
+
   ///******************* Support APIs *******************
   /// --- Create new support chat.
   static Future<void> createSupportChat(String userId) async {
@@ -875,8 +891,13 @@ class APIs {
   /// -- Method to fetch info from Firestore.
   static Future<List<InfoAppModel>> getInfoChat() async {
     try {
-      final querySnapshot = await firestore.collection('InfoChats').get();
+      final userId = FirebaseAuth.instance.currentUser?.uid;
 
+      if (userId == null) {
+        return [];
+      }
+
+      final querySnapshot = await firestore.collection('InfoChats').where('userId', isEqualTo: userId).limit(1).get();
       final infos = querySnapshot.docs.map((doc) {
         return InfoAppModel.fromMap(doc.data());
       }).toList();

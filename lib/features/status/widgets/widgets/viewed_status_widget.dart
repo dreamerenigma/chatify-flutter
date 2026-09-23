@@ -92,7 +92,7 @@ class _ViewedStatusWidgetState extends State<ViewedStatusWidget> {
                                   alignment: Alignment.center,
                                   children: [
                                     SvgPicture.asset(ChatifyVectors.starburst, width: 16, height: 16, colorFilter: ColorFilter.mode(widget.colorsController.getColor(widget.colorsController.selectedColorScheme.value), BlendMode.srcIn)),
-                                    SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+                                    SvgPicture.asset(ChatifyVectors.check, width: 10, height: 10, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                   ],
                                 ),
                                 const Positioned(

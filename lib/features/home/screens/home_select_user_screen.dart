@@ -1,5 +1,6 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:chatify/features/calls/screens/new_contact_screen.dart';
 import 'package:chatify/features/group/screens/new_group_screen.dart';
 import 'package:chatify/features/personalization/screens/help/help_center_screen.dart';
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../api/apis.dart';
+import '../../../core/enums/snack_bar_position_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -58,7 +60,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
   List<UserModel> chatUsers = [];
   List<UserModel> searchList = [];
   List<UserModel> list = [];
-  Set<UserModel> selectedUsers = {};
+  List<UserModel> selectedUsers = [];
 
   @override
   void initState() {
@@ -187,7 +189,14 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
       isLoading = false;
     });
 
-    Dialogs.showSnackbar(context, (S.of(context).yourContactListUpdated));
+    CustomIconSnackBar.showAnimatedSnackBar(
+      context,
+      S.of(context).yourContactListUpdated,
+      icon: const Icon(BootstrapIcons.check_circle),
+      iconColor: ChatifyColors.success,
+      position: SnackBarPositionType.bottom,
+      offset: 20,
+    );
   }
 
   void _toggleUserSelection(UserModel user) {
@@ -232,7 +241,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             if (isSelectionMode) {
               setState(() {
@@ -273,7 +282,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                    Navigator.push(context, createPageRoute(NewGroupScreen(selectedUsers: List<UserModel>.from(selectedUsers))));
                   },
                   style: TextButton.styleFrom(foregroundColor: ChatifyColors.steelGrey, splashFactory: NoSplash.splashFactory),
                   child: Text(
@@ -420,7 +429,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                         icon: _buildIconContainer(Icons.group_add, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newGroup,
                         onTap: () {
-                          Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                          Navigator.push(context, createPageRoute(NewGroupScreen(selectedUsers: selectedUsers)));
                         },
                       ),
                       AppActionMenuItem(
@@ -457,14 +466,14 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 ...chatUsers.map((chatUser) =>
                   UseAppUserCard(
                     user: chatUser,
-                    isSelected: selectedUsers.contains(chatUser),
+                    isSelected: selectedUsers.any((user) => user.id == chatUser.id),
                     onUserSelected: _toggleUserSelection,
                     onLongPress: _handleLongPress,
                     onTap: () => _handleTap(chatUser),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  padding: const EdgeInsets.all(16),
                   child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ),
                 ...filteredContacts.map((contact) =>
@@ -476,12 +485,12 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 ),
                 _buildOptionItem(
                   icon: Icons.share,
-                  text: S.of(context).newMailing,
+                  text: 'Поделиться приглашением',
                   onTap: () {},
                 ),
                 _buildOptionItem(
                   icon: Icons.question_mark_rounded,
-                  text: S.of(context).newMailing,
+                  text: 'Помощь с контактами',
                   onTap: () {},
                 ),
               ],

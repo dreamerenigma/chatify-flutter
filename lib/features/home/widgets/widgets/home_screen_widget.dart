@@ -10,13 +10,13 @@ import '../../../../api/chat_api.dart';
 import '../../../../core/enums/chat_list_type.dart';
 import '../../../../core/enums/selection_type.dart';
 import '../../../../core/services/dialogs/dialog_manager.dart';
+import '../../../../core/theme/seasons/effects/leaf_effect.dart';
+import '../../../../core/theme/seasons/effects/rain_effect.dart';
+import '../../../../core/theme/seasons/effects/snow_effect.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../../utils/theme/seasons/effects/leaf_effect.dart';
-import '../../../../utils/theme/seasons/effects/rain_effect.dart';
-import '../../../../utils/theme/seasons/effects/snow_effect.dart';
 import '../../../bot/models/info_app_model.dart';
 import '../../../bot/models/support_model.dart';
 import '../../../calls/screens/add_favorite_screen.dart';
@@ -58,6 +58,7 @@ class HomeScreenWidget extends StatefulWidget {
   final Set<String> selectedChats;
   final Set<String> selectedNewsletterIds;
   final Set<String> selectedCommunityIds;
+  final Set<String> selectedGroupIds;
   final Set<String> pinnedChats;
   final Set<String> mutedChats;
   final SelectionType selectionType;
@@ -85,6 +86,7 @@ class HomeScreenWidget extends StatefulWidget {
     required this.selectedChats,
     required this.selectedNewsletterIds,
     required this.selectedCommunityIds,
+    required this.selectedGroupIds,
     required this.pinnedChats,
     required this.mutedChats,
     required this.selectionType,
@@ -321,15 +323,17 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                         isAccessKeyVisible: showPasskeyCard,
                                                         searchList: widget.searchList,
                                                         onUserSelected: widget.onUserSelected,
-                                                        selectedUserIds: widget.selectedChats,
                                                         pinnedChats: widget.pinnedChats,
                                                         mutedChats: widget.mutedChats,
                                                         isSelectionMode: widget.selectionType != SelectionType.none,
-                                                        selectedNewsletterIds: widget.selectedNewsletterIds,
                                                         onNewsletterSelected: widget.onNewsletterSelected,
                                                         selectionType: widget.selectionType,
+                                                        selectedUserIds: widget.selectedChats,
+                                                        selectedNewsletterIds: widget.selectedNewsletterIds,
                                                         selectedCommunityIds: widget.selectedCommunityIds,
+                                                        selectedGroupIds: widget.selectedGroupIds,
                                                         onCommunitySelected: widget.onCommunitySelected,
+                                                        onGroupSelected: widget.onGroupSelected,
                                                       ),
                                                       StreamBuilder<int>(
                                                         stream: ChatApi.getArchivedUsersCount(widget.user.id),
@@ -664,9 +668,10 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
         color: ChatifyColors.transparent,
         child: InkWell(
           splashFactory: NoSplash.splashFactory,
-          splashColor: primaryColor.withAlpha((0.1 * 255).toInt()),
-          highlightColor: primaryColor.withAlpha((0.2 * 255).toInt()),
           borderRadius: BorderRadius.circular(30),
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {
             if (isAddTab) {
               showNewListBottomSheetDialog(context);

@@ -78,8 +78,8 @@ class RequestAccountInformationScreenState extends State<RequestAccountInformati
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
+            elevation: 0,
             title: Text(S.of(context).requestAccountInfo, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-            elevation: 1,
           ),
         ),
       ),

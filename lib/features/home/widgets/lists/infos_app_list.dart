@@ -23,20 +23,28 @@ class _InfosAppListState extends State<InfosAppList> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.infosApp.isEmpty
-      ? const SizedBox.shrink()
-      : Column(
-          children: widget.infosApp.map((infoApp) {
-            final isSelected = widget.selectedInfoApp?.id == infoApp.id;
+    if (widget.infosApp.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
-            return InfoAppCard(
-              infoApp: infoApp,
-              onInfoAppSelected: (_) {
-                widget.onInfoAppSelected(infoApp);
-              },
-              isSelected: isSelected,
-            );
-          }).toList(),
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: widget.infosApp.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 6),
+      itemBuilder: (context, index) {
+        final infoApp = widget.infosApp[index];
+
+        final isSelected = widget.selectedInfoApp?.id == infoApp.id;
+
+        return InfoAppCard(
+          infoApp: infoApp,
+          onInfoAppSelected: (_) {
+            widget.onInfoAppSelected(infoApp);
+          },
+          isSelected: isSelected,
         );
+      },
+    );
   }
 }

@@ -118,7 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add a question or at least two answer options",
     ),
     "addScreenshots": MessageLookupByLibrary.simpleMessage(
-      "Add up to 3 screenshots or recordings",
+      "Click the screenshot to edit or remove sensitive information. Add up to 3 screenshots or recordings",
     ),
     "addSignature": MessageLookupByLibrary.simpleMessage("Add signature..."),
     "addStatus": MessageLookupByLibrary.simpleMessage("Add status"),
@@ -421,7 +421,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "changeSettingLaterGoing": MessageLookupByLibrary.simpleMessage(
       "You can change this later in Settings.",
     ),
-    "changeSettings": MessageLookupByLibrary.simpleMessage("Change settings"),
+    "changeSettingsGroup": MessageLookupByLibrary.simpleMessage(
+      "Change settings group",
+    ),
     "changeTopic": MessageLookupByLibrary.simpleMessage("Change theme?"),
     "changeWallpaperLightTheme": MessageLookupByLibrary.simpleMessage(
       "To change the wallpaper for light theme, enable light theme: Settings > Chats > Theme.",
@@ -430,7 +432,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "If you have changed both your phone and number, change your number on your old phone first.",
     ),
     "changesAffectStatus": MessageLookupByLibrary.simpleMessage(
-      "Changes to your privacy settings will not affect status updates you\'ve already sent",
+      "Changes to privacy settings will not affect status updates you have already published.",
     ),
     "changingYourPhoneNumber": MessageLookupByLibrary.simpleMessage(
       "Changing your phone number will move your groups, settings, and account data.",
@@ -768,11 +770,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteUnreadList": MessageLookupByLibrary.simpleMessage(
       "Delete the list \"Unread\"?",
     ),
-    "describeProblem": MessageLookupByLibrary.simpleMessage(
-      "Describe the problem",
-    ),
     "describeProposal": MessageLookupByLibrary.simpleMessage(
       "Describe your proposal. We will not be able to answer you personally, but we will certainly take into account your wishes.",
+    ),
+    "describeTechProblem": MessageLookupByLibrary.simpleMessage(
+      "Describe the technical problem",
     ),
     "descriptionOptional": MessageLookupByLibrary.simpleMessage(
       "Description (optional)",
@@ -1240,6 +1242,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "help": MessageLookupByLibrary.simpleMessage("Help"),
     "helpCenter": MessageLookupByLibrary.simpleMessage("Help Center"),
     "helpTopics": MessageLookupByLibrary.simpleMessage("Help Topics"),
+    "helpsCenter": MessageLookupByLibrary.simpleMessage("Help Center"),
     "herePicture": MessageLookupByLibrary.simpleMessage("Here is the image!"),
     "hide": MessageLookupByLibrary.simpleMessage("Hide"),
     "hintAbout": MessageLookupByLibrary.simpleMessage("eg. Feeling Happy"),
@@ -1799,7 +1802,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please confirm your identity",
     ),
     "pleaseDescribeHappenedAttachImages": MessageLookupByLibrary.simpleMessage(
-      "Please describe what happened and attach images or additional details if necessary. This will help our team quickly understand the situation and offer a solution.",
+      "For other issues such as spam or scams, you can get help or contact support at ",
     ),
     "pleaseEnterGroupName": MessageLookupByLibrary.simpleMessage(
       "Please enter a group name",

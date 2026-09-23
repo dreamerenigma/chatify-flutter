@@ -345,7 +345,7 @@ class _AddStatusBottomSheetState extends State<AddStatusBottomSheet> {
         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {
-          Navigator.push(context, createPageRoute(CameraScreen(user: widget.user)));
+          Navigator.push(context, createPageRoute(CameraScreen(chatTarget: widget.user)));
         },
         child: Container(
           decoration: BoxDecoration(color: ChatifyColors.transparent, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1)),

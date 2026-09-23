@@ -14,7 +14,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../../utils/urls/url_utils.dart';
-import '../../../authentication/widgets/bars/auth_app_bar.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'all_popular_articles_screen.dart';
@@ -66,13 +66,52 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
 
     return Scaffold(
       backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: Text(S.of(context).helpCenter, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        actions: [
+          TooltipTheme(
+            data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+            child: Theme(
+              data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+              child: PopupMenuButton<int>(
+                tooltip: S.of(context).more,
+                position: PopupMenuPosition.under,
+                offset: const Offset(-8, 0),
+                menuPadding: EdgeInsets.symmetric(vertical: 4),
+                constraints: const BoxConstraints(minWidth: 0, maxWidth: 200),
+                icon: const Icon(Icons.more_vert),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                    }
+                    return ChatifyColors.transparent;
+                  }),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                ),
+                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 1,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: AppPopupMenuItem(
+                      text: S.of(context).openInBrowser,
+                      onTap: () {
+                        UrlUtils.launchURL(AppLinks.helpCenter);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          AuthAppBar(
-            title: S.of(context).helpCenter,
-            onMenuItemIndex1: () => UrlUtils.launchURL(AppLinks.helpCenter),
-            menuItem1Text: '',
-          ),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoGlowScrollBehavior(),
@@ -84,7 +123,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
                       _buildLogo(logoAsset),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(S.of(context).howCanHelp, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.bold)),
+                        child: Text(S.of(context).howCanHelp, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w600)),
                       ),
                       _buildSearchBar(context),
                       SizedBox(height: DeviceUtils.getScreenHeight(context) * .02),
@@ -118,14 +157,14 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
                   ));
                 }
               },
-              icon: SvgPicture.asset(ChatifyVectors.questionSupport, width: 20, height: 20, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
-              label: Text(S.of(context).connectWithUs, style: TextStyle(color: ChatifyColors.black, fontWeight: FontWeight.w300)),
+              icon: SvgPicture.asset(ChatifyVectors.questionSupport, width: 22, height: 22, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+              label: Text(S.of(context).connectWithUs, style: TextStyle(color: ChatifyColors.black, fontSize: 15, fontWeight: FontWeight.w400)),
               style: ElevatedButton.styleFrom(
                 foregroundColor: ChatifyColors.white,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 side: BorderSide.none,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               ),
             );
           } else {
@@ -145,6 +184,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       margin: const EdgeInsets.all(0),
+      noRoundedCorners: true,
       backgroundColor: isMobile ? ChatifyColors.transparent : (context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
     );
   }
@@ -154,7 +194,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
   }
 
   Widget _buildLogo(String logoAsset) {
-    return Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: Center(child: Image.asset(logoAsset, width: 100, height: 100)));
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: Center(child: SvgPicture.asset(logoAsset, width: 80, height: 80)));
   }
 
   Widget _buildSearchBar(BuildContext context) {
@@ -181,7 +221,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(35),
                       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.youngNight, width: 0.5),
                     ),
                     child: Padding(
@@ -194,13 +234,13 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
                         ),
                         child: TextField(
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search, color: ChatifyColors.darkGrey),
+                            prefixIcon: const Icon(Icons.search, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
                             hintText: S.of(context).searchHelpCenter,
-                            hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
+                            hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 13),
                           ),
                         ),
                       ),
@@ -237,7 +277,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
             children: [
               first,
               SizedBox(height: spacing / 2),
-              Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey),
+              Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey),
               SizedBox(height: spacing / 2),
               second,
             ],
@@ -254,37 +294,38 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .02),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(S.of(context).helpTopics, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+          child: Text(S.of(context).helpTopics, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
         ),
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .01),
         Column(
           children: helpTopics.map((item) {
-            return _buildSettingsTile(
-              icon: item['icon'] as IconData,
-              title: item['title'] as String,
-              onTap: () {},
-            );
+            return _buildSettingsTile(icon: item['icon'] as IconData, title: item['title'] as String, onTap: () {});
           }).toList(),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const AllReferenceSectionsScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            ));
-          },
-          mouseCursor: SystemMouseCursors.basic,
-          borderRadius: BorderRadius.circular(12),
-          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 40),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: ChatifyColors.transparent),
-            child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+        Material(
+          color: ChatifyColors.transparent,
+          child: InkWell(
+            mouseCursor: SystemMouseCursors.basic,
+            splashFactory: NoSplash.splashFactory,
+            borderRadius: BorderRadius.circular(8),
+            splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+            onTap: () {
+              Navigator.of(context).push(PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const AllReferenceSectionsScreen(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+              ));
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 45),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(0), color: ChatifyColors.transparent),
+              child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+            ),
           ),
         ),
       ],
@@ -314,7 +355,7 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .02),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(S.of(context).popularArticles, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+          child: Text(S.of(context).popularArticles, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
         ),
         SizedBox(height: DeviceUtils.getScreenHeight(context) * .01),
         Column(
@@ -323,24 +364,29 @@ class HelpCenterScreenState extends State<HelpCenterScreen> {
           }).toList(),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const AllPopularArticlesScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            ));
-          },
-          mouseCursor: SystemMouseCursors.basic,
-          borderRadius: BorderRadius.circular(12),
-          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 40),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: ChatifyColors.transparent),
-            child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+        Material(
+          color: ChatifyColors.transparent,
+          child: InkWell(
+            splashFactory: NoSplash.splashFactory,
+            mouseCursor: SystemMouseCursors.basic,
+            borderRadius: BorderRadius.circular(8),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            onTap: () {
+              Navigator.of(context).push(PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const AllPopularArticlesScreen(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+              ));
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 45),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(0), color: ChatifyColors.transparent),
+              child: Text(S.of(context).more, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+            ),
           ),
         ),
       ],

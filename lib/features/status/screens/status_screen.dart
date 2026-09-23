@@ -29,7 +29,7 @@ import '../widgets/dialogs/add_status_bottom_dialog.dart';
 import '../widgets/texts/encryption_info_text.dart';
 import '../widgets/widgets/status_header_widget.dart';
 import '../widgets/widgets/viewed_status_widget.dart';
-import 'confidentiality_status_screen.dart';
+import 'status_privacy_screen.dart';
 
 class StatusScreen extends StatefulWidget {
   final UserModel user;
@@ -273,7 +273,7 @@ class StatusScreenState extends State<StatusScreen> {
                       text: S.of(context).confidentialityStatus,
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.push(context, createPageRoute(const ConfidentialityStatusScreen()));
+                        Navigator.push(context, createPageRoute(const StatusPrivacyScreen()));
                       },
                     ),
                   ),

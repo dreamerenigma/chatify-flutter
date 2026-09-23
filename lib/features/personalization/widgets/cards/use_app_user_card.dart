@@ -53,6 +53,16 @@ class UseAppUserCardState extends State<UseAppUserCard> {
     _loadProfileImage();
   }
 
+  @override
+  void didUpdateWidget(covariant UseAppUserCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.user.id != widget.user.id || oldWidget.user.image != widget.user.image) {
+      _profileImageUrl = null;
+      _loadProfileImage();
+    }
+  }
+
   Future<void> _loadProfileImage() async {
     final imagePath = widget.user.image.trim();
 
@@ -191,7 +201,7 @@ class UseAppUserCardState extends State<UseAppUserCard> {
                       child: Icon(
                         widget.isSelected ? Icons.check_circle : Icons.circle_outlined,
                         size: 26,
-                        color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value) : context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkGrey,
+                        color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value) : context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey,
                       ),
                     ),
                   )

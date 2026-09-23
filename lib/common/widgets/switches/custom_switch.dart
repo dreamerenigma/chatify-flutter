@@ -15,6 +15,7 @@ class CustomSwitch extends StatefulWidget {
   final double switchHeight;
   final double thumbSize;
   final double thumbPadding;
+  final bool isPressed;
 
   const CustomSwitch({
     super.key,
@@ -27,6 +28,7 @@ class CustomSwitch extends StatefulWidget {
     this.switchHeight = 22.0,
     this.thumbSize = 12.0,
     this.thumbPadding = 5.0,
+    this.isPressed = false,
   });
 
   @override
@@ -36,6 +38,7 @@ class CustomSwitch extends StatefulWidget {
 class CustomSwitchState extends State<CustomSwitch> {
   double _dragPosition = 0.0;
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -67,17 +70,20 @@ class CustomSwitchState extends State<CustomSwitch> {
                 child: GestureDetector(
                   onHorizontalDragUpdate: (details) {
                     setState(() {
+                      _isPressed = true;
                       _dragPosition += details.primaryDelta!;
                       _dragPosition = _dragPosition.clamp(0.0, maxDrag);
                     });
                   },
                   onHorizontalDragEnd: (details) {
                     final shouldTurnOn = _dragPosition >= (maxDrag / 2);
+
                     if (widget.onChanged != null) {
                       widget.onChanged!(shouldTurnOn);
                     }
                     setState(() {
                       _dragPosition = 0.0;
+                      _isPressed = false;
                     });
                   },
                   child: MouseRegion(
@@ -92,15 +98,13 @@ class CustomSwitchState extends State<CustomSwitch> {
                       });
                     },
                     child: AnimatedScale(
-                      duration: const Duration(milliseconds: 200),
-                      scale: isOn ? (_isHovered ? 1.2 : 1.0) : 1.0,
+                      duration: const Duration(milliseconds: 120),
+                      curve: Curves.easeOut,
+                      scale: widget.isPressed ? 1.13 : isOn && _isHovered ? 1.2 : 1.0,
                       child: Container(
                         width: widget.thumbSize,
                         height: widget.thumbSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isOn ? context.isDarkMode ? ChatifyColors.black : ChatifyColors.white : ChatifyColors.darkerGrey,
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: isOn ? context.isDarkMode ? ChatifyColors.black : ChatifyColors.white : ChatifyColors.darkerGrey),
                         alignment: Alignment.center,
                         child: isOn
                           ? SvgPicture.asset(ChatifyVectors.check, width: 15, height: 15, colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn))

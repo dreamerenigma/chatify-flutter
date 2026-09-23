@@ -74,6 +74,7 @@ void showReminderCallBottomDialog(BuildContext context) {
                       value: '30_minutes',
                       iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                       radioPosition: RadioPositionType.left,
+                      radioScale: 1.13,
                       padding: const EdgeInsets.only(left: 20, right: 12, top: 3, bottom: 3),
                     ),
                     CustomRadioListTile(
@@ -81,6 +82,7 @@ void showReminderCallBottomDialog(BuildContext context) {
                       value: 'hour',
                       iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                       radioPosition: RadioPositionType.left,
+                      radioScale: 1.13,
                       padding: const EdgeInsets.only(left: 20, right: 12, top: 3, bottom: 3),
                     ),
                     CustomRadioListTile(
@@ -88,6 +90,7 @@ void showReminderCallBottomDialog(BuildContext context) {
                       value: 'day',
                       iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                       radioPosition: RadioPositionType.left,
+                      radioScale: 1.13,
                       padding: const EdgeInsets.only(left: 20, right: 12, top: 3, bottom: 3),
                     ),
                     CustomRadioListTile(
@@ -95,6 +98,7 @@ void showReminderCallBottomDialog(BuildContext context) {
                       value: 'never',
                       iconColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                       radioPosition: RadioPositionType.left,
+                      radioScale: 1.13,
                       padding: const EdgeInsets.only(left: 20, right: 12, top: 3, bottom: 3),
                     ),
                   ],

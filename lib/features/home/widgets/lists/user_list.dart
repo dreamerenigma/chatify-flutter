@@ -71,14 +71,11 @@ class _UserListState extends State<UserList> {
   }
 
   Widget _buildUserList(List<UserModel> users, Set<String> pinnedChats, Set<String> mutedChats) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 6),
-      child: Column(
-        children: [
-          for (final user in users)
-            _buildUserItem(user, isPinned: pinnedChats.contains(user.id), isMuted: mutedChats.contains(user.id)),
-        ],
-      ),
+    return Column(
+      children: [
+        for (final user in users)
+          _buildUserItem(user, isPinned: pinnedChats.contains(user.id), isMuted: mutedChats.contains(user.id)),
+      ],
     );
   }
 

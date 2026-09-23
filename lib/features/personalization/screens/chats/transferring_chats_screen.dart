@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../core/theme/app_cheme_assets.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -17,6 +18,11 @@ class TransferringChatsScreen extends StatefulWidget {
 class TransferringChatsScreenState extends State<TransferringChatsScreen> {
   @override
   Widget build(BuildContext context) {
+    final asset = AppSchemeAssets.getAsset(
+      schemeIndex: AppSchemeAssets.mapSchemeToIndex(colorsController.selectedColorScheme.value),
+      assets: [ChatifyVectors.simCardRed, ChatifyVectors.simCardGreen, ChatifyVectors.simCardBlue, ChatifyVectors.simCardOrange],
+    );
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -28,8 +34,8 @@ class TransferringChatsScreenState extends State<TransferringChatsScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
+            elevation: 0,
             title: Text(S.of(context).changeNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-            elevation: 1,
           ),
         ),
       ),
@@ -43,7 +49,7 @@ class TransferringChatsScreenState extends State<TransferringChatsScreen> {
                 children: [
                   const SizedBox(height: 40),
                   Center(
-                    child: SvgPicture.asset(ChatifyVectors.simCard, width: 70, height: 70),
+                    child: SvgPicture.asset(asset, width: 70, height: 70),
                   ),
                   const SizedBox(height: 40),
                   Padding(

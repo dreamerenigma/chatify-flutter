@@ -58,10 +58,10 @@ class SettingsScreenState extends State<SettingsScreen> {
     'Chats',
     'Notifications',
     'Data storage',
+    'Parental controls',
     'Special features',
     'Application language',
     'Help',
-    'Report a bug',
     'Invite friend',
   ];
 
@@ -239,81 +239,84 @@ class SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                     ],
-                    SizedBox(height: 10),
-                    Material(
-                      color: ChatifyColors.transparent,
-                      child: InkWell(
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                        onTap: () {
-                          Navigator.push(context, createPageRoute(ProfileScreen(user: widget.user)));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8, right: 6, top: 8, bottom: 8),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .05),
-                                child: CachedNetworkImage(
-                                  width: DeviceUtils.getScreenHeight(context) * .08,
-                                  height: DeviceUtils.getScreenHeight(context) * .08,
-                                  imageUrl: _profileImageUrl ?? '',
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
-                                  errorWidget: (context, url, error) {
-                                    return CircleAvatar(
-                                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .08, height: DeviceUtils.getScreenHeight(context) * .08),
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
-                                    const SizedBox(height: 4),
-                                    Text(widget.user.status, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-                                  ],
-                                ),
-                              ),
-                              Row(
+                    Stack(
+                      children: [
+                        Positioned.fill(child: Image.asset(ChatifyImages.chatBackgroundDark, fit: BoxFit.cover)),
+                        Positioned.fill(child: Container(color: ChatifyColors.black.withAlpha((0.35 * 255).toInt()))),
+                        Material(
+                          color: ChatifyColors.transparent,
+                          child: InkWell(
+                            splashFactory: NoSplash.splashFactory,
+                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            onTap: () {
+                              Navigator.push(context, createPageRoute(ProfileScreen(user: widget.user)));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 18, right: 2, top: 14, bottom: 14),
+                              child: Row(
                                 children: [
-                                  Obx(() {
-                                    return IconButton(
-                                      onPressed: () {
-                                        Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
-
-                                        Future.delayed(const Duration(seconds: 2), () {
-                                          if (!mounted) return;
-
-                                          Navigator.pop(context);
-                                          Navigator.push(context, createPageRoute(QrCodeScreen(user: widget.user)));
-                                        });
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .05),
+                                    child: CachedNetworkImage(
+                                      width: DeviceUtils.getScreenHeight(context) * .08,
+                                      height: DeviceUtils.getScreenHeight(context) * .08,
+                                      imageUrl: _profileImageUrl ?? '',
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(width: DeviceUtils.getScreenHeight(context) * .1, height: DeviceUtils.getScreenHeight(context) * .1, color: ChatifyColors.blackGrey),
+                                      errorWidget: (context, url, error) {
+                                        return CircleAvatar(
+                                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                          child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .08, height: DeviceUtils.getScreenHeight(context) * .08),
+                                        );
                                       },
-                                      icon: Icon(Icons.qr_code, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                                    );
-                                  }),
-                                  Obx(() {
-                                    return IconButton(
-                                      onPressed: () {
-                                        showAddUserBottomSheet(context, widget.user.image, widget.user.name, widget.user.phoneNumber);
-                                      },
-                                      icon: Icon(Icons.add_circle_outline_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
-                                    );
-                                  }),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+                                        Text('@${widget.user.username}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), overflow: TextOverflow.ellipsis),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Obx(() {
+                                        return IconButton(
+                                          onPressed: () {
+                                            Dialogs.showCustomDialog(context: context, message: S.of(context).pleaseWait, duration: const Duration(seconds: 1));
+
+                                            Future.delayed(const Duration(seconds: 2), () {
+                                              if (!mounted) return;
+
+                                              Navigator.pop(context);
+                                              Navigator.push(context, createPageRoute(QrCodeScreen(user: widget.user)));
+                                            });
+                                          },
+                                          icon: Icon(Icons.qr_code, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                        );
+                                      }),
+                                      Obx(() {
+                                        return IconButton(
+                                          onPressed: () {
+                                            showAddUserBottomSheet(context, widget.user.image, widget.user.name, widget.user.phoneNumber);
+                                          },
+                                          icon: Icon(Icons.add_circle_outline_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
+                                        );
+                                      }),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                    SizedBox(height: 10),
                     CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
@@ -332,7 +335,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                         });
                       },
                     ),
-                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 5, bottom: 0),
+                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                     _buildCenterAccounts(),
                   ],
                 ),
@@ -391,17 +394,14 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildCenterAccounts() {
-    final backgroundColor = context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey;
-
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 12),
+      padding: const EdgeInsets.only(top: 8),
       child: Container(
-        decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: ChatifyColors.transparent, borderRadius: BorderRadius.circular(12)),
         child: Material(
           color: ChatifyColors.transparent,
           child: InkWell(
             splashFactory: NoSplash.splashFactory,
-            borderRadius: BorderRadius.circular(12),
             splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,

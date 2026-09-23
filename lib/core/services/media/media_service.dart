@@ -6,4 +6,6 @@ abstract class MediaService {
   Future<void> delete(String path);
 
   Future<String?> getUrl(String path);
+
+  Future<void> clearUrlCache(String path);
 }

@@ -53,7 +53,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
             title: Text(S.of(context).chats, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
             titleSpacing: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },

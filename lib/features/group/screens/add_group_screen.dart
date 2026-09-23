@@ -35,7 +35,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },

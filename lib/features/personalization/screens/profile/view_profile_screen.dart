@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
@@ -40,7 +39,11 @@ import 'change_contact_screen.dart';
 
 class ViewProfileScreen extends StatefulWidget {
   final UserModel user;
-  const ViewProfileScreen({super.key, required this.user});
+
+  const ViewProfileScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<ViewProfileScreen> createState() => ViewProfileScreenState();

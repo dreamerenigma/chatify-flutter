@@ -92,18 +92,18 @@ class AddLinksScreenState extends State<AddLinksScreen> {
                 ChatifyVectors.vk,
                 S.of(context).vkontakte,
                 context,
-                  () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => AddDataAboutScreen(title: S.of(context).vkontakte)));
-                  },
+                () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => AddDataAboutScreen(title: S.of(context).vkontakte)));
+                },
               ),
               const SizedBox(height: 22),
               _buildSocialLinkRow(
                 ChatifyVectors.ok,
                 S.of(context).odnoklassniki,
                 context,
-                  () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => AddDataAboutScreen(title: S.of(context).odnoklassniki)));
-                  },
+                () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => AddDataAboutScreen(title: S.of(context).odnoklassniki)));
+                },
               ),
             ],
           ),

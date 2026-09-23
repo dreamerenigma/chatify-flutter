@@ -138,7 +138,7 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                     text: S.of(context).newGroup,
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                      Navigator.push(context, createPageRoute(NewGroupScreen(selectedUsers: users)));
                     },
                   ),
                 ),

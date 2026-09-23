@@ -8,10 +8,7 @@ import '../platforms/platform_utils.dart';
 
 class DateUtil {
   /// -- Getting formatted time from milliSecondsSinceEpochs string.
-  static String getFormattedTime({
-    required BuildContext context,
-    required Timestamp time,
-  }) {
+  static String getFormattedTime({required BuildContext context, required Timestamp time}) {
     final date = time.toDate();
 
     return TimeOfDay.fromDateTime(date).format(context);
@@ -56,7 +53,7 @@ class DateUtil {
     }
   }
 
-  /// -- .
+  /// -- Formats a call timestamp into a human-readable date and time string.
   static String getCallDateTime({required BuildContext context, required DateTime time, bool showTime = true}) {
     const months = [
       'января',
@@ -85,7 +82,7 @@ class DateUtil {
     return '$day $month, $formattedTime';
   }
 
-  /// -- .
+  /// -- Returns a two-digit string representation of a number.
   static String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
   /// -- Get formatted creation date of the community.
@@ -262,7 +259,7 @@ class DateUtil {
     return '${dayLabel[0].toUpperCase()}${dayLabel.substring(1)}';
   }
 
-  /// -- .
+  /// -- Returns a full localized date string from a Firestore timestamp.
   static String getFullFormattedDate({required BuildContext context, required Timestamp timestamp}) {
     try {
       final date = timestamp.toDate();
@@ -275,7 +272,7 @@ class DateUtil {
     }
   }
 
-  /// -- .
+  /// -- Parses a date and time string into a DateTime object.
   static DateTime parseDateTime(dynamic value) {
     if (value is Timestamp) return value.toDate();
     if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
@@ -296,7 +293,7 @@ class DateUtil {
     return DateTime.now();
   }
 
-  /// -- .
+  /// -- Formats a DateTime object into a localized date and time string.
   static String formatDateTime(DateTime dateTime) {
     if (dateTime == DateTime(0)) {
       return 'Дата не указана';
@@ -309,7 +306,7 @@ class DateUtil {
     }
   }
 
-  /// -- .
+  /// -- Formats a status timestamp into a human-readable time label.
   static String formatStatusTime(DateTime createdAt) {
     final difference = DateTime.now().difference(createdAt);
 
@@ -332,7 +329,7 @@ class DateUtil {
     return '${difference.inDays} ${plural(difference.inDays, 'день', 'дня', 'дней')} назад';
   }
 
-  /// -- .
+  /// -- Returns a localized pluralized word based on the given number.
   static String plural(int value, String one, String few, String many) {
     final lastTwo = value % 100;
     final last = value % 10;
@@ -350,6 +347,34 @@ class DateUtil {
     }
 
     return many;
+  }
+
+  /// -- Returns a chat message date label.
+  static String getChatMessageDateLabel({required BuildContext context, required Timestamp timestamp}) {
+    try {
+      final date = timestamp.toDate();
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final messageDay = DateTime(date.year, date.month, date.day);
+      final difference = today.difference(messageDay).inDays;
+
+      if (difference == 0) {
+        return 'Сегодня';
+      }
+
+      if (difference == 1) {
+        return 'Вчера';
+      }
+
+      if (difference > 1 && difference < 7) {
+        return getDayOfWeekName(date.weekday);
+      }
+
+      return '${date.day} ${getMonth(date, context)} ${date.year} г.';
+    } catch (e) {
+      log('Error formatting chat message date: $e');
+      return 'Invalid date';
+    }
   }
 
   /// -- Get the full name of the day of the week.

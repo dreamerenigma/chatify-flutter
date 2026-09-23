@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../domain/entities/chat_target.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 import 'camera_preview_widget.dart';
 
 class CameraScreen extends StatefulWidget {
-  final UserModel user;
+  final ChatTarget chatTarget;
 
   const CameraScreen({
     super.key,
-    required this.user,
+    required this.chatTarget,
   });
 
   @override
@@ -22,6 +23,6 @@ class CameraScreenState extends State<CameraScreen> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: ChatifyColors.black, body: CameraPreviewWidget(user: widget.user));
+    return Scaffold(backgroundColor: ChatifyColors.black, body: CameraPreviewWidget(chatTarget: widget.chatTarget));
   }
 }

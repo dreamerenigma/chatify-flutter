@@ -26,39 +26,42 @@ class CustomTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(labelText, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm)),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(labelText, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400)),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 32),
           child: Stack(
             children: [
-              TextField(
-                controller: controller,
-                focusNode: focusNode,
-                keyboardType: TextInputType.phone,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(3),
-                ],
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
-                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
-                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                  hintText: '',
-                  hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.only(left: 20, right: 15, bottom: 2, top: 2),
+              TextSelectionTheme(
+                data: TextSelectionThemeData(
+                  cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                  selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 ),
-                onChanged: onChanged,
+                child: TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  keyboardType: TextInputType.phone,
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  inputFormatters: [LengthLimitingTextInputFormatter(3)],
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: '',
+                    hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkGrey)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkGrey)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  ),
+                  onChanged: onChanged,
+                ),
               ),
               Positioned(
                 left: 0,
                 top: 0,
                 bottom: 0,
-                child: Center(
-                  child: Text(prefixText, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd)),
-                ),
+                child: Center(child: Text(prefixText, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
               ),
             ],
           ),

@@ -86,7 +86,7 @@ class PrivacyGroupsScreenState extends State<PrivacyGroupsScreen> {
                   inactiveIconColor: ChatifyColors.red,
                   radioPosition: RadioPositionType.left,
                   padding: const EdgeInsets.only(left: 12, right: 12),
-                  radioScale: 1.15,
+                  radioScale: 1.13,
                 );
               }).toList(),
             ),

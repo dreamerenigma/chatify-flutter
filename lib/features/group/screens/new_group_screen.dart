@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +13,17 @@ import '../../chat/models/user_model.dart';
 import '../../community/widgets/cards/invite_user_card.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../utils/widgets/dividers/custom_divider.dart';
+import '../../utils/widgets/images/user_avatar_image.dart';
 import 'add_new_group_screen.dart';
 
 class NewGroupScreen extends StatefulWidget {
-  const NewGroupScreen({super.key});
+  final List<UserModel> selectedUsers;
+
+  const NewGroupScreen({
+    super.key,
+    required this.selectedUsers,
+  });
 
   @override
   NewGroupScreenState createState() => NewGroupScreenState();
@@ -36,14 +42,15 @@ class NewGroupScreenState extends State<NewGroupScreen> {
   List<UserModel> _chatUsers = [];
   List<UserModel> list = [];
   List<UserModel> searchList = [];
-  Set<UserModel> selectedUsers = {};
-  Set<Contact> selectedContacts = {};
+  List<UserModel> selectedUsers = [];
+  List<Contact> selectedContacts = [];
 
   @override
   void initState() {
     super.initState();
     _fetchContacts();
     _fetchChatUsers();
+    selectedUsers = List<UserModel>.from(widget.selectedUsers);
     _searchController.addListener(() {
       _filterContacts();
     });
@@ -117,8 +124,10 @@ class NewGroupScreenState extends State<NewGroupScreen> {
 
   void _toggleUserSelection(UserModel user) {
     setState(() {
-      if (selectedUsers.contains(user)) {
-        selectedUsers.remove(user);
+      final index = selectedUsers.indexWhere((u) => u.id == user.id);
+
+      if (index != -1) {
+        selectedUsers.removeAt(index);
       } else {
         selectedUsers.add(user);
       }
@@ -132,8 +141,9 @@ class NewGroupScreenState extends State<NewGroupScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             if (isSearching) {
               _toggleSearch();
@@ -196,53 +206,50 @@ class NewGroupScreenState extends State<NewGroupScreen> {
                             runSpacing: 16,
                             children: selectedUsers.map((user) {
                               return Column(
+                                key: ValueKey(user.id),
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Stack(
-                                    clipBehavior: Clip.none,
-                                    alignment: Alignment.bottomRight,
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Column(
+                                      Stack(
+                                        clipBehavior: Clip.none,
                                         children: [
-                                          user.image.isNotEmpty
-                                          ? CachedNetworkImage(
-                                            imageUrl: user.image,
-                                              placeholder: (context, url) => const CircleAvatar(
-                                                backgroundColor: ChatifyColors.grey,
-                                                radius: 30,
-                                                child: Icon(Icons.person, color: ChatifyColors.white, size: 24),
+                                          UserAvatarImage(user: user, radius: 27),
+                                          Positioned(
+                                            bottom: -3,
+                                            right: -7,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _toggleUserSelection(user);
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
+                                                child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 10, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
                                               ),
-                                              errorWidget: (context, url, error) => const CircleAvatar(
-                                                backgroundColor: ChatifyColors.blackGrey,
-                                                radius: 30,
-                                                child: Icon(Icons.error, color: ChatifyColors.red, size: 24),
-                                              ),
-                                              imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider, radius: 30),
-                                            )
-                                          : const CircleAvatar(backgroundColor: ChatifyColors.blackGrey, radius: 30, child: Icon(Icons.person, color: ChatifyColors.white, size: 24)),
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                      Positioned(
-                                        bottom: -3,
-                                        right: -5,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            _toggleUserSelection(user);
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
-                                            child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
-                                          ),
+                                      const SizedBox(height: 6),
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text(
+                                          user.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                                         ),
                                       ),
                                     ],
-                                  ),
+                                  )
                                 ],
                               );
                             }).toList(),
                           ),
                         ),
-                        const Divider(),
+                        CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                       ],
                     );
                   } else {
@@ -253,21 +260,23 @@ class NewGroupScreenState extends State<NewGroupScreen> {
                 if (adjustedIndex == 0) {
                   return Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
+                    child: Text(S.of(context).contactsOnApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   );
                 } else if (adjustedIndex <= _chatUsers.length) {
                   final chatUser = _chatUsers[adjustedIndex - 1];
 
                   return UseAppUserCard(
                     user: chatUser,
+                    showSelectionButton: true,
                     onUserSelected: (UserModel selectedUser) {
                       _toggleUserSelection(selectedUser);
                     },
+                    isSelected: selectedUsers.any((user) => user.id == chatUser.id),
                   );
                 } else if (adjustedIndex == _chatUsers.length + 1) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey)),
+                    child: Text(S.of(context).inviteOnApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   );
                 } else {
                   final filteredIndex = adjustedIndex - _chatUsers.length - 2;
@@ -295,7 +304,7 @@ class NewGroupScreenState extends State<NewGroupScreen> {
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
           foregroundColor: ChatifyColors.white,
-          child: const Icon(Icons.arrow_forward_rounded),
+          child: Icon(Icons.arrow_forward_rounded, size: 25, color: ChatifyColors.black),
         ),
       ),
     );

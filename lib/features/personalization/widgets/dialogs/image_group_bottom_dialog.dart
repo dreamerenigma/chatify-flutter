@@ -104,7 +104,7 @@ Widget _buildRoundedIconContainer({
 void handleContainerTap(BuildContext context, int index, UserModel user) {
   switch (index) {
     case 0:
-      Navigator.push(context, createPageRoute(CameraScreen(user: user)));
+      Navigator.push(context, createPageRoute(CameraScreen(chatTarget: user)));
       break;
     case 1:
       break;

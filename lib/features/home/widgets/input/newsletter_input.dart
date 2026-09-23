@@ -5,6 +5,7 @@ import 'package:chatify/features/chat/models/message_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -168,7 +169,7 @@ class NewsletterInputState extends State<NewsletterInput> {
                         //     });
                         //   }, // Update isUploading state
                         // ),
-                        CameraButton(onImagePicked: handleImagePicked, user: user),
+                        CameraButton(onImagePicked: handleImagePicked, chatTarget: user),
                       ],
                     ),
                   ),
@@ -199,12 +200,17 @@ class NewsletterInputState extends State<NewsletterInput> {
           EmojiPicker(
             textEditingController: textController,
             config: Config(
-              height: DeviceUtils.getScreenHeight(context) * 0.35,
+              height: MediaQuery.of(context).size.height * 0.35,
               checkPlatformCompatibility: true,
-              emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
-              categoryViewConfig: const CategoryViewConfig(),
-              bottomActionBarConfig: const BottomActionBarConfig(),
-              skinToneConfig: const SkinToneConfig(),
+              emojiViewConfig: EmojiViewConfig(
+                columns: 8,
+                emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+                backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+              ),
+              categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
+              bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
+              skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
+              customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
             ),
           ),
         ],

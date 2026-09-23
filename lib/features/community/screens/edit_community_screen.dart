@@ -11,8 +11,8 @@ import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
 import '../models/community_model.dart';
-import '../widgets/dialogs/edit_image_community_bottom_dialog.dart';
 import 'communities_screen.dart';
 import 'emoji_sticker_screen.dart';
 
@@ -126,7 +126,7 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
           ),
           child: AppBar(
             titleSpacing: 0,
-            elevation: 1,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, size: 24),
@@ -156,14 +156,16 @@ class EditCommunityScreenState extends State<EditCommunityScreen> {
                       const communityId = 'temporaryId';
                       final imageUrl = imagePath ?? '';
 
-                      showEditImageCommunityBottomDialog(
+                      showEditImageBottomDialog(
                         context,
-                        communityId,
-                        imageUrl,
-                        () => CommunityApi.deleteCommunityPicture(communityId, imageUrl),
-                        updateImagePath,
-                        updateImagePath,
-                        (color, emoji) {
+                        title: S.of(context).communityPicture,
+                        onDeletePressed: () {
+                          CommunityApi.deleteCommunityPicture(communityId, imageUrl);
+                        },
+                        onImageSelected: (path) {
+                          updateImagePath(path);
+                        },
+                        onEmojiSelected: (color, emoji) {
                           setState(() {
                             _selectedColor = color;
                             _selectedEmoji = emoji;

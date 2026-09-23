@@ -25,9 +25,9 @@ class _SupportButtonState extends State<SupportButton> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         side: BorderSide.none,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       ),
       onPressed: widget.allFieldsFilled ? widget.handleSendFeedback : null,
       child: Text(widget.buttonText, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),

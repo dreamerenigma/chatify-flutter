@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   viewBox="0 0 37.5 37.5"
+   id="warning"
+   data-name="Flat Color"
+   class="icon flat-color"
+   version="1.1"
+   sodipodi:docname="warning.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.78808594"
+     inkscape:cx="527.86121"
+     inkscape:cy="382.57249"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="warning" />
+  <path
+     id="primary"
+     style="stroke-width:1.57199"
+     d="M 18.645264 2.8207397 A 15.719942 15.719942 0 0 0 2.925293 18.54071 A 15.719942 15.719942 0 0 0 18.645264 34.260681 A 15.719942 15.719942 0 0 0 34.365143 18.54071 A 15.719942 15.719942 0 0 0 18.645264 2.8207397 z M 18.645996 9.1094971 C 19.431988 9.1094971 20.217753 9.6332584 20.217224 10.680725 L 20.217224 20.112671 C 20.216124 22.207605 17.072155 22.207605 17.073212 20.112671 L 17.073212 10.680725 C 17.073762 9.6332584 17.860004 9.1094971 18.645996 9.1094971 z M 18.639771 23.968781 A 1.5697128 1.5697128 0 0 1 20.209534 25.538544 A 1.5697128 1.5697128 0 0 1 18.639771 27.108215 A 1.5697128 1.5697128 0 0 1 17.070099 25.538544 A 1.5697128 1.5697128 0 0 1 18.639771 23.968781 z " />
+</svg>

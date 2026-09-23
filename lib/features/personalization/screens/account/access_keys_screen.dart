@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -53,20 +52,13 @@ class AccessKeysScreen extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
+            elevation: 0,
             title: Text(S.of(context).accessKeys, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-            elevation: 1,
           ),
         ),
       ),
@@ -117,7 +109,7 @@ class AccessKeysScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(S.of(context).createAccessKey, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).createAccessKey, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),
@@ -136,7 +128,7 @@ class AccessKeysScreen extends StatelessWidget {
           Container(alignment: Alignment.center, height: 24, child: Icon(icon, size: iconSize, color: iconColor)),
           SizedBox(width: iconWidth),
           Expanded(
-            child: Text(text, style: const TextStyle(fontSize: 15, height: 1.3), softWrap: true, overflow: TextOverflow.visible),
+            child: Text(text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.3), softWrap: true, overflow: TextOverflow.visible),
           ),
         ],
       ),

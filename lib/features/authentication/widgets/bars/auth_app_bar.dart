@@ -44,14 +44,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
         height: (isWebOrWindows && !isMobile) ? 55 : 75,
         decoration: BoxDecoration(
           color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
-          boxShadow: [
-            BoxShadow(
-              color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-              spreadRadius: 1,
-              blurRadius: 3,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 2))],
         ),
         child: Padding(
           padding: EdgeInsets.only(top: isMobile ? 35 : 5),
@@ -85,13 +78,14 @@ class _AuthAppBarState extends State<AuthAppBar> {
                         mouseCursor: SystemMouseCursors.basic,
                         splashFactory: NoSplash.splashFactory,
                         borderRadius: BorderRadius.circular(8),
-                        splashColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                        highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
                           clipBehavior: Clip.hardEdge,
-                          child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                          child: Icon(Icons.arrow_back_rounded, size: 25, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
                         ),
                       ),
                     ),

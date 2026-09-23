@@ -41,7 +41,7 @@ void showEditPhotoBottomSheet(BuildContext context, Function(String?) onImagePic
                             constraints: const BoxConstraints(),
                             icon: const Icon(FluentIcons.delete_24_regular),
                             onPressed: () {
-                              showDeleteConfirmationDialog(context, onImagePicked, onDeletePressed);
+                              showDeleteConfirmationDialog(context, onDeletePressed);
                             },
                           ),
                         ),

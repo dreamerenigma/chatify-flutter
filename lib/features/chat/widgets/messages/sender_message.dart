@@ -148,6 +148,7 @@ class SenderMessageState extends State<SenderMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Flexible(child: _buildContent()),
           if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.voice)
             Center(
               child: Container(
@@ -166,7 +167,6 @@ class SenderMessageState extends State<SenderMessage> {
                 ),
               ),
             ),
-          Flexible(child: _buildContent()),
         ],
       ),
     );
@@ -439,6 +439,7 @@ class SenderMessageState extends State<SenderMessage> {
         onSecondaryTap: () {
           final RenderBox renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           showEditMessageDialog(context, position, _containerKey);
         },
         child: Stack(
@@ -465,7 +466,9 @@ class SenderMessageState extends State<SenderMessage> {
                       setState(() {
                         isDownloading = true;
                       });
+
                       await Future.delayed(const Duration(seconds: 2));
+
                       setState(() {
                         isDownloading = false;
                       });

@@ -267,7 +267,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                 child: TextFormField(
                   readOnly: true,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                   decoration: InputDecoration(
                     hintText: selectedCountryName ?? S.of(context).selectCountry,
                     hintStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd),

@@ -10,7 +10,7 @@ import '../../../../utils/platforms/platform_utils.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/info_app_model.dart';
-import '../../screens/support_info_screen.dart';
+import '../../screens/info_app_chat_screen.dart';
 
 class InfoAppCard extends StatefulWidget {
   final InfoAppModel infoApp;
@@ -80,7 +80,7 @@ class _InfoAppCardState extends State<InfoAppCard> {
               if (isWindows) {
                 widget.onInfoAppSelected(widget.infoApp);
               } else {
-                Navigator.push(context, createPageRoute(SupportInfoScreen()));
+                Navigator.push(context, createPageRoute(InfoAppChatScreen(infoApp: widget.infoApp)));
               }
             },
             splashFactory: NoSplash.splashFactory,
@@ -100,23 +100,23 @@ class _InfoAppCardState extends State<InfoAppCard> {
                         radius: 24,
                         backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 28, height: 28),
+                        child: SvgPicture.asset(ChatifyVectors.logoApp, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
                       ),
                       if (!isWindows && isSelected)
-                      Positioned(
-                        bottom: -3,
-                        right: -2,
-                        child: Container(
-                          width: 23,
-                          height: 23,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                        Positioned(
+                          bottom: -3,
+                          right: -2,
+                          child: Container(
+                            width: 23,
+                            height: 23,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                            ),
+                            child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
                           ),
-                          child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(width: 12),
@@ -128,15 +128,17 @@ class _InfoAppCardState extends State<InfoAppCard> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: Text(
-                                widget.infoApp.name,
-                                style: TextStyle(
-                                  fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                                  fontFamily: 'Helvetica',
-                                  fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    widget.infoApp.name,
+                                    style: TextStyle(fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Helvetica', fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  SvgPicture.asset(ChatifyVectors.starburstCheck, width: 16, height: 16, colorFilter: ColorFilter.mode(ChatifyColors.blue, BlendMode.srcIn)),
+                                ],
                               ),
                             ),
                             Text(
@@ -144,20 +146,19 @@ class _InfoAppCardState extends State<InfoAppCard> {
                               style: TextStyle(
                                 fontSize: ChatifySizes.fontSizeLm,
                                 color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-                                fontWeight: FontWeight.w300,
-                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         if (widget.infoApp.lastMessage != null && widget.infoApp.lastMessage!.isNotEmpty)
-                        Text(
-                          widget.infoApp.lastMessage!,
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                          Text(
+                            widget.infoApp.lastMessage?.isNotEmpty == true ? widget.infoApp.lastMessage! : 'Официальный аккаунт Chatify',
+                            style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       ],
                     ),
                   ),

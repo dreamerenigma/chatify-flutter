@@ -30,10 +30,6 @@ class NewsletterList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 6),
           child: NewsletterCard(
             newsletter: newsletter,
-            newsletterName: newsletter.newsletterName,
-            newsletterImage: newsletter.newsletterImage,
-            createdAt: newsletter.createdAt,
-            newsletters: newsletter.members.map((id) => id).toList(),
             isSelectionMode: isSelectionMode,
             isSelected: isSelected,
             onNewsletterSelected: (_) {

@@ -132,7 +132,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupChatAppBar(groupImage: group.groupImage, groupName: group.groupName, members: group.members, userNamesFuture: userNamesFuture),
+      appBar: GroupChatAppBar(group: group, userNamesFuture: userNamesFuture),
       body: _buildBody(),
       bottomNavigationBar: _buildBottomInputBar(context),
     );

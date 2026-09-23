@@ -33,13 +33,11 @@ import 'group_chat_screen.dart';
 
 class AboutGroupScreen extends StatefulWidget {
   final GroupModel group;
-  final List<String> members;
   final Map<String, UserModel> user;
 
   const AboutGroupScreen({
     super.key,
     required this.group,
-    required this.members,
     required this.user,
   });
 
@@ -60,7 +58,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
     super.initState();
     isCloseChatEnabled = storage.read<bool>('isCloseChatEnabled') ?? false;
     mediaThumbnails = [];
-    loadUsers(widget.members);
+    loadUsers(widget.group.members);
   }
 
   void saveSwitchState(bool value) {
@@ -200,7 +198,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
     profileInfoWidgets.add(Center(child: Text(group.groupName, style: TextStyle(fontSize: ChatifySizes.fontSizeMg))));
     profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .01));
     profileInfoWidgets.add(
-      Center(child:  Text('${S.of(context).aboutGroups} • ${widget.members.length} ${S.of(context).aboutGroups}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey))),
+      Center(child:  Text('${S.of(context).aboutGroups} • ${widget.group.members.length} ${S.of(context).aboutGroups}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey))),
     );
     profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .02));
 
@@ -295,16 +293,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               height: 80,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.push(context, createPageRoute(
-                    GroupChatScreen(
-                      group: widget.group,
-                      groupName: '',
-                      members: const [],
-                      groupImage: '',
-                      createdAt: DateTime.now(),
-                      groupId: '',
-                    ),
-                  ));
+                  Navigator.push(context, createPageRoute(GroupChatScreen(group: widget.group)));
                 },
                 style: OutlinedButton.styleFrom(
                   minimumSize: Size.zero,
@@ -341,38 +330,41 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
   Widget _buildAddInfo() {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(context, createPageRoute(const DescriptionGroupScreen()));
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  S.of(context).addGroupDescription,
-                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
-                ),
-                SizedBox(height: DeviceUtils.getScreenHeight(context) * 0.015),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: S.of(context).groupCreatedByYou,
-                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
-                      ),
-                      TextSpan(
-                        text: DateFormat('dd.MM.yyyy').format(widget.group.createdAt),
-                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
-                      ),
-                    ],
+      child: Material(
+        color: ChatifyColors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(context, createPageRoute(const DescriptionGroupScreen()));
+          },
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    S.of(context).addGroupDescription,
+                    style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
                   ),
-                ),
-              ],
+                  SizedBox(height: DeviceUtils.getScreenHeight(context) * 0.015),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: S.of(context).groupCreatedByYou,
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                        ),
+                        TextSpan(
+                          text: DateFormat('dd.MM.yyyy').format(widget.group.createdAt),
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -398,7 +390,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                  Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
                 ],
               ),
@@ -406,17 +398,10 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 8, mainAxisSpacing: 8),
                 itemCount: mediaThumbnails.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {},
-                    child: Image.network(mediaThumbnails[index], fit: BoxFit.cover),
-                  );
+                  return GestureDetector(onTap: () {}, child: Image.network(mediaThumbnails[index], fit: BoxFit.cover));
                 },
               ),
             ],
@@ -435,29 +420,43 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  children: [
-                    const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey),
-                    const SizedBox(width: 25),
-                    Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                  ],
+            Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                splashFactory: NoSplash.splashFactory,
+                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey),
+                      const SizedBox(width: 25),
+                      Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                    ],
+                  ),
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  children: [
-                    const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey),
-                    const SizedBox(width: 25),
-                    Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-                  ],
+            Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                splashFactory: NoSplash.splashFactory,
+                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey),
+                      const SizedBox(width: 25),
+                      Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -635,7 +634,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${widget.members.length} ${S.of(context).participant}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
+                  Text('${widget.group.members.length} ${S.of(context).participant}', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey)),
                   IconButton(icon: const Icon(Icons.search, color: ChatifyColors.darkGrey), onPressed: () {}),
                 ],
               ),
@@ -680,7 +679,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: widget.members.map((id) {
+              children: widget.group.members.map((id) {
                 final member = widget.user[id] ?? APIs.createChatUserFromData({});
 
                 return InkWell(

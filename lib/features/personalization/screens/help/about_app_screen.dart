@@ -19,7 +19,7 @@ class AboutAppScreen extends StatelessWidget {
         children: [
           Positioned.fill(child: Image.asset(context.isDarkMode ? ChatifyImages.helpBackgroundDarkV1 : ChatifyImages.helpBackgroundDarkV1 , fit: BoxFit.cover)),
           Positioned(
-            top: 40,
+            top: 30,
             left: 5,
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),

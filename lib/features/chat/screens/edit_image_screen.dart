@@ -16,19 +16,8 @@ class EditImageScreen extends StatelessWidget {
       appBar: AppBar(title: Text(S.of(context).editImage)),
       body: Column(
         children: [
-          Expanded(
-            child: InteractiveViewer(
-              panEnabled: true,
-              scaleEnabled: true,
-              minScale: 1.0,
-              maxScale: 4.0,
-              child: Image.file(fileToSend, fit: BoxFit.contain),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: ShareInput(user: user, fileToSend: fileToSend),
-          ),
+          Expanded(child: InteractiveViewer(panEnabled: true, scaleEnabled: true, minScale: 1.0, maxScale: 4.0, child: Image.file(fileToSend, fit: BoxFit.contain))),
+          Padding(padding: const EdgeInsets.all(8), child: ShareInput(user: user, fileToSend: fileToSend)),
         ],
       ),
     );

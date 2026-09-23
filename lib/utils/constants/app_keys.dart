@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 
 class AppKeys {
+  static const message = 'animation_message';
   static const emoji = 'animation_emoji';
   static const sticker = 'animation_sticker';
   static const gif = 'animation_gif';

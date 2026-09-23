@@ -2,9 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../core/enums/radio_position_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../widgets/dialogs/custom_radio_list_tile.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class AutomaticTimerScreen extends StatefulWidget {
@@ -66,10 +68,10 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
             child: Text(
               S.of(context).timerDisappearingMessagesNewChats,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
+              style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
             ),
           ),
           RadioGroup<String>(
@@ -81,45 +83,46 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
             },
             child: Column(
               children: _options.map((option) {
-                return RadioListTile<String>(
+                return CustomRadioListTile<String>(
                   value: option['value']!,
-                  hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                  activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  visualDensity: const VisualDensity(vertical: -2),
-                  title: Text(option['label']!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                  isSelected: _selectedOption == option['value'],
+                  title: Text(option['label']!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                  iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                  inactiveIconColor: ChatifyColors.lightSoftNight,
+                  radioPosition: RadioPositionType.left,
+                  radioScale: 1.13,
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 );
               }).toList(),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 6, bottom: 16),
             child: RichText(
               text: TextSpan(
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal, color: ChatifyColors.darkGrey),
-                children: _selectedOption == 'off' ?
-                  [
-                    TextSpan(text: S.of(context).modeEnabledMessagesNewIndividualChats),
-                    TextSpan(
-                      text: S.of(context).readMore,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                      recognizer: TapGestureRecognizer()..onTap = () {},
-                    ),
-                  ]
+                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                children: _selectedOption == 'off'
+                  ? [
+                      TextSpan(text: S.of(context).modeEnabledMessagesNewIndividualChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.4)),
+                      TextSpan(
+                        text: S.of(context).readMore,
+                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, height: 1.4),
+                        recognizer: TapGestureRecognizer()..onTap = () {},
+                      ),
+                    ]
                   : [
-                    TextSpan(text: S.of(context).notAffectApplyMessageTimerExistingChats),
-                  TextSpan(
-                    text: S.of(context).selectThem,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
-                  ),
-                  TextSpan(
-                    text: S.of(context).readMore,
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: ChatifyColors.blue),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
-                  ),
-                  const WidgetSpan(child: SizedBox(height: 30)),
-                ],
+                      TextSpan(text: S.of(context).notAffectApplyMessageTimerExistingChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.4)),
+                      TextSpan(
+                        text: S.of(context).selectThem,
+                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, height: 1.4),
+                        recognizer: TapGestureRecognizer()..onTap = () {},
+                      ),
+                      TextSpan(
+                        text: S.of(context).readMore,
+                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, height: 1.4),
+                        recognizer: TapGestureRecognizer()..onTap = () {},
+                      ),
+                    ],
               ),
             ),
           ),

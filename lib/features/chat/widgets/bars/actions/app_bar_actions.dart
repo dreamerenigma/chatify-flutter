@@ -11,12 +11,16 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../../utils/devices/device_utility.dart';
 import '../../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../../group/widgets/dialogs/video_call_popup_menu.dart';
 import '../../../../utils/dialogs/no_internet_connection_dialog.dart';
 
 class AppBarActions extends StatefulWidget {
   final VoidCallback? onVideoCall;
   final VoidCallback? onAudioCall;
   final VoidCallback? onSearch;
+  final bool showAudioCall;
+  final bool showVideoCallMenu;
+  final bool isGroup;
   final void Function(int)? onPopupItemSelected;
 
   const AppBarActions({
@@ -24,6 +28,9 @@ class AppBarActions extends StatefulWidget {
     this.onVideoCall,
     this.onAudioCall,
     this.onSearch,
+    this.showAudioCall = true,
+    this.showVideoCallMenu = false,
+    this.isGroup = false,
     this.onPopupItemSelected,
   });
 
@@ -64,38 +71,28 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
             ),
             child: Row(
               children: [
-                _buildIcon(
-                  context,
-                  message: S.of(context).videoCall,
-                  icon: HeroIcon(HeroIcons.videoCamera, size: 22),
-                  onTap: () async {
-                    if (await DeviceUtils.hasInternetConnection()) {
-                      widget.onVideoCall?.call();
-                    } else {
-                      showNoInternetConnectionDialog(context);
-                    }
-                  },
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
-                ),
-                if (!isMobile) ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: VerticalDivider(color: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, thickness: 1, width: 1),
+                _buildVideoCallButton(context),
+                if (widget.showAudioCall) ...[
+                  if (!isMobile) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: VerticalDivider(color: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, thickness: 1, width: 1),
+                    ),
+                  ],
+                  _buildIcon(
+                    context,
+                    message: S.of(context).audioCall,
+                    icon: SvgPicture.asset(ChatifyVectors.calls, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 22, height: 22),
+                    onTap: () async {
+                      if (await DeviceUtils.hasInternetConnection()) {
+                        widget.onAudioCall?.call();
+                      } else {
+                        showNoInternetConnectionDialog(context);
+                      }
+                    },
+                    borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
                   ),
                 ],
-                _buildIcon(
-                  context,
-                  message: S.of(context).audioCall,
-                  icon: SvgPicture.asset(ChatifyVectors.calls, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 22, height: 22),
-                  onTap: () async {
-                    if (await DeviceUtils.hasInternetConnection()) {
-                      widget.onAudioCall?.call();
-                    } else {
-                      showNoInternetConnectionDialog(context);
-                    }
-                  },
-                  borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
-                ),
               ],
             ),
           ),
@@ -119,22 +116,24 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
                   ),
                 ),
               ),
-              SizedBox(width: 4),
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: InkWell(
-                  onTap: widget.onAudioCall,
-                  mouseCursor: SystemMouseCursors.basic,
-                  borderRadius: BorderRadius.circular(30),
-                  splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
-                  highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(ChatifyVectors.calls, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+              if (!widget.isGroup) ...[
+                SizedBox(width: 4),
+                SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: InkWell(
+                    onTap: widget.onAudioCall,
+                    mouseCursor: SystemMouseCursors.basic,
+                    borderRadius: BorderRadius.circular(30),
+                    splashColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.steelGrey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: SvgPicture.asset(ChatifyVectors.calls, width: 24, height: 24, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ],
@@ -301,7 +300,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           child: AppPopupMenuItem(
             text: 'Заблокировать',
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pop(context, 11);
             },
           ),
         ),
@@ -311,7 +310,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           child: AppPopupMenuItem(
             text: 'Очистить чат',
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pop(context, 12);
             },
           ),
         ),
@@ -321,7 +320,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           child: AppPopupMenuItem(
             text: 'Экспорт чата',
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pop(context, 13);
             },
           ),
         ),
@@ -331,7 +330,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           child: AppPopupMenuItem(
             text: 'Добавить иконку на экран',
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pop(context, 14);
             },
           ),
         ),
@@ -341,7 +340,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           child: AppPopupMenuItem(
             text: 'Добавить в список',
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pop(context, 15);
             },
           ),
         ),
@@ -351,5 +350,66 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
 
       widget.onPopupItemSelected?.call(value);
     });
+  }
+
+  Widget _buildVideoCallButton(BuildContext context) {
+    if (!widget.showVideoCallMenu) {
+      return _buildIcon(
+        context,
+        message: S.of(context).videoCall,
+        icon: HeroIcon(HeroIcons.videoCamera, size: 22),
+        onTap: () async {
+          if (await DeviceUtils.hasInternetConnection()) {
+            widget.onVideoCall?.call();
+          } else {
+            showNoInternetConnectionDialog(context);
+          }
+        },
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
+        ),
+      );
+    }
+
+    return _buildVideoCallWithMenu(context);
+  }
+
+  Widget _buildVideoCallWithMenu(BuildContext context) {
+    return CustomTooltip(
+      message: S.of(context).videoCall,
+      verticalOffset: -70,
+      horizontalOffset: -35,
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+        onTap: () async {
+          if (await DeviceUtils.hasInternetConnection()) {
+            widget.onVideoCall?.call();
+          } else {
+            showNoInternetConnectionDialog(context);
+          }
+        },
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              HeroIcon(HeroIcons.videoCamera, size: 22, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              const SizedBox(width: 3),
+              InkWell(
+                onTap: () => showVideoCallPopupMenu(context),
+                borderRadius: BorderRadius.circular(20),
+                child: Icon(Icons.keyboard_arrow_down, size: 17, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

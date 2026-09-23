@@ -282,7 +282,11 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                     child: Material(
                       color: ChatifyColors.transparent,
                       child: InkWell(
+                        splashFactory: NoSplash.splashFactory,
                         borderRadius: BorderRadius.circular(14),
+                        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
                         onTap: () {
                           showReactionBottomSheetDialog(context, message: widget.message);
                         },

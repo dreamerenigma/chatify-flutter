@@ -64,14 +64,7 @@ Future<void> showEmojiStickersDialog(
               position: slideAnimation,
               child: Container(
                 decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                      spreadRadius: 1,
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: const Offset(0, 4))],
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: ClipRRect(
@@ -161,23 +154,27 @@ Future<void> showEmojiStickersDialog(
 }
 
 Widget _buildTabButton(String label, int index, EmojiStickersController controller, BuildContext context) {
-  return InkWell(
-    onTap: () {
-      controller.selectedIndex.value = index;
-    },
-    mouseCursor: SystemMouseCursors.basic,
-    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-    child: Obx(() => Text(
-      label,
-      style: TextStyle(
-        color: controller.selectedIndex.value == index
-          ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)
-          : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey),
-        fontSize: ChatifySizes.fontSizeLg,
-        fontWeight: FontWeight.w400,
-        fontFamily: 'Roboto',
-      ),
-    )),
+  return Material(
+    color: ChatifyColors.transparent,
+    child: InkWell(
+      splashFactory: NoSplash.splashFactory,
+      mouseCursor: SystemMouseCursors.basic,
+      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+      onTap: () {
+        controller.selectedIndex.value = index;
+      },
+      child: Obx(() => Text(
+        label,
+        style: TextStyle(
+          color: controller.selectedIndex.value == index
+            ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)
+            : (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey),
+          fontSize: ChatifySizes.fontSizeLg,
+          fontWeight: FontWeight.w400,
+        ),
+      )),
+    ),
   );
 }

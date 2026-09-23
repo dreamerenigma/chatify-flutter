@@ -5,7 +5,8 @@ import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
 
 class LogoutDialog {
-  static Future<void> showLogoutDialog(BuildContext context, {
+  static Future<void> showLogoutDialog(
+    BuildContext context, {
     required VoidCallback onConfirm,
     required VoidCallback onCancel,
     required String logoutTitle,
@@ -13,7 +14,6 @@ class LogoutDialog {
     required String cancelText,
     required String confirmText,
     required ColorScheme colorScheme,
-    bool isDarkMode = false,
   }) async {
     await showDialog(
       context: context,
@@ -34,7 +34,7 @@ class LogoutDialog {
               ),
             ],
           ),
-          content: Text(logoutMessage, style: TextStyle(color: isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+          content: Text(logoutMessage, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
           actions: <Widget>[
             TextButton(
               onPressed: onCancel,

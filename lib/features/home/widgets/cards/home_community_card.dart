@@ -48,6 +48,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
       margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
       elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
       child: GestureDetector(
         onSecondaryTapDown: (details) {
           if (isWindows) {
@@ -122,7 +123,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                             ),
-                            child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
+                            child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
                           ),
                         ),
                     ],

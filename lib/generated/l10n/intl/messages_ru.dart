@@ -124,7 +124,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Добавьте вопрос или не менее двух вариантов ответа",
     ),
     "addScreenshots": MessageLookupByLibrary.simpleMessage(
-      "Добавьте до 3 скриншотов или записей",
+      "Нажмите на скриншот, чтобы отредактировать или удалить информацию деликатного характера. Добавьте до 3 скриншотов или записей",
     ),
     "addSignature": MessageLookupByLibrary.simpleMessage("Добавить подпись..."),
     "addStatus": MessageLookupByLibrary.simpleMessage("Добавить статус"),
@@ -204,7 +204,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "alwaysSilent": MessageLookupByLibrary.simpleMessage("Всегда без звука"),
     "animalsNature": MessageLookupByLibrary.simpleMessage("Животные и природа"),
     "animationEnabledEmojisStickersAuto": MessageLookupByLibrary.simpleMessage(
-      "При включенной анимации смайлики, стикеры и файлы GIF будут двигаться автоматически.",
+      "If this feature is enabled, messages, emojis, stickers, and GIFs will animate automatically.",
     ),
     "announcements": MessageLookupByLibrary.simpleMessage("Объявления"),
     "answer": MessageLookupByLibrary.simpleMessage("Ответить"),
@@ -443,8 +443,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "changeSettingLaterGoing": MessageLookupByLibrary.simpleMessage(
       "Позже вы можете изменить этот параметр, перейдя в раздел \"Настройки\".",
     ),
-    "changeSettings": MessageLookupByLibrary.simpleMessage(
-      "Изменять настройки",
+    "changeSettingsGroup": MessageLookupByLibrary.simpleMessage(
+      "Изменять настройки группы",
     ),
     "changeTopic": MessageLookupByLibrary.simpleMessage("Сменить тему?"),
     "changeWallpaperLightTheme": MessageLookupByLibrary.simpleMessage(
@@ -454,7 +454,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Если у вас сменился и телефон, и номер, сначала измените свой номер на старом телефоне.",
     ),
     "changesAffectStatus": MessageLookupByLibrary.simpleMessage(
-      "Изменения в настройки конфиденциальности не затронут уже отправленные вами обновления статуса",
+      "Изменения в настройках конфиденциальности не затронут уже опубликованные вами статусы.",
     ),
     "changingYourPhoneNumber": MessageLookupByLibrary.simpleMessage(
       "Изменение вашего номера телефона приведёт, к перемещению ваших групп, настроек и данных вашего аккаунта.",
@@ -803,9 +803,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteUnreadList": MessageLookupByLibrary.simpleMessage(
       "Удалить список \"Непрочитанное\"?",
     ),
-    "describeProblem": MessageLookupByLibrary.simpleMessage("Опишите проблему"),
     "describeProposal": MessageLookupByLibrary.simpleMessage(
       "Опишите свое предложение. Мы не сможем ответить вам лично, но обязательно учтем ваши пожелания.",
+    ),
+    "describeTechProblem": MessageLookupByLibrary.simpleMessage(
+      "Опишите техническую проблему",
     ),
     "descriptionOptional": MessageLookupByLibrary.simpleMessage(
       "Описание (необязательно)",
@@ -911,7 +913,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Чтобы включить эту опцию, перейдите в Настройки своего компьютера > Приложения > Автозагрузка и включите запуск Chatify при входе",
     ),
     "enabledAdminsJoinGroup": MessageLookupByLibrary.simpleMessage(
-      "Если эта функция \n включена, админам \n потребуется \n подтверждать все\n запросы на вступление в\n группу. ",
+      "Если эта функция включена, админам потребуется подтверждать все запросы на вступление в группу. ",
     ),
     "enabledAppUnlockedFingerprint": MessageLookupByLibrary.simpleMessage(
       "Если этот параметр включён, Chatify нужно будет разблокировать с помощью лица отпечатка пальца или другого уникального идентификатора. Вы можете принимать звонки, даже если Chatify заблокирован.",
@@ -927,7 +929,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Благодаря сквозному шифрованию содержимое ваших личных сообщений и звонков остается только между вами и людьми, с которыми вы общаетесь. Никто не может прочитать, прослушать или переслать их, даже сотрудники Chatify. Под защитой находятся:",
     ),
     "endToEndEncryptionPrivateMessages": MessageLookupByLibrary.simpleMessage(
-      "Благодаря сквозному шифрованию содержимое ваших личных сообщений и звонков остается только между вами и людьми, с которыми вы общаетесь. Никто не может прочитать, прослушать или переслать их, даже сотрудники Chatify. \nПод защитой находятся:",
+      "Благодаря сквозному шифрованию содержимое ваших личных сообщений и звонков остается только между вами и людьми, с которыми вы общаетесь. Никто не может прочитать, прослушать или переслать их, даже сотрудники Chatify. Под защитой находятся:",
     ),
     "englishLanguage": MessageLookupByLibrary.simpleMessage("Английский"),
     "enlargeToDesiredSize": MessageLookupByLibrary.simpleMessage(
@@ -1193,13 +1195,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "generalGroup": MessageLookupByLibrary.simpleMessage("общая группа"),
     "generalGroups": MessageLookupByLibrary.simpleMessage("общие группы"),
     "generateReportAppAccountInfo": MessageLookupByLibrary.simpleMessage(
-      "Создайте отчет с информацией и \n настройками вашего аккаунта \n Chatify, который вы можете \n контакта в чате со сквозным \n просмотреть или экспортировать в \n другое приложение. Этот отчет не \n содержит ваших сообщений. ",
+      "Создайте отчет с информацией и настройками вашего аккаунта Chatify, который вы можете контакта в чате со сквозным просмотреть или экспортировать в другое приложение. Этот отчет не содержит ваших сообщений. ",
     ),
     "generateReportInfoSettings": MessageLookupByLibrary.simpleMessage(
-      "Создайте отчет с информацией и настройками \n вашего аккаунта Chatify, который вы можете \n просмотреть или экспортировать в другое \n приложение. Этот отчет не содержит ваших \n сообщений. ",
+      "Создайте отчет с информацией и настройками вашего аккаунта Chatify, который вы можете просмотреть или экспортировать в другое приложение. Этот отчет не содержит ваших сообщений. ",
     ),
     "generateReportsAuto": MessageLookupByLibrary.simpleMessage(
-      "Создавать отчёты \n автоматически",
+      "Создавать отчёты автоматически",
     ),
     "geodata": MessageLookupByLibrary.simpleMessage("Геоданные"),
     "geodataRequiresBackgroundLocationAccess": MessageLookupByLibrary.simpleMessage(
@@ -1244,7 +1246,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Изображение группы успешно удалено из базы данных.",
     ),
     "groupIncludes": MessageLookupByLibrary.simpleMessage(
-      "Сюда входят название, \n картинка и описание \n группы, таймер \n исчезающих сообщений, а\n также настройки сохранения\n и закрепления сообщений.",
+      "Сюда входят название, картинка и описание группы, таймер исчезающих сообщений, а также настройки сохранения и закрепления сообщений.",
     ),
     "groupMembersNotified": MessageLookupByLibrary.simpleMessage(
       "Участники группы не будут об этом оповещены.",
@@ -1283,6 +1285,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "help": MessageLookupByLibrary.simpleMessage("Помощь"),
     "helpCenter": MessageLookupByLibrary.simpleMessage("Справочный центр"),
     "helpTopics": MessageLookupByLibrary.simpleMessage("Справочные разделы"),
+    "helpsCenter": MessageLookupByLibrary.simpleMessage("Справочном центре"),
     "herePicture": MessageLookupByLibrary.simpleMessage("Вот изображение!"),
     "hide": MessageLookupByLibrary.simpleMessage("Скрыть"),
     "hintAbout": MessageLookupByLibrary.simpleMessage(
@@ -1854,7 +1857,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пожалуйста, подтвердите свою личность",
     ),
     "pleaseDescribeHappenedAttachImages": MessageLookupByLibrary.simpleMessage(
-      "Расскажите, что произошло, и при необходимости приложите изображения или дополнительные детали. Это поможет нашей команде быстрее разобраться в ситуации и предложить решение.",
+      "По другим вопросам, таким как спам или мошеничество, вы можете получить помощь или связаться со службой поддержки в ",
     ),
     "pleaseEnterGroupName": MessageLookupByLibrary.simpleMessage(
       "Пожалуйста, введите название группы",
@@ -2062,7 +2065,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "replacingTextEmoticons": MessageLookupByLibrary.simpleMessage(
       "Замена текста на смайлики",
     ),
-    "reportBug": MessageLookupByLibrary.simpleMessage("Сообщить об ошибке"),
+    "reportBug": MessageLookupByLibrary.simpleMessage("Отправить отзыв"),
     "reportGroup": MessageLookupByLibrary.simpleMessage(
       "Пожаловаться на группу",
     ),
@@ -2086,7 +2089,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetQrCode": MessageLookupByLibrary.simpleMessage("Сбросить QR-код"),
     "resetUnsentMessage": MessageLookupByLibrary.simpleMessage(
-      "Сбросить неотправленное сообщение?",
+      "Сбросить не отправленное сообщение?",
     ),
     "resetWallpaperSettings": MessageLookupByLibrary.simpleMessage(
       "Сброс настроек обоев",
@@ -2409,7 +2412,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Добавить, изменить порядок, убрать",
     ),
     "subtitleHelp": MessageLookupByLibrary.simpleMessage(
-      "Справочный центр, cвязь с нами, политика конфиденциальности",
+      "Справочный центр, связь с нами, политика конфиденциальности",
     ),
     "subtitleHelpCenter": MessageLookupByLibrary.simpleMessage(
       "Помощь, связь с нами",
@@ -2430,7 +2433,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Блокировка контактов, исчезающие сообщений",
     ),
     "subtitleReportBug": MessageLookupByLibrary.simpleMessage(
-      "Технические проблемы и ошибки",
+      "Сообщить о технических проблемах",
     ),
     "subtitleSendEnterKey": MessageLookupByLibrary.simpleMessage(
       "Нажатие клавиши Enter отправляет сообщение",

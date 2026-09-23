@@ -31,12 +31,7 @@ Future<void> showEditSettingsChatDialog(BuildContext context, Offset position) a
     builder: (context) {
       return Stack(
         children: [
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: closeOverlay,
-            ),
-          ),
+          Positioned.fill(child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: closeOverlay)),
           Positioned(
             left: logicalPosition.dx,
             top: logicalPosition.dy,

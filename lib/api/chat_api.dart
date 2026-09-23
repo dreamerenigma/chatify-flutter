@@ -45,8 +45,6 @@ class ChatApi {
     final messageId = DateTime.now().millisecondsSinceEpoch.toString();
     final conversationId = getConversationId(chatUser.id);
 
-    final bool isSelfMessage = user.uid == chatUser.id;
-
     final message = MessageModel(
       toId: chatUser.id,
       msg: msg,
@@ -64,46 +62,37 @@ class ChatApi {
 
     final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
 
+    log('SEND MESSAGE: current uid = ${user.uid}');
+    log('SEND MESSAGE: chat user uid = ${chatUser.id}');
+
+    log('SEND MESSAGE: writing message...');
     await ref.set(message.toJson());
+    log('SEND MESSAGE: message written');
+
+    log('SEND MESSAGE: writing my_users for current user...');
     await firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id).set({'lastMessageTime': messageId}, SetOptions(merge: true));
+    log('SEND MESSAGE: current user my_users written');
+
+    log('SEND MESSAGE: writing my_users for chat user...');
     await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': messageId}, SetOptions(merge: true));
+    log('SEND MESSAGE: chat user my_users written');
     await APIs.sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
   }
 
   /// -- Mark self messages as read.
-  static Future<void> migrateSelfMessagesToRead(
-      String conversationId,
-      ) async {
+  static Future<void> migrateSelfMessagesToRead(String conversationId) async {
     try {
-      log(
-        'MIGRATION SELF READ: '
-            'conversationId=$conversationId',
-      );
-
-      final messagesSnapshot = await firestore
-          .collection('Chats')
-          .doc(conversationId)
-          .collection('messages')
-          .get();
+      final messagesSnapshot = await firestore.collection('Chats').doc(conversationId).collection('messages').get();
 
       int updated = 0;
       int skipped = 0;
 
-      log(
-        'MIGRATION SELF READ: '
-            'messages=${messagesSnapshot.docs.length}',
-      );
-
       for (final messageDoc in messagesSnapshot.docs) {
         final data = messageDoc.data();
-
         final fromId = data['fromId']?.toString();
         final toId = data['toId']?.toString();
         final read = data['read']?.toString() ?? '';
-
-        final isSelfMessage =
-            fromId == user.uid &&
-                toId == user.uid;
+        final isSelfMessage = fromId == user.uid && toId == user.uid;
 
         if (!isSelfMessage) {
           skipped++;
@@ -115,28 +104,12 @@ class ChatApi {
           continue;
         }
 
-        await messageDoc.reference.update({
-          'read': Timestamp.now().seconds.toString(),
-        });
+        await messageDoc.reference.update({'read': Timestamp.now().seconds.toString()});
 
         updated++;
-
-        log(
-          'MIGRATION SELF READ: '
-              'updated=${messageDoc.id}',
-        );
       }
-
-      log(
-        'MIGRATION SELF READ COMPLETE: '
-            'updated=$updated | '
-            'skipped=$skipped',
-      );
     } catch (e, stackTrace) {
-      log(
-        'MIGRATION SELF READ ERROR: $e',
-        stackTrace: stackTrace,
-      );
+      log('MIGRATION SELF READ ERROR: $e', stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -338,44 +311,66 @@ class ChatApi {
   static Future<void> sendChatImage(UserModel chatUser, File file) async {
     final ext = file.path.split('.').last.toLowerCase();
     final isGif = ext == 'gif';
-    final ref = storage.ref().child('images/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-    final contentType = isGif ? 'image/gif' : 'image/$ext';
+    final chatId = getConversationId(chatUser.id);
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final path = 'Chats/$chatId/messages/images/$fileName';
 
     try {
-      final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
+      log('SEND IMAGE: started');
+      log('SEND IMAGE: path = $path');
+      log('SEND IMAGE: file = ${file.path}');
 
-      await uploadTask.then((taskSnapshot) async {
-        final imageUrl = await ref.getDownloadURL();
+      final imagePath = await mediaService.uploadFile(file: file, path: path);
 
-        if (isGif) {
-          await sendMessage(chatUser, imageUrl, MessageType.gif);
-        } else {
-          await sendMessage(chatUser, imageUrl, MessageType.image);
-        }
-      });
-    } catch (e) {
-      log('Error uploading image: $e');
+      if (imagePath == null) {
+        log('SEND IMAGE: upload returned null');
+        return;
+      }
+
+      log('SEND IMAGE: uploaded = $imagePath');
+
+      await sendMessage(chatUser, imagePath, isGif ? MessageType.gif : MessageType.image);
+
+      log('SEND IMAGE: message sent');
+    } catch (e, st) {
+      log('SEND IMAGE: error = $e');
+      log('SEND IMAGE: stack = $st');
     }
   }
 
   /// -- Send chat video.
   static Future<void> sendChatVideo(UserModel chatUser, File file) async {
     final ext = file.path.split('.').last.toLowerCase();
-    log('Extension: $ext');
+    final chatId = getConversationId(chatUser.id);
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
 
-    final ref = storage.ref().child('videos/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-    final contentType = 'video/$ext';
+    final path = 'Chats/$chatId/messages/videos/$fileName';
 
-    await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
-      log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
+    try {
+      log('SEND VIDEO: started');
+      log('SEND VIDEO: path = $path');
+      log('SEND VIDEO: file = ${file.path}');
 
-      final videoUrl = await ref.getDownloadURL();
-      await sendMessage(chatUser, videoUrl, MessageType.video);
-    });
+      final videoPath = await mediaService.uploadFile(file: file, path: path);
+
+      if (videoPath == null) {
+        log('SEND VIDEO: upload returned null');
+        return;
+      }
+
+      log('SEND VIDEO: uploaded = $videoPath');
+
+      await sendMessage(chatUser, videoPath, MessageType.video);
+
+      log('SEND VIDEO: message sent');
+    } catch (e, st) {
+      log('SEND VIDEO: error = $e');
+      log('SEND VIDEO: stack = $st');
+    }
   }
 
   /// -- Send chat audio.
-  static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName) async {
+  static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName, {int? audioDuration}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final ref = storage.ref().child('audio/${getConversationId(chatUser.id)}/$fileName');
     final contentType = 'audio/$ext';

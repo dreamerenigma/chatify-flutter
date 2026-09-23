@@ -20,6 +20,7 @@ import '../../controllers/user_controller.dart';
 import '../../screens/profile/add_links_screen.dart';
 import '../../screens/profile/profile_intelligence_screen.dart';
 import '../../screens/profile/photo_profile_screen.dart';
+import '../../screens/profile/reserve_username_screen.dart';
 import '../../screens/profile/username_screen.dart';
 import '../dialogs/enter_name_bottom_dialog.dart';
 import '../dialogs/light_dialog.dart';
@@ -258,14 +259,27 @@ class ProfileFormState extends State<ProfileForm> {
                 _buildProfileInfo(Icons.info_outline, S.of(context).info, APIs.me.about, ChatifyColors.darkGrey, () {
                   Navigator.push(context, createPageRoute(ProfileIntelligenceScreen()));
                 }),
-                _buildProfileInfo(Icons.alternate_email_outlined, S.of(context).username, 'Зарезервируйте имя пользователя', colorsController.getColor(colorsController.selectedColorScheme.value), () {
-                  Navigator.push(context, createPageRoute(UsernameScreen()));
-                }),
+                _buildProfileInfo(
+                  Icons.alternate_email_outlined,
+                  widget.user.username.trim().isNotEmpty ? 'Имя пользователя зарезервировано' : S.of(context).username,
+                  widget.user.username.trim().isNotEmpty ? '@${widget.user.username.trim()}' : 'Зарезервируйте имя пользователя',
+                  colorsController.getColor(colorsController.selectedColorScheme.value),
+                  valueColor: widget.user.username.trim().isNotEmpty ? ChatifyColors.darkGrey : colorsController.getColor(colorsController.selectedColorScheme.value),
+                  () {
+                    final username = widget.user.username.trim();
+
+                    if (username.isNotEmpty) {
+                      Navigator.push(context, createPageRoute(UsernameScreen(user: widget.user)));
+                    } else {
+                      Navigator.push(context,createPageRoute(ReserveUsernameScreen(user: widget.user)));
+                    }
+                  },
+                ),
                 _buildProfileInfo(FluentIcons.status_16_filled, S.of(context).status, APIs.me.status, ChatifyColors.darkGrey, () {
                   Navigator.push(context, createPageRoute(ProfileIntelligenceScreen()));
                 }),
                 _buildProfileInfo(Icons.phone_android, S.of(context).phone, APIs.me.phoneNumber, ChatifyColors.darkGrey, () {
-                  Navigator.push(context, createPageRoute(EditPhoneScreen()));
+                  Navigator.push(context, createPageRoute(EditPhoneScreen(user: widget.user)));
                 }),
                 _buildProfileInfo(Icons.mail_outline_rounded, S.of(context).email, widget.user.email, ChatifyColors.darkGrey, () {
                   Clipboard.setData(ClipboardData(text: widget.user.email));
@@ -286,7 +300,7 @@ class ProfileFormState extends State<ProfileForm> {
     );
   }
 
-  Widget _buildProfileInfo(IconData icon, String title, String subtitle, Color? color, VoidCallback? onTap, {String placeholder = ''}) {
+  Widget _buildProfileInfo(IconData icon, String title, String subtitle, Color? color, VoidCallback? onTap, {Color? valueColor, String placeholder = ''}) {
     final bool hasSubtitle = subtitle.trim().isNotEmpty;
 
     return Material(
@@ -312,7 +326,8 @@ class ProfileFormState extends State<ProfileForm> {
                     width: MediaQuery.of(context).size.width - 100,
                     child: Text(
                       hasSubtitle ? subtitle : placeholder,
-                      style: TextStyle(color: hasSubtitle ? color : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontFamily: 'Roboto'), softWrap: true, overflow: TextOverflow.visible,
+                      style: TextStyle(
+                        color: hasSubtitle ? (valueColor ?? color) : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm), softWrap: true, overflow: TextOverflow.visible,
                     ),
                   ),
                 ],
@@ -346,7 +361,7 @@ class ProfileFormState extends State<ProfileForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold, height: 1.3)),
+                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.3)),
                   SizedBox(height: 4),
                   RichText(
                     text: TextSpan(

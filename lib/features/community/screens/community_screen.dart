@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../chat/models/message_model.dart';
 import '../../chat/models/user_model.dart';
 import '../../chat/widgets/input/chat_input.dart';
-import '../../home/widgets/dialogs/chats_calls_privacy_sheet_dialog.dart';
+import '../../utils/widgets/cards/encrypted_chat_info_card.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../widgets/bars/community_app_bar.dart';
 import '../widgets/buttons/add_member_button.dart';
@@ -80,7 +81,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
     });
   }
 
-
   Future<void> _loadCommunityImage() async {
     final currentCommunity = community;
 
@@ -97,7 +97,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
         _communityImageUrl = imageUrl;
       });
     } catch (e) {
-      debugPrint('Ошибка загрузки изображения сообщества: $e');
+      log('Ошибка загрузки изображения сообщества: $e');
     }
   }
 
@@ -156,49 +156,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ),
               ),
             ),
-            SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 40),
-                    Material(
-                      color: ChatifyColors.transparent,
-                      child: InkWell(
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
-                        onTap: () {
-                          showChatsCallsPrivacyBottomSheet(context, headerText: S.of(context).chatsCallsConfidential, titleText: S.of(context).yourPrivateMessagesAndCalls);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 30, right: 30, top: 14),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
-                          ),
-                          child: Center(
-                            child: RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: TextStyle(color: ChatifyColors.yellow, fontSize: 13, fontWeight: FontWeight.w400, height: 1.5),
-                                children: [
-                                  const WidgetSpan(child: Padding(padding: EdgeInsets.only(right: 5), child: Icon(Icons.lock_outline, color: ChatifyColors.yellow, size: 13)), alignment: PlaceholderAlignment.middle),
-                                  TextSpan(text: 'Сообщения и звонки защищены сквозным шифрованием. ''Прочитать, прослушать или переслать их могут только ''участники этого чата. ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, height: 1.3)),
-                                  TextSpan(text: 'Подробнее', style: TextStyle(color: ChatifyColors.yellow, fontSize: 13, fontWeight: FontWeight.w600, height: 1.3), recognizer: _moreRecognizer),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    _buildWelcomeCommunity(),
-                  ],
-                ),
+            Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
+                  EncryptedChatInfoCard(),
+                  const SizedBox(height: 10),
+                  _buildWelcomeCommunity(),
+                ],
               ),
             ),
             Positioned(
@@ -209,14 +174,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
                 child: ChatInput(
                   focusNode: inputFocusNode,
-                  user: widget.user,
                   onToggleEmojiKeyboard: toggleEmojiKeyboard,
                   isReplyVisible: replyMessage != null,
+                  chatTarget: widget.user,
                   onSendMessage: (text) async {
                     if (list.isEmpty) {
-                      APIs.sendFirstMessage(widget.user, text, MessageType.text);
+                      await APIs.sendFirstMessage(widget.user, text, MessageType.text);
                     } else {
-                      ChatApi.sendMessage(widget.user, text, MessageType.text);
+                      await ChatApi.sendMessage(widget.user, text, MessageType.text);
                     }
                   },
                 ),

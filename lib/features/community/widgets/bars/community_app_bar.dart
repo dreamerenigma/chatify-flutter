@@ -319,8 +319,8 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
       color: ChatifyColors.transparent,
       child: InkWell(
         mouseCursor: SystemMouseCursors.basic,
-        borderRadius: BorderRadius.circular(8),
         splashFactory: NoSplash.splashFactory,
+        borderRadius: BorderRadius.circular(8),
         splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,

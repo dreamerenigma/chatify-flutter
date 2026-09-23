@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:chatify/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../../../../data/repositories/email/email_send_repository.dart';
@@ -81,11 +82,11 @@ class SupportFormState extends State<SupportForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SupportInput(controller: problemController, hintText: S.of(context).describeProblem),
-        const SizedBox(height: 30),
-        Text(S.of(context).screenshotsOptional, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+        SupportInput(controller: problemController, hintText: S.of(context).describeTechProblem),
+        const SizedBox(height: 20),
+        Text('Скриншоты или записи (необязательно)', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
         SizedBox(height: 6),
-        Text(S.of(context).addScreenshots, style: TextStyle(fontSize: ChatifySizes.fontSizeSm)),
+        Text(S.of(context).addScreenshots, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
         const SizedBox(height: 20),
         SupportImageSelector(
           selectedImages: selectedImages,

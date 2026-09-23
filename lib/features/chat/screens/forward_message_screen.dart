@@ -186,7 +186,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
               : Text(S.of(context).forward,
             style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 if (isSearching) {
                   _toggleSearch();
@@ -206,7 +206,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                   IconButton(
                     icon: const Icon(Icons.group_add_outlined, size: 23),
                     onPressed: () {
-                      Navigator.push(context, createPageRoute(const NewGroupScreen()));
+                      Navigator.push(context, createPageRoute(NewGroupScreen(selectedUsers: selectedUsers)));
                     },
                   ),
                   IconButton(

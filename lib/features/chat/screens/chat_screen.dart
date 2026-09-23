@@ -375,8 +375,6 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   void _minimizeCall() {
     if (!mounted) return;
 
-    log('[CHAT_SCREEN] MINIMIZE CALL');
-
     setState(() {
       isCallActive = true;
       isCallMinimized = true;
@@ -575,14 +573,14 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                 padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
                 child: ChatInput(
                   focusNode: inputFocusNode,
-                  user: widget.user,
                   onToggleEmojiKeyboard: toggleEmojiKeyboard,
                   isReplyVisible: replyMessage != null,
+                  chatTarget: widget.user,
                   onSendMessage: (text) async {
                     if (list.isEmpty) {
-                      APIs.sendFirstMessage(widget.user, text, MessageType.text);
+                      await APIs.sendFirstMessage(widget.user, text, MessageType.text);
                     } else {
-                      ChatApi.sendMessage(widget.user, text, MessageType.text);
+                      await ChatApi.sendMessage(widget.user, text, MessageType.text);
                     }
                   },
                 ),
@@ -759,11 +757,11 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220), borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220), borderRadius: BorderRadius.circular(8)),
         child: Text(
           DateUtil.getCallDateTime(context: context, time: date, showTime: false),
-          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w500),
+          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
         ),
       ),
     );

@@ -12,24 +12,23 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../api/apis.dart';
-import '../../../../api/chat_api.dart';
+import '../../../../domain/entities/chat_target.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../calls/screens/select_contact_screen.dart';
-import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/buttons/camera_icon_button.dart';
 import '../../../personalization/screens/qr_code/gallery_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 
 class CameraPreviewWidget extends StatefulWidget {
-  final UserModel user;
+  final ChatTarget chatTarget;
 
   const CameraPreviewWidget({
     super.key,
-    required this.user,
+    required this.chatTarget,
   });
 
   @override
@@ -453,15 +452,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
 
       log('VIDEO SEND: calling APIs.sendVideoMessage()');
 
-      final messageId = await ChatApi.sendVideoMessage(widget.user,
-        localPath,
-        fileName: 'video_message.mp4',
-        fileSize: fileSize.toString(),
-        videoDuration: videoDuration,
-      );
-
-      log('VIDEO SEND: sendVideoMessage completed');
-      log('VIDEO SEND: messageId = $messageId');
+      await widget.chatTarget.sendVideo(File(localPath), fileName: 'video_message.mp4', fileSize: fileSize.toString(), videoDuration: videoDuration);
 
       if (!mounted) return;
 

@@ -86,7 +86,7 @@ class PhotoNewsletterScreenState extends State<PhotoNewsletterScreen> {
             titleSpacing: 0,
             title: Text('${widget.newsletters.length} ${S.of(context).recipient}', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Get.back();
               },

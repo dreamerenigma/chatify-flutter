@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Añadir una pregunta o al menos dos opciones de respuesta",
     ),
     "addScreenshots": MessageLookupByLibrary.simpleMessage(
-      "Añade hasta 3 capturas de pantalla o grabaciones",
+      "Haz clic en una captura de pantalla para editar o eliminar información confidencial. Puedes añadir hasta 3 capturas de pantalla o grabaciones",
     ),
     "addSignature": MessageLookupByLibrary.simpleMessage("Añadir firma..."),
     "addStatus": MessageLookupByLibrary.simpleMessage("Agregar estado"),
@@ -137,11 +137,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "changeNumber": MessageLookupByLibrary.simpleMessage("Cambiar número"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Cambiar foto"),
-    "changeSettings": MessageLookupByLibrary.simpleMessage(
+    "changeSettingsGroup": MessageLookupByLibrary.simpleMessage(
       "Cambiar configuración",
     ),
     "changesAffectStatus": MessageLookupByLibrary.simpleMessage(
-      "Los cambios en tu configuración de privacidad no afectarán las actualizaciones de estado que ya hayas enviado",
+      "Los cambios en tu configuración de privacidad no afectarán a las publicaciones que ya hayas realizado.",
     ),
     "chatSettings": MessageLookupByLibrary.simpleMessage(
       "Configuración del chat",
@@ -268,11 +268,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteProfilePhoto": MessageLookupByLibrary.simpleMessage(
       "¿Eliminar foto de perfil?",
     ),
-    "describeProblem": MessageLookupByLibrary.simpleMessage(
-      "Describa el problema.",
-    ),
     "describeProposal": MessageLookupByLibrary.simpleMessage(
       "Describe tu propuesta. No podremos responderte personalmente, pero podemos Sin duda, tendremos en cuenta sus deseos.",
+    ),
+    "describeTechProblem": MessageLookupByLibrary.simpleMessage(
+      "Describe el problema técnico",
     ),
     "deutschLanguage": MessageLookupByLibrary.simpleMessage("Alemán"),
     "differentCommunities": MessageLookupByLibrary.simpleMessage(

@@ -83,8 +83,8 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
+            elevation: 0,
             title: Text(S.of(context).info, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-            elevation: 1,
             actions: [
               IconButton(
                 icon: const Icon(Icons.more_vert, color: ChatifyColors.white),

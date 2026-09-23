@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
+import 'package:chatify/features/personalization/screens/chats/wallpaper_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,7 +48,7 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<ChatAppBar> createState() => _ChatAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight + 4);
 }
 
 class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateMixin {
@@ -57,6 +58,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   bool showRealStatus = false;
   bool showSearchOverlay = false;
   bool showStatusText = false;
+  String? imagePath;
 
   @override
   void initState() {
@@ -153,6 +155,12 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
             ),
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10, top: 10),
@@ -222,8 +230,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
 
                     widget.onCallFinished?.call(result);
                   },
-                  onPopupItemSelected:
-                  _handlePopupAction,
+                  onPopupItemSelected: _handlePopupAction,
                 ),
               ],
             ),
@@ -271,6 +278,9 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       case 13:
         break;
       case 14:
+        if (imagePath != null && imagePath!.isNotEmpty) {
+          Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath!)));
+        }
         break;
       case 15:
         break;

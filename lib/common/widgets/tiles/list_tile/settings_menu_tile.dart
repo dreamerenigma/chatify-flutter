@@ -10,6 +10,7 @@ class SettingsMenuTile extends StatelessWidget {
   final String subTitle;
   final double? titleFontSize;
   final double? subTitleFontSize;
+  final double? iconSize;
   final Color? titleColor;
   final Widget? trailing;
   final VoidCallback? onTap;
@@ -24,8 +25,9 @@ class SettingsMenuTile extends StatelessWidget {
     required this.iconColor,
     required this.title,
     required this.subTitle,
-    this.titleFontSize,
+    this.titleFontSize = 16,
     this.subTitleFontSize,
+    this.iconSize,
     this.titleColor,
     this.trailing,
     this.onTap,
@@ -58,7 +60,7 @@ class SettingsMenuTile extends StatelessWidget {
             decoration: BoxDecoration(borderRadius: borderRadius),
             child: Row(
               children: [
-                CustomIcon(icon: icon, color: iconColor, size: 28),
+                CustomIcon(icon: icon, color: iconColor, size: iconSize ?? 26),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
@@ -68,6 +70,7 @@ class SettingsMenuTile extends StatelessWidget {
                         title,
                         style: TextStyle(color: titleColor ?? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), fontSize: titleFontSize, fontWeight: FontWeight.w400),
                       ),
+                      SizedBox(height: 2),
                       if (subTitle.isNotEmpty)
                         Text(subTitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: subTitleFontSize, fontWeight: FontWeight.w400)),
                     ],

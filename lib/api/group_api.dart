@@ -2,16 +2,17 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:http/http.dart';
 import 'package:logger/logger.dart';
 import '../core/enums/message_type.dart';
+import '../core/services/media/media_service.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/group/models/group_model.dart';
-import '../utils/popups/dialogs.dart';
 import 'access_firebase_token.dart';
 import 'apis.dart';
 import 'chat_api.dart';
@@ -26,6 +27,9 @@ class GroupApi {
 
   /// -- Accessing Firebase Storage.
   static FirebaseStorage storage = FirebaseStorage.instance;
+
+  /// -- Accessing media service.
+  static MediaService get mediaService => Get.find<MediaService>();
 
   /// -- Storing self information user.
   static late UserModel me;
@@ -46,7 +50,7 @@ class GroupApi {
 
   /// -- Getting all message of a specific conversation from Firestore Database.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupAllMessages(GroupModel group) {
-    final conversationId = getGroupConversationId(group.groupId);
+    final conversationId = getGroupConversationId(group.id);
     if (conversationId.isEmpty) {
       log('Error: conversationId is empty!');
       return Stream.empty();
@@ -61,14 +65,13 @@ class GroupApi {
   }
 
   /// -- Creating new group.
-  static Future<bool> createGroup(BuildContext context, GroupModel group, File? imageFile) async {
+  static Future<bool> createGroup(GroupModel group, File? imageFile) async {
     try {
       final user = auth.currentUser!;
       final groupId = firestore.collection('Groups').doc().id;
 
-      group.groupId = groupId;
+      group.id = groupId;
       group.createdAt = DateTime.now();
-
       group.creatorName = user.displayName ?? 'Неизвестный пользователь';
       group.members = [user.uid];
 
@@ -76,21 +79,19 @@ class GroupApi {
       await firestore.collection('Users').doc(user.uid).collection('my_group').doc(groupId).set({'groupId': groupId});
 
       if (imageFile != null) {
-        final imageUrl = await uploadGroupImageToFirebaseStorage(groupId, imageFile);
-        if (imageUrl != null) {
-          group.groupImage = imageUrl;
+        final imageUrl = await uploadGroupImage(groupId, imageFile);
 
-          await firestore.collection('Groups').doc(groupId).update({'groupImage': imageUrl});
-        } else {
-          Dialogs.showSnackbar(context, 'Не удалось загрузить изображение.');
+        if (imageUrl == null) {
           return false;
         }
+
+        group.groupImage = imageUrl;
+        await firestore.collection('Groups').doc(groupId).update({'groupImage': imageUrl});
       }
 
-      Dialogs.showSnackbar(context, 'Группа успешно создана');
       return true;
-    } catch (e) {
-      Dialogs.showSnackbar(context, 'Ошибка при создании группы');
+    } catch (e, stackTrace) {
+      log('Error creating group: $e', stackTrace: stackTrace);
       return false;
     }
   }
@@ -125,19 +126,19 @@ class GroupApi {
 
   /// -- Send group message.
   static Future<void> sendGroupMessage(GroupModel group, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
-    if (group.groupId.isEmpty) {
+    if (group.id.isEmpty) {
       log('Error: groupId is empty!');
       return;
     }
 
-    log('Sending message to group with groupId: ${group.groupId}');
+    log('Sending message to group with groupId: ${group.id}');
 
     final now = Timestamp.now();
     final messageId = DateTime.now().millisecondsSinceEpoch.toString();
 
     final message = MessageModel(
       id: messageId,
-      toId: group.groupId,
+      toId: group.id,
       msg: msg,
       read: '',
       type: type,
@@ -150,12 +151,12 @@ class GroupApi {
       deletedAt: null,
     );
 
-    final ref = firestore.collection('Groups/${group.groupId}/messages/');
+    final ref = firestore.collection('Groups/${group.id}/messages/');
     log('Firestore path for messages: ${ref.path}');
 
     try {
       await ref.doc(messageId).set(message.toJson()).then((value) => sendGroupPushNotification(group, type == MessageType.text ? msg : 'image', imageUrl: imageUrl));
-      await firestore.collection('Groups').doc(group.groupId).update({'lastMessageTimestamp': int.parse(messageId)});
+      await firestore.collection('Groups').doc(group.id).update({'lastMessageTimestamp': int.parse(messageId)});
     } catch (e) {
       log('Error sending group message: $e');
     }
@@ -163,7 +164,7 @@ class GroupApi {
 
   /// -- Getting group message of a specific conversation from Firestore Database.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupMessages(GroupModel group) {
-    final conversationId = getGroupConversationId(group.groupId);
+    final conversationId = getGroupConversationId(group.id);
     assert(conversationId.isNotEmpty, 'Conversation ID cannot be empty.');
     final path = 'Groups/$conversationId/messages/';
 
@@ -176,7 +177,7 @@ class GroupApi {
   static Future<void> sendGroupImage(GroupModel group, File file) async {
     final ext = file.path.split('.').last.toLowerCase();
     final isGif = ext == 'gif';
-    final ref = storage.ref().child('group_images/${group.groupId}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = storage.ref().child('group_images/${group.id}/${DateTime.now().millisecondsSinceEpoch}.$ext');
     final contentType = isGif ? 'image/gif' : 'image/$ext';
     final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
 
@@ -196,7 +197,7 @@ class GroupApi {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = storage.ref().child('videos/${getGroupConversationId(group.groupId)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = storage.ref().child('videos/${getGroupConversationId(group.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
     final contentType = 'video/$ext';
 
@@ -209,11 +210,11 @@ class GroupApi {
   }
 
   /// -- Send chat audio.
-  static Future<void> sendGroupAudio(GroupModel group, File file, String fileName) async {
+  static Future<void> sendGroupAudio(GroupModel group, File file, String fileName, {int? audioDuration}) async {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = storage.ref().child('audio/${ChatApi.getConversationId(group.groupId)}/$fileName');
+    final ref = storage.ref().child('audio/${ChatApi.getConversationId(group.id)}/$fileName');
     final contentType = 'audio/$ext';
 
     await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
@@ -230,7 +231,7 @@ class GroupApi {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = FirebaseStorage.instance.ref().child('documents/${getGroupConversationId(group.groupId)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = FirebaseStorage.instance.ref().child('documents/${getGroupConversationId(group.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
     final contentType = APIs.getContentType(ext);
     log('Content Type: $contentType');
@@ -316,29 +317,69 @@ class GroupApi {
     }
   }
 
+  /// -- Upload group image to Yandex Disk.
+  static Future<String?> uploadGroupImage(String groupId, File file) async {
+    try {
+      final ext = file.path.split('.').last.toLowerCase();
+      final path = 'groups/$groupId.$ext';
+      final imagePath = await mediaService.uploadFile(file: file, path: path);
+
+      if (imagePath == null) {
+        log('Failed to upload group image: $path');
+        return null;
+      }
+
+      log('Group image uploaded: $imagePath');
+
+      return imagePath;
+    } catch (e, stackTrace) {
+      log('Error uploading group image: $e', stackTrace: stackTrace);
+      return null;
+    }
+  }
+
   /// -- Update group picture.
-  static Future<void> updateGroupPicture(String groupId, File file) async {
-    final ext = file.path.split('.').last;
-    log('Extension: $ext');
+  static Future<String?> updateGroupPicture(String groupId, File file) async {
+    try {
+      final ext = file.path.split('.').last.toLowerCase();
+      final path = 'groups/$groupId.$ext';
 
-    final ref = storage.ref().child('group_pictures/$groupId.$ext');
+      log('Uploading group picture: $path');
 
-    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
+      final imagePath = await mediaService.uploadFile(file: file, path: path);
 
-    String downloadURL = await ref.getDownloadURL();
-    await firestore.collection('Groups').doc(groupId).update({'image': downloadURL});
+      if (imagePath == null) {
+        log('Failed to upload group picture: $path');
+        return null;
+      }
+
+      await firestore.collection('Groups').doc(groupId).update({'image': imagePath});
+
+      log('Group picture updated: $imagePath');
+
+      return imagePath;
+    } catch (e, stackTrace) {
+      log('Error updating group picture: $e', stackTrace: stackTrace);
+
+      return null;
+    }
   }
 
   /// -- Delete group picture.
-  static Future<void> deleteGroupPicture(String groupId, String imageUrl) async {
+  static Future<void> deleteGroupPicture(String groupId, String imagePath) async {
     try {
-      await storage.refFromURL(imageUrl).delete();
+      if (imagePath.isEmpty || imagePath == 'null') {
+        await firestore.collection('Groups').doc(groupId).update({'image': null});
 
-      await FirebaseFirestore.instance.collection('Groups').doc(groupId).update({'image': null});
-    } catch (e) {
-      log('Error deleting group picture: $e');
+        return;
+      }
+
+      await mediaService.delete(imagePath);
+      await firestore.collection('Groups').doc(groupId).update({'image': null});
+
+      log('Group picture deleted: $imagePath');
+    } catch (e, stackTrace) {
+      log('Error deleting group picture: $e', stackTrace: stackTrace);
     }
   }
 }

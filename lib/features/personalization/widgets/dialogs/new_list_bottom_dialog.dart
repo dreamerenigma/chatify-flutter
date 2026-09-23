@@ -7,7 +7,6 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../../utils/devices/device_utility.dart';
 import '../../screens/lists/add_to_list_screen.dart';
 import 'light_dialog.dart';
 
@@ -168,12 +167,17 @@ class _NewListBottomSheetState extends State<NewListBottomSheet> {
                 child: EmojiPicker(
                   textEditingController: textController,
                   config: Config(
-                    height: DeviceUtils.getScreenHeight(context) * 0.35,
+                    height: MediaQuery.of(context).size.height * 0.35,
                     checkPlatformCompatibility: true,
-                    emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
-                    categoryViewConfig: const CategoryViewConfig(),
-                    bottomActionBarConfig: const BottomActionBarConfig(),
-                    skinToneConfig: const SkinToneConfig(),
+                    emojiViewConfig: EmojiViewConfig(
+                      columns: 8,
+                      emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+                      backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+                    ),
+                    categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
+                    bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
+                    skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
+                    customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
                   ),
                 ),
               ),

@@ -1749,10 +1749,10 @@ class S {
     return Intl.message('Only...', name: 'only', desc: '', args: []);
   }
 
-  /// `Changes to your privacy settings will not affect status updates you've already sent`
+  /// `Changes to privacy settings will not affect status updates you have already published.`
   String get changesAffectStatus {
     return Intl.message(
-      'Changes to your privacy settings will not affect status updates you\'ve already sent',
+      'Changes to privacy settings will not affect status updates you have already published.',
       name: 'changesAffectStatus',
       desc: '',
       args: [],
@@ -2394,20 +2394,20 @@ class S {
     );
   }
 
-  /// `Describe the problem`
-  String get describeProblem {
+  /// `Describe the technical problem`
+  String get describeTechProblem {
     return Intl.message(
-      'Describe the problem',
-      name: 'describeProblem',
+      'Describe the technical problem',
+      name: 'describeTechProblem',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add up to 3 screenshots or recordings`
+  /// `Click the screenshot to edit or remove sensitive information. Add up to 3 screenshots or recordings`
   String get addScreenshots {
     return Intl.message(
-      'Add up to 3 screenshots or recordings',
+      'Click the screenshot to edit or remove sensitive information. Add up to 3 screenshots or recordings',
       name: 'addScreenshots',
       desc: '',
       args: [],
@@ -3369,11 +3369,11 @@ class S {
     );
   }
 
-  /// `Change settings`
-  String get changeSettings {
+  /// `Change settings group`
+  String get changeSettingsGroup {
     return Intl.message(
-      'Change settings',
-      name: 'changeSettings',
+      'Change settings group',
+      name: 'changeSettingsGroup',
       desc: '',
       args: [],
     );
@@ -8399,14 +8399,19 @@ class S {
     );
   }
 
-  /// `Please describe what happened and attach images or additional details if necessary. This will help our team quickly understand the situation and offer a solution.`
+  /// `For other issues such as spam or scams, you can get help or contact support at `
   String get pleaseDescribeHappenedAttachImages {
     return Intl.message(
-      'Please describe what happened and attach images or additional details if necessary. This will help our team quickly understand the situation and offer a solution.',
+      'For other issues such as spam or scams, you can get help or contact support at ',
       name: 'pleaseDescribeHappenedAttachImages',
       desc: '',
       args: [],
     );
+  }
+
+  /// `Help Center`
+  String get helpsCenter {
+    return Intl.message('Help Center', name: 'helpsCenter', desc: '', args: []);
   }
 
   /// `By continuing, you agree to Chatify reviewing your technical account information so that our team can provide you with assistance with this issue.`

@@ -374,7 +374,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                                   SvgPicture.asset(ChatifyVectors.starburst, width: 25, height: 25, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 1, top: 2),
-                                    child: SvgPicture.asset(ChatifyVectors.checkmark, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.white,  BlendMode.srcIn)),
+                                    child: SvgPicture.asset(ChatifyVectors.check, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.white,  BlendMode.srcIn)),
                                   ),
                                 ],
                               ),

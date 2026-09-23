@@ -36,7 +36,7 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
           ),
           child: AppBar(
             titleSpacing: 0,
-            elevation: 1,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),

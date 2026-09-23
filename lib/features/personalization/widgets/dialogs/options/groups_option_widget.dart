@@ -45,7 +45,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
   Widget build(BuildContext context) {
     final sharedGroups = widget.currentUserGroups.where((group) {
       final members = group.members;
-      return members.contains(group.groupId) && members.contains(APIs.user.uid);
+      return members.contains(group.id) && members.contains(APIs.user.uid);
     }).toList();
     final sharedGroupCount = sharedGroups.length;
 

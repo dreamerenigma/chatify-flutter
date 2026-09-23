@@ -21,7 +21,7 @@ void showWaitingParticipantBottomSheetDialog(BuildContext context) {
           children: [
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: Text(S.of(context).waitingForOtherParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
               ),
             ),

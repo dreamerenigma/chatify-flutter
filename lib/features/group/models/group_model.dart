@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../api/group_api.dart';
+import '../../../core/enums/message_type.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../domain/entities/chat_target.dart';
 
 class GroupModel implements ChatTarget {
-  late String groupId;
+  late String id;
+  late String ownerId;
   late String groupName;
   late String groupImage;
   late String groupDescription;
@@ -16,7 +18,8 @@ class GroupModel implements ChatTarget {
   late int lastMessageTimestamp;
 
   GroupModel({
-    required this.groupId,
+    required this.id,
+    required this.ownerId,
     required this.groupName,
     required this.groupImage,
     required this.groupDescription,
@@ -31,7 +34,8 @@ class GroupModel implements ChatTarget {
 
   Map<String, dynamic> toMap() {
     return {
-      'groupId': groupId,
+      'groupId': id,
+      'ownerId': ownerId,
       'groupName': groupName,
       'groupImage': groupImage,
       'groupDescription': groupDescription,
@@ -46,7 +50,8 @@ class GroupModel implements ChatTarget {
   factory GroupModel.fromDoc(DocumentSnapshot doc) {
     final json = doc.data() as Map<String, dynamic>;
     return GroupModel(
-      groupId: doc.id,
+      id: doc.id,
+      ownerId: json['ownerId'] ?? '',
       groupName: json['groupName'] ?? '',
       groupImage: json['groupImage'] ?? '',
       groupDescription: json['groupDescription'] ?? '',
@@ -59,7 +64,8 @@ class GroupModel implements ChatTarget {
   }
 
   GroupModel.fromJson(Map<String, dynamic> json){
-    groupId = json['groupId'] ?? '';
+    id = json['id'] ?? json['groupId'] ?? '';
+    ownerId = json['ownerId'] ?? '';
     groupName = json['groupName'] ?? '';
     groupImage = json['groupImage'] ?? '';
     groupDescription = json['groupDescription'] ?? '';
@@ -71,16 +77,23 @@ class GroupModel implements ChatTarget {
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['groupId'] = groupId;
-    data['groupName'] = groupName;
-    data['groupImage'] = groupImage;
-    data['groupDescription'] = groupDescription;
-    data['created_at'] = Timestamp.fromDate(createdAt);
-    data['creatorName'] = creatorName;
-    data['push_token'] = pushToken;
-    data['lastMessageTimestamp'] = lastMessageTimestamp;
-    return data;
+    return {
+      'id': id,
+      'ownerId': ownerId,
+      'groupName': groupName,
+      'groupImage': groupImage,
+      'groupDescription': groupDescription,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'creatorName': creatorName,
+      'members': members,
+      'push_token': pushToken,
+      'lastMessageTimestamp': lastMessageTimestamp,
+    };
+  }
+
+  @override
+  Future<void> sendText(String text) async {
+    await GroupApi.sendGroupMessage(this, text, MessageType.text);
   }
 
   @override
@@ -89,7 +102,7 @@ class GroupModel implements ChatTarget {
   }
 
   @override
-  Future<void> sendVideo(File file) async {
+  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration}) async {
     await GroupApi.sendGroupVideo(this, members, file);
   }
 
@@ -99,7 +112,7 @@ class GroupModel implements ChatTarget {
   }
 
   @override
-  Future<void> sendAudio(File file, String fileName) async {
-    await GroupApi.sendGroupAudio(this, file, fileName);
+  Future<void> sendAudio(File file, String fileName, {int? audioDuration}) async {
+    await GroupApi.sendGroupAudio(this, file, fileName, audioDuration: audioDuration);
   }
 }

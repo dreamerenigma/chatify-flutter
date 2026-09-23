@@ -25,7 +25,7 @@ class _RelatedDevicesScreenState extends State<RelatedDevicesScreen> {
         title: Text(S.of(context).appRelatedDevices, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         backgroundColor: ChatifyColors.blackGrey,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             Navigator.pop(context);
           },

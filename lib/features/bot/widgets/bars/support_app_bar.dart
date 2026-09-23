@@ -2,38 +2,42 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../common/widgets/buttons/custom_search_button.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/widgets/dialogs/chat_settings_dialog.dart';
+import '../../../personalization/screens/chats/wallpaper_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../models/info_app_model.dart';
 import '../../models/support_model.dart';
 
 class SupportAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final SupportAppModel support;
+  final SupportAppModel? support;
+  final InfoAppModel? infoApp;
 
-  const SupportAppBar({super.key, required this.support});
+  const SupportAppBar({
+    super.key,
+    this.support,
+    this.infoApp,
+  });
 
   @override
   State<SupportAppBar> createState() => SupportAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight + 4);
 }
 
 class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderStateMixin {
-  late AnimationController _searchController;
-  late Animation<double> _searchScaleAnimation;
   bool showRealStatus = false;
+  String? imagePath;
 
   @override
   void initState() {
     super.initState();
-    _searchController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
-    _searchScaleAnimation = Tween<double>(begin: 1.0, end: 0.8).animate(CurvedAnimation(parent: _searchController, curve: Curves.easeInOut));
-
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         showRealStatus = true;
@@ -42,111 +46,288 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return _buildAppBar(context, widget.support);
+    return _buildAppBar(context);
   }
 
-  Widget _buildAppBar(BuildContext context, SupportAppModel support) {
+  Widget _buildAppBar(BuildContext context) {
     return Stack(
       children: [
-        _buildSupportAppBar(context, support),
+        _buildSupportAppBar(context),
       ],
     );
   }
 
-  Widget _buildSupportAppBar(BuildContext context, SupportAppModel support) {
+  Widget _buildSupportAppBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(border: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey))),
       child: AppBar(
-        backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
+        backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.lightGrey,
         surfaceTintColor: ChatifyColors.transparent,
-        titleSpacing: 0,
+        titleSpacing: -5,
         elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 15, top: 10),
-          child: Row(
-            children: [
-              _buildSupportInfo(context, support),
-            ],
-          ),
+        leadingWidth: 55,
+        title: _buildSupportInfo(context),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         actions: [
-          CustomSearchButton(
-            searchController: _searchController,
-            searchScaleAnimation: _searchScaleAnimation,
-            onPressed: () {},
+          PopupMenuButton<int>(
+            tooltip: S.of(context).more,
+            position: PopupMenuPosition.under,
+            offset: const Offset(-8, 0),
+            menuPadding: EdgeInsets.symmetric(vertical: 4),
+            constraints: const BoxConstraints(minWidth: 0, maxWidth: 160),
+            icon: const Icon(Icons.more_vert),
+            color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                }
+                return ChatifyColors.transparent;
+              }),
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+            ),
+            onSelected: (value) {
+              if (value == 5) {
+                _showMorePopupMenu(context);
+                return;
+              }
+
+              _handlePopupAction(value);
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                value: 1,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: AppPopupMenuItem(
+                  text: 'Поиск',
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 2,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: AppPopupMenuItem(
+                  text: 'Заблокировать',
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 3,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: AppPopupMenuItem(
+                  text: 'Без звука',
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 4,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: AppPopupMenuItem(
+                  text: 'Тема чата',
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (imagePath != null && imagePath!.isNotEmpty) {
+                      Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath!)));
+                    }
+                  },
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 5,
+                padding: EdgeInsets.zero,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      borderRadius: BorderRadius.circular(ChatifySizes.inputFieldRadius),
+                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () {
+                        Navigator.pop(context, 5);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12, right: 6, top: 10, bottom: 10),
+                        child: Row(
+                          children: [
+                            Expanded(child: Text(S.of(context).more, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+                            Icon(Icons.arrow_right, size: 28, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSupportInfo(BuildContext context, SupportAppModel support) {
-    return InkWell(
-      onTap: () {
-        final RenderBox renderBox = context.findRenderObject() as RenderBox;
-        final position = renderBox.localToGlobal(Offset.zero);
-        showChatSettingsDialog(context, widget.support, position, initialIndex: 0);
-      },
-      mouseCursor: SystemMouseCursors.basic,
+  Future<void> _handlePopupAction(int value) async {
+    switch (value) {
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 6:
+        break;
+      case 7:
+        break;
+      case 8:
+        break;
+      case 9:
+        break;
+    }
+  }
+
+  Widget _buildSupportInfo(BuildContext context) {
+    final String name;
+    final String description;
+
+    if (widget.infoApp != null) {
+      name = widget.infoApp!.name;
+      description = widget.infoApp!.description;
+    } else {
+      name = S.of(context).chatifySupport;
+      description = widget.support!.description;
+    }
+
+    return Material(
+      color: ChatifyColors.transparent,
       borderRadius: BorderRadius.circular(8),
-      splashColor: ChatifyColors.transparent,
-      highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-      hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-              child: SvgPicture.asset(ChatifyVectors.logoApp, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), width: 26, height: 26),
-            ),
-            SizedBox(width: Platform.isWindows ? 14 : 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AnimatedPadding(
-                  duration: const Duration(milliseconds: 300),
-                  padding: EdgeInsets.only(top: showRealStatus ? 16 : 0),
-                  child: Row(
-                    children: [
-                      Text(
-                        S.of(context).chatifySupport,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontFamily: 'Roboto', fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400),
-                      ),
-                      SizedBox(width: 4),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SvgPicture.asset(ChatifyVectors.starburst, width: 18, height: 18, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
-                          SvgPicture.asset(ChatifyVectors.checkmark, width: 10, height: 10, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-                        ],
-                      ),
-                    ],
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        mouseCursor: SystemMouseCursors.basic,
+        borderRadius: BorderRadius.circular(8),
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        onTap: () {
+          final RenderBox renderBox = context.findRenderObject() as RenderBox;
+          final position = renderBox.localToGlobal(Offset.zero);
+
+          if (widget.support != null) {
+            showChatSettingsDialog(context, widget.support!, position, initialIndex: 0);
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                child: SvgPicture.asset(ChatifyVectors.logoApp, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+              ),
+              SizedBox(width: Platform.isWindows ? 14 : 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Text(
+                          name,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400, height: 1.3),
+                        ),
+                        SizedBox(width: 4),
+                        SvgPicture.asset(ChatifyVectors.starburstCheck, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.blue, BlendMode.srcIn)),
+                      ],
+                    ),
                   ),
-                ),
-                AnimatedOpacity(
-                  opacity: showRealStatus ? 0.0 : 1.0,
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    widget.support.description,
-                    style: TextStyle(fontSize: Platform.isWindows ? 13 : 13, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
+                  Text(
+                    description,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400, height: 1.3),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _showMorePopupMenu(BuildContext context) {
+    showMenu<int>(
+      context: context,
+      position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width - 255, kToolbarHeight + 25, 8, 0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      constraints: const BoxConstraints(minWidth: 255, maxWidth: 255),
+      menuPadding: EdgeInsets.symmetric(vertical: 4),
+      color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+      items: [
+        PopupMenuItem<int>(
+          value: 6,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Медиа, ссылки и докум.',
+            onTap: () {
+              Navigator.pop(context, 6);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 7,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Очистить чат',
+            onTap: () {
+              Navigator.pop(context, 7);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 8,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Экспорт чата',
+            onTap: () {
+              Navigator.pop(context, 8);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 9,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Добавить иконку на экран',
+            onTap: () {
+              Navigator.pop(context, 9);
+            },
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == null) return;
+
+      _handlePopupAction(value);
+    });
   }
 }

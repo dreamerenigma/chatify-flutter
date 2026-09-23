@@ -163,8 +163,6 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
     try {
       final url = await APIs.getMediaUrl(imagePath);
 
-      log('PROFILE IMAGE: resolved URL = $url');
-
       if (!mounted) return;
 
       setState(() {
@@ -172,7 +170,6 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
         isLoadingProfileImage = false;
       });
 
-      log('PROFILE IMAGE URL: $_profileImageUrl');
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
 

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../api/chat_api.dart';
 import '../../../common/entities/base_chat_entity.dart';
+import '../../../core/enums/message_type.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../domain/entities/chat_target.dart';
 
@@ -141,13 +142,18 @@ class UserModel implements ChatTarget, BaseChatEntity {
   }
 
   @override
+  Future<void> sendText(String text) async {
+    await ChatApi.sendMessage(this, text, MessageType.text);
+  }
+
+  @override
   Future<void> sendImage(File file) async {
     await ChatApi.sendChatImage(this, file);
   }
 
   @override
-  Future<void> sendVideo(File file) async {
-    await ChatApi.sendChatVideo(this, file);
+  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration}) async {
+    await ChatApi.sendVideoMessage(this, file.path, fileName: fileName, fileSize: fileSize, videoDuration: videoDuration);
   }
 
   @override
@@ -156,7 +162,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
   }
 
   @override
-  Future<void> sendAudio(File file, String fileName) async {
-    await ChatApi.sendChatAudio(this, file, fileName);
+  Future<void> sendAudio(File file, String fileName, {int? audioDuration}) async {
+    await ChatApi.sendChatAudio(this, file, fileName, audioDuration: audioDuration);
   }
 }

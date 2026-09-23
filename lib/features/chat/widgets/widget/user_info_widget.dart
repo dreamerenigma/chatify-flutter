@@ -84,9 +84,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         mouseCursor: SystemMouseCursors.basic,
         splashFactory: NoSplash.splashFactory,
         borderRadius: BorderRadius.circular(8),
-        splashColor: ChatifyColors.transparent,
-        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
+        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
         onTap: () {
           if (Platform.isWindows) {
             final renderBox = context.findRenderObject() as RenderBox;

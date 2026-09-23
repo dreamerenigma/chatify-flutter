@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -15,6 +16,7 @@ import '../../../../../../utils/popups/custom_tooltip.dart';
 import '../../../../../../utils/urls/url_utils.dart';
 import '../../../widgets/buttons/support_button.dart';
 import '../../../widgets/dialogs/light_dialog.dart';
+import '../../../widgets/dialogs/reset_feedback_dialog.dart';
 import '../../../widgets/forms/support_form.dart';
 import '../help_screen.dart';
 
@@ -45,6 +47,16 @@ class SupportScreenState extends State<SupportScreen> {
   bool allFieldsFilled = false;
   bool isHoveredHelp = false;
 
+  bool get hasUnsavedChanges {
+    return problemController.text.trim().isNotEmpty || (widget.selectedImages?.isNotEmpty ?? false);
+  }
+
+  @override
+  void dispose() {
+    problemController.dispose();
+    super.dispose();
+  }
+
   void updateFieldsFilled(bool filled) {
     setState(() {
       allFieldsFilled = filled;
@@ -60,7 +72,11 @@ class SupportScreenState extends State<SupportScreen> {
         imageBytes.add(bytes);
       }
     }
-    bool success = await EmailSendRepository.instance.sendFeedback(context, suggestion: problemController.text.isEmpty ? null : problemController.text, images: imageBytes);
+
+    bool success = await EmailSendRepository.instance.sendFeedback(
+      context, suggestion: problemController.text.isEmpty ? null : problemController.text, images: imageBytes,
+    );
+
     if (success) {
       setState(() {
         problemController.clear();
@@ -70,197 +86,239 @@ class SupportScreenState extends State<SupportScreen> {
     }
   }
 
+  Future<void> _handleBack() async {
+    if (!hasUnsavedChanges) {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      return;
+    }
+
+    final shouldReset = await showResetFeedbackDialog(context);
+
+    if (!shouldReset || !mounted) {
+      return;
+    }
+
+    problemController.clear();
+    widget.selectedImages?.clear();
+
+    setState(() {
+      allFieldsFilled = false;
+    });
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: isWebOrWindows ? (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt())) : null,
-      appBar: _buildAppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: isWebOrWindows
-              ? Center(
-              child: ScrollConfiguration(
-                behavior: NoGlowScrollBehavior(),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 592),
-                          child: Text(
-                            S.of(context).pleaseDescribeHappenedAttachImages,
-                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                            textAlign: isWebOrWindows ? TextAlign.center : TextAlign.start,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      isWebOrWindows
-                        ? Center(
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 592),
-                              child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                            ),
-                          )
-                        : SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                      const SizedBox(height: 20),
-                      if (isWindows) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          constraints: const BoxConstraints(maxWidth: 592),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                onEnter: (_) => setState(() => isHoveredHelp = true),
-                                onExit: (_) => setState(() => isHoveredHelp = false),
-                                child: GestureDetector(
-                                  onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
-                                  child: Text(
-                                    S.of(context).visitHelpCenter,
-                                    style: TextStyle(
-                                      fontSize: ChatifySizes.fontSizeSm,
-                                      color: isHoveredHelp
-                                        ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
-                                        : colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
-                                      decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                      decorationThickness: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              Align(alignment: Alignment.center, child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+
+        _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: isWebOrWindows ? (context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt())) : null,
+        appBar: _buildAppBar(),
+        body: Column(
+          children: [
+            Expanded(child: _buildContent()),
+            if (isMobile)
+              _buildMobileBottomBar(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return isWebOrWindows ? _buildDesktopContent() : _buildMobileContent();
+  }
+
+  Widget _buildDesktopContent() {
+    return Center(
+      child: ScrollConfiguration(
+        behavior: NoGlowScrollBehavior(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildDescription(),
+              const SizedBox(height: 20),
+              _buildSupportForm(),
+              const SizedBox(height: 20),
+              if (isWindows)
+                _buildWindowsActions(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileContent() {
+    return ScrollConfiguration(
+      behavior: NoGlowScrollBehavior(),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (!widget.showText) ...[
+              _buildDescription(),
+              const SizedBox(height: 15),
+            ],
+            _buildSupportForm(),
+            if (isMobile && widget.showReadMoreText)
+              _buildReadMore(),
+            if (isWindows)
+              _buildWindowsActions(),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDescription() {
+    final linkColor = colorsController.getColor(colorsController.selectedColorScheme.value);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 592),
+        child: RichText(
+          textAlign: isWebOrWindows ? TextAlign.center : TextAlign.start,
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: ChatifySizes.fontSizeSm,
+              fontWeight: FontWeight.w400,
+              color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+            ),
+            children: [
+              TextSpan(text: S.of(context).pleaseDescribeHappenedAttachImages, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5)),
+              const TextSpan(text: ' '),
+              TextSpan(
+                text: S.of(context).helpCenter,
+                style: TextStyle(color: linkColor, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5, decoration: TextDecoration.none, decorationColor: linkColor),
+                recognizer: TapGestureRecognizer()..onTap = () {
+                  UrlUtils.launchURL(AppLinks.helpCenter);
+                },
               ),
-            ) : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 592),
-                      child: widget.showText ? Text(
-                        S.of(context).pleaseDescribeHappenedAttachImages,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                        textAlign: isWebOrWindows ? TextAlign.center : TextAlign.start,
-                      ) : SizedBox.shrink(),
-                    ),
-                  ),
-                  SizedBox(height: widget.showText ? 20 : 0),
-                  isWebOrWindows
-                    ? Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 592),
-                        child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                      ),
-                    ) : SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
-                  SizedBox(height: widget.showReadMoreText ? 12 : 0),
-                  if (widget.showReadMoreText)
-                  StatefulBuilder(
-                    builder: (context, setState) {
-                      return RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: S.of(context).continuingAgreeAppTechInfo,
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.2),
-                            ),
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.baseline,
-                              baseline: TextBaseline.alphabetic,
-                              child: Material(
-                                color: ChatifyColors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(context, createPageRoute(const HelpScreen()));
-                                  },
-                                  splashColor: ChatifyColors.blueAccent.withAlpha((0.2 * 255).toInt()),
-                                  highlightColor: ChatifyColors.blueAccent.withAlpha((0.1 * 255).toInt()),
-                                  child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500, color: ChatifyColors.blueAccent)),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  if (isWindows) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      constraints: const BoxConstraints(maxWidth: 592),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            onEnter: (_) => setState(() => isHoveredHelp = true),
-                            onExit: (_) => setState(() => isHoveredHelp = false),
-                            child: GestureDetector(
-                              onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
-                              child: Text(
-                                S.of(context).visitHelpCenter,
-                                style: TextStyle(
-                                  fontSize: ChatifySizes.fontSizeSm,
-                                  color: isHoveredHelp
-                                    ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.7 * 255).toInt())
-                                    : colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
-                                  decorationColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  decorationThickness: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          Align(alignment: Alignment.center, child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSupportForm() {
+    if (!isWebOrWindows) {
+      return SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled);
+    }
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 592),
+        child: SupportForm(selectedImages: widget.selectedImages, onFieldsFilledChanged: updateFieldsFilled),
+      ),
+    );
+  }
+
+  Widget _buildReadMore() {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: S.of(context).continuingAgreeAppTechInfo,
+            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
+          ),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.baseline,
+            baseline: TextBaseline.alphabetic,
+            child: Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(context, createPageRoute(const HelpScreen()));
+                },
+                splashColor: ChatifyColors.blueAccent.withAlpha((0.2 * 255).toInt()),
+                highlightColor: ChatifyColors.blueAccent.withAlpha((0.1 * 255).toInt()),
+                child: Text(
+                  S.of(context).readMore,
+                  style: TextStyle(color: ChatifyColors.blueAccent, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500),
+                ),
               ),
             ),
           ),
-          if (isMobile)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: widget.showCompactButtonOnly
-                ? SizedBox(
-                    width: double.infinity,
-                    child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback, buttonText: S.of(context).save),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
-                        child: Text(S.of(context).visitHelpCenter, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value), decoration: TextDecoration.none)),
-                      ),
-                      const Spacer(),
-                      SizedBox(child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback)),
-                    ],
-              ),
-            ),
         ],
       ),
+    );
+  }
+
+  Widget _buildWindowsActions() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      constraints: const BoxConstraints(maxWidth: 592),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildHelpCenterButton(),
+          const Spacer(),
+          SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHelpCenterButton() {
+    final color = colorsController.getColor(colorsController.selectedColorScheme.value);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => isHoveredHelp = true),
+      onExit: (_) => setState(() => isHoveredHelp = false),
+      child: GestureDetector(
+        onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
+        child: Text(
+          S.of(context).visitHelpCenter,
+          style: TextStyle(
+            fontSize: ChatifySizes.fontSizeSm,
+            color: isHoveredHelp ? color.withAlpha((0.7 * 255).toInt()) : color,
+            decoration: isHoveredHelp ? TextDecoration.underline : TextDecoration.none,
+            decorationColor: color,
+            decorationThickness: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileBottomBar() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 20),
+      child: widget.showCompactButtonOnly
+        ? SizedBox(
+            width: double.infinity,
+            child: SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback, buttonText: S.of(context).send),
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () => UrlUtils.launchURL(AppLinks.helpCenter),
+                child: Text(
+                  S.of(context).visitHelpCenter,
+                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                ),
+              ),
+              const Spacer(),
+              SupportButton(allFieldsFilled: allFieldsFilled, handleSendFeedback: handleSendFeedback),
+            ],
+          ),
     );
   }
 
@@ -271,10 +329,10 @@ class SupportScreenState extends State<SupportScreen> {
 
     return AppBar(
       backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-      leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
+      leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: _handleBack),
       titleSpacing: 0,
-      title: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400,)),
-      elevation: 1,
+      elevation: 0,
+      title: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
       iconTheme: IconThemeData(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
     );
   }
@@ -320,7 +378,7 @@ class SupportScreenState extends State<SupportScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
-                      child: Icon(Icons.arrow_back, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                      child: Icon(Icons.arrow_back_rounded, size: 25, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
                     ),
                   ),
                 ),
@@ -330,7 +388,7 @@ class SupportScreenState extends State<SupportScreen> {
             Expanded(
               child: Align(
                 alignment: Alignment.topCenter,
-                child: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500)),
+                child: Text(widget.title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
               ),
             ),
           ],

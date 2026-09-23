@@ -108,6 +108,7 @@ class ChatUserCardState extends State<ChatUserCard> {
       margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8, bottom: 6),
       elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
       child: GestureDetector(
         onSecondaryTapDown: (details) {
           if (isWindows) {
@@ -195,15 +196,6 @@ class ChatUserCardState extends State<ChatUserCard> {
                                   return ClipOval(child: _profileImageError(context, size));
                                 }
 
-                                debugPrint(
-                                  'PREVIEW CONDITION: '
-                                      'user=${widget.user.id} | '
-                                      'messageId=${message?.id} | '
-                                      'type=${message?.type} | '
-                                      'msg="${message?.msg}" | '
-                                      'isEmpty=${message?.msg.isEmpty}',
-                                );
-
                                 return ClipOval(
                                   child: CachedNetworkImage(
                                     width: size,
@@ -230,7 +222,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                   color: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                                 ),
-                                child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
+                                child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
                               ),
                             ),
                         ],
@@ -418,10 +410,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                   ),
                 ),
               ] else if (message.type == MessageType.document) ...[
-                Icon(
-                  FluentIcons.document_16_filled,
-                  color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-                ),
+                Icon(FluentIcons.document_16_filled, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
@@ -447,9 +436,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                             colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                           ),
                         ),
-                        const WidgetSpan(
-                          child: SizedBox(width: 4),
-                        ),
+                        const WidgetSpan(child: SizedBox(width: 4)),
                         TextSpan(
                           text: message.msg,
                           style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontSize: ChatifySizes.fontSizeSm),

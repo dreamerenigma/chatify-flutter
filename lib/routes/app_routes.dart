@@ -30,7 +30,7 @@ class AppRoutes {
     GetPage(name: ChatifyRoutes.community, page: () => CommunityScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.communities, page: () => CommunitiesScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.status, page: () => StatusScreen(user: APIs.me)),
-    GetPage(name: ChatifyRoutes.newGroup, page: () => const NewGroupScreen()),
+    GetPage(name: ChatifyRoutes.newGroup, page: () => const NewGroupScreen(selectedUsers: [])),
     GetPage(name: ChatifyRoutes.newNewsletter, page: () => const NewNewsletterScreen(selectedUsers: [])),
     GetPage(name: ChatifyRoutes.favorite, page: () => const FavoriteMessageScreen()),
     GetPage(name: ChatifyRoutes.account, page: () => AccountScreen(user: APIs.me)),

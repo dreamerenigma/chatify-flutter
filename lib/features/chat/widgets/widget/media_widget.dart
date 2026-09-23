@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helper/gif_loading_indicator.dart';
+import '../../../../api/apis.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../data/file_extensions_data.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -54,7 +56,15 @@ class MediaWidgetState extends State<MediaWidget> {
   final GifController _gifController = GifController();
   bool isGifPlaying = false;
   bool isDownloading = false;
+  bool _isImageLoading = true;
+  Map<String, String> _resolvedImageUrls = {};
   Timer? _gifTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveImageUrls();
+  }
 
   @override
   void dispose() {
@@ -142,6 +152,37 @@ class MediaWidgetState extends State<MediaWidget> {
     );
   }
 
+  Future<void> _resolveImageUrls() async {
+    try {
+      final result = <String, String>{};
+
+      for (final path in widget.imageUrls) {
+        final trimmedPath = path.trim();
+        final url = await APIs.getMediaUrl(trimmedPath);
+
+        if (url != null && url.isNotEmpty) {
+          result[trimmedPath] = url;
+        }
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _resolvedImageUrls = result;
+        _isImageLoading = false;
+      });
+    } catch (e, st) {
+      log('MEDIA WIDGET: failed to resolve image URLs: $e');
+      log('MEDIA WIDGET: stack = $st');
+
+      if (!mounted) return;
+
+      setState(() {
+        _isImageLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (widget.message.type) {
@@ -164,35 +205,53 @@ class MediaWidgetState extends State<MediaWidget> {
 
   Widget _buildImageWidget(BuildContext context) {
     const borderRadius = BorderRadius.all(Radius.circular(10));
-    int index = widget.imageUrls.indexWhere((url) => url.trim() == widget.message.msg.trim());
-    final currentIndex = (index >= 0 && widget.imageUrls.isNotEmpty) ? index.clamp(0, widget.imageUrls.length - 1) : 0;
+    final currentPath = widget.message.msg.trim();
+    final currentUrl = _resolvedImageUrls[currentPath];
+    final resolvedImageUrls = widget.imageUrls.map((path) => _resolvedImageUrls[path.trim()]).whereType<String>().where((url) => url.isNotEmpty).toList();
+    final index = widget.imageUrls.map((path) => path.trim()).toList().indexOf(currentPath);
+    final currentIndex = index >= 0 ? index : 0;
 
     return ClipRRect(
       borderRadius: borderRadius,
       child: GestureDetector(
         onTap: () {
+          if (resolvedImageUrls.isEmpty) return;
+
           if (Platform.isWindows) {
-            showDialog(context: context, builder: (context) => FullScreenImageWidget(imageUrls: widget.imageUrls, initialIndex: currentIndex));
+            showDialog(
+              context: context,
+              builder: (context) => FullScreenImageWidget(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1)),
+            );
           } else {
-            Navigator.push(context, createPageRoute(FullScreenImageScreen(imageUrls: widget.imageUrls, initialIndex: currentIndex)));
+            Navigator.push(context, createPageRoute(FullScreenImageScreen(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1))));
           }
         },
         child: Container(
           width: 250,
           height: 230,
           decoration: BoxDecoration(borderRadius: borderRadius),
-          child: CachedNetworkImage(
-            imageUrl: widget.message.msg,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              width: 250,
-              height: 230,
-              decoration: const BoxDecoration(color: ChatifyColors.transparent),
-              child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt()), BlendMode.darken), child: const SizedBox.expand()),
-            ),
-            imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 230, height: 230),
-            errorWidget: (context, url, error) => const Icon(Icons.image, size: 70),
-          ),
+          child: _isImageLoading || currentUrl == null
+            ? Container(
+                width: 250,
+                height: 230,
+                decoration: const BoxDecoration(color: ChatifyColors.transparent), child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt(),), BlendMode.darken), child: const SizedBox.expand(),),
+              )
+            : CachedNetworkImage(
+                imageUrl: currentUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: 250,
+                  height: 230,
+                  decoration: const BoxDecoration(color: ChatifyColors.transparent),
+                  child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt(),), BlendMode.darken), child: const SizedBox.expand()),
+                ),
+                imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 230, height: 230),
+                errorWidget: (context, url, error) {
+                  log('MEDIA WIDGET: image loading error: $error');
+
+                  return const Icon(Icons.image, size: 70);
+                },
+              ),
         ),
       ),
     );

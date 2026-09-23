@@ -4,7 +4,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
-void showDeleteConfirmationDialog(BuildContext context, Function(String?) onImagePicked, VoidCallback onDeletePressed) {
+void showDeleteConfirmationDialog(BuildContext context, VoidCallback onDeletePressed) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -24,7 +24,6 @@ void showDeleteConfirmationDialog(BuildContext context, Function(String?) onImag
           ),
           TextButton(
             onPressed: () {
-              onImagePicked(null);
               onDeletePressed();
               Navigator.pop(context);
               Navigator.pop(context);

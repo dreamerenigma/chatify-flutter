@@ -103,7 +103,11 @@ class EmojiStickerScreenState extends State<EmojiStickerScreen> {
                   config: Config(
                     height: MediaQuery.of(context).size.height * 0.35,
                     checkPlatformCompatibility: true,
-                    emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0), backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
+                    emojiViewConfig: EmojiViewConfig(
+                      columns: 8,
+                      emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+                      backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+                    ),
                     categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
                     bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
                     skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),

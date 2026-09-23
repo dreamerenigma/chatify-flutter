@@ -152,7 +152,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
       appBar: AppBar(
         titleSpacing: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             if (isSearching) {
               _toggleSearch();
@@ -162,53 +162,52 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
           },
         ),
         title: isSearching
-            ? TextSelectionTheme(
-          data: TextSelectionThemeData(
-            cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-            selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          ),
-          child: TextField(
-            key: textFieldKey,
-            focusNode: _searchFocusNode,
-            controller: _searchController,
-            cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-            keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
-            decoration: InputDecoration(
-              hintText: S.of(context).searchContacts,
-              hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
+          ? TextSelectionTheme(
+              data: TextSelectionThemeData(
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              ),
+              child: TextField(
+                key: textFieldKey,
+                focusNode: _searchFocusNode,
+                controller: _searchController,
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
+                decoration: InputDecoration(
+                  hintText: S.of(context).searchContacts,
+                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                ),
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).contactsSending, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                const SizedBox(height: 4),
+                Text('${S.of(context).selected} ${selectedUsers.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.normal)),
+              ],
             ),
-          ),
-        )
-        : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(S.of(context).contactsSending, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
-            const SizedBox(height: 4),
-            Text('${S.of(context).selected} ${selectedUsers.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.normal)),
-          ],
-        ),
         actions: isSearching
-            ? [
-          IconButton(
-            icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad),
-            onPressed: _toggleInputMode,
-          ),
-        ]
-            : [
-          IconButton(
-            icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
-            onPressed: _toggleSearch,
-          ),
-        ],
+          ? [
+              IconButton(
+                icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad),
+                onPressed: _toggleInputMode,
+              ),
+            ]
+          : [
+              IconButton(
+                icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                onPressed: _toggleSearch,
+              ),
+            ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-        )
+        ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),)
         : ScrollbarTheme(
           data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
           child: Scrollbar(

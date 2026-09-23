@@ -165,7 +165,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             if (isSearching) {
               _toggleSearch();

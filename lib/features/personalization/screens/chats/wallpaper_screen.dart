@@ -47,6 +47,12 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
       appBar: AppBar(
         titleSpacing: 0,
         title: Text(context.isDarkMode ? S.of(context).wallpaperDarkTheme : S.of(context).wallpaperLightTheme, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: ScrollbarTheme(
         data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),

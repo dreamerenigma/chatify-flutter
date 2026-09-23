@@ -18,53 +18,35 @@ sealed class HomeItem {
 class ChatHomeItem extends HomeItem {
   final UserModel user;
 
-  ChatHomeItem({
-    required this.user,
-    required super.activityTime,
-  }) : super(id: user.id);
+  ChatHomeItem({required this.user, required super.activityTime}) : super(id: user.id);
 }
 
 class GroupHomeItem extends HomeItem {
   final GroupModel group;
 
-  GroupHomeItem({
-    required this.group,
-    required super.activityTime,
-  }) : super(id: group.groupId);
+  GroupHomeItem({required this.group, required super.activityTime}) : super(id: group.id);
 }
 
 class CommunityHomeItem extends HomeItem {
   final CommunityModel community;
 
-  CommunityHomeItem({
-    required this.community,
-    required super.activityTime,
-  }) : super(id: community.id);
+  CommunityHomeItem({required this.community, required super.activityTime}) : super(id: community.id);
 }
 
 class NewsletterHomeItem extends HomeItem {
   final NewsletterModel newsletter;
 
-  NewsletterHomeItem({
-    required this.newsletter,
-    required super.activityTime,
-  }) : super(id: newsletter.id);
+  NewsletterHomeItem({required this.newsletter, required super.activityTime}) : super(id: newsletter.id);
 }
 
 class SupportHomeItem extends HomeItem {
   final SupportAppModel support;
 
-  SupportHomeItem({
-    required this.support,
-    required super.activityTime,
-  }) : super(id: support.id);
+  SupportHomeItem({required this.support, required super.activityTime}) : super(id: support.id);
 }
 
 class InfoAppHomeItem extends HomeItem {
   final InfoAppModel info;
 
-  InfoAppHomeItem({
-    required this.info,
-    required super.activityTime,
-  }) : super(id: info.id);
+  InfoAppHomeItem({required this.info, required super.activityTime}) : super(id: info.id);
 }

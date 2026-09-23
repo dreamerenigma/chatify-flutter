@@ -79,7 +79,7 @@ class SaveContactController extends GetxController {
                       children: [
                         CustomRadioListTile<int>(
                           value: 1,
-                          radioScale: 1.15,
+                          radioScale: 1.13,
                           radioPosition: RadioPositionType.left,
                           padding: const EdgeInsets.only(left: 12, right: 12),
                           title: Text(APIs.me.email),
@@ -87,7 +87,7 @@ class SaveContactController extends GetxController {
                         ),
                         CustomRadioListTile<int>(
                           value: 2,
-                          radioScale: 1.15,
+                          radioScale: 1.13,
                           radioPosition: RadioPositionType.left,
                           padding: const EdgeInsets.only(left: 12, right: 12),
                           title: Text(S.of(context).phone),

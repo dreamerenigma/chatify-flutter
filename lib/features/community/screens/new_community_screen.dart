@@ -16,9 +16,9 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import '../models/community_model.dart';
-import '../widgets/dialogs/edit_image_community_bottom_dialog.dart';
 import 'communities_screen.dart';
 import 'emoji_sticker_screen.dart';
 
@@ -151,7 +151,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
           ),
           child: AppBar(
             titleSpacing: 0,
-            elevation: 1,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, size: 24),
@@ -217,14 +217,14 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
                             nameFocusNode.unfocus();
                             descriptionFocusNode.unfocus();
 
-                            showEditImageCommunityBottomDialog(
+                            showEditImageBottomDialog(
                               context,
-                              imageUrl,
-                              communityId,
-                              () => CommunityApi.deleteCommunityPicture(communityId, imageUrl),
-                              updateImagePath,
-                              updateImagePath,
-                              (color, emoji) {
+                              title: S.of(context).communityPicture,
+                              onDeletePressed: () async {
+                                await CommunityApi.deleteCommunityPicture(communityId, imageUrl);
+                              },
+                              onImageSelected: updateImagePath,
+                              onEmojiSelected: (color, emoji) {
                                 setState(() {
                                   _generatedEmojiBackground = color;
                                   _generatedEmoji = emoji;

@@ -152,7 +152,7 @@ class AddUserScreenState extends State<AddUserScreen> {
       appBar: AppBar(
         titleSpacing: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             if (isSearching) {
               _toggleSearch();

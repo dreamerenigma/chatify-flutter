@@ -45,7 +45,7 @@ void showNoSoundDialog(BuildContext context, int initialDuration, ValueChanged<i
                       CustomRadioListTile<int>(
                         title: Text(S.of(context).nineHours),
                         value: 8,
-                        radioScale: 1.15,
+                        radioScale: 1.13,
                         iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         radioPosition: RadioPositionType.left,
                         padding: const EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
@@ -53,7 +53,7 @@ void showNoSoundDialog(BuildContext context, int initialDuration, ValueChanged<i
                       CustomRadioListTile<int>(
                         title: Text(S.of(context).oneWeek),
                         value: 168,
-                        radioScale: 1.15,
+                        radioScale: 1.13,
                         iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         radioPosition: RadioPositionType.left,
                         padding: const EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),
@@ -61,7 +61,7 @@ void showNoSoundDialog(BuildContext context, int initialDuration, ValueChanged<i
                       CustomRadioListTile<int>(
                         title: Text(S.of(context).always),
                         value: 0,
-                        radioScale: 1.15,
+                        radioScale: 1.13,
                         iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                         radioPosition: RadioPositionType.left,
                         padding: const EdgeInsets.only(left: 12, right: 12, top: 3, bottom: 3),

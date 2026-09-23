@@ -45,7 +45,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
             elevation: 0,
             automaticallyImplyLeading: false,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },

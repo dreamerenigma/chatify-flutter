@@ -23,8 +23,8 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
+            elevation: 0,
             title: Text(S.of(context).twoStepVerification, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-            elevation: 1,
           ),
         ),
       ),
@@ -38,7 +38,7 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
                   const SizedBox(height: 25),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(S.of(context).createSixDigitRemember, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal), textAlign: TextAlign.center,
+                    child: Text(S.of(context).createSixDigitRemember, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center,
                     ),
                   ),
                 ],
@@ -61,7 +61,7 @@ class EnableTwoStepVerificationScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).next, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),

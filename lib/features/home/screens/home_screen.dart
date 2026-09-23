@@ -55,6 +55,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final PageController _pageController = PageController();
   final Set<String> selectedNewsletterIds = {};
   final Set<String> selectedCommunityIds = {};
+  final Set<String> selectedGroupIds = {};
   final Map<String, int> userLastMessageTimes = {};
   late bool isHomeScreen;
   bool isSearching = false;
@@ -102,6 +103,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _fetchCommunities();
     _fetchNewsletters();
     _fetchSupportChat();
+    _fetchInfoChats();
     _listenToMyUsers();
   }
 
@@ -117,6 +119,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final bool? newGroupCreated = ModalRoute.of(context)?.settings.arguments as bool?;
+
     if (newGroupCreated == true) {
       _fetchGroups();
     }
@@ -241,6 +244,14 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
+  Future<void> _fetchInfoChats() async {
+    List<InfoAppModel> fetchInfoChats = await APIs.getInfoChat();
+    setState(() {
+      infosApp = fetchInfoChats;
+      _rebuildHomeItems();
+    });
+  }
+
   void _listenToMyUsers() {
     _myUsersSubscription = APIs.getMyUsersId().listen((snapshot) {
       final userIds = snapshot.docs.map((doc) => doc.id).toList();
@@ -284,20 +295,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           users = loadedUsers;
           _rebuildHomeItems();
         });
-      },
-      onError: (error, stackTrace) {
-        log('========== USERS STREAM ERROR ==========');
-        log('ERROR: $error');
-        log('STACK: $stackTrace');
       });
-    },
-    onError: (error, stackTrace) {
-      log('========== MY_USERS STREAM ERROR ==========');
-      log('ERROR: $error');
-      log('STACK: $stackTrace');
-    },
-    onDone: () {
-      log('========== MY_USERS STREAM DONE ==========');
     });
   }
 
@@ -318,10 +316,16 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void clearSelection() {
+    log('clearSelection BEFORE: '
+        'selectedGroupIds=$selectedGroupIds, '
+        'selectionType=$selectionType');
+
+
     setState(() {
       selectedChats.clear();
       selectedNewsletterIds.clear();
       selectedCommunityIds.clear();
+      selectedGroupIds.clear();
       selectionType = SelectionType.none;
     });
   }
@@ -342,7 +346,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  void _toggleChatSelection(UserModel user) {
+  void onChatSelection(UserModel user) {
     setState(() {
       if (selectionType == SelectionType.none) {
         selectionType = SelectionType.chats;
@@ -364,7 +368,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
-  void _toggleNewsletterSelection(NewsletterModel newsletter) {
+  void onNewsletterSelection(NewsletterModel newsletter) {
     setState(() {
       if (selectionType == SelectionType.none) {
         selectionType = SelectionType.newsletters;
@@ -386,7 +390,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
-  void onCommunitySelected(CommunityModel community) {
+  void onCommunitySelection(CommunityModel community) {
     setState(() {
       if (selectionType == SelectionType.none) {
         selectionType = SelectionType.communities;
@@ -403,6 +407,28 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
 
       if (selectedCommunityIds.isEmpty) {
+        selectionType = SelectionType.none;
+      }
+    });
+  }
+
+  void onGroupSelection(GroupModel group) {
+    setState(() {
+      if (selectionType == SelectionType.none) {
+        selectionType = SelectionType.groups;
+      }
+
+      if (selectionType != SelectionType.groups) {
+        return;
+      }
+
+      if (selectedGroupIds.contains(group.id)) {
+        selectedGroupIds.remove(group.id);
+      } else {
+        selectedGroupIds.add(group.id);
+      }
+
+      if (selectedGroupIds.isEmpty) {
         selectionType = SelectionType.none;
       }
     });
@@ -443,7 +469,6 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final bool isMuted = selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id));
-
     isHomeScreen = selectedIndex == 0;
 
     return GestureDetector(
@@ -458,6 +483,16 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         backgroundColor: isWebOrWindows ? context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()) : null,
         appBar: defaultTargetPlatform == TargetPlatform.windows
           ? null
+          : selectionType == SelectionType.groups
+            ? SelectionAppBar(
+                selectedChatsCount: selectedGroupIds.length,
+                onClearSelection: clearSelection,
+                onDelete: () {},
+                onPin: () {},
+                onMute: () {},
+                onArchive: () {},
+                isNewsletterMode: false,
+              )
           : selectionType == SelectionType.newsletters
             ? SelectionAppBar(
                 selectedChatsCount: selectedNewsletterIds.length,
@@ -546,7 +581,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   });
                 },
                 onCameraPressed: () {
-                  Navigator.push(context, createPageRoute(CameraScreen(user: widget.user)));
+                  Navigator.push(context, createPageRoute(CameraScreen(chatTarget: widget.user)));
                 },
                 hintText: S.of(context).search,
               )
@@ -602,16 +637,17 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           supports: supports,
           infosApp: infosApp,
           selectedChats: selectedChats,
-          onNewsletterSelected: _toggleNewsletterSelection,
           onPageChanged: _onPageChanged,
           onItemTapped: onItemTapped,
-          onGroupSelected: (group) {},
-          onUserSelected: (user) => _toggleChatSelection(user),
+          onUserSelected: onChatSelection,
+          onGroupSelected: onGroupSelection,
+          onNewsletterSelected: onNewsletterSelection,
+          onCommunitySelected: onCommunitySelection,
           user: widget.user,
-          selectedNewsletterIds: selectedNewsletterIds,
           selectionType: selectionType,
+          selectedNewsletterIds: selectedNewsletterIds,
           selectedCommunityIds: selectedCommunityIds,
-          onCommunitySelected: onCommunitySelected,
+          selectedGroupIds: selectedGroupIds,
           pinnedChats: pinnedChats,
           mutedChats: mutedChats,
         ),

@@ -26,6 +26,7 @@ class MessageDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        elevation: 0,
         backgroundColor: ChatifyColors.brown,
         title: Text('Данные о сообщении', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         shape: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkGrey.withValues(alpha: 0.5) : ChatifyColors.buttonDisabled, width: 1)),

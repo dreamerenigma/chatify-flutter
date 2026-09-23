@@ -1,6 +1,7 @@
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
@@ -19,6 +20,7 @@ class AnimationScreen extends StatefulWidget {
 
 class _AnimationScreenState extends State<AnimationScreen> {
   final storageBox = GetStorage();
+  late bool isMessageEnabled;
   late bool isEmojiEnabled;
   late bool isStickerEnabled;
   late bool isGifEnabled;
@@ -26,8 +28,9 @@ class _AnimationScreenState extends State<AnimationScreen> {
   @override
   void initState() {
     super.initState();
+    isMessageEnabled = storageBox.read(AppKeys.message) ?? true;
     isEmojiEnabled = storageBox.read(AppKeys.emoji) ?? true;
-    isStickerEnabled = storageBox.read(AppKeys.sticker) ?? false;
+    isStickerEnabled = storageBox.read(AppKeys.sticker) ?? true;
     isGifEnabled = storageBox.read(AppKeys.gif) ?? true;
   }
 
@@ -46,7 +49,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -91,7 +94,17 @@ class _AnimationScreenState extends State<AnimationScreen> {
           Text(S.of(context).animationEnabledEmojisStickersAuto, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: 13, fontWeight: FontWeight.w400, height: 1.2)),
           const SizedBox(height: 20),
           _buildSwitchTile(
-            icon: Icons.emoji_emotions_outlined,
+            icon: SvgPicture.asset(ChatifyVectors.messageOutline, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+            text: S.of(context).messages,
+            switchValue: isEmojiEnabled,
+            onChanged: (val) {
+              setState(() => isEmojiEnabled = val);
+              storageBox.write(AppKeys.emoji, val);
+            },
+          ),
+          const SizedBox(height: 18),
+          _buildSwitchTile(
+            icon: Icon(Icons.emoji_emotions_outlined),
             text: S.of(context).emoticons,
             switchValue: isEmojiEnabled,
             onChanged: (val) {
@@ -101,7 +114,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
           ),
           const SizedBox(height: 18),
           _buildSwitchTile(
-            icon: ChatifyVectors.sticker,
+            icon: SvgPicture.asset(ChatifyVectors.sticker, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
             text: S.of(context).stickers,
             switchValue: isStickerEnabled,
             onChanged: (val) {
@@ -111,7 +124,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
           ),
           const SizedBox(height: 18),
           _buildSwitchTile(
-            icon: FluentIcons.gif_16_regular,
+            icon: Icon(FluentIcons.gif_16_regular),
             text: S.of(context).gif,
             switchValue: isGifEnabled,
             onChanged: (val) {
@@ -124,14 +137,40 @@ class _AnimationScreenState extends State<AnimationScreen> {
     );
   }
 
-  Widget _buildSwitchTile({required dynamic icon, required String text, required bool switchValue, required ValueChanged<bool> onChanged}) {
-    return Row(
-      children: [
-        Icon(icon, size: 24),
-        const SizedBox(width: 12),
-        Expanded(child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd))),
-        CustomSwitch(value: switchValue, onChanged: onChanged, switchWidth: 50, switchHeight: 31, thumbSize: 21, thumbPadding: 5),
-      ],
+  Widget _buildSwitchTile({required Widget icon, required String text, required bool switchValue, required ValueChanged<bool> onChanged}) {
+    bool isPressed = false;
+
+    return StatefulBuilder(
+      builder: (context, setTileState) {
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (_) {
+            setTileState(() {
+              isPressed = true;
+            });
+          },
+          onTapUp: (_) {
+            setTileState(() {
+              isPressed = false;
+            });
+
+            onChanged(!switchValue);
+          },
+          onTapCancel: () {
+            setTileState(() {
+              isPressed = false;
+            });
+          },
+          child: Row(
+            children: [
+              SizedBox(width: 24, height: 24, child: icon),
+              const SizedBox(width: 12),
+              Expanded(child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+              CustomSwitch(value: switchValue, onChanged: onChanged, isPressed: isPressed, switchWidth: 55, switchHeight: 34, thumbSize: 25, thumbPadding: 3),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -80,7 +80,7 @@ class _SupportCardState extends State<SupportCard> {
               if (isWindows) {
                 widget.onSupportSelected(widget.support);
               } else {
-                Navigator.push(context, createPageRoute(SupportInfoScreen()));
+                Navigator.push(context, createPageRoute(SupportInfoScreen(support: widget.support)));
               }
             },
             splashFactory: NoSplash.splashFactory,
@@ -114,7 +114,7 @@ class _SupportCardState extends State<SupportCard> {
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                             ),
-                            child: const Icon(Icons.check, color: ChatifyColors.white, size: 16),
+                            child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
                           ),
                         ),
                     ],

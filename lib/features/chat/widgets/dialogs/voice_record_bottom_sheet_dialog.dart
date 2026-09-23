@@ -4,14 +4,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:just_audio/just_audio.dart';
-import '../../../../api/chat_api.dart';
 import '../../../../core/services/voice/voice_recorder_service.dart';
+import '../../../../domain/entities/chat_target.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../models/user_model.dart';
 import '../controls/voice_recording_control.dart';
 import '../widget/voice_record_track_widget.dart';
 
-void showVoiceRecordBottomSheetDialog(BuildContext context, UserModel user) {
+void showVoiceRecordBottomSheetDialog(BuildContext context, ChatTarget chatTarget,) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -23,9 +22,9 @@ void showVoiceRecordBottomSheetDialog(BuildContext context, UserModel user) {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
     builder: (_) {
       return VoiceRecordBottomSheetContent(
-        user: user,
+        chatTarget: chatTarget,
         onRecordingFinished: (String localPath, int audioDuration) async {
-          await ChatApi.sendVoiceMessage(user, localPath, audioDuration: audioDuration);
+          await chatTarget.sendAudio(File(localPath), 'voice.m4a', audioDuration: audioDuration);
         },
       );
     },
@@ -33,12 +32,12 @@ void showVoiceRecordBottomSheetDialog(BuildContext context, UserModel user) {
 }
 
 class VoiceRecordBottomSheetContent extends StatefulWidget {
-  final UserModel user;
+  final ChatTarget chatTarget;
   final Future<void> Function(String localPath, int audioDuration) onRecordingFinished;
 
   const VoiceRecordBottomSheetContent({
     super.key,
-    required this.user,
+    required this.chatTarget,
     required this.onRecordingFinished,
   });
 

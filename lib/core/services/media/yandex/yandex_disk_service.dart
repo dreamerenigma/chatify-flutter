@@ -7,9 +7,15 @@ class YandexDiskService implements MediaService {
 
   YandexDiskService(this._api);
 
+  final Map<String, String> _urlCache = {};
+
   @override
   Future<String?> uploadFile({required File file, required String path}) async {
-    return await _api.uploadFile(file: file, path: path);
+    final result = await _api.uploadFile(file: file, path: path);
+
+    _urlCache.remove(path);
+
+    return result;
   }
 
   @override
@@ -19,13 +25,31 @@ class YandexDiskService implements MediaService {
 
   @override
   Future<String?> getUrl(String path) async {
+    if (path.isEmpty) {
+      return null;
+    }
 
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
 
+    final cachedUrl = _urlCache[path];
+
+    if (cachedUrl != null && cachedUrl.isNotEmpty) {
+      return cachedUrl;
+    }
+
     final result = await _api.getDownloadUrl(path);
 
+    if (result != null && result.isNotEmpty) {
+      _urlCache[path] = result;
+    }
+
     return result;
+  }
+
+  @override
+  Future<void> clearUrlCache(String path) async {
+    _urlCache.remove(path);
   }
 }

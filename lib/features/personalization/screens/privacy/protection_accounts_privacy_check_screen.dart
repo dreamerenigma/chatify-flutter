@@ -27,14 +27,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).privacyCheck, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
@@ -76,13 +69,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
                         Positioned(
                           right: -40,
                           top: 10,
-                          child: Center(
-                            child: SvgPicture.asset(
-                              ChatifyVectors.accountProtection,
-                              height: 65,
-                              width: 65,
-                            ),
-                          ),
+                          child: Center(child: SvgPicture.asset(ChatifyVectors.accountProtection, height: 65, width: 65)),
                         ),
                       ],
                     ),
@@ -141,7 +128,7 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
           children: [
             if (icon != null) Icon(icon, color: ChatifyColors.darkGrey, size: 26)
             else if (svgIconPath != null)
-              SvgPicture.asset(svgIconPath, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 26, height: 26)
+              SvgPicture.asset(svgIconPath, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))
             else
               const SizedBox(width: 26, height: 26),
             const SizedBox(width: 25),
@@ -149,14 +136,14 @@ class ProtectionAccountsPrivacyCheckScreenState extends State<ProtectionAccounts
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal, height: 1.3)),
+                  Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.3)),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.normal, height: 1.3, color: ChatifyColors.darkGrey)),
+                  Text(subtitle, style: const TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400, height: 1.3)),
                 ],
               ),
             ),
             const SizedBox(width: 35),
-            const Icon(Icons.arrow_forward_rounded, color: ChatifyColors.darkGrey, size: 24),
+            const Icon(Icons.arrow_forward_rounded, size: 24, color: ChatifyColors.darkGrey),
           ],
         ),
       ),

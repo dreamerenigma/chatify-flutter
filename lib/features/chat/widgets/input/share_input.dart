@@ -5,6 +5,7 @@ import 'package:chatify/features/chat/models/message_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -22,7 +23,11 @@ class ShareInput extends StatefulWidget {
   final UserModel user;
   final File? fileToSend;
 
-  const ShareInput({super.key, required this.user, this.fileToSend});
+  const ShareInput({
+    super.key,
+    required this.user,
+    this.fileToSend,
+  });
 
   @override
   ShareInputState createState() => ShareInputState();
@@ -30,13 +35,13 @@ class ShareInput extends StatefulWidget {
 
 class ShareInputState extends State<ShareInput> {
   late final UserModel user;
-  List<MessageModel> list = [];
   final TextEditingController textController = TextEditingController();
   final focusNode = FocusNode();
   final AudioPlayer audioPlayer = AudioPlayer();
   bool showEmoji = false;
   bool isTyping = false;
   bool showEmojiIcon = false;
+  List<MessageModel> list = [];
   File? fileToSend;
 
   @override
@@ -44,7 +49,6 @@ class ShareInputState extends State<ShareInput> {
     super.initState();
     user = widget.user;
     fileToSend = widget.fileToSend;
-    log('fileToSend in ShareInput: ${fileToSend?.path}');
     focusNode.addListener(() {
       setState(() {
         showEmojiIcon = focusNode.hasFocus;
@@ -189,12 +193,17 @@ class ShareInputState extends State<ShareInput> {
           EmojiPicker(
             textEditingController: textController,
             config: Config(
-              height: DeviceUtils.getScreenHeight(context) * 0.35,
+              height: MediaQuery.of(context).size.height * 0.35,
               checkPlatformCompatibility: true,
-              emojiViewConfig: EmojiViewConfig(columns: 8, emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0)),
-              categoryViewConfig: const CategoryViewConfig(),
-              bottomActionBarConfig: const BottomActionBarConfig(),
-              skinToneConfig: const SkinToneConfig(),
+              emojiViewConfig: EmojiViewConfig(
+                columns: 8,
+                emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+                backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+              ),
+              categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
+              bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
+              skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
+              customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
             ),
           ),
         ],
