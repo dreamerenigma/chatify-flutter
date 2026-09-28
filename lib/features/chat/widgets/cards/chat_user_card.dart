@@ -4,7 +4,6 @@ import 'package:chatify/features/chat/models/user_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -55,11 +54,22 @@ class ChatUserCardState extends State<ChatUserCard> {
 
   String _formatDuration(int milliseconds) {
     final duration = Duration(milliseconds: milliseconds);
-
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
 
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  String _getPageText(int count) {
+    if (count % 10 == 1 && count % 100 != 11) {
+      return '$count страница';
+    }
+
+    if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+      return '$count страницы';
+    }
+
+    return '$count страниц';
   }
 
   @override
@@ -155,9 +165,9 @@ class ChatUserCardState extends State<ChatUserCard> {
               }
             },
             splashFactory: NoSplash.splashFactory,
-            splashColor: ChatifyColors.transparent,
-            highlightColor: ChatifyColors.transparent,
-            hoverColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             child: StreamBuilder(
               stream: ChatApi.getLastMessage(widget.user),
               builder: (context, snapshot) {
@@ -222,7 +232,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                                   color: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                                 ),
-                                child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
+                                child: const Icon(Icons.check_rounded, size: 16, color: ChatifyColors.black),
                               ),
                             ),
                         ],
@@ -248,11 +258,15 @@ class ChatUserCardState extends State<ChatUserCard> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                SizedBox(width: 16),
+                                SizedBox(width: 10),
                                 if (message != null) ...[
                                   Text(
                                     DateUtil.getLastMessageTime(context: context, time: message.sent.toDate(), formatType: DateFormatType.numeric),
-                                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
+                                    style: TextStyle(
+                                      color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                                      fontSize: ChatifySizes.fontSizeLm,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ],
                               ],
@@ -265,13 +279,13 @@ class ChatUserCardState extends State<ChatUserCard> {
                                   ? _buildMessagePreview(context, message)
                                   : Text(
                                       widget.user.about,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     )
                               : Text(
                                   widget.user.about,
-                                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm),
+                                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                             ),
@@ -345,7 +359,7 @@ class ChatUserCardState extends State<ChatUserCard> {
             children: [
               if (message.type == MessageType.gif) ...[
                 HeroIcon(HeroIcons.gif, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     S.of(context).gif,
@@ -356,7 +370,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 ),
               ] else if (message.type == MessageType.image) ...[
                 Icon(Icons.image, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     S.of(context).photo,
@@ -367,7 +381,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 ),
               ] else if (message.type == MessageType.video) ...[
                 Icon(Icons.videocam, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     S.of(context).video,
@@ -378,7 +392,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 ),
               ] else if (message.type == MessageType.videoMessage) ...[
                 Icon(Icons.video_camera_front_outlined, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     'Видеозаметка (${message.videoDuration != null ? _formatDuration(message.videoDuration!) : '0:00'})',
@@ -389,7 +403,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 ),
               ] else if (message.type == MessageType.audio) ...[
                 Icon(Icons.audiotrack, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     S.of(context).audio,
@@ -400,7 +414,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 ),
               ] else if (message.type == MessageType.voice) ...[
                 Icon(Icons.mic_rounded, size: 18, color: ChatifyColors.green),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     'Голосовое сообщение (${message.audioDuration != null ? _formatDuration(message.audioDuration!) : '0:00'})',
@@ -410,14 +424,28 @@ class ChatUserCardState extends State<ChatUserCard> {
                   ),
                 ),
               ] else if (message.type == MessageType.document) ...[
-                Icon(FluentIcons.document_16_filled, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                const SizedBox(width: 4),
+                SvgPicture.asset(ChatifyVectors.documentFilled, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, BlendMode.srcIn)),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     message.documentName ?? S.of(context).unknownDocument,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ] else if (message.type == MessageType.event) ...[
+                Icon(Icons.calendar_month_outlined, size: 18, color:context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 2),
+                    child: Text(
+                      'создал(-а) мероприятие "${message.event?.name ?? ''}"',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                    ),
                   ),
                 ),
               ] else ...[
@@ -429,17 +457,12 @@ class ChatUserCardState extends State<ChatUserCard> {
                       children: [
                         WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
-                          child: SvgPicture.asset(
-                            ChatifyVectors.doubleCheck,
-                            width: 18,
-                            height: 18,
-                            colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
-                          ),
+                          child: SvgPicture.asset(ChatifyVectors.doubleCheck, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                         ),
                         const WidgetSpan(child: SizedBox(width: 4)),
                         TextSpan(
                           text: message.msg,
-                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w400, fontSize: ChatifySizes.fontSizeSm),
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),

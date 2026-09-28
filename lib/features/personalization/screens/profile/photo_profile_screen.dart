@@ -9,9 +9,9 @@ import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
+import '../../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
 import '../../controllers/photo_profile_controller.dart';
 import '../../controllers/user_controller.dart';
-import '../../widgets/dialogs/edit_image_bottom_dialog.dart';
 
 class PhotoProfileScreen extends StatefulWidget {
   final String? image;
@@ -135,7 +135,8 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
                 boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
               ),
               child: AppBar(
-                titleSpacing: 10,
+                titleSpacing: 0,
+                elevation: 0,
                 backgroundColor: ChatifyColors.transparent,
                 title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
                 leading: IconButton(
@@ -149,7 +150,13 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
                   IconButton(
                     icon: const Icon(Icons.mode_edit_outlined),
                     onPressed: () {
-                      showEditPhotoBottomSheet(context, controller.onImagePicked, () => deleteProfilePhoto());
+                      showEditImageBottomDialog(
+                        context,
+                        title: 'Картинка профиля',
+                        onImageSelected: (String value) {},
+                        onEmojiSelected: (Color color, String emoji) {},
+                        onDeletePressed: () {},
+                      );
                     },
                   ),
                   IconButton(

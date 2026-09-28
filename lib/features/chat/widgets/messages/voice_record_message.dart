@@ -115,9 +115,7 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
       final url = await APIs.mediaService.getUrl(yandexPath);
 
       if (url == null || url.isEmpty) {
-        throw Exception(
-          'Failed to get Yandex Disk download URL',
-        );
+        throw Exception('Failed to get Yandex Disk download URL');
       }
 
       await _audioPlayer.setUrl(url);
@@ -187,34 +185,42 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
     final duration = Duration(milliseconds: widget.message.audioDuration ?? 0);
 
     return SizedBox(
-      height: 54,
+      height: 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         textDirection: widget.isSender ? TextDirection.rtl : TextDirection.ltr,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-            child: GestureDetector(
-              onTap: _changePlaybackSpeed,
+          GestureDetector(
+            onTap: _changePlaybackSpeed,
+            child: SizedBox(
+              width: 60,
+              height: 50,
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
+                layoutBuilder: (currentChild, previousChildren) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ...previousChildren,
+                      ?currentChild,
+                    ],
+                  );
+                },
                 child: _isPlaying
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Container(
-                        key: const ValueKey('speed'),
-                        width: 60,
-                        height: 33,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
-                        child: Text(
-                          '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
-                        ),
+                  ? Container(
+                      key: const ValueKey('speed'),
+                      width: 60,
+                      height: 33,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
+                      child: Text(
+                        '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                       ),
                     )
                   : SizedBox(
+                      key: const ValueKey('avatar'),
                       width: 50,
                       height: 50,
                       child: Stack(
@@ -225,7 +231,7 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
                             child: Container(
                               width: 50,
                               height: 50,
-                              decoration: const BoxDecoration(shape: BoxShape.circle),
+                              decoration: const BoxDecoration(shape: BoxShape.circle,),
                               clipBehavior: Clip.antiAlias,
                               child: Image.network(
                                 _profileImageUrl ?? '',
@@ -244,11 +250,11 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
                           ),
                         ],
                       ),
-                ),
+                    ),
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,

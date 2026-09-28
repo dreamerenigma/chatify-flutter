@@ -963,7 +963,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "write": MessageLookupByLibrary.simpleMessage("Escribir"),
     "yes": MessageLookupByLibrary.simpleMessage("Sí"),
     "youCreatedMailingList": MessageLookupByLibrary.simpleMessage(
-      "Has creado una lista de correo con ",
+      "Has creado una lista de correo con",
     ),
     "yourChatsCallsConfidential": MessageLookupByLibrary.simpleMessage(
       "Con el cifrado de extremo a extremo, tus mensajes y llamadas privados permanecen entre tú y las personas con las que chateas. Ni siquiera Chatify puede acceder a ellos. Estos incluyen:",

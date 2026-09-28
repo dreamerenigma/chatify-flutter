@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   viewBox="0 0 37.5 37.5"
+   id="file-7"
+   data-name="Flat Color"
+   class="icon flat-color"
+   version="1.1"
+   sodipodi:docname="document_filled.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.55726091"
+     inkscape:cx="263.79026"
+     inkscape:cy="169.57945"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="file-7" />
+  <path
+     id="primary"
+     style="fill:#000000;stroke-width:1.65611"
+     d="m 8.6580665,1.9999695 c -1.8292874,0 -3.3121674,1.4830315 -3.3121674,3.3123189 V 31.80993 c 0,1.829287 1.48288,3.312321 3.3121674,3.312321 H 28.531374 c 1.829287,0 3.312167,-1.483034 3.312167,-3.312321 V 5.4222139 c 0,-2.0774981 -1.670653,-3.4220929 -3.723363,-3.4220929 0,0 -18.6875513,-1.515e-4 -19.4621115,-1.515e-4 z m 3.3121675,9.9366535 h 13.248974 c 0.939869,0 1.413832,0.643119 1.427198,1.296674 0.01381,0.675117 -0.463877,1.361371 -1.427198,1.361371 H 11.970234 c -0.929655,0 -1.392889,-0.718926 -1.363079,-1.408996 0.02751,-0.636812 0.474896,-1.249049 1.363079,-1.249049 z m 0,7.234334 h 13.248974 c 0.941937,0 1.420489,0.684414 1.419572,1.364368 -9.05e-4,0.671149 -0.46894,1.337952 -1.419572,1.337952 H 11.970234 c -0.981633,0 -1.404355,-0.680751 -1.367875,-1.358902 0.0362,-0.67299 0.524644,-1.343418 1.367875,-1.343418 z m 0,6.639175 h 10.218974 c 0.912968,0 1.419932,0.711351 1.387064,1.402121 -0.03102,0.651921 -0.582594,1.285511 -1.387064,1.285511 H 11.970234 c -0.992644,0 -1.396395,-0.663005 -1.403685,-1.330418 -0.0074,-0.676344 0.470713,-1.357214 1.403685,-1.357214 z"
+     sodipodi:nodetypes="ssssssscssssssssssssssssssssss" />
+</svg>

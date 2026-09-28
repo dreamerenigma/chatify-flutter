@@ -469,7 +469,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chatSettings": MessageLookupByLibrary.simpleMessage("Настройки чата"),
     "chatWallpaper": MessageLookupByLibrary.simpleMessage("Обои чата"),
-    "chatifySupport": MessageLookupByLibrary.simpleMessage("Поддержка Chatify"),
+    "chatifySupport": MessageLookupByLibrary.simpleMessage("Chatify Support"),
     "chats": MessageLookupByLibrary.simpleMessage("Чаты"),
     "chatsBackup": MessageLookupByLibrary.simpleMessage(
       "Резервная копия чатов",
@@ -695,7 +695,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "createNewContactOrAddExistingOne": MessageLookupByLibrary.simpleMessage(
       "Создать новый контакт или добавить к существующему?",
     ),
-    "createPoll": MessageLookupByLibrary.simpleMessage("Создать опрос"),
+    "createPoll": MessageLookupByLibrary.simpleMessage("Создание опроса"),
     "createRegisterApp": MessageLookupByLibrary.simpleMessage(
       "Создайте PIN для повторной регистрации вашего номера телефона в Chatify.",
     ),
@@ -1558,7 +1558,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Сообщения могут быть сгенерированы ИИ и могут быть неточными или неуместными. Нажмите, чтобы узнать подробнее.",
     ),
     "messagesCallsProtectedEncryption": MessageLookupByLibrary.simpleMessage(
-      " Сообщения и звонки защищены сквозным шифрованием. Третьи лица включая Chatify, не могут прочитать ваши сообщения или прослушать звонки. Нажмите, чтобы узнать подробнее.",
+      "Сообщения и звонки защищены сквозным шифрованием. Прочитать, прослушать или переслать их могут только участники этого чата. ",
     ),
     "messagesCallsProtectedEndToEndEncryption":
         MessageLookupByLibrary.simpleMessage(
@@ -2760,7 +2760,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Вы создали эту группу",
     ),
     "youCreatedMailingList": MessageLookupByLibrary.simpleMessage(
-      "Вы создали список рассылки с ",
+      "Вы создали список рассылки с",
     ),
     "youForgottenYourSecretCode": MessageLookupByLibrary.simpleMessage(
       "Если вы забыли свой секретный код, его можно сбросить. При этом сообщения, фото и видео в закрытых чатах будут удалены, а сами чаты будут открыты.",

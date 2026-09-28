@@ -71,7 +71,6 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -142,7 +141,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                                           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                           side: BorderSide.none,
                                         ),
-                                        child: Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                                        child: Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                       ),
                                     ),
                                   ),
@@ -174,7 +173,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                   side: BorderSide.none,
                                 ),
-                                child: Text(S.of(context).next, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                                child: Text(S.of(context).next, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                               ),
                             ),
                           ),
@@ -302,6 +301,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                     controller: countryCodeController,
                     focusNode: countryCodeFocusNode,
                     prefixText: '+',
+                    labelText: '',
                     onChanged: (value) {
                       if (value.length <= 3) {
                         updateCountryName(value);
@@ -310,7 +310,7 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                         countryCodeFocusNode.unfocus();
                         FocusScope.of(context).requestFocus(phoneNumberFocusNode);
                       }
-                    }, labelText: '',
+                    },
                   ),
                 ),
               ),
@@ -331,13 +331,13 @@ class EnterPhoneNumberScreenState extends State<EnterPhoneNumberScreen> {
                     keyboardType: TextInputType.phone,
                     style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
                     decoration: InputDecoration(
+                      isDense: true,
                       hintText: S.of(context).phoneNumber,
                       hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                      border: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
-                      enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: ChatifyColors.darkGrey)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 0),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkGrey, width: 1.5)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkGrey, width: 1.5)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1.5)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 16),
                     ),
                   ),
                 ),

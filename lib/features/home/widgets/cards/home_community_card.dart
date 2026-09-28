@@ -85,8 +85,12 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
           ),
           child: InkWell(
+            splashFactory: NoSplash.splashFactory,
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             onTap: () {
               if (widget.isSelectionMode) {
                 widget.onCommunitySelected(widget.community);
@@ -99,10 +103,6 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                 Navigator.push(context, createPageRoute(CommunityInfoScreen(community: widget.community, isValidDate: (date) => widget.isValidDate, fileToSend: widget.fileToSend)));
               }
             },
-            splashFactory: NoSplash.splashFactory,
-            splashColor: ChatifyColors.transparent,
-            highlightColor: ChatifyColors.transparent,
-            hoverColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -148,7 +148,7 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(width: 16),
+                            SizedBox(width: 10),
                             isWindows
                               ? Text(
                                   DateUtil.getCommunityCreationDate(context: context, creationDate: widget.community.createdAt, includeTime: true),
@@ -160,8 +160,6 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.check, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                            const SizedBox(width: 6),
                             Text(
                               'Объявления',
                               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontFamily: 'Roboto'),
@@ -170,11 +168,14 @@ class _HomeCommunityCardState extends State<HomeCommunityCard> {
                             Icon(Icons.play_arrow_rounded, size: 16, color: context.isDarkMode ? ChatifyColors.darkGrey: ChatifyColors.textSecondary),
                             const SizedBox(width: 6),
                             Expanded(
-                              child: Text(
-                                S.of(context).welcomeToCommunity,
-                                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Text(
+                                  S.of(context).welcomeToCommunity,
+                                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
                           ],

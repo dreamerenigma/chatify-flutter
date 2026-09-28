@@ -63,7 +63,7 @@ class Dialogs {
   static Future<void> showProgressBarDialog(
     BuildContext context, {
     required String title,
-    required String message,
+    String? message,
     bool verticalLayout = false,
     double maxWidth = 300,
     double maxHeight = 200,
@@ -72,51 +72,46 @@ class Dialogs {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final color = colorsController.getColor(colorsController.selectedColorScheme.value);
+
         return AlertDialog(
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           content: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                verticalLayout
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: SizedBox(
-                              width: 42,
-                              height: 42,
-                              child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal), textAlign: TextAlign.center),
-                          const SizedBox(height: 16),
-                          Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
-                        ],
-                      ),
-                    )
-                  : Row(
+            child: message == null
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(width: 30, height: 30, child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(color))),
+                    const SizedBox(width: 16),
+                    Flexible(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+                  ],
+                )
+              : verticalLayout
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(child: SizedBox(width: 42, height: 42, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(color)))),
+                        const SizedBox(height: 20),
+                        Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
+                      ],
+                    ),
+                  )
+                : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
-                        width: 42,
-                        height: 42,
-                        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-                      ),
+                      SizedBox(width: 42, height: 42, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(color))),
                       const SizedBox(width: 16),
                       Expanded(child: Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), overflow: TextOverflow.ellipsis)),
                     ],
                   ),
-              ],
-            ),
           ),
         );
       },

@@ -45,7 +45,7 @@ class ActionOption extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 12),
         SizedBox(
           width: labelWidth ?? width,
           child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, height: 1.2), textAlign: TextAlign.center),

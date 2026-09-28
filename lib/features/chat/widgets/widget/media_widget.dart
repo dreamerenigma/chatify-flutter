@@ -5,8 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-
 import 'package:gif_view/gif_view.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:http/http.dart' as http;
@@ -20,16 +18,16 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helper/gif_loading_indicator.dart';
 import '../../../../api/apis.dart';
 import '../../../../core/enums/message_type.dart';
-import '../../../../data/file_extensions_data.dart';
+import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../routes/custom_page_route.dart';
-import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/formatters/formatter.dart';
+import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../video_player/widgets/video_player_widget.dart';
 import '../../models/message_model.dart';
 import '../audio/audio_widget.dart';
 import '../../screens/full_screen_image_screen.dart';
 import '../image/full_screen_image_widget.dart';
+import 'document_message_widget.dart';
 
 class MediaWidget extends StatefulWidget {
   final MessageModel message;
@@ -57,13 +55,18 @@ class MediaWidgetState extends State<MediaWidget> {
   bool isGifPlaying = false;
   bool isDownloading = false;
   bool _isImageLoading = true;
+  bool _isAudioLoading = true;
   Map<String, String> _resolvedImageUrls = {};
+  String? _resolvedAudioUrl;
   Timer? _gifTimer;
 
   @override
   void initState() {
     super.initState();
     _resolveImageUrls();
+    if (widget.message.type == MessageType.audio) {
+      _resolveAudioUrl();
+    }
   }
 
   @override
@@ -79,8 +82,15 @@ class MediaWidgetState extends State<MediaWidget> {
 
       await launchUrl(Uri.parse(url));
     } catch (e) {
-      logger.e('Ошибка при открытии документа: $e');
-      Dialogs.showSnackbar(context, 'Не удалось открыть документ.');
+      log('Ошибка при открытии документа: $e');
+      CustomIconSnackBar.showAnimatedSnackBar(
+        context,
+        'Не удалось открыть документ',
+        icon: SvgPicture.asset(ChatifyVectors.closeCircle, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+        iconColor: ChatifyColors.danger,
+        position: SnackBarPositionType.bottom,
+        offset: 40
+      );
     }
   }
 
@@ -90,11 +100,11 @@ class MediaWidgetState extends State<MediaWidget> {
     });
 
     try {
-      logger.d('Starting document download...');
+      log('Starting document download...');
       final response = await http.get(Uri.parse(widget.message.msg));
 
       if (response.statusCode == 200) {
-        logger.d('Download successful');
+        log('Download successful');
 
         if (kIsWeb) {
           final blob = html.Blob([response.bodyBytes]);
@@ -103,22 +113,22 @@ class MediaWidgetState extends State<MediaWidget> {
           html.AnchorElement(href: url)..download = widget.message.documentName ?? 'document'..click();
           html.Url.revokeObjectUrl(url);
 
-          logger.d('Web download triggered');
+          log('Web download triggered');
         } else {
           final directory = await getExternalStorageDirectory();
           final filePath = '${directory!.path}/${widget.message.documentName ?? 'document'}';
           final file = File(filePath);
 
           await file.writeAsBytes(response.bodyBytes);
-          logger.d('File saved to $filePath');
+          log('File saved to $filePath');
           Dialogs.showSnackbar(context, S.of(context).documentSuccessfullySaved);
         }
       } else {
-        logger.d('Failed to download document, status code: ${response.statusCode}');
+        log('Failed to download document, status code: ${response.statusCode}');
         Dialogs.showSnackbar(context, S.of(context).failedDownloadDocument);
       }
     } catch (e) {
-      logger.d('Error downloading document: $e');
+      log('Error downloading document: $e');
       Dialogs.showSnackbar(context, 'Error: $e');
     } finally {
       setState(() {
@@ -183,6 +193,29 @@ class MediaWidgetState extends State<MediaWidget> {
     }
   }
 
+  Future<void> _resolveAudioUrl() async {
+    try {
+      final path = widget.message.msg.trim();
+      final url = await APIs.getMediaUrl(path);
+
+      if (!mounted) return;
+
+      setState(() {
+        _resolvedAudioUrl = url;
+        _isAudioLoading = false;
+      });
+    } catch (e, st) {
+      log('MEDIA WIDGET: failed to resolve audio URL: $e');
+      log('MEDIA WIDGET: stack = $st');
+
+      if (!mounted) return;
+
+      setState(() {
+        _isAudioLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (widget.message.type) {
@@ -195,9 +228,23 @@ class MediaWidgetState extends State<MediaWidget> {
 
         return VideoPlayerWidget(videoUrls: urls, message: widget.message);
       case MessageType.audio:
-        return AudioWidget(audioUrl: widget.message.msg, documentName: widget.message.documentName ?? 'Unknown', fileSize: widget.message.fileSize ?? 'Unknown size', isSender: widget.isSender);
+        if (_isAudioLoading) {
+          return SizedBox(width: 300, height: 100, child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))));
+        }
+
+        if (_resolvedAudioUrl == null || _resolvedAudioUrl!.isEmpty) {
+          return const SizedBox(width: 300, height: 100, child: Center(child: Icon(Icons.error_outline)));
+        }
+
+        return AudioWidget(
+          audioUrl: _resolvedAudioUrl!,
+          documentName: widget.message.documentName ?? 'Unknown',
+          fileSize: widget.message.fileSize ?? 'Unknown size',
+          isSender: widget.isSender,
+          audioDuration: widget.message.audioDuration,
+        );
       case MessageType.document:
-        return _buildDocumentWidget(context, isSender: widget.isSender);
+        return DocumentMessageWidget(isSender: widget.isSender, message: widget.message);
       default:
         return const SizedBox.shrink();
     }
@@ -294,133 +341,5 @@ class MediaWidgetState extends State<MediaWidget> {
         ),
       ),
     );
-  }
-
-  Widget _buildDocumentWidget(BuildContext context, {required bool isSender}) {
-    final fileName = widget.message.documentName ?? 'Unknown';
-    final fileExtension = fileName.split('.').last.toLowerCase();
-    final fileTypeDescription = FileExtensionsData.fileTypeDescriptions[fileExtension] ?? fileExtension.toUpperCase();
-    final fileSizeValue = widget.message.fileSize ?? '';
-    final cleanedFileSize = Formatter.cleanFileSizeString(fileSizeValue);
-    double fileSizeBytes = double.tryParse(cleanedFileSize) ?? 0;
-    final fileSize = fileSizeBytes > 0 ? Formatter.formatFileSize(fileSizeBytes) : 'Unknown size';
-    final backgroundColor = isSender ? (context.isDarkMode ? ChatifyColors.greenMessageBorderLight : ChatifyColors.greenMessageLight) : (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.white);
-    final borderColor = isSender ? (context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.lightGrey);
-    final dividerColor = isSender ? (context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.lightGrey);
-    final buttonColor = isSender ? (context.isDarkMode ? ChatifyColors.greenMessageButton : ChatifyColors.greenMessageBorder) : (context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.6 * 255).toInt()) : ChatifyColors.lightGrey);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 0))],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 10),
-              child: Row(
-                children: [
-                  getFileIconWidget(fileExtension),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          fileName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w300, fontFamily: 'Roboto', height: 1.2),
-                        ),
-                        const SizedBox(height: 2),
-                        Text('$fileSize, $fileTypeDescription', style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontFamily: 'Roboto', fontWeight: FontWeight.w300, height: 1.2)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 0, thickness: 1, color: dividerColor),
-            Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-              child: isSender
-                ? SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: isDownloading ? null : () => onDownload(),
-                      label: const Text('Скачать'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor,
-                        foregroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        side: BorderSide.none,
-                        textStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-                      ),
-                    ),
-                  )
-                : Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: isDownloading ? null : () => onOpenDocument(),
-                        label: const Text('Открыть'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonColor,
-                          foregroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          textStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-                          side: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: isDownloading ? null : () => onDownload(),
-                        label: Text('Сохранить как', overflow: TextOverflow.ellipsis),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonColor,
-                          foregroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                          textStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm),
-                          side: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget getFileIconWidget(String fileExtension) {
-    switch (fileExtension.toLowerCase()) {
-      case 'pdf':
-        return SvgPicture.asset(ChatifyVectors.filePdf, width: 28, height: 28);
-      case 'doc':
-      case 'docx':
-        return SvgPicture.asset(ChatifyVectors.fileDoc, width: 28, height: 28);
-      case 'xls':
-      case 'xlsx':
-        return SvgPicture.asset(ChatifyVectors.fileXls, width: 28, height: 28);
-      case 'zip':
-      case 'rar':
-        return Icon(Icons.archive, color: ChatifyColors.orange);
-      case 'apk':
-        return Icon(Icons.android, color: ChatifyColors.green);
-      default:
-        return Icon(Icons.insert_drive_file, color: ChatifyColors.grey);
-    }
   }
 }

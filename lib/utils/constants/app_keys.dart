@@ -7,4 +7,5 @@ class AppKeys {
   static const gif = 'animation_gif';
   static const String latestStatusesExpandedKey = 'latest_statuses_expanded';
   static const channel = MethodChannel('com.inputstudios.chatify/passkey');
+  static const wallpaperKey = 'backgroundImagePath';
 }

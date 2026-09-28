@@ -3,7 +3,7 @@ import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import 'custom_radio_list_tile.dart';
+import '../../../utils/widgets/tiles/custom_radio_list_tile.dart';
 import 'light_dialog.dart';
 
 Future<void> showColorSchemeSelectionDialog(BuildContext context) async {

@@ -6,7 +6,7 @@ import '../../../core/enums/font_mode_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
-import '../widgets/dialogs/custom_radio_list_tile.dart';
+import '../../utils/widgets/tiles/custom_radio_list_tile.dart';
 import '../widgets/dialogs/light_dialog.dart';
 
 class FontsController extends GetxController {

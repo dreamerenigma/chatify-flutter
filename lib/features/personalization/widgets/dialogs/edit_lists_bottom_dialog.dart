@@ -29,7 +29,7 @@ void showEditListsBottomSheet(BuildContext context) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(icon: const Icon(Icons.close, size: 26), onPressed: () => Navigator.pop(context)),
-                Text(S.of(context).editLists, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.normal)),
+                Text(S.of(context).editLists, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                 IconButton(
                   icon: const Icon(Icons.check, size: 26),
                   onPressed: () => {
@@ -44,7 +44,7 @@ void showEditListsBottomSheet(BuildContext context) {
               child: Text(
                 S.of(context).editListsFiltersChangeDisplay,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
+                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.w400),
               ),
             ),
             const SizedBox(height: 30),
@@ -53,7 +53,7 @@ void showEditListsBottomSheet(BuildContext context) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(S.of(context).yourLists, style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.normal)),
+                  Text(S.of(context).yourLists, style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,9 +61,9 @@ void showEditListsBottomSheet(BuildContext context) {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(S.of(context).unread, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                          Text(S.of(context).unread, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                           const SizedBox(height: 8),
-                          Text(S.of(context).preset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                          Text(S.of(context).preset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.w400)),
                         ],
                       ),
                       const Row(
@@ -79,7 +79,7 @@ void showEditListsBottomSheet(BuildContext context) {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                      Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                       const Icon(AkarIcons.two_line_horizontal, size: 24, color: ChatifyColors.buttonSecondary),
                     ],
                   ),
@@ -90,9 +90,9 @@ void showEditListsBottomSheet(BuildContext context) {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                          Text('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                           const SizedBox(height: 8),
-                          Text(S.of(context).preset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                          Text(S.of(context).preset, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.w400)),
                         ],
                       ),
                       const Row(
@@ -108,7 +108,7 @@ void showEditListsBottomSheet(BuildContext context) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(S.of(context).availablePresets, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+                      Text(S.of(context).availablePresets, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.w400)),
                       const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),

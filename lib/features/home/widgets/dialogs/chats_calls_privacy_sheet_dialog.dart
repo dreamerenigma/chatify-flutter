@@ -14,6 +14,7 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    showDragHandle: false,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
     builder: (_) {
@@ -21,34 +22,37 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 14),
+            Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 14),
             Align(
-              alignment: Alignment.topLeft,
+              alignment: Alignment.topRight,
               child: IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(Icons.close_rounded, size: 25),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
             ),
-            Center(child: SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.scheduledCalls), width: 100, height: 100)),
+            Center(child: SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.strongbox), width: 100, height: 100)),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-              child: Center(child: Text(headerText, style: TextStyle(fontSize: ChatifySizes.fontSizeBg), textAlign: TextAlign.center)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Center(child: Text(headerText, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400), textAlign: TextAlign.center)),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Center(
-                child: Text(titleText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5), textAlign: TextAlign.center),
+                child: Text(titleText, style: TextStyle(fontSize: 15, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400, height: 1.5), textAlign: TextAlign.center),
               ),
             ),
             const SizedBox(height: 16),
-            _buildIconTextRow(icon: Icons.message_outlined, text: S.of(context).textVoiceMessages),
-            _buildIconTextRow(icon: Icons.call_outlined, text: S.of(context).audioVideoCalls),
-            _buildIconTextRow(icon: Icons.attach_file, text: S.of(context).photosVideosDocuments),
-            _buildIconTextRow(icon: Icons.location_on_outlined, text: S.of(context).yourLocation),
-            _buildIconTextRow(icon: Icons.update, text: S.of(context).statusUpdates, isSvg: true),
+            _buildIconTextRow(context, svgAsset: ChatifyVectors.messageOutline, text: S.of(context).textVoiceMessages),
+            _buildIconTextRow(context, icon: Icons.call_outlined, text: S.of(context).audioVideoCalls),
+            _buildIconTextRow(context, icon: Icons.attach_file, text: S.of(context).photosVideosDocuments),
+            _buildIconTextRow(context, icon: Icons.location_on_outlined, text: S.of(context).yourLocation),
+            _buildIconTextRow(context, svgAsset: ChatifyVectors.status, text: S.of(context).statusUpdates, isSvg: true),
             const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -76,19 +80,24 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
   );
 }
 
-Widget _buildIconTextRow({required IconData icon, required String text, bool isSvg = false}) {
+Widget _buildIconTextRow(BuildContext context, {IconData? icon, String? svgAsset, double iconSize = 24, required String text, bool isSvg = false}) {
+  Widget leadingIcon;
+  if (svgAsset != null) {
+    leadingIcon = SvgPicture.asset(svgAsset, width: iconSize, height: iconSize, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, BlendMode.srcIn));
+  } else if (icon != null) {
+    leadingIcon = Icon(icon, size: iconSize, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black);
+  } else {
+    leadingIcon = const SizedBox.shrink();
+  }
+
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        isSvg
-          ? SvgPicture.asset(ChatifyVectors.status, width: 24, height: 24, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn))
-          : Icon(icon, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 24),
+        leadingIcon,
         const SizedBox(width: 16),
-        Expanded(
-          child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500, color: ChatifyColors.darkGrey)),
-        ),
+        Expanded(child: Text(text, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400))),
       ],
     ),
   );

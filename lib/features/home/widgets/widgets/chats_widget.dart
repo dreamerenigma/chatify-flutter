@@ -405,7 +405,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                                 selectedUser = null;
                               });
                               widget.onInfoAppSelected(infoApp);
-                            },
+                            }, support: widget.supports.first,
                           ),
                         ),
                         SizedBox(height: 8),

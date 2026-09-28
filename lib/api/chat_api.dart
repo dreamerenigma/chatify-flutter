@@ -10,8 +10,10 @@ import '../core/enums/call_type.dart';
 import '../core/enums/message_type.dart';
 import '../core/services/media/media_service.dart';
 import '../core/services/media/yandex/yandex_disk_paths.dart';
+import '../features/chat/models/event_model.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/chat/models/user_model.dart';
+import '../features/survey/models/survey_model.dart';
 import 'apis.dart';
 
 class ChatApi {
@@ -40,43 +42,49 @@ class ChatApi {
   }
 
   /// -- Sending message.
-  static Future<void> sendMessage(UserModel chatUser, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
-    final now = Timestamp.now();
-    final messageId = DateTime.now().millisecondsSinceEpoch.toString();
-    final conversationId = getConversationId(chatUser.id);
+  static Future<void> sendMessage(
+    UserModel chatUser,
+    String msg,
+    MessageType type, {
+    String? fileName,
+    String? fileSize,
+    String? imageUrl,
+    int? videoDuration,
+    int? audioDuration
+  }) async {
+    try {
+      final now = Timestamp.now();
+      final messageId = DateTime.now().millisecondsSinceEpoch.toString();
+      final conversationId = getConversationId(chatUser.id);
 
-    final message = MessageModel(
-      toId: chatUser.id,
-      msg: msg,
-      read: user.uid == chatUser.id ? now.seconds.toString() : '',
-      type: type,
-      fromId: user.uid,
-      sent: now,
-      documentName: fileName,
-      fileSize: fileSize,
-      deletedBy: [],
-      reactions: {},
-      deletedAt: null,
-      id: '',
-    );
+      final message = MessageModel(
+        toId: chatUser.id,
+        msg: msg,
+        read: user.uid == chatUser.id ? now.seconds.toString() : '',
+        type: type,
+        fromId: user.uid,
+        sent: now,
+        documentName: fileName,
+        fileSize: fileSize,
+        audioDuration: audioDuration,
+        videoDuration: videoDuration,
+        deletedBy: [],
+        reactions: {},
+        deletedAt: null,
+        id: '',
+      );
 
-    final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
+      final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
 
-    log('SEND MESSAGE: current uid = ${user.uid}');
-    log('SEND MESSAGE: chat user uid = ${chatUser.id}');
+      await ref.set(message.toJson());
+      await firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id).set({'lastMessageTime': messageId}, SetOptions(merge: true));
+      await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': messageId}, SetOptions(merge: true));
+      await APIs.sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
 
-    log('SEND MESSAGE: writing message...');
-    await ref.set(message.toJson());
-    log('SEND MESSAGE: message written');
-
-    log('SEND MESSAGE: writing my_users for current user...');
-    await firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id).set({'lastMessageTime': messageId}, SetOptions(merge: true));
-    log('SEND MESSAGE: current user my_users written');
-
-    log('SEND MESSAGE: writing my_users for chat user...');
-    await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': messageId}, SetOptions(merge: true));
-    log('SEND MESSAGE: chat user my_users written');
-    await APIs.sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
+    } catch (e, stackTrace) {
+      log('SEND MESSAGE ERROR: $e', stackTrace: stackTrace);
+      rethrow;
+    }
   }
 
   /// -- Mark self messages as read.
@@ -108,6 +116,8 @@ class ChatApi {
 
         updated++;
       }
+
+      log('MIGRATION SELF READ: ''updated=$updated, skipped=$skipped, total=${messagesSnapshot.docs.length}');
     } catch (e, stackTrace) {
       log('MIGRATION SELF READ ERROR: $e', stackTrace: stackTrace);
       rethrow;
@@ -316,10 +326,6 @@ class ChatApi {
     final path = 'Chats/$chatId/messages/images/$fileName';
 
     try {
-      log('SEND IMAGE: started');
-      log('SEND IMAGE: path = $path');
-      log('SEND IMAGE: file = ${file.path}');
-
       final imagePath = await mediaService.uploadFile(file: file, path: path);
 
       if (imagePath == null) {
@@ -327,11 +333,7 @@ class ChatApi {
         return;
       }
 
-      log('SEND IMAGE: uploaded = $imagePath');
-
       await sendMessage(chatUser, imagePath, isGif ? MessageType.gif : MessageType.image);
-
-      log('SEND IMAGE: message sent');
     } catch (e, st) {
       log('SEND IMAGE: error = $e');
       log('SEND IMAGE: stack = $st');
@@ -339,71 +341,109 @@ class ChatApi {
   }
 
   /// -- Send chat video.
-  static Future<void> sendChatVideo(UserModel chatUser, File file) async {
+  static Future<bool> sendChatVideo(UserModel chatUser, File file, {String? fileName, String? fileSize, int? videoDuration}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final chatId = getConversationId(chatUser.id);
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
-
-    final path = 'Chats/$chatId/messages/videos/$fileName';
+    final generatedFileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final path = 'Chats/$chatId/messages/videos/$generatedFileName';
 
     try {
       log('SEND VIDEO: started');
       log('SEND VIDEO: path = $path');
       log('SEND VIDEO: file = ${file.path}');
+      log('SEND VIDEO: size = ''${await file.length()}');
+      log('SEND VIDEO: duration = ''$videoDuration');
 
-      final videoPath = await mediaService.uploadFile(file: file, path: path);
+      final uploadUrl = await mediaService.createUploadUrl(path: path);
 
-      if (videoPath == null) {
-        log('SEND VIDEO: upload returned null');
-        return;
+      if (uploadUrl == null || uploadUrl.isEmpty) {
+        log('SEND VIDEO: failed to get upload URL');
+
+        return false;
       }
 
-      log('SEND VIDEO: uploaded = $videoPath');
+      log('SEND VIDEO: direct upload URL received');
 
-      await sendMessage(chatUser, videoPath, MessageType.video);
+      final uploaded = await mediaService.uploadLargeFile(file: file, uploadUrl: uploadUrl, contentType: 'video/mp4');
+
+      if (!uploaded) {
+        log('SEND VIDEO: direct upload failed');
+
+        return false;
+      }
+
+      log('SEND VIDEO: uploaded = $path');
+
+      await sendMessage(
+        chatUser,
+        path,
+        MessageType.video,
+        fileName:
+        fileName ?? generatedFileName,
+        fileSize: fileSize,
+        videoDuration: videoDuration,
+      );
 
       log('SEND VIDEO: message sent');
+
+      return true;
     } catch (e, st) {
-      log('SEND VIDEO: error = $e');
-      log('SEND VIDEO: stack = $st');
+      log('SEND VIDEO: error = $e', stackTrace: st);
+
+      return false;
     }
   }
 
-  /// -- Send chat audio.
+  /// --- Send chat audio.
   static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName, {int? audioDuration}) async {
-    final ext = file.path.split('.').last.toLowerCase();
-    final ref = storage.ref().child('audio/${getConversationId(chatUser.id)}/$fileName');
-    final contentType = 'audio/$ext';
-
-    await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
-      log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
-
-      final audioUrl = await ref.getDownloadURL();
-      await sendMessage(chatUser, audioUrl, MessageType.audio);
-    });
-  }
-
-  /// -- Send chat document.
-  static Future<void> sendChatDocument(UserModel chatUser, File file) async {
-    final ext = file.path.split('.').last.toLowerCase();
-    final ref = FirebaseStorage.instance.ref().child('documents/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-    final contentType = APIs.getContentType(ext);
+    final chatId = getConversationId(chatUser.id);
+    final path = 'Chats/$chatId/messages/audio/$fileName';
 
     try {
-      final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
-      await uploadTask.whenComplete(() async {
-        final documentUrl = await ref.getDownloadURL();
+      log('SEND AUDIO: audioDuration = $audioDuration');
 
-        await sendMessage(chatUser, documentUrl, MessageType.document, fileName: file.path.split('/').last);
-      });
-    } on FirebaseException catch (e) {
-      if (e.code == 'object-not-found') {
-        log('File not found at the specified reference.');
-      } else {
-        log('Unknown error occurred.');
+      final fileSize = await file.length();
+      final audioPath = await mediaService.uploadFile(file: file, path: path);
+
+      if (audioPath == null) {
+        log('SEND AUDIO: upload returned null');
+        return;
       }
-    } catch (e) {
-      log('An unexpected error occurred: $e');
+
+      await sendMessage(chatUser, audioPath, MessageType.audio, fileName: fileName, fileSize: fileSize.toString(), audioDuration: audioDuration);
+
+      log('SEND AUDIO: uploaded successfully');
+    } catch (e, st) {
+      log('SEND AUDIO: error = $e');
+      log('SEND AUDIO: stack = $st');
+    }
+  }
+
+  /// --- Send chat document.
+  static Future<void> sendChatDocument(UserModel chatUser, File file) async {
+    final ext = file.path.split('.').last.toLowerCase();
+    final chatId = getConversationId(chatUser.id);
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final path = 'Chats/$chatId/messages/documents/$fileName';
+
+    try {
+      final fileSize = await file.length();
+
+      log('SEND DOCUMENT: file size = $fileSize bytes');
+
+      final documentPath = await mediaService.uploadFile(file: file, path: path);
+
+      if (documentPath == null) {
+        log('SEND DOCUMENT: upload returned null');
+        return;
+      }
+
+      await sendMessage(chatUser, documentPath, MessageType.document, fileName: file.path.split('/').last, fileSize: fileSize.toString());
+
+      log('SEND DOCUMENT: uploaded successfully');
+    } catch (e, st) {
+      log('SEND DOCUMENT: error = $e');
+      log('SEND DOCUMENT: stack = $st');
     }
   }
 
@@ -414,7 +454,8 @@ class ChatApi {
 
   /// -- Delete message.
   static Future<void> deleteMessage(MessageModel message, {bool deleteForEveryone = false}) async {
-    final otherUserId = message.fromId == user.uid ? message.toId : message.fromId;
+    final currentUid = user.uid;
+    final otherUserId = message.fromId == currentUid ? message.toId : message.fromId;
     final conversationId = getConversationId(otherUserId);
     final docRef = firestore.collection('Chats').doc(conversationId).collection('messages').doc(message.id);
 
@@ -426,14 +467,21 @@ class ChatApi {
       }
 
       if (deleteForEveryone) {
-        if (message.fromId != user.uid) {
+        if (message.fromId != currentUid) {
           throw Exception('Only sender can delete message for everyone');
         }
 
         await docRef.update({'deletedForEveryone': true});
-      } else {
-        await docRef.update({'deletedBy': FieldValue.arrayUnion([user.uid])});
+
+        return;
       }
+
+      if (message.fromId == currentUid) {
+        await docRef.delete();
+        return;
+      }
+
+      await docRef.update({'deletedBy': FieldValue.arrayUnion([currentUid])});
     } catch (e, stackTrace) {
       log('$stackTrace');
       rethrow;
@@ -599,5 +647,125 @@ class ChatApi {
   /// -- Get archived chat users count.
   static Stream<int> getArchivedUsersCount(String userId) {
     return firestore.collection('Users').doc(userId).collection('my_users').where('archived', isEqualTo: true).snapshots().map((snapshot) => snapshot.docs.length);
+  }
+
+  /// -- Create survey message.
+  static Future<void> createSurvey({required UserModel chatUser, required String question, required List<String> options, required bool allowMultipleAnswers}) async {
+    final now = Timestamp.now();
+    final messageId = DateTime.now().millisecondsSinceEpoch.toString();
+    final conversationId = getConversationId(chatUser.id);
+    final survey = SurveyModel(question: question, options: options, allowMultipleAnswers: allowMultipleAnswers);
+
+    final message = MessageModel(
+      id: messageId,
+      toId: chatUser.id,
+      msg: question,
+      read: '',
+      fromId: user.uid,
+      sent: now,
+      type: MessageType.survey,
+      survey: survey,
+      deletedBy: [],
+      reactions: {},
+      deletedAt: null,
+    );
+
+    final messageRef = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
+
+    await messageRef.set(message.toJson());
+
+    final myUserRef = firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id);
+
+    await myUserRef.set({'lastMessage': question, 'lastMessageTime': messageId}, SetOptions(merge: true));
+    await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': messageId}, SetOptions(merge: true));
+  }
+
+  /// -- Vote for survey option.
+  static Future<void> voteForOption({required String conversationId, required String messageId, required String option, required bool allowMultipleAnswers}) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      log('VOTE: user is null');
+      return;
+    }
+
+    final voteRef = FirebaseFirestore.instance.collection('Chats').doc(conversationId).collection('messages').doc(messageId).collection('votes').doc(userId);
+    final currentVote = await voteRef.get();
+
+    List<String> selectedOptions = [];
+
+    if (currentVote.exists) {
+      final data = currentVote.data();
+
+      selectedOptions = List<String>.from(data?['selectedOptions'] ?? []);
+    }
+
+    if (allowMultipleAnswers) {
+      if (selectedOptions.contains(option)) {
+        selectedOptions.remove(option);
+      } else {
+        selectedOptions.add(option);
+      }
+    } else {
+      selectedOptions = [option];
+    }
+
+    if (selectedOptions.isEmpty) {
+      await voteRef.delete();
+
+      return;
+    }
+
+    await voteRef.set({'selectedOptions': selectedOptions, 'votedAt': FieldValue.serverTimestamp()});
+  }
+
+  /// -- Create event message.
+  static Future<void> createEvent({
+    required UserModel chatUser,
+    required String name,
+    required String description,
+    required Timestamp startEvent,
+    required Timestamp endEvent,
+    required String location,
+    required String callType,
+  }) async {
+    final now = Timestamp.now();
+    final messageId = DateTime.now().millisecondsSinceEpoch.toString();
+    final conversationId = getConversationId(chatUser.id);
+
+    final event = EventModel(
+      name: name,
+      description: description,
+      startEvent: startEvent,
+      endEvent: endEvent,
+      location: location,
+      callType: callType,
+      ownerId: user.uid,
+      createdAt: now,
+    );
+
+    final message = MessageModel(
+      id: messageId,
+      toId: chatUser.id,
+      msg: name,
+      read: user.uid == chatUser.id ? now.seconds.toString() : '',
+      fromId: user.uid,
+      sent: now,
+      type: MessageType.event,
+      event: event,
+      deletedBy: [],
+      reactions: {},
+      deletedAt: null,
+    );
+
+    final messageRef = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
+
+    await messageRef.set(message.toJson());
+
+    final myUserRef = firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id);
+
+    await myUserRef.set({'lastMessage': name, 'lastMessageTime': messageId}, SetOptions(merge: true));
+
+    await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': messageId}, SetOptions(merge: true));
   }
 }

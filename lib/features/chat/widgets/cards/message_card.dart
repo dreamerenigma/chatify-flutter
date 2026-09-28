@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -95,9 +96,12 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
     final Color selectionColor = context.isDarkMode ? ChatifyColors.greenMessageButton.withAlpha((0.45 * 255).toInt()) : ChatifyColors.lightGrey.withAlpha((0.7 * 255).toInt());
     final reactions = widget.message.reactions;
     final hasReaction = reactions.isNotEmpty;
+    final bool isMe = APIs.user.uid == widget.message.fromId;
+    final bool isDeletedByMe = widget.message.deletedBy.contains(APIs.user.uid);
 
-    bool isMe = APIs.user.uid == widget.message.fromId;
-    bool isDeletedByMe = widget.message.deletedBy.contains(APIs.user.uid);
+    if (isDeletedByMe && isMe) {
+      return const SizedBox.shrink();
+    }
 
     if (isDeletedByMe) {
       final deletedTime = widget.message.deletedAt ?? widget.message.sent.toDate();
@@ -256,7 +260,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
               Transform.translate(
                 offset: Offset(_swipeOffset, 0),
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0,),
+                  padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0),
                   child: Align(
                     alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                     child: widget.message.type == MessageType.videoMessage
@@ -265,7 +269,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                           child: ConstrainedBox(
                             constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (widget.message.type == MessageType.call ? 0.85 : 0.8)),
                             child: isMe
-                              ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction)
+                              ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, conversationId: ChatApi.getConversationId(widget.user.id), user: APIs.me)
                               : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, user: widget.user),
                           ),
                         ),
@@ -294,9 +298,10 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                           constraints: const BoxConstraints(minWidth: 32, minHeight: 26),
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight,
-                            border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightBlue, width: 1),
+                            color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.white,
+                            border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.grey, width: 1),
                             borderRadius: BorderRadius.circular(14),
+                            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3,offset: const Offset(0, 1))],
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -307,7 +312,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                               return Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(emoji, style: const TextStyle(fontSize: 15)),
+                                  Text(emoji, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
                                   if (count > 1) ...[
                                     const SizedBox(width: 4),
                                     Text(count.toString(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),

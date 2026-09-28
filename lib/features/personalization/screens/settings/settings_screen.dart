@@ -241,8 +241,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     ],
                     Stack(
                       children: [
-                        Positioned.fill(child: Image.asset(ChatifyImages.chatBackgroundDark, fit: BoxFit.cover)),
-                        Positioned.fill(child: Container(color: ChatifyColors.black.withAlpha((0.35 * 255).toInt()))),
+                        Positioned.fill(child: Image.asset(context.isDarkMode ? ChatifyImages.chatBackgroundDark : ChatifyImages.chatBackgroundLight, fit: BoxFit.cover)),
                         Material(
                           color: ChatifyColors.transparent,
                           child: InkWell(

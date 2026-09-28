@@ -7,19 +7,23 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/helper/date_util.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../home/widgets/dialogs/bot_info_dialog.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/info_app_model.dart';
+import '../../models/support_model.dart';
 import '../../screens/info_app_chat_screen.dart';
 
 class InfoAppCard extends StatefulWidget {
   final InfoAppModel infoApp;
+  final SupportAppModel support;
   final ValueChanged<InfoAppModel> onInfoAppSelected;
   final bool isSelected;
 
   const InfoAppCard({
     super.key,
     required this.infoApp,
+    required this.support,
     required this.isSelected,
     required this.onInfoAppSelected,
   });
@@ -74,8 +78,12 @@ class _InfoAppCardState extends State<InfoAppCard> {
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
           ),
           child: InkWell(
+            splashFactory: NoSplash.splashFactory,
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             onTap: () {
               if (isWindows) {
                 widget.onInfoAppSelected(widget.infoApp);
@@ -83,10 +91,6 @@ class _InfoAppCardState extends State<InfoAppCard> {
                 Navigator.push(context, createPageRoute(InfoAppChatScreen(infoApp: widget.infoApp)));
               }
             },
-            splashFactory: NoSplash.splashFactory,
-            splashColor: ChatifyColors.transparent,
-            highlightColor: ChatifyColors.transparent,
-            hoverColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -96,11 +100,17 @@ class _InfoAppCardState extends State<InfoAppCard> {
                     alignment: Alignment.centerRight,
                     clipBehavior: Clip.none,
                     children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        child: SvgPicture.asset(ChatifyVectors.logoApp, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          showDialog(context: context, builder: (_) => BotInfoDialog(infoApp: widget.infoApp, support: null, isInfoApp: true, title: 'Chatify'));
+                        },
+                        child: CircleAvatar(
+                          radius: 24,
+                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          child: SvgPicture.asset(ChatifyVectors.logoApp, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                        ),
                       ),
                       if (!isWindows && isSelected)
                         Positioned(

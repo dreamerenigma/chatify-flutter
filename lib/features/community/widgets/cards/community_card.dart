@@ -135,7 +135,7 @@ class _CommunityCardState extends State<CommunityCard> {
                       ),
                       Text(
                         widget.community.description.isNotEmpty ? widget.community.description : S.of(context).noDescription,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm),
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),

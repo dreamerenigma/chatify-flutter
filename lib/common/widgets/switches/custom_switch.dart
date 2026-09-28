@@ -107,7 +107,7 @@ class CustomSwitchState extends State<CustomSwitch> {
                         decoration: BoxDecoration(shape: BoxShape.circle, color: isOn ? context.isDarkMode ? ChatifyColors.black : ChatifyColors.white : ChatifyColors.darkerGrey),
                         alignment: Alignment.center,
                         child: isOn
-                          ? SvgPicture.asset(ChatifyVectors.check, width: 15, height: 15, colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn))
+                          ? SvgPicture.asset(ChatifyVectors.check, width: 14, height: 14, colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn))
                           : SvgPicture.asset(ChatifyVectors.minus, width: 13, height: 13, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
                         ),
                       ),

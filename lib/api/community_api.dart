@@ -46,7 +46,8 @@ class CommunityApi {
             context,
             S.of(context).profileUpdated,
             icon: SvgPicture.asset(ChatifyVectors.closeCircle, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
-            iconColor: ChatifyColors.error);
+            iconColor: ChatifyColors.danger,
+          );
           Dialogs.showSnackbar(context, 'Failed to upload image.');
           return false;
         }

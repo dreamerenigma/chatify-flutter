@@ -8,12 +8,16 @@ class CustomBottomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
   final bool enabled;
+  final Widget? icon;
+  final EdgeInsetsGeometry? padding;
 
   const CustomBottomButton({
     super.key,
     required this.text,
     required this.onTap,
     this.enabled = true,
+    this.icon,
+    this.padding,
   });
 
   @override
@@ -22,7 +26,7 @@ class CustomBottomButton extends StatelessWidget {
     final Color textColor = enabled ? ChatifyColors.black : ChatifyColors.softNight;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 20),
+      padding: padding ?? const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 20),
       child: SizedBox(
         width: double.infinity,
         child: Material(
@@ -37,7 +41,16 @@ class CustomBottomButton extends StatelessWidget {
             onTap: enabled ? onTap : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 9),
-              child: Center(child: Text(text, style: TextStyle(color: textColor, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon != null) ...[
+                    icon!,
+                    const SizedBox(width: 8),
+                  ],
+                  Text(text, style: TextStyle(color: textColor, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                ],
+              ),
             ),
           ),
         ),

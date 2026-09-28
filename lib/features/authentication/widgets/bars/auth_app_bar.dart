@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -29,7 +31,7 @@ class AuthAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<AuthAppBar> createState() => _AuthAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight);
 }
 
 class _AuthAppBarState extends State<AuthAppBar> {
@@ -42,10 +44,6 @@ class _AuthAppBarState extends State<AuthAppBar> {
       padding: const EdgeInsets.only(right: 5),
       child: Container(
         height: (isWebOrWindows && !isMobile) ? 55 : 75,
-        decoration: BoxDecoration(
-          color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
-          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 2))],
-        ),
         child: Padding(
           padding: EdgeInsets.only(top: isMobile ? 35 : 5),
           child: Row(
@@ -85,7 +83,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
                           clipBehavior: Clip.hardEdge,
-                          child: Icon(Icons.arrow_back_rounded, size: 25, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.white),
+                          child: Icon(Icons.arrow_back_rounded, size: 25, color: isHovered ? context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white : ChatifyColors.black),
                         ),
                       ),
                     ),
@@ -98,7 +96,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
                   children: [
                     Align(
                       alignment: isWindows ? Alignment.center : Alignment.centerLeft,
-                      child: Text(widget.title, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, overflow: TextOverflow.ellipsis), maxLines: 1),
+                      child: Text(widget.title, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis), maxLines: 1),
                     ),
                   ],
                 ),
@@ -133,26 +131,29 @@ class _AuthAppBarState extends State<AuthAppBar> {
                           PopupMenuItem(
                             value: 1,
                             padding: EdgeInsets.zero,
-                            child: InkWell(
-                              mouseCursor: SystemMouseCursors.basic,
-                              splashFactory: NoSplash.splashFactory,
-                              splashColor: ChatifyColors.transparent,
-                              highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                              hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
-                              onTap: () {
-                                Navigator.pop(context, 1);
-                                widget.onMenuItemIndex1?.call();
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                constraints: const BoxConstraints(minHeight: 48),
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
-                                child: Text(
-                                  widget.menuItem1Text!,
-                                  style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                            child: Material(
+                              color: ChatifyColors.transparent,
+                              child: InkWell(
+                                mouseCursor: SystemMouseCursors.basic,
+                                splashFactory: NoSplash.splashFactory,
+                                splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                                highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                                hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                                onTap: () {
+                                  Navigator.pop(context, 1);
+                                  widget.onMenuItemIndex1?.call();
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  constraints: const BoxConstraints(minHeight: 48),
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    widget.menuItem1Text!,
+                                    style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
                               ),
                             ),
@@ -169,9 +170,9 @@ class _AuthAppBarState extends State<AuthAppBar> {
                               child: InkWell(
                                 mouseCursor: SystemMouseCursors.basic,
                                 splashFactory: NoSplash.splashFactory,
-                                splashColor: ChatifyColors.transparent,
-                                highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                                hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.3 * 255).toInt()) : ChatifyColors.steelGrey,
+                                splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                                highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                                hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
                                 onTap: () {
                                   Navigator.pop(context, 2);
                                   widget.onMenuItemIndex2?.call();
@@ -181,7 +182,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
                                   constraints: const BoxConstraints(minHeight: 48),
                                   alignment: Alignment.centerLeft,
                                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  child: Text(widget.menuItem2Text!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                                  child: Text(widget.menuItem2Text!, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                 ),
                               ),
                             ),
@@ -209,7 +210,7 @@ class _AuthAppBarState extends State<AuthAppBar> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(6)),
-                      child: const Icon(Icons.more_vert),
+                      child: const Icon(Icons.more_vert, size: 25),
                     ),
                   ),
                 ),

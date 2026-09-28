@@ -15,7 +15,7 @@ import '../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../chat/widgets/dialogs/select_message_dialog.dart';
 import '../../../chat/widgets/input/bottom_input.dart';
 import '../../../home/controllers/overlay_color_controller.dart';
-import '../bars/newsletter_app_bar.dart';
+import '../bars/app_bars/newsletter_app_bar.dart';
 import '../../../personalization/widgets/dialogs/attach_files_dialog.dart';
 import '../../../personalization/widgets/dialogs/emoji_stickers_dialog.dart';
 

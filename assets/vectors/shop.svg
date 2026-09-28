@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 15 15"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="shop.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="1.1145218"
+     inkscape:cx="375.94598"
+     inkscape:cy="299.23147"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     id="path1"
+     style="fill:#000000;fill-opacity:1;stroke-width:0.873397"
+     d="m 2.2301051,3.1188574 c -0.2081656,0 -0.3873734,0.1469111 -0.428196,0.3510328 L 0.92852518,7.8368597 c -0.0256583,0.1282934 0.007561,0.261353 0.0905069,0.3625272 0.082946,0.1011831 0.2068568,0.159824 0.3376891,0.159824 h 0.4302451 v 5.0228491 0.436693 h 0.00615 v 0.0032 h 7.2516296 c 0,-0.151344 0.00211,-0.721469 0.00211,-0.861205 V 8.3592109 h 3.2273121 v 4.5894061 c 0,0.156895 -0.0016,0.768603 -0.0016,0.873388 h 0.874271 l 6.99e-4,-5.4627907 h 0.436692 c 0.130836,0 0.254767,-0.05864 0.337739,-0.1598238 0.08288,-0.1011744 0.116136,-0.234234 0.09046,-0.3625273 L 13.139108,3.4698902 C 13.098233,3.2657685 12.919043,3.1188574 12.710911,3.1188574 Z M 2.5881345,3.9922413 H 12.352883 L 13.0516,7.4858269 H 1.8894174 Z m 0.078712,4.3669696 H 8.1734236 V 12.945369 H 2.6668471 Z"
+     sodipodi:nodetypes="scccsccccccsccccccscccsscccccccccc" />
+  <rect
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#0c0310;stroke-width:0.390189;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:146.2;paint-order:stroke fill markers"
+     id="rect5"
+     width="10.930201"
+     height="0.51624417"
+     x="1.9990815"
+     y="1.1572547"
+     rx="0.25812209"
+     ry="0.25812209" />
+</svg>

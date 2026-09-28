@@ -773,6 +773,10 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
               isPrivacyEnabled = value;
             });
           },
+          switchWidth: 55,
+          switchHeight: 33,
+          thumbSize: 25,
+          thumbPadding: 3,
         ),
       ],
     );

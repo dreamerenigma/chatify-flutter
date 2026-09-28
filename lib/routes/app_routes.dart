@@ -8,7 +8,7 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import '../api/apis.dart';
 import '../features/calls/screens/calls_screen.dart';
-import '../features/community/screens/community_screen.dart';
+import '../features/community/screens/community_chat_screen.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/newsletter/screens/new_newsletter_screen.dart';
 import '../features/personalization/screens/account/account_screen.dart';
@@ -27,7 +27,7 @@ class AppRoutes {
     GetPage(name: ChatifyRoutes.support, page: () => SupportScreen(title: 'Поддержка')),
     GetPage(name: ChatifyRoutes.calls, page: () => CallsScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.chat, page: () => const ChatsScreen()),
-    GetPage(name: ChatifyRoutes.community, page: () => CommunityScreen(user: APIs.me)),
+    GetPage(name: ChatifyRoutes.community, page: () => CommunityChatScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.communities, page: () => CommunitiesScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.status, page: () => StatusScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.newGroup, page: () => const NewGroupScreen(selectedUsers: [])),

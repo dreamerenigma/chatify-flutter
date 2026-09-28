@@ -480,7 +480,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                         }
 
                         if (list.isEmpty) {
-                          return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)));
+                          return Center(child: Text(S.of(context).hello, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)));
                         }
 
                         return ScrollbarTheme(
@@ -576,6 +576,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                   onToggleEmojiKeyboard: toggleEmojiKeyboard,
                   isReplyVisible: replyMessage != null,
                   chatTarget: widget.user,
+                  user: widget.user,
                   onSendMessage: (text) async {
                     if (list.isEmpty) {
                       await APIs.sendFirstMessage(widget.user, text, MessageType.text);
@@ -599,10 +600,10 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                   height: 30,
                   child: FloatingActionButton(
                     onPressed: scrollToBottom,
-                    backgroundColor: ChatifyColors.blackGrey,
+                    backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.borderPrimary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     mini: true,
-                    child: const Icon(Icons.keyboard_double_arrow_down_outlined, color: ChatifyColors.darkGrey),
+                    child: Icon(Icons.keyboard_double_arrow_down_outlined, size: 24, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
                   ),
                 ),
               ),
@@ -758,10 +759,14 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220), borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(
+          color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
+        ),
         child: Text(
           DateUtil.getCallDateTime(context: context, time: date, showTime: false),
-          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
         ),
       ),
     );

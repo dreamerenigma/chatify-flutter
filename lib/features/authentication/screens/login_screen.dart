@@ -99,7 +99,6 @@ class LoginScreenState extends State<LoginScreen> {
     final logoAsset = context.isDarkMode ? ChatifyVectors.appLogoLight : ChatifyVectors.appLogoDark;
 
     return Scaffold(
-      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

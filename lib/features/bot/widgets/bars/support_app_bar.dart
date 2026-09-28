@@ -8,11 +8,12 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
-import '../../../chat/widgets/dialogs/chat_settings_dialog.dart';
 import '../../../personalization/screens/chats/wallpaper_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/info_app_model.dart';
 import '../../models/support_model.dart';
+import '../../screens/info_app_info_screen.dart';
+import '../../screens/support_info_screen.dart';
 
 class SupportAppBar extends StatefulWidget implements PreferredSizeWidget {
   final SupportAppModel? support;
@@ -97,10 +98,9 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
             onSelected: (value) {
               if (value == 5) {
                 _showMorePopupMenu(context);
+
                 return;
               }
-
-              _handlePopupAction(value);
             },
             itemBuilder: (context) => [
               PopupMenuItem<int>(
@@ -117,7 +117,7 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                 value: 2,
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: AppPopupMenuItem(
-                  text: 'Заблокировать',
+                  text: 'Без звука',
                   onTap: () {
                     Navigator.pop(context);
                   },
@@ -127,27 +127,15 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                 value: 3,
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: AppPopupMenuItem(
-                  text: 'Без звука',
+                  text: 'Тема чата',
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath)));
                   },
                 ),
               ),
               PopupMenuItem<int>(
                 value: 4,
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: AppPopupMenuItem(
-                  text: 'Тема чата',
-                  onTap: () {
-                    Navigator.pop(context);
-                    if (imagePath != null && imagePath!.isNotEmpty) {
-                      Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath!)));
-                    }
-                  },
-                ),
-              ),
-              PopupMenuItem<int>(
-                value: 5,
                 padding: EdgeInsets.zero,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -182,27 +170,6 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
     );
   }
 
-  Future<void> _handlePopupAction(int value) async {
-    switch (value) {
-      case 1:
-        break;
-      case 2:
-        break;
-      case 3:
-        break;
-      case 4:
-        break;
-      case 6:
-        break;
-      case 7:
-        break;
-      case 8:
-        break;
-      case 9:
-        break;
-    }
-  }
-
   Widget _buildSupportInfo(BuildContext context) {
     final String name;
     final String description;
@@ -226,12 +193,21 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {
-          final RenderBox renderBox = context.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
+          if (widget.infoApp != null) {
+            final infoApp = widget.infoApp!;
 
-          if (widget.support != null) {
-            showChatSettingsDialog(context, widget.support!, position, initialIndex: 0);
+            Navigator.push(context, createPageRoute(InfoAppInfoScreen(infoApp: infoApp)));
+
+            return;
           }
+
+          final support = widget.support;
+
+          if (support == null) {
+            return;
+          }
+
+          Navigator.push(context, createPageRoute(SupportInfoScreen(support: support)));
         },
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -284,10 +260,20 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
       color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
       items: [
         PopupMenuItem<int>(
-          value: 6,
+          value: 5,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
             text: 'Медиа, ссылки и докум.',
+            onTap: () {
+              Navigator.pop(context, 5);
+            },
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 6,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Очистить чат',
             onTap: () {
               Navigator.pop(context, 6);
             },
@@ -297,7 +283,7 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
           value: 7,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
-            text: 'Очистить чат',
+            text: 'Экспорт чата',
             onTap: () {
               Navigator.pop(context, 7);
             },
@@ -307,27 +293,15 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
           value: 8,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
-            text: 'Экспорт чата',
-            onTap: () {
-              Navigator.pop(context, 8);
-            },
-          ),
-        ),
-        PopupMenuItem<int>(
-          value: 9,
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: AppPopupMenuItem(
             text: 'Добавить иконку на экран',
             onTap: () {
-              Navigator.pop(context, 9);
+              Navigator.pop(context, 8);
             },
           ),
         ),
       ],
     ).then((value) {
       if (value == null) return;
-
-      _handlePopupAction(value);
     });
   }
 }

@@ -47,18 +47,13 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   final ColorsController colorsController = Get.put(ColorsController());
 
-
   @override
   Widget build(BuildContext context) {
     if (widget.showContacts) {
       return _buildContactsList();
     }
 
-    return _buildUserList(
-      widget.isSearching ? widget.searchList : widget.list,
-      widget.pinnedChats,
-      widget.mutedChats,
-    );
+    return _buildUserList(widget.isSearching ? widget.searchList : widget.list, widget.pinnedChats, widget.mutedChats);
   }
 
   Widget _buildContactsList() {

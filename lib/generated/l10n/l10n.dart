@@ -3604,10 +3604,10 @@ class S {
     );
   }
 
-  /// `You have created a mailing list with `
+  /// `You have created a mailing list with`
   String get youCreatedMailingList {
     return Intl.message(
-      'You have created a mailing list with ',
+      'You have created a mailing list with',
       name: 'youCreatedMailingList',
       desc: '',
       args: [],

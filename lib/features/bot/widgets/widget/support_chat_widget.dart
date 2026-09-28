@@ -40,10 +40,10 @@ class SupportChatWidget extends StatefulWidget {
 }
 
 class _SupportChatWidgetState extends State<SupportChatWidget> {
-  late SupportAppModel support;
   late FocusNode focusNode;
   final overlayController = Get.put(OverlayColorController());
   final GlobalKey _textFieldKey = GlobalKey();
+  late SupportAppModel support;
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
   bool isHovered = false;
@@ -83,9 +83,10 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
 
   Future<void> sendMessage() async {
     final text = textController.text.trim();
+
     if (text.isEmpty) return;
 
-    await APIs.sendMessageSupportChat(supportId: support.id, chatId: 'main', text: text);
+    await APIs.sendSupportBotMessage(message: text, supportChatId: support.id);
 
     setState(() {
       textController.clear();
@@ -124,11 +125,13 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
         showEmojiStickersDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           await showEmojiStickersDialog(context, position, onEmojiSelected, onGifSelected);
         },
         showAttachFileDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
+
           await showAttachFileDialog(context, position, onImageSelected);
         },
         onEmojiSelected: onEmojiSelected,
@@ -229,26 +232,24 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
       padding: const EdgeInsets.only(left: 45, right: 45, top: 18),
       child: GestureDetector(
         onTap: () {
-              onTap();
+          scale.value = 0.99;
 
-              scale.value = 0.99;
-
-              Future.delayed(const Duration(milliseconds: 100), () {
-                scale.value = 1.0;
-              });
-            },
-            onTapDown: (_) {
-              scale.value = 0.99;
-            },
-            onTapUp: (_) {
-              scale.value = 1.0;
-            },
-            onTapCancel: () {
-              scale.value = 0.99;
-            },
-            onLongPressUp: () {
-              scale.value = 1.0;
-            },
+          Future.delayed(const Duration(milliseconds: 100), () {
+            scale.value = 1.0;
+          });
+        },
+        onTapDown: (_) {
+          scale.value = 0.99;
+        },
+        onTapUp: (_) {
+          scale.value = 1.0;
+        },
+        onTapCancel: () {
+          scale.value = 0.99;
+        },
+        onLongPressUp: () {
+          scale.value = 1.0;
+        },
         child: MouseRegion(
           onEnter: (_) {
             setState(() {
@@ -290,7 +291,7 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
                     child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: effectiveMaxWidth),
                       child: Center(
-                        child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w300, height: 1.2), textAlign: TextAlign.center, softWrap: true),
+                        child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w400, height: 1.2), textAlign: TextAlign.center, softWrap: true),
                       ),
                     ),
                   );

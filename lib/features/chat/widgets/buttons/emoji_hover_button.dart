@@ -24,6 +24,12 @@ class _EmojiHoverButtonState extends State<EmojiHoverButton> {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
+        mouseCursor: SystemMouseCursors.basic,
+        borderRadius: BorderRadius.circular(25),
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {
           setState(() { isPressed = true; isDialogVisible = true; });
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -35,10 +41,6 @@ class _EmojiHoverButtonState extends State<EmojiHoverButton> {
             });
           });
         },
-        mouseCursor: SystemMouseCursors.basic,
-        borderRadius: BorderRadius.circular(25),
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
         child: MouseRegion(
           onEnter: (_) {
             if (!isDialogVisible) {

@@ -41,14 +41,7 @@ class InfoChatSupportAppOverlay {
                     color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white,
                     border: Border.all(color: context.isDarkMode ? ChatifyColors.buttonDarkGrey : ChatifyColors.grey, width: 1),
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -72,27 +65,11 @@ class InfoChatSupportAppOverlay {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildInfoRow(
-                                    context,
-                                    ChatifyVectors.handFavorite,
-                                    S.of(context).getHelpFaster,
-                                    S.of(context).appSupportTeamAiQuestions,
-                                  ),
+                                  _buildInfoRow(context, ChatifyVectors.handFavorite, S.of(context).getHelpFaster, S.of(context).appSupportTeamAiQuestions),
                                   SizedBox(height: 12),
-                                  _buildInfoRow(
-                                    context,
-                                    ChatifyVectors.questionAi,
-                                    S.of(context).findOutChatsUseAi,
-                                    '',
-                                    insertAiIcon: true,
-                                  ),
+                                  _buildInfoRow(context, ChatifyVectors.questionAi, S.of(context).findOutChatsUseAi, '', insertAiIcon: true),
                                   SizedBox(height: 12),
-                                  _buildInfoRow(
-                                    context,
-                                    ChatifyVectors.question,
-                                    S.of(context).moreInfoVisitHelpCenter,
-                                    S.of(context).visitHelpCenterFindAnswers
-                                  ),
+                                  _buildInfoRow(context, ChatifyVectors.question, S.of(context).moreInfoVisitHelpCenter, S.of(context).visitHelpCenterFindAnswers),
                                 ],
                               ),
                             ),

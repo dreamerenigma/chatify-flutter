@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   viewBox="0 0 37.5 37.5"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="calendar_event.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.55726091"
+     inkscape:cx="563.47035"
+     inkscape:cy="349.02861"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     id="path1"
+     style="stroke-width:1.61868;stroke-dasharray:none;paint-order:stroke fill markers"
+     d="M 10.650143,2.3976018 V 5.6351257 H 7.4126191 c -1.7854398,0 -3.2373756,1.4519358 -3.2373756,3.2373756 V 31.534426 c 0,1.78544 1.4519358,3.237526 3.2373756,3.237526 H 30.074694 c 1.78544,0 3.237375,-1.452086 3.237375,-3.237526 V 8.8725013 c 0,-1.7854398 -1.451935,-3.2373756 -3.237375,-3.2373756 H 26.837169 V 2.3976018 H 23.599794 V 5.6351257 H 13.887519 V 2.3976018 Z M 7.4126191,10.491262 H 30.074694 v 3.237376 H 7.4126191 Z m 0.7521026,7.809717 h 7.0296033 c 0.418763,0 0.755957,0.337044 0.755957,0.755806 v 7.202551 c 0,0.418763 -0.337194,0.755955 -0.755957,0.755955 H 8.1647217 c -0.4187636,0 -0.7559559,-0.337192 -0.7559559,-0.755955 v -7.202551 c 0,-0.418762 0.3371923,-0.755806 0.7559559,-0.755806 z" />
+</svg>

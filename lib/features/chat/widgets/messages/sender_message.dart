@@ -342,8 +342,8 @@ class SenderMessageState extends State<SenderMessage> {
         child: CustomPaint(
           size: const Size(10, 10),
           painter: TrianglePainter(
-            fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.blueMessageLight),
-            borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.blueMessageBorder),
+            fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.lightGrey),
+            borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey),
           ),
         ),
       ),
@@ -452,15 +452,15 @@ class SenderMessageState extends State<SenderMessage> {
                 ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
                 : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight,
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.lightBlue),
+                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                border: Border.all(color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey),
                 borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
               ),
               child: Stack(
                 children: [
                   MediaWidget(
                     message: widget.message,
-                    isSender: false,
+                    isSender: true,
                     isDownloading: isDownloading,
                     onDownload: () async {
                       setState(() {
@@ -477,7 +477,7 @@ class SenderMessageState extends State<SenderMessage> {
                   ),
                   Positioned(
                     bottom: bottomOffset,
-                    right: 2,
+                    right: 6,
                     child: Text(
                       DateUtil.getFormattedTime(context: context, time: widget.message.sent),
                       style: TextStyle(
@@ -490,21 +490,7 @@ class SenderMessageState extends State<SenderMessage> {
                 ],
               ),
             ),
-            Positioned(
-              top: 5,
-              left: 7,
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()..scaleByDouble(-1.0, 1.0, 1.0, 1.0),
-                child: CustomPaint(
-                  size: const Size(10, 10),
-                  painter: TrianglePainter(
-                    fillColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.blueMessageLight),
-                    borderColor: isPressed ? (context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey) : context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.blueMessageBorder,
-                  ),
-                ),
-              ),
-            ),
+            _buildMessageTail(),
             if (isVideo)
               Positioned(
                 left: 30,

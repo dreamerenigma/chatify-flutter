@@ -24,6 +24,7 @@ import 'buttons/camera_button.dart';
 import 'buttons/chat_input_attachments_button.dart';
 
 class ChatInput extends StatefulWidget {
+  final UserModel user;
   final ChatTarget chatTarget;
   final FocusNode focusNode;
   final VoidCallback onToggleEmojiKeyboard;
@@ -32,6 +33,7 @@ class ChatInput extends StatefulWidget {
 
   const ChatInput({
     super.key,
+    required this.user,
     required this.chatTarget,
     required this.focusNode,
     required this.onToggleEmojiKeyboard,
@@ -47,7 +49,6 @@ class ChatInputState extends State<ChatInput> {
   final TextEditingController textController = TextEditingController();
   final AudioPlayer audioPlayer = AudioPlayer();
   late final ValueChanged<bool> setUploading;
-  late final UserModel user;
   bool showEmoji = false;
   bool isUploading = false;
   bool sendWithEnter = false;
@@ -151,15 +152,16 @@ class ChatInputState extends State<ChatInput> {
 
     final text = textController.text.trim();
 
-    await widget.chatTarget.sendText(text);
-
     textController.clear();
-
     playSendSound();
 
     if (mounted) {
       setState(() {});
     }
+
+    widget.chatTarget.sendText(text).catchError((error, stackTrace) {
+      log('CHAT INPUT SEND ERROR: $error', stackTrace: stackTrace);
+    });
   }
 
   void _handleTyping() {
@@ -211,7 +213,7 @@ class ChatInputState extends State<ChatInput> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: DeviceUtils.getScreenWidth(context) * .015, right: DeviceUtils.getScreenWidth(context) * .015, top: widget.isReplyVisible ? 0 : DeviceUtils.getScreenHeight(context) * .005, bottom: DeviceUtils.getScreenHeight(context) * .005),
+          padding: EdgeInsets.only(left: 8, right: 14, top: widget.isReplyVisible ? 0 : DeviceUtils.getScreenHeight(context) * .005, bottom: DeviceUtils.getScreenHeight(context) * .005),
           child: Row(
             children: [
               Expanded(
@@ -261,7 +263,7 @@ class ChatInputState extends State<ChatInput> {
                                   contentPadding: EdgeInsets.only(top: 2)
                                 ),
                                 textCapitalization: TextCapitalization.sentences,
-                                style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400, height: 1.2),
+                                style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400, height: 1.2),
                                 onTap: () {
                                   if (showEmoji) {
                                     setState(() {
@@ -280,6 +282,7 @@ class ChatInputState extends State<ChatInput> {
                         ),
                         ChatInputAttachments(
                           chatTarget: widget.chatTarget,
+                          user: widget.user,
                           isUploading: isUploading,
                           setUploading: (value) {
                             setState(() {
@@ -306,7 +309,7 @@ class ChatInputState extends State<ChatInput> {
                   ),
                 ),
               ),
-              SizedBox(width: DeviceUtils.getScreenWidth(context) * .009),
+              SizedBox(width: 8),
               GestureDetector(
                 onPanStart: (_) {
                   _dragOffset = 0;
@@ -339,7 +342,7 @@ class ChatInputState extends State<ChatInput> {
                   child: CircleAvatar(
                     backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     radius: 24,
-                    child: hasText ? const Icon(Icons.send, color: ChatifyColors.black, size: 21) : const Icon(Icons.mic, color: ChatifyColors.black, size: 25),
+                    child: hasText ? Icon(Icons.send, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, size: 21) : const Icon(Icons.mic, color: ChatifyColors.black, size: 25),
                   ),
                 ),
               ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/constants/app_vectors.dart';
 
 class FullScreenAppBar extends StatefulWidget implements PreferredSizeWidget {
   const FullScreenAppBar({super.key});
@@ -20,23 +21,26 @@ class FullScreenAppBarState extends State<FullScreenAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: ChatifyColors.blackGrey,
+      backgroundColor: ChatifyColors.nightGrey.withValues(alpha: 0.5),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: ChatifyColors.white),
+        icon: const Icon(Icons.arrow_back_rounded, size: 25, color: ChatifyColors.white),
         onPressed: () {
           Navigator.pop(context);
         },
       ),
       actions: [
         IconButton(
-          icon: Icon(isFavorited ? Icons.star : Icons.star_border, color: ChatifyColors.white),
+          icon: Icon(Icons.file_download_outlined, size: 27, color: ChatifyColors.white),
           onPressed: () {
             setState(() {
               isFavorited = !isFavorited;
             });
           },
         ),
-        IconButton(icon: const Icon(FluentIcons.arrow_forward_16_filled, color: ChatifyColors.white), onPressed: () {}),
+        SizedBox(width: 8),
+        SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+        SizedBox(width: 18),
+        SvgPicture.asset(ChatifyVectors.statusAdd, width: 27, height: 27, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
         IconButton(
           icon: const Icon(Icons.more_vert, color: ChatifyColors.white),
           onPressed: () {

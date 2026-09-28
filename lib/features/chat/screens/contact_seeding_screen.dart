@@ -29,25 +29,24 @@ class ContactsSendingScreen extends StatefulWidget {
 }
 
 class ContactsSendingScreenState extends State<ContactsSendingScreen> {
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  int selectedIndex = 0;
+  bool isFetchingContacts = true;
+  bool isFetchingChatUsers = true;
+  bool isSearching = false;
+  bool isNumericMode = false;
   List<Contact> contacts = [];
   List<Contact> filteredContacts = [];
   List<UserModel> chatUsers = [];
   List<UserModel> list = [];
   List<UserModel> searchList = [];
   List<NewsletterModel> newsletters = [];
-  int selectedIndex = 0;
-  bool isFetchingContacts = true;
-  bool isFetchingChatUsers = true;
-  bool isSearching = false;
-  bool isNumericMode = false;
-  final TextEditingController textController = TextEditingController();
-  final nameController = TextEditingController();
-  final descriptionController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
-  Key textFieldKey = UniqueKey();
-
   Set<UserModel> selectedUsers = {};
+  Key textFieldKey = UniqueKey();
 
   @override
   void initState() {
@@ -105,6 +104,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
     setState(() {
       filteredContacts = contacts.where((contact) {
         final contactName = contact.displayName.toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -151,6 +151,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
@@ -177,7 +178,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
                 keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
                 decoration: InputDecoration(
                   hintText: S.of(context).searchContacts,
-                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -207,111 +208,181 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
             ],
       ),
       body: isLoading
-        ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),)
-        : ScrollbarTheme(
-          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
-          child: Scrollbar(
-            thickness: 4,
-            thumbVisibility: false,
-            child: ScrollConfiguration(
-                behavior: NoGlowScrollBehavior(),
-                child: ListView.builder(
-                  itemCount: chatUsers.length + filteredContacts.length + 2 + (selectedUsers.isEmpty ? 0 : 2),
-                  itemBuilder: (context, index) {
-                  int adjustedIndex = index;
-
-                  if (selectedUsers.isNotEmpty) {
-                    if (index == 0) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                            child: Wrap(
-                              spacing: 16,
-                              runSpacing: 16,
-                              children: selectedUsers.map((user) {
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Stack(
-                                      alignment: Alignment.bottomRight,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03),
-                                              child: CachedNetworkImage(
-                                                width: DeviceUtils.getScreenHeight(context) * .055,
-                                                height: DeviceUtils.getScreenHeight(context) * .055,
-                                                imageUrl: user.image,
-                                                fit: BoxFit.cover,
-                                                errorWidget: (context, url, error) => CircleAvatar(
-                                                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                                  backgroundImage: NetworkImage(user.image),
-                                                  foregroundColor: Colors.white,
-                                                  child: const Icon(CupertinoIcons.person),
-                                                ),
+          ? Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(
+            colorsController.getColor(
+              colorsController.selectedColorScheme.value,
+            ),
+          ),
+        ),
+      )
+          : ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor: WidgetStateProperty.all(
+            ChatifyColors.darkerGrey,
+          ),
+        ),
+        child: Scrollbar(
+          thickness: 4,
+          thumbVisibility: false,
+          child: ScrollConfiguration(
+            behavior: NoGlowScrollBehavior(),
+            child: ListView.builder(
+              itemCount: chatUsers.length + filteredContacts.length + 2 + (selectedUsers.isEmpty ? 0 : 2),
+              itemBuilder: (context, index) {
+                int contentIndex = index;
+                if (selectedUsers.isNotEmpty) {
+                  if (index == 0) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: Wrap(
+                            spacing: 16,
+                            runSpacing: 16,
+                            children: selectedUsers.map((user) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Stack(
+                                    alignment: Alignment.bottomRight,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                              DeviceUtils.getScreenHeight(
+                                                context,
+                                              ) *
+                                                  .03,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              width:
+                                              DeviceUtils.getScreenHeight(
+                                                context,
+                                              ) *
+                                                  .055,
+                                              height:
+                                              DeviceUtils.getScreenHeight(
+                                                context,
+                                              ) *
+                                                  .055,
+                                              imageUrl: user.image,
+                                              fit: BoxFit.cover,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                    colorsController.getColor(
+                                                      colorsController
+                                                          .selectedColorScheme
+                                                          .value,
+                                                    ),
+                                                    backgroundImage:
+                                                    NetworkImage(user.image),
+                                                    foregroundColor:
+                                                    ChatifyColors.white,
+                                                    child: const Icon(
+                                                      CupertinoIcons.person,
+                                                    ),
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            user.name.length > 7
+                                                ? '${user.name.substring(0, 7)}...'
+                                                : user.name,
+                                            style: TextStyle(
+                                              fontSize:
+                                              ChatifySizes.fontSizeLm,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                      Positioned(
+                                        bottom: 17,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _toggleUserSelection(user);
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: ChatifyColors.black,
+                                                width: 2,
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              user.name.length > 7 ? '${user.name.substring(0, 7)}...' : user.name,
-                                              style: const TextStyle(fontSize: 12),
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                        Positioned(
-                                          bottom: 17,
-                                          right: 0,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _toggleUserSelection(user);
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
-                                              child: const CircleAvatar(
-                                                backgroundColor: ChatifyColors.grey,
-                                                radius: 12,
-                                                child: Icon(Icons.close, size: 16, color: ChatifyColors.black),
+                                            child: const CircleAvatar(
+                                              backgroundColor:
+                                              ChatifyColors.grey,
+                                              radius: 12,
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 16,
+                                                color: ChatifyColors.black,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
-                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            }).toList(),
                           ),
-                          const Divider(),
-                        ],
-                      );
-                    } else {
-                      adjustedIndex = index - 1;
-                    }
+                        ),
+                        const Divider(),
+                      ],
+                    );
                   }
 
-                  final filteredIndex = index - chatUsers.length;
-                  if (adjustedIndex > 0 && adjustedIndex <= chatUsers.length) {
-                    final chatUser = chatUsers[adjustedIndex - 1];
-                    return ContactsSendCard(
-                      user: chatUser,
-                      contact: filteredContacts[filteredIndex],
-                      isSelected: selectedUsers.contains(chatUser),
-                      onUserSelected: _toggleUserSelection,
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              ),
+                  contentIndex = index - 1;
+                }
+                if (contentIndex == 0) {
+                  return const SizedBox.shrink();
+                }
+
+                contentIndex--;
+
+                if (contentIndex < chatUsers.length) {
+                  final chatUser = chatUsers[contentIndex];
+
+                  return ContactsSendCard(
+                    user: chatUser,
+                    contact: filteredContacts[contentIndex],
+                    isSelected: selectedUsers.contains(chatUser),
+                    onUserSelected: _toggleUserSelection,
+                  );
+                }
+
+                if (contentIndex >= 0 && contentIndex < chatUsers.length && contentIndex < filteredContacts.length) {
+                  final chatUser = chatUsers[contentIndex];
+                  final contact = filteredContacts[contentIndex];
+
+                  return ContactsSendCard(
+                    user: chatUser,
+                    contact: contact,
+                    isSelected: selectedUsers.contains(chatUser),
+                    onUserSelected: _toggleUserSelection,
+                  );
+                }
+
+                return const SizedBox.shrink();
+              },
             ),
           ),
         ),
+      ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
@@ -322,6 +393,7 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
 
             if (selectedUsers.length < 2) {
               Dialogs.showSnackbar(context, S.of(context).atLeastTwoContactsSelected);
+
               return;
             }
 
@@ -344,8 +416,8 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
             }
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.arrow_forward_rounded, color: ChatifyColors.black),
+          foregroundColor: ChatifyColors.white,
+          child: const Icon(Icons.arrow_forward_rounded, size: 25, color: ChatifyColors.black),
         ),
       ),
     );

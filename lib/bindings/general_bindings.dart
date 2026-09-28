@@ -1,5 +1,6 @@
 import 'package:chatify/features/home/controllers/dialog_controller.dart';
 import 'package:get/get.dart';
+import '../core/services/bot/support_bot_service.dart';
 import '../core/services/calls/agora_call_service.dart';
 import '../core/services/calls/call_service.dart';
 import '../core/services/media/media_service.dart';
@@ -51,5 +52,7 @@ class GeneralBindings extends Bindings {
 
     Get.put<YandexDiskApi>(YandexDiskApi());
     Get.put<MediaService>(YandexDiskService(Get.find<YandexDiskApi>()));
+
+    Get.put<SupportBotService>(SupportBotService());
   }
 }

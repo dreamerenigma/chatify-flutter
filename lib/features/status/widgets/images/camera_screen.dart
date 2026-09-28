@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../domain/entities/chat_target.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../chat/models/user_model.dart';
 import 'camera_preview_widget.dart';
 
 class CameraScreen extends StatefulWidget {

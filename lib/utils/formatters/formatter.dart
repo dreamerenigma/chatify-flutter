@@ -16,12 +16,17 @@ class Formatter {
   }
 
   static String formatFileSize(double size) {
-    if (size <= 0) return "0 B";
-
-    const suffixes = ["B", "KB", "MB", "GB", "TB"];
+    if (size <= 0) return '0 B';
+    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
     int i = (log(size) / log(1024)).floor();
     double adjustedSize = size / pow(1024, i);
-    String formattedSize = adjustedSize.round().toString();
+    String formattedSize = adjustedSize.toStringAsFixed(1);
+
+    if (formattedSize.endsWith('.0')) {
+      formattedSize = formattedSize.substring(0, formattedSize.length - 2);
+    }
+
+    formattedSize = formattedSize.replaceAll('.', ',');
 
     return '$formattedSize ${suffixes[i]}';
   }

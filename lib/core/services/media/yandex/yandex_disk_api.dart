@@ -15,6 +15,59 @@ class YandexDiskApi {
   /// Example:
   /// communities/abc123.jpg
   /// users/userId/audio/1758123456789.m4a
+  Future<String?> createUploadUrl({required String path}) async {
+    try {
+      final uri = Uri.parse('${AppLinks.baseUrl}/api/yandex-disk/upload-url');
+
+      log('YANDEX API: requesting direct upload URL');
+      log('YANDEX API: path = $path');
+
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'path': path,
+        }),
+      );
+
+      log('YANDEX API: upload URL status = ''${response.statusCode}');
+
+      log('YANDEX API: upload URL body = ''${response.body}');
+
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        return null;
+      }
+
+      final json = jsonDecode(response.body);
+
+      if (json['success'] != true) {
+        log('YANDEX API: backend returned success=false');
+
+        return null;
+      }
+
+      final uploadUrl =
+      json['data']['href'] as String?;
+
+      if (uploadUrl == null || uploadUrl.isEmpty) {
+        log('YANDEX API: upload URL is empty');
+
+        return null;
+      }
+
+      log('YANDEX API: direct upload URL received');
+
+      return uploadUrl;
+    } catch (e, st) {
+      log('YANDEX API: create upload URL error: $e', stackTrace: st);
+
+      return null;
+    }
+  }
+
   Future<String?> uploadFile({required File file, required String path}) async {
     try {
       log('YANDEX API: upload started');
@@ -55,7 +108,7 @@ class YandexDiskApi {
 
       log('YANDEX API: sending request...');
 
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+      final streamedResponse = await request.send().timeout(const Duration(minutes: 5));
 
       log('YANDEX API: response received: ''${streamedResponse.statusCode}');
 

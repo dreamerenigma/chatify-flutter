@@ -27,10 +27,18 @@ class FullScreenImageInput extends StatefulWidget {
 class _FullScreenImageInputState extends State<FullScreenImageInput> {
   final LayerLink _layerZoomLink = LayerLink();
   late TextPainter _textPainter;
-  VoidCallback? _focusListener;
   bool isFocused = false;
   bool isZoomAppDropdown = false;
   bool isHovered = false;
+  VoidCallback? _focusListener;
+
+  double getTextWidth(String text) {
+    final textPainter = TextPainter(text: TextSpan(text: text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400)), textDirection: TextDirection.ltr);
+
+    textPainter.layout();
+
+    return textPainter.width;
+  }
 
   @override
   void initState() {
@@ -41,19 +49,13 @@ class _FullScreenImageInputState extends State<FullScreenImageInput> {
         isFocused = widget.focusNode.hasFocus;
 
         if (isFocused) {
-          widget.controller.selection = TextSelection(
-            baseOffset: 0,
-            extentOffset: widget.controller.text.length,
-          );
+          widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length);
         }
       });
     };
     widget.focusNode.addListener(_focusListener!);
 
-    _textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-      text: TextSpan(text: widget.controller.text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontFamily: 'Roboto')),
-    );
+    _textPainter = TextPainter(textDirection: TextDirection.ltr, text: TextSpan(text: widget.controller.text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),);
     _textPainter.layout();
   }
 
@@ -72,17 +74,8 @@ class _FullScreenImageInputState extends State<FullScreenImageInput> {
   }
 
   void _updateTextWidth() {
-    _textPainter.text = TextSpan(text: widget.controller.text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontFamily: 'Roboto'));
+    _textPainter.text = TextSpan(text: widget.controller.text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400));
     _textPainter.layout();
-  }
-
-  double getTextWidth(String text) {
-    final textPainter = TextPainter(
-      text: TextSpan(text: text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w300, fontFamily: 'Roboto')),
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    return textPainter.width;
   }
 
   @override
@@ -141,9 +134,9 @@ class _FullScreenImageInputState extends State<FullScreenImageInput> {
                             mouseCursor: SystemMouseCursors.basic,
                             borderRadius: BorderRadius.circular(6),
                             splashFactory: NoSplash.splashFactory,
-                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               transform: Matrix4.translationValues(0, isZoomAppDropdown ? 2.0 : 0, 0),

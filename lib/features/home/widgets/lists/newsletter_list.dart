@@ -1,6 +1,6 @@
 import 'package:chatify/features/newsletter/models/newsletter_model.dart';
 import 'package:flutter/material.dart';
-import '../cards/newsletter_card.dart';
+import '../../../newsletter/widgets/cards/newsletter_card.dart';
 
 class NewsletterList extends StatelessWidget {
   final List<NewsletterModel> newsletters;

@@ -3,6 +3,9 @@ import '../../../api/apis.dart';
 import '../../../core/enums/call_status_type.dart';
 import '../../../core/enums/call_type.dart';
 import '../../../core/enums/message_type.dart';
+import '../../survey/models/survey_model.dart';
+import 'event_model.dart';
+import 'location_model.dart';
 
 class MessageModel {
   late final String id;
@@ -21,6 +24,9 @@ class MessageModel {
   late final DateTime? deletedAt;
   late final int? audioDuration;
   late final int? videoDuration;
+  late final SurveyModel? survey;
+  late final EventModel? event;
+  late final LocationModel? location;
 
   MessageModel({
     required this.id,
@@ -39,6 +45,9 @@ class MessageModel {
     required this.deletedAt,
     this.audioDuration,
     this.videoDuration,
+    this.survey,
+    this.event,
+    this.location,
   });
 
   bool get isMe => fromId == APIs.user.uid;
@@ -61,6 +70,15 @@ class MessageModel {
         break;
       case 'videoMessage':
         type = MessageType.videoMessage;
+        break;
+      case 'survey':
+        type = MessageType.survey;
+        break;
+      case 'event':
+        type = MessageType.event;
+        break;
+      case 'location':
+        type = MessageType.location;
         break;
       case 'audio':
         type = MessageType.audio;
@@ -139,6 +157,30 @@ class MessageModel {
       videoDuration = int.tryParse(videoDurationValue?.toString() ?? '');
     }
 
+    final surveyJson = json['survey'];
+
+    if (surveyJson is Map) {
+      survey = SurveyModel.fromJson(Map<String, dynamic>.from(surveyJson));
+    } else {
+      survey = null;
+    }
+
+    final eventJson = json['event'];
+
+    if (eventJson is Map) {
+      event = EventModel.fromJson(Map<String, dynamic>.from(eventJson));
+    } else {
+      event = null;
+    }
+
+    final locationJson = json['location'];
+
+    if (locationJson is Map) {
+      location = LocationModel.fromJson(Map<String, dynamic>.from(locationJson));
+    } else {
+      location = null;
+    }
+
     final callTypeValue = json['callType'];
 
     if (callTypeValue == 'audio') {
@@ -174,39 +216,40 @@ class MessageModel {
     data['type'] = type.name;
     data['fromId'] = fromId;
     data['sent'] = sent;
+    data['deletedBy'] = deletedBy;
 
     if (callType != null) {
       data['callType'] = callType!.name;
     }
-
     if (callStatus != null) {
       data['callStatus'] = callStatus!.name;
     }
-
     if (documentName != null) {
       data['documentName'] = documentName;
     }
-
     if (fileSize != null) {
       data['fileSize'] = fileSize;
     }
-
-    data['deletedBy'] = deletedBy;
-
     if (reactions.isNotEmpty) {
       data['reactions'] = reactions;
     }
-
     if (deletedAt != null) {
       data['deletedAt'] = deletedAt!.toIso8601String();
     }
-
     if (audioDuration != null) {
       data['audioDuration'] = audioDuration;
     }
-
     if (videoDuration != null) {
       data['videoDuration'] = videoDuration;
+    }
+    if (survey != null) {
+      data['survey'] = survey!.toJson();
+    }
+    if (event != null) {
+      data['event'] = event!.toJson();
+    }
+    if (location != null) {
+      data['location'] = location!.toJson();
     }
 
     return data;

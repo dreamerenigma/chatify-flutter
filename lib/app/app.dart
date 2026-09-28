@@ -14,7 +14,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../api/apis.dart';
-import '../api/chat_api.dart';
 import '../bindings/general_bindings.dart';
 import '../config/config.dart';
 import '../core/theme/theme.dart';
@@ -56,8 +55,6 @@ Future<void> initApp() async {
 
   /// -- Set setting orientation to portrait only
   DeviceUtils.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-  await ChatApi.migrateSelfMessagesToRead('gzwoMT7pZgdj4ZccV3jKLylDMpr2_gzwoMT7pZgdj4ZccV3jKLylDMpr2');
 
   /// -- Initialize user data
   try {

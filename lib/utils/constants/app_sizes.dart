@@ -15,6 +15,7 @@ class ChatifySizes {
   static const double iconLg = 32.0;
 
   // Font sizes
+  static double fontSizeXs = 10.0;
   static double fontSizeLm = 12.0;
   static double fontSizeSm = 14.0;
   static double fontSizeMd = 16.0;

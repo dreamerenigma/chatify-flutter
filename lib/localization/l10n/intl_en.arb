@@ -446,7 +446,7 @@
     "leastTwoContactsMustBeSelected": "A minimum of 2 contacts must be selected",
     "yourPrivateMessagesAndCalls": "With end-to-end encryption, your private messages and calls stay between you and the people you're communicating with. Not even Chatify can access them. These include:",
     "messagesCallsProtectedEncryption": " Messages and calls are protected by end-to-end encryption. Third parties, including Chatify, cannot read your messages or listen to your calls. Click to learn more.",
-    "youCreatedMailingList": "You have created a mailing list with ",
+    "youCreatedMailingList": "You have created a mailing list with",
     "recipients": "recipients",
     "loading": "Loading...",
     "errorLoadingNames": "Error loading names",

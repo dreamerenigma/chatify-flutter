@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../bot/models/info_app_model.dart';
+import '../../../bot/models/support_model.dart';
 import '../../../bot/widgets/cards/info_app_card.dart';
 
 class InfosAppList extends StatefulWidget {
   final List<InfoAppModel> infosApp;
+  final SupportAppModel support;
   final Function(InfoAppModel) onInfoAppSelected;
   final InfoAppModel? selectedInfoApp;
 
   const InfosAppList({
     super.key,
     required this.infosApp,
+    required this.support,
     required this.onInfoAppSelected,
     this.selectedInfoApp,
   });
@@ -43,6 +46,7 @@ class _InfosAppListState extends State<InfosAppList> {
             widget.onInfoAppSelected(infoApp);
           },
           isSelected: isSelected,
+          support: widget.support,
         );
       },
     );

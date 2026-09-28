@@ -323,18 +323,34 @@ class APIs {
     return await firestore.collection('Users').doc(user.uid).set(chatUser.toJson());
   }
 
-  /// -- Method to fetch username Firestore.
+  /// -- Method to fetch user full names from Firestore.
   static Future<Map<String, String>> fetchUserNames(List<String> userIds, {bool shortenNames = false}) async {
     final userNames = <String, String>{};
 
     try {
+      if (userIds.isEmpty) return userNames;
+
       final snapshot = await FirebaseFirestore.instance.collection('Users').where(FieldPath.documentId, whereIn: userIds).get();
+
       final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
         final userId = doc.id;
-        var userName = (userId == currentUserId) ? 'Вы' : (data['name'] ?? 'Unknown User');
+
+        if (userId == currentUserId) {
+          userNames[userId] = 'Вы';
+          continue;
+        }
+
+        final name = data['name']?.toString().trim() ?? '';
+        final surname = data['surname']?.toString().trim() ?? '';
+
+        var userName = [name, surname].where((value) => value.isNotEmpty).join(' ');
+
+        if (userName.isEmpty) {
+          userName = 'Unknown User';
+        }
 
         if (shortenNames && userName.length > 7) {
           userName = userName.substring(0, 7);
@@ -820,10 +836,10 @@ class APIs {
       'userId': userId,
       'name': 'Chatify',
       'surname': 'Support',
-      'description': 'Поддержка пользователей Chatify',
+      'description': 'Официальный аккаунт поддержки',
       'phoneNumber': '+7 (999) 194-0398',
       'createdAt': FieldValue.serverTimestamp(),
-      'lastMessage': 'Здравствуйте!👋 Благодарим вас за обращение...',
+      'lastMessage': 'Здравствуйте! 👋 Благодарим вас за обращение...',
       'isAiHandled': true,
       'status': 'open',
       'isResolved': false,
@@ -832,7 +848,7 @@ class APIs {
     await newChatRef.collection('messages').add({
       'fromId': 'support_bot',
       'toId': userId,
-      'message': 'Здравствуйте!👋 Благодарим вас за обращение в Службу поддержки Chatify. Чем мы можем помочь?',
+      'message': 'Здравствуйте! 👋 Благодарим вас за обращение в Службу поддержки Chatify. Чем мы можем помочь?',
       'timestamp': FieldValue.serverTimestamp(),
       'type': 'text',
     });
@@ -860,8 +876,78 @@ class APIs {
     }
   }
 
-  /// -- Send message support chat.
-  static Future<void> sendMessageSupportChat({required String supportId, required String chatId, required String text}) async {}
+  /// --- Send message to support chat.
+  static Future<void> sendSupportMessage({required String supportChatId, required String message}) async {
+    try {
+      final String text = message.trim();
+
+      if (supportChatId.isEmpty || text.isEmpty) {
+        return;
+      }
+
+      final DocumentReference<Map<String, dynamic>> chatRef =
+      firestore.collection('SupportChats').doc(supportChatId);
+
+      final DocumentSnapshot<Map<String, dynamic>> chatDoc =
+      await chatRef.get();
+
+      if (!chatDoc.exists) {
+        log('SUPPORT CHAT: chat not found: $supportChatId');
+        return;
+      }
+
+      await chatRef.collection('messages').add({'fromId': APIs.me.id, 'toId': 'support_bot', 'message': text, 'timestamp': FieldValue.serverTimestamp(), 'type': 'text'});
+
+      await chatRef.update({'lastMessage': text});
+
+      log('SUPPORT MESSAGE SENT: $text');
+    } catch (e, stackTrace) {
+      log('SUPPORT MESSAGE ERROR: $e', stackTrace: stackTrace,);
+
+      rethrow;
+    }
+  }
+
+  /// --- Send bot message to support chat.
+  static Future<void> sendSupportBotMessage({required String supportChatId, required String message}) async {
+    try {
+      final String text = message.trim();
+
+      if (supportChatId.isEmpty || text.isEmpty) {
+        return;
+      }
+
+      final DocumentReference<Map<String, dynamic>> chatRef = firestore.collection('SupportChats').doc(supportChatId);
+
+      final DocumentSnapshot<Map<String, dynamic>> chatDoc = await chatRef.get();
+
+      if (!chatDoc.exists) {
+        log('SUPPORT BOT: chat not found: $supportChatId');
+        return;
+      }
+
+      await chatRef.collection('messages').add({
+        'fromId': 'support_bot',
+        'toId': APIs.me.id,
+        'message': text,
+        'timestamp': FieldValue.serverTimestamp(),
+        'type': 'text',
+      });
+
+      await chatRef.update({'lastMessage': text});
+
+      log('SUPPORT BOT MESSAGE SENT: $text');
+    } catch (e, stackTrace) {
+      log('SUPPORT BOT MESSAGE ERROR: $e', stackTrace: stackTrace);
+
+      rethrow;
+    }
+  }
+
+  /// ---
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getSupportMessages(String supportChatId) {
+    return firestore.collection('SupportChats').doc(supportChatId).collection('messages').orderBy('timestamp', descending: false).snapshots();
+  }
 
   ///******************* Infos App APIs *******************
   /// --- Create new info chat.
@@ -881,7 +967,7 @@ class APIs {
       'name': 'Chatify',
       'description': 'Официальный аккаунт Chatify',
       'createdAt': FieldValue.serverTimestamp(),
-      'lastMessage': 'Здравствуйте!👋 Благодарим вас за обращение...',
+      'lastMessage': 'Здравствуйте! 👋 Благодарим вас за обращение...',
       'isAiHandled': true,
       'status': 'open',
       'isResolved': false,
@@ -906,6 +992,42 @@ class APIs {
     } catch (e) {
       log('Error fetching info chat: $e');
       return [];
+    }
+  }
+
+  /// --- Send user message to support chat.
+  static Future<void> sendSupportUserMessage({required String supportChatId, required String message}) async {
+    try {
+      final String text = message.trim();
+
+      if (supportChatId.isEmpty || text.isEmpty) {
+        return;
+      }
+
+      final DocumentReference<Map<String, dynamic>> chatRef = firestore.collection('SupportChats').doc(supportChatId);
+
+      final DocumentSnapshot<Map<String, dynamic>> chatDoc = await chatRef.get();
+
+      if (!chatDoc.exists) {
+        log('SUPPORT USER: chat not found: $supportChatId');
+        return;
+      }
+
+      await chatRef.collection('messages').add({
+        'fromId': APIs.me.id,
+        'toId': 'support_bot',
+        'message': text,
+        'timestamp': FieldValue.serverTimestamp(),
+        'type': 'text',
+      });
+
+      await chatRef.update({'lastMessage': text});
+
+      log('SUPPORT USER MESSAGE SENT: $text');
+    } catch (e, stackTrace) {
+      log('SUPPORT USER MESSAGE ERROR: $e', stackTrace: stackTrace);
+
+      rethrow;
     }
   }
 

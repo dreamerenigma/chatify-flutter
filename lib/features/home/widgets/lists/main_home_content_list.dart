@@ -129,9 +129,9 @@ class MainHomeContentList extends StatelessWidget {
             const SizedBox(height: 8),
           IgnorePointer(ignoring: isSelectionMode, child: SupportList(supports: supports, onSupportSelected: (support) {})),
         ],
-        if (supports.isNotEmpty) ...[
+        if (infosApp.isNotEmpty && supports.isNotEmpty) ...[
           const SizedBox(height: 6),
-          IgnorePointer(ignoring: isSelectionMode, child: InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {})),
+          IgnorePointer(ignoring: isSelectionMode, child: InfosAppList(infosApp: infosApp, onInfoAppSelected: (infosApp) {}, support: supports.first)),
         ],
       ],
     );

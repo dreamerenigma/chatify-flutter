@@ -111,26 +111,14 @@ void showChatSettingsDialog(BuildContext context, BaseChatEntity entity, Offset 
                         }
 
                         return  ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: minHeight,
-                            maxHeight: maxHeight,
-                            minWidth: minWidth,
-                            maxWidth: maxWidth,
-                          ),
+                          constraints: BoxConstraints(minHeight: minHeight, maxHeight: maxHeight, minWidth: minWidth, maxWidth: maxWidth),
                           child: Container(
                             width: dialogWidth,
                             height: dialogHeight,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.cardColor.withAlpha((0.4 * 255).toInt()) : ChatifyColors.lightGrey),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
+                              boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1))],
                             ),
                             child: Row(
                               children: [
@@ -269,14 +257,15 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
       child: Material(
         color: ChatifyColors.transparent,
         child: InkWell(
+          splashFactory: NoSplash.splashFactory,
+          mouseCursor: SystemMouseCursors.basic,
+          borderRadius: BorderRadius.circular(8),
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {
             selectedIndexNotifier.value = index;
           },
-          mouseCursor: SystemMouseCursors.basic,
-          borderRadius: BorderRadius.circular(8),
-          splashColor: ChatifyColors.transparent,
-          highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-          hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
           child: Stack(
             children: [
               Container(
@@ -300,7 +289,7 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
                         color: colorsController.getColor(colorsController.selectedColorScheme.value),
                       ),
                     SizedBox(width: options[index]['iconWidth']?.toDouble() ?? 24),
-                    Text(options[index]['text'], style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    Text(options[index]['text'], style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ],
                 ),
               ),

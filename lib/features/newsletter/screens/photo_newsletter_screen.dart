@@ -72,29 +72,28 @@ class PhotoNewsletterScreenState extends State<PhotoNewsletterScreen> {
 
     return Scaffold(
       appBar: _isAppBarVisible
-          ? PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            color: ChatifyColors.black,
-            boxShadow: [
-              BoxShadow(color: shadowColor, spreadRadius: 0, blurRadius: 0.5, offset: const Offset(0, 0.5)),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            titleSpacing: 0,
-            title: Text('${widget.newsletters.length} ${S.of(context).recipient}', style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, size: 25),
-              onPressed: () {
-                Get.back();
-              },
+        ? PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              decoration: BoxDecoration(
+                color: ChatifyColors.black,
+                boxShadow: [BoxShadow(color: shadowColor, spreadRadius: 0, blurRadius: 0.5, offset: const Offset(0, 0.5))],
+              ),
+              child: AppBar(
+                backgroundColor: ChatifyColors.transparent,
+                titleSpacing: 0,
+                elevation: 0,
+                title: Text('${widget.newsletters.length} ${S.of(context).recipient}', style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded, size: 25),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ),
             ),
-          ),
-        ),
-      )
-          : null,
+          )
+        : null,
       body: Container(
         color: ChatifyColors.black,
         child: Center(
@@ -114,7 +113,7 @@ class PhotoNewsletterScreenState extends State<PhotoNewsletterScreen> {
                 child: hasImage
                     ? CachedNetworkImage(imageUrl: image, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
                     : Center(
-                  child: Text(S.of(context).noImageMailingList, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd)),
+                  child: Text(S.of(context).noImageMailingList, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                 ),
               ),
             );

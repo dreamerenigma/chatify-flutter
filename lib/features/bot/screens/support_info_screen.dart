@@ -1,51 +1,341 @@
-import 'package:chatify/features/bot/widgets/bars/support_app_bar.dart';
-import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
-import 'package:provider/provider.dart';
-import '../../../provider/wallpaper_provider.dart';
-import '../../../utils/constants/app_images.dart';
-import '../models/info_app_model.dart';
+import '../../../common/widgets/switches/custom_switch.dart';
+import '../../../generated/l10n/l10n.dart';
+import '../../../routes/custom_page_route.dart';
+import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
+import '../../personalization/widgets/dialogs/add_list_bottom_sheet_dialog.dart';
+import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../personalization/widgets/items/profile_settings_item.dart';
+import '../../utils/widgets/dividers/custom_divider.dart';
+import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/support_model.dart';
+import '../widgets/dialogs/ai_support_bottom_sheet_dialog.dart';
+import '../widgets/dialogs/security_support_bottom_sheet_dialog.dart';
+import '../widgets/dialogs/verified_badge_bottom_sheet_dialog.dart';
+import '../widgets/widget/expandable_description_widget.dart';
+import 'block_bot_screen.dart';
+import 'bot_image_viewer_screen.dart';
 
-class SupportInfoScreen extends StatelessWidget {
-  final SupportAppModel? support;
-  final InfoAppModel? infoApp;
+class SupportInfoScreen extends StatefulWidget {
+  final SupportAppModel support;
 
   const SupportInfoScreen({
     super.key,
-    this.support,
-    this.infoApp,
+    required this.support,
   });
 
   @override
+  State<SupportInfoScreen> createState() => _SupportInfoScreenState();
+}
+
+class _SupportInfoScreenState extends State<SupportInfoScreen> {
+  final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
+  final ScrollController _scrollController = ScrollController();
+  bool isCloseChatEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      setState(() {
+        _scrollOffset.value = _scrollController.offset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollOffset.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SupportAppBar(support: support, infoApp: infoApp),
-      body: _buildBodySection(context),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height * .03 + 56),
+                Expanded(
+                  child: ScrollConfiguration(
+                    behavior: NoGlowScrollBehavior(),
+                    child: ScrollbarTheme(
+                      data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+                      child: Scrollbar(
+                        thickness: 4,
+                        thumbVisibility: false,
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildInfoDetails(context),
+                              _buildInfo(),
+                              SizedBox(height: 15),
+                              _buildModerationUser(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            _buildAnimatedHeader(),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildBodySection(BuildContext context) {
-    return ScrollConfiguration(
-      behavior: NoGlowScrollBehavior(),
-      child: Stack(
-        children: [
-          Consumer<WallpaperProvider>(
-            builder: (context, wallpaperProvider, child) {
-              final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+  Widget _buildAnimatedHeader() {
+    return ValueListenableBuilder<double>(
+      valueListenable: _scrollOffset,
+      builder: (context, scrollOffset, child) {
+        final double progress = ((scrollOffset - 80) / 70).clamp(0.0, 1.0);
+        final double borderOpacity = ((progress - 0.9) / 0.1).clamp(0.0, 1.0);
 
-              return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
-            },
+        return Positioned(
+          top: 25,
+          left: 0,
+          right: 0,
+          child: SizedBox(
+            height: 54,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: progress,
+                    child: Container(
+                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 60),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, createPageRoute(BotImageViewerScreen(imageAsset: ChatifyVectors.appLogoLight, title: 'Chatify Support')));
+                            },
+                            child: Container(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                              alignment: Alignment.center,
+                              child: SvgPicture.asset(ChatifyVectors.appLogoLight, width: 25, height: 25, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '${widget.support.name} ${widget.support.surname}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400),
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                SvgPicture.asset(ChatifyVectors.starburstCheck, width: 14, height: 14, colorFilter: const ColorFilter.mode(ChatifyColors.blue, BlendMode.srcIn)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 4,
+                  top: 7,
+                  child: IconButton(icon: Icon(Icons.arrow_back_rounded, size: 25, color: ChatifyColors.white), onPressed: () => Navigator.pop(context)),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: IgnorePointer(
+                    child: Opacity(opacity: borderOpacity, child: Container(height: 1, color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.buttonDisabled)),
+                  ),
+                ),
+              ],
+            ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14)),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoDetails(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(context, createPageRoute(BotImageViewerScreen(imageAsset: ChatifyVectors.appLogoLight, title: 'Chatify Support')));
+          },
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: SvgPicture.asset(ChatifyVectors.appLogoLight, width: 70, height: 70, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+          ),
+        ),
+        const SizedBox(height: 14),
+        GestureDetector(
+          onTap: () {
+            showVerifiedBadeBottomSheetDialog(context);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${widget.support.name} ${widget.support.surname}',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
+              ),
+              const SizedBox(width: 5),
+              SvgPicture.asset(ChatifyVectors.starburstCheck, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.blue, BlendMode.srcIn)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 2),
+        GestureDetector(
+          onTap: () {
+            showVerifiedBadeBottomSheetDialog(context);
+          },
+          child: Text(
+            widget.support.description,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400, height: 1.4),
+          ),
+        ),
+        const SizedBox(height: 5),
+        CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 20, bottom: 10),
+      ],
+    );
+  }
+
+  Widget _buildInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildDescriptionItem(),
+        SizedBox(height: 15),
+        ProfileSettingsItem(
+          icon: const Icon(Icons.notifications_none_rounded, size: 27, color: ChatifyColors.darkGrey),
+          title: S.of(context).notifications,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          onTap: () {},
+        ),
+        SizedBox(height: 15),
+        ProfileSettingsItem(
+          icon: SvgPicture.asset(ChatifyVectors.aiOutline, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+          title: 'ИИ',
+          subtitle: 'Сообщения в этом чате могут быть сгенерированы ИИ. Нажмите, чтобы узнать подробнее.',
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          onTap: () {
+            showAISupportBottomSheetDialog(context);
+          },
+        ),
+        SizedBox(height: 10),
+        ProfileSettingsItem(
+          icon: SvgPicture.asset(ChatifyVectors.messageLock, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+          title: S.of(context).closingChat,
+          subtitle: S.of(context).closeHideChatDevice,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          trailing: CustomSwitch(
+            value: isCloseChatEnabled,
+            onChanged: (value) {
+              setState(() {
+                isCloseChatEnabled = value;
+              });
+            },
+            switchWidth: 55,
+            switchHeight: 33,
+            thumbSize: 25,
+            thumbPadding: 3,
+          ),
+          onTap: () {
+            setState(() {
+              isCloseChatEnabled = !isCloseChatEnabled;
+            });
+          },
+        ),
+        SizedBox(height: 10),
+        ProfileSettingsItem(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          icon: const Icon(Icons.info_outline_rounded, size: 27, color: ChatifyColors.darkGrey),
+          title: 'Безопасность',
+          subtitle: 'Это официальный аккаунт Службы поддержки Chatify. Нажмите, чтобы узнать подробнее.',
+          onTap: () {
+            showSecuritySupportBottomSheetDialog(context);
+          },
+        ),
+        SizedBox(height: 10),
+        ProfileSettingsItem(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          icon: SvgPicture.asset(ChatifyVectors.addToList, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+          title: 'Добавить в список',
+          onTap: () {
+            showAddListBottomSheetDialog(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDescriptionItem() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 25,
+            child: Center(child: SvgPicture.asset(ChatifyVectors.shop, width: 22, height: 22, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))),
+          ),
+          const SizedBox(width: 25),
+          Expanded(
+            child: ExpandableDescriptionWidget(
+              text: 'Это официальный чат службы поддержки Chatify. Здесь вы можете получить ответы на вопросы о приложении, его функциях и возможностях. Мы помогаем пользователям решать возникающие проблемы и делаем всё возможное, чтобы общение в Chatify оставалось простым, удобным, безопасным и надежным на любых устройствах.',
+              maxLines: 7,
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildModerationUser() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ProfileSettingsItem(
+          icon: const Icon(Icons.not_interested, size: 25),
+          title: '${S.of(context).block}: ${widget.support.name}',
+          titleColor: ChatifyColors.danger,
+          iconColor: ChatifyColors.danger,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          onTap: () {
+            Navigator.push(context, createPageRoute(BlockBotScreen()));
+          },
+        ),
+      ],
     );
   }
 }

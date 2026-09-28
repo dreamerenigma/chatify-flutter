@@ -170,9 +170,9 @@ class PrivacyExtendedScreenState extends State<PrivacyExtendedScreen> {
                     CustomSwitch(
                       value: switchValue,
                       onChanged: onChanged,
-                      switchWidth: 58,
-                      switchHeight: 35,
-                      thumbSize: 27,
+                      switchWidth: 55,
+                      switchHeight: 33,
+                      thumbSize: 25,
                       thumbPadding: 3,
                     ),
                   ],

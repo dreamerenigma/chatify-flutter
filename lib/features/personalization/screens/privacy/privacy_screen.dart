@@ -248,9 +248,9 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                                   : CustomSwitch(
                                       value: isReadingReportsEnabled,
                                       onChanged: _toggleSwitch,
-                                      switchWidth: 58,
-                                      switchHeight: 35,
-                                      thumbSize: 27,
+                                      switchWidth: 55,
+                                      switchHeight: 33,
+                                      thumbSize: 25,
                                       thumbPadding: 3,
                                     ),
                               ],
@@ -400,9 +400,9 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                                     onChanged: (value) {
                                       _toggleEffectCamera(value);
                                     },
-                                    switchWidth: 58,
-                                    switchHeight: 35,
-                                    thumbSize: 27,
+                                    switchWidth: 55,
+                                    switchHeight: 33,
+                                    thumbSize: 25,
                                     thumbPadding: 3,
                                   ),
                                 ),

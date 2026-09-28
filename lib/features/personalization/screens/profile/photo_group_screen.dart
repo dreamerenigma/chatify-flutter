@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:developer';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../api/apis.dart';
 import '../../../../api/group_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../group/controllers/photo_group_controller.dart';
+import '../../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
 import '../../controllers/user_controller.dart';
-import '../../widgets/dialogs/edit_image_bottom_dialog.dart';
+import '../../widgets/dialogs/light_dialog.dart';
 
 class PhotoGroupScreen extends StatefulWidget {
   final String imageGroup;
@@ -28,6 +29,14 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
   bool _isAppBarVisible = true;
   TransformationController transformationController = TransformationController();
   TapDownDetails _doubleTapDetails = TapDownDetails();
+
+  Future<String?> _resolveGroupImage() async {
+    if (widget.imageGroup.isEmpty) {
+      return null;
+    }
+
+    return await APIs.getMediaUrl(widget.imageGroup);
+  }
 
   Future<void> deleteGroupPhoto() async {
     try {
@@ -71,8 +80,6 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PhotoGroupController(image: widget.imageGroup.obs));
-
     return Scaffold(
       appBar: _isAppBarVisible
         ? PreferredSize(
@@ -83,19 +90,27 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
                 boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
               ),
               child: AppBar(
+                titleSpacing: 0,
+                elevation: 0,
                 backgroundColor: ChatifyColors.transparent,
-                title: Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
+                title: Text(S.of(context).groupPicture, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back_rounded, size: 25),
                   onPressed: () {
                     Get.back();
                   },
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.edit),
+                    icon: const Icon(Icons.edit_outlined),
                     onPressed: () {
-                      showEditPhotoBottomSheet(context, (path) => controller.onImagePicked(context, path), () => deleteGroupPhoto());
+                      showEditImageBottomDialog(
+                        context,
+                        title: 'Картинка группы',
+                        onImageSelected: (String value) {},
+                        onEmojiSelected: (Color color, String emoji) {},
+                        onDeletePressed: () {},
+                      );
                     },
                   ),
                 ],
@@ -105,26 +120,43 @@ class PhotoGroupScreenState extends State<PhotoGroupScreen> {
         : null,
       body: Container(
         color: ChatifyColors.black,
+        width: double.infinity,
+        height: double.infinity,
         child: Center(
-          child: Obx(() {
-            final image = controller.image.value;
-            final hasImage = image.isNotEmpty;
+          child: FutureBuilder<String?>(
+            future: _resolveGroupImage(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)));
+              }
 
-            return GestureDetector(
-              onDoubleTapDown: (details) => _doubleTapDetails = details,
-              onDoubleTap: _handleDoubleTap,
-              child: InteractiveViewer(
-                panEnabled: true,
-                scaleEnabled: true,
-                transformationController: transformationController,
-                minScale: 1,
-                maxScale: 4,
-                child: hasImage
-                  ? CachedNetworkImage(imageUrl: image, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
-                  : Center(child: Text(S.of(context).noGroupPicture, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd))),
-              ),
-            );
-          }),
+              final imageUrl = snapshot.data;
+
+              if (imageUrl == null || imageUrl.isEmpty) {
+                return Text(S.of(context).noGroupPicture, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400));
+              }
+
+              return GestureDetector(
+                onDoubleTapDown: (details) => _doubleTapDetails = details,
+                onDoubleTap: _handleDoubleTap,
+                child: InteractiveViewer(
+                  panEnabled: true,
+                  scaleEnabled: true,
+                  transformationController: transformationController,
+                  minScale: 1,
+                  maxScale: 4,
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
+                    errorWidget: (context, url, error) => Center(child: Text(S.of(context).noGroupPicture, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd))),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

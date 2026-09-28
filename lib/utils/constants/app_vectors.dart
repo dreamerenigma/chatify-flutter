@@ -42,7 +42,9 @@ class ChatifyVectors {
   static const String simCardBlue = "assets/vectors/sim_card_blue.svg";
   static const String simCardOrange = "assets/vectors/sim_card_orange.svg";
   static const String document = "assets/vectors/document.svg";
+  static const String documents = "assets/vectors/documents.svg";
   static const String documentOutline = "assets/vectors/document_outline.svg";
+  static const String documentFilled = "assets/vectors/document_filled.svg";
   static const String documentRed = "assets/vectors/document_red.svg";
   static const String documentGreen = "assets/vectors/document_green.svg";
   static const String documentBlue = "assets/vectors/document_blue.svg";
@@ -56,6 +58,7 @@ class ChatifyVectors {
   static const String message = "assets/vectors/message.svg";
   static const String messageFilled = "assets/vectors/message_filled.svg";
   static const String messageOutline = "assets/vectors/message_outline.svg";
+  static const String messageLock = "assets/vectors/message_lock.svg";
   static const String lock = "assets/vectors/lock.svg";
   static const String lockOutline = "assets/vectors/lock_outline.svg";
   static const String user = "assets/vectors/user.svg";
@@ -157,6 +160,7 @@ class ChatifyVectors {
   static const String review = "assets/vectors/review.svg";
   static const String handFavorite = "assets/vectors/hand_favorite.svg";
   static const String ai = "assets/vectors/ai.svg";
+  static const String aiOutline = "assets/vectors/ai_outline.svg";
   static const String question = "assets/vectors/question.svg";
   static const String questionSupport = "assets/vectors/question_support.svg";
   static const String addFavorite = "assets/vectors/add_favorite.svg";
@@ -252,12 +256,24 @@ class ChatifyVectors {
   static const String familyShield = "assets/vectors/family_shield.svg";
   static const String key = "assets/vectors/key.svg";
   static const String hdSettings = "assets/vectors/hd_settings.svg";
+  static const String hdCheck = "assets/vectors/hd_check.svg";
   static const String disappearingMessage = "assets/vectors/disappearing_message.svg";
   static const String forwardingArrow = "assets/vectors/forwarding_arrow.svg";
   static const String username = "assets/vectors/username.svg";
   static const String warning = "assets/vectors/warning.svg";
   static const String reservedUsername = "assets/vectors/reserved_username.svg";
   static const String email = "assets/vectors/email.svg";
+  static const String newsletter = "assets/vectors/newsletter.svg";
+  static const String shop = "assets/vectors/shop.svg";
+  static const String earth = "assets/vectors/earth.svg";
+  static const String securitySupport = "assets/vectors/security_support.svg";
+  static const String likeDislike = "assets/vectors/like_dislike.svg";
+  static const String handHeart = "assets/vectors/hand_heart.svg";
+  static const String heartEmoji = "assets/vectors/heart_emoji.svg";
+  static const String laughingEmoji = "assets/vectors/laughing_emoji.svg";
+  static const String emojiOutline = "assets/vectors/emoji_outline.svg";
+  static const String emojiAdd = "assets/vectors/emoji_add.svg";
+  static const String calendarEvent = "assets/vectors/calendar_event.svg";
 
   /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';

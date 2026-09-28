@@ -9,6 +9,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../personalization/controllers/colors_controller.dart';
+import '../../utils/widgets/dividers/custom_divider.dart';
 
 class SendGeolocationScreen extends StatefulWidget {
   const SendGeolocationScreen({super.key});
@@ -29,9 +30,29 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
 
   Future<void> _checkPermissionStatus() async {
     final status = await Permission.location.status;
+
     setState(() {
       _isPermissionGranted = status.isGranted;
     });
+  }
+
+  Future<void> _openAppSettings() async {
+    final packageName = await _getPackageName();
+    final intent = AndroidIntent(
+      action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
+      package: packageName,
+      flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+    );
+
+    try {
+      await intent.launch();
+    } catch (e) {
+      log('${S.of(context).errorOpeningAppSettings}: $e');
+    }
+  }
+
+  Future<String> _getPackageName() async {
+    return 'com.inputstudios.chatify';
   }
 
   @override
@@ -42,14 +63,8 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
         title: Text(S.of(context).sendLocation, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         actions: [
           if (_isPermissionGranted)
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {},
-            ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {},
-          ),
+            IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: () {}),
         ],
       ),
       body: _isPermissionGranted ? _buildContentWithPermission() : _buildContentWithoutPermission(),
@@ -65,11 +80,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
           child: YandexMap(
             mapType: MapType.vector,
             onMapCreated: (controller) {
-              controller.moveCamera(
-                CameraUpdate.newCameraPosition(
-                  const CameraPosition(target: Point(latitude: 37.7749, longitude: -122.4194), zoom: 12),
-                ),
-              );
+              controller.moveCamera(CameraUpdate.newCameraPosition(const CameraPosition(target: Point(latitude: 37.7749, longitude: -122.4194), zoom: 12)));
             },
           )
         ),
@@ -86,8 +97,8 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                   child: const Icon(Icons.location_on, color: Colors.white),
                 ),
                 const SizedBox(width: 16),
-                Text(S.of(context).shareGeodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                const Divider(height: 0, thickness: 1),
+                Text(S.of(context).shareGeodata, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
               ],
             ),
           ),
@@ -100,7 +111,7 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(S.of(context).nearestPlaces, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                  child: Text(S.of(context).nearestPlaces, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -135,7 +146,10 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Text(S.of(context).sendCurrentLocation, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          S.of(context).sendCurrentLocation,
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeMd,fontWeight: FontWeight.w400), maxLines: 1, overflow: TextOverflow.ellipsis
+                        ),
                       ),
                     ],
                   ),
@@ -157,13 +171,8 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
           Container(
             width: 110,
             height: 110,
-            decoration: BoxDecoration(
-              color: colorsController.getColor(colorsController.selectedColorScheme.value),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(Icons.location_on_outlined, color: ChatifyColors.white, size: 50),
-            ),
+            decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+            child: const Center(child: Icon(Icons.location_on_outlined, size: 50, color: ChatifyColors.black)),
           ),
           const SizedBox(height: 45),
           Text(S.of(context).settingsSendCurrentLocation, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
@@ -192,24 +201,5 @@ class _SendGeolocationScreenState extends State<SendGeolocationScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _openAppSettings() async {
-    final packageName = await _getPackageName();
-    final intent = AndroidIntent(
-      action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
-      package: packageName,
-      flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-    );
-
-    try {
-      await intent.launch();
-    } catch (e) {
-      log('${S.of(context).errorOpeningAppSettings}: $e');
-    }
-  }
-
-  Future<String> _getPackageName() async {
-    return 'com.inputstudios.chatify';
   }
 }

@@ -107,7 +107,7 @@ class GroupModel implements ChatTarget {
   }
 
   @override
-  Future<void> sendDocument(File file) async {
+  Future<void> sendDocument(File file, {String? fileSize}) async {
     await GroupApi.sendGroupDocument(this, members, file);
   }
 

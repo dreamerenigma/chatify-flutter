@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
+import 'package:chatify/features/personalization/screens/data_storage/disappearing_messages_screen.dart';
 import 'package:chatify/features/personalization/screens/profile/photo_profile_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
@@ -10,9 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
-import 'package:iconify_flutter/iconify_flutter.dart';
-import 'package:iconify_flutter/icons/mdi.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/popups/dialogs.dart';
@@ -57,7 +55,10 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   bool isCloseChatEnabled = false;
   bool isProfilePhotoLoaded = false;
   bool _isLoadingProfileImage = false;
+  bool isFavorite = false;
   String? _profileImageUrl;
+
+  bool get isCurrentUser => APIs.auth.currentUser?.uid == widget.user.id;
 
   @override
   void initState() {
@@ -80,13 +81,24 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   }
 
   void _openProfilePhoto(UserModel user, BuildContext context) {
-    Navigator.push(context, createPageRoute(PhotoProfileScreen(image: user.image, user: user)));
+    final UserModel profileUser = isCurrentUser ? APIs.me : user;
+
+    Navigator.push(context, createPageRoute(PhotoProfileScreen(image: _profileImageUrl, user: profileUser)));
   }
 
   Future<void> _loadProfileImage() async {
-    final imagePath = widget.user.image.trim();
+    final UserModel profileUser = isCurrentUser ? APIs.me : widget.user;
+
+    final String imagePath = profileUser.image.trim();
 
     if (imagePath.isEmpty) {
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        isProfilePhotoLoaded = true;
+      });
+
       return;
     }
 
@@ -97,14 +109,18 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     }
 
     try {
-      final url = await APIs.getMediaUrl(imagePath);
+      final String? url = await APIs.getMediaUrl(imagePath);
 
       if (!mounted) return;
 
       setState(() {
         _profileImageUrl = url;
         _isLoadingProfileImage = false;
+        isProfilePhotoLoaded = url != null && url.isNotEmpty;
       });
+
+      log('PROFILE IMAGE PATH: $imagePath');
+      log('PROFILE IMAGE URL: $url');
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
 
@@ -113,6 +129,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       setState(() {
         _profileImageUrl = null;
         _isLoadingProfileImage = false;
+        isProfilePhotoLoaded = true;
       });
     }
   }
@@ -142,10 +159,14 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildProfileInfo(widget.user, context),
-                              _buildMedia(),
+                              if (!isCurrentUser)
+                                _buildMedia(),
                               _buildInfo(),
                               _buildChat(),
-                              _buildGeneralGroup(),
+                              if (!isCurrentUser)
+                                _buildGeneralGroup(),
+                              if (isCurrentUser)
+                                const SizedBox(height: 15),
                               _buildModerationUser(),
                               const SizedBox(height: 20),
                             ],
@@ -205,7 +226,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                         ),
                         const SizedBox(width: 14),
                         Text(
-                          '${widget.user.name} ${widget.user.surname}',
+                          APIs.me.id == widget.user.id ? '@${widget.user.username} (Вы)' : '${widget.user.name} ${widget.user.surname}',
                           style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.normal, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                         ),
                       ],
@@ -234,40 +255,42 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                     ),
                     color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
                     itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 1,
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: AppPopupMenuItem(
-                          text: 'Поделиться',
-                          onTap: () {
-                            final double maxHeight = MediaQuery.of(context).size.height * 0.62;
+                      if (!isCurrentUser) ...[
+                        PopupMenuItem(
+                          value: 1,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: AppPopupMenuItem(
+                            text: 'Поделиться',
+                            onTap: () {
+                              final double maxHeight = MediaQuery.of(context).size.height * 0.62;
 
-                            showAddNewContactBottomSheetDialog(context, maxHeight);
-                            Navigator.pop(context);
-                          },
+                              showAddNewContactBottomSheetDialog(context, maxHeight);
+                              Navigator.pop(context);
+                            },
+                          ),
                         ),
-                      ),
-                      PopupMenuItem(
-                        value: 2,
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: AppPopupMenuItem(
-                          text: 'Изменить',
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(context, createPageRoute(ChangeContactScreen()));
-                          },
+                        PopupMenuItem(
+                          value: 2,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: AppPopupMenuItem(
+                            text: 'Изменить',
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(context, createPageRoute(ChangeContactScreen()));
+                            },
+                          ),
                         ),
-                      ),
-                      PopupMenuItem(
-                        value: 3,
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: AppPopupMenuItem(
-                          text: 'Открыть в адресной книге',
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
+                        PopupMenuItem(
+                          value: 3,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: AppPopupMenuItem(
+                            text: 'Открыть в адресной книге',
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
                         ),
-                      ),
+                      ],
                       PopupMenuItem(
                         value: 4,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -299,139 +322,149 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
   Widget _buildProfileInfo(UserModel user, BuildContext context) {
     final double imageSize = MediaQuery.of(context).size.height * .15;
+    final UserModel profileUser = isCurrentUser ? APIs.me : user;
     List<Widget> profileInfoWidgets = [];
 
     profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .008));
-    profileInfoWidgets.add(ProfilePhotoWidget(user: user, size: imageSize, onTap: () => _openProfilePhoto(user, context)));
+    profileInfoWidgets.add(ProfilePhotoWidget(user: profileUser, size: imageSize, onTap: () => _openProfilePhoto(profileUser, context)));
     profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .008));
-    profileInfoWidgets.add(Center(child: Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w500))));
-    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
-    if (user.phoneNumber.isNotEmpty && user.phoneNumber != "null") {
-      profileInfoWidgets.add(Center(child: Text(user.phoneNumber, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400))));
-    }
-    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
-    profileInfoWidgets.add(
-      StreamBuilder<firestore.DocumentSnapshot>(
-        stream: APIs.firestore.collection('Users').doc(user.id).snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const SizedBox.shrink();
-          }
-
-          final data = snapshot.data!.data() as Map<String, dynamic>;
-          final bool isOnline = data['is_online'] ?? false;
-          final dynamic lastActiveDynamic = data['last_active'];
-
-          String lastActiveText = S.of(context).lastSeenNotAvailable;
-
-          if (lastActiveDynamic is firestore.Timestamp) {
-            lastActiveText = DateUtil.getLastActiveTime(context: context, lastActive: lastActiveDynamic, addWasPrefix: true, capitalizeWasPrefix: true);
-          } else if (lastActiveDynamic is String) {
-            final int? millis = int.tryParse(lastActiveDynamic);
-
-            if (millis != null) {
-              lastActiveText = DateUtil.getLastActiveTime(context: context, lastActive: firestore.Timestamp.fromMillisecondsSinceEpoch(millis), addWasPrefix: true);
-            }
-          }
-
-          final String statusText = isOnline ? S.of(context).online : lastActiveText;
-
-          return Center(
-            child: Text(
-              statusText,
-              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          );
-        },
-      ),
-    );
-    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
     profileInfoWidgets.add(
       Center(
-        child: GestureDetector(
-          onTap: () {
-            Clipboard.setData(ClipboardData(text: user.email));
-            Dialogs.showSnackbar(context, S.of(context).emailCopied);
+        child: Text(
+          APIs.me.id == profileUser.id ? '@${profileUser.username} (Вы)' : '${profileUser.name} ${profileUser.surname}',
+          style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
+        ),
+      ),
+    );
+    if (!isCurrentUser) {
+      profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
+      if (user.phoneNumber.isNotEmpty && user.phoneNumber != "null") {
+        profileInfoWidgets.add(Center(child: Text(user.phoneNumber, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400))));
+      }
+      profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
+      profileInfoWidgets.add(
+        StreamBuilder<firestore.DocumentSnapshot>(
+          stream: APIs.firestore.collection('Users').doc(user.id).snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const SizedBox.shrink();
+            }
+
+            final data = snapshot.data!.data() as Map<String, dynamic>;
+            final bool isOnline = data['is_online'] ?? false;
+            final dynamic lastActiveDynamic = data['last_active'];
+
+            String lastActiveText = S.of(context).lastSeenNotAvailable;
+
+            if (lastActiveDynamic is firestore.Timestamp) {
+              lastActiveText = DateUtil.getLastActiveTime(context: context, lastActive: lastActiveDynamic, addWasPrefix: true, capitalizeWasPrefix: true);
+            } else if (lastActiveDynamic is String) {
+              final int? millis = int.tryParse(lastActiveDynamic);
+
+              if (millis != null) {
+                lastActiveText = DateUtil.getLastActiveTime(context: context, lastActive: firestore.Timestamp.fromMillisecondsSinceEpoch(millis), addWasPrefix: true);
+              }
+            }
+
+            final String statusText = isOnline ? S.of(context).online : lastActiveText;
+
+            return Center(
+              child: Text(
+                statusText,
+                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            );
           },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+        ),
+      );
+      profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .006));
+      profileInfoWidgets.add(
+        Center(
+          child: GestureDetector(
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: user.email));
+              Dialogs.showSnackbar(context, S.of(context).emailCopied);
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(user.email, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black)),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: user.email));
+                    Dialogs.showSnackbar(context, S.of(context).emailCopied);
+                  },
+                  child: Icon(Icons.copy, size: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .02));
+      profileInfoWidgets.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ActionOption(
+              svgAsset: ChatifyVectors.messageOutline,
+              label: S.of(context).write,
+              onTap: () {
+                Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
+              },
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+            ActionOption(
+              icon: Icons.call_outlined,
+              label: S.of(context).audio,
+              onTap: () {
+                Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
+              },
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+            ActionOption(
+              svgAsset: ChatifyVectors.videoCameraOutline,
+              label: S.of(context).video,
+              onTap: () {
+                Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
+              },
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+            ActionOption(
+              icon: Icons.search,
+              label: S.of(context).search,
+              onTap: () {
+                final double maxHeight = MediaQuery.of(context).size.height * 0.62;
+
+                showAddNewContactBottomSheetDialog(context, maxHeight);
+              },
+            ),
+          ],
+        ),
+      );
+      profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .03));
+      profileInfoWidgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(user.email, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black)),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: user.email));
-                  Dialogs.showSnackbar(context, S.of(context).emailCopied);
-                },
-                child: Icon(Icons.copy, size: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
+              Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Text(
+                  DateUtil.getLastMessageTime(context: context, time: widget.user.createdAt, showYear: true, formatType: DateFormatType.textual),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
+                ),
               ),
             ],
           ),
         ),
-      ),
-    );
-    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .02));
-    profileInfoWidgets.add(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ActionOption(
-            svgAsset: ChatifyVectors.messageOutline,
-            label: S.of(context).write,
-            onTap: () {
-              Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
-            },
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          ActionOption(
-            icon: Icons.call_outlined,
-            label: S.of(context).audio,
-            onTap: () {
-              Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
-            },
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          ActionOption(
-            svgAsset: ChatifyVectors.videoCameraOutline,
-            label: S.of(context).video,
-            onTap: () {
-              Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
-            },
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          ActionOption(
-            icon: Icons.search,
-            label: S.of(context).search,
-            onTap: () {
-              final double maxHeight = MediaQuery.of(context).size.height * 0.62;
-
-              showAddNewContactBottomSheetDialog(context, maxHeight);
-            },
-          ),
-        ],
-      ),
-    );
-    profileInfoWidgets.add(SizedBox(height: MediaQuery.of(context).size.height * .03));
-    profileInfoWidgets.add(
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                DateUtil.getLastMessageTime(context: context, time: widget.user.createdAt, showYear: true, formatType: DateFormatType.textual),
-                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+      );
+    }
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: profileInfoWidgets);
   }
@@ -481,25 +514,27 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (!isCurrentUser) ...[
+          ProfileSettingsItem(
+            icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+            title: 'Управление хранилищем',
+            subtitle: '77 KB',
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            onTap: () {},
+          ),
+          SizedBox(height: 6),
+          ProfileSettingsItem(
+            icon: const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey, size: 25),
+            title: S.of(context).notifications,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            onTap: () {
+              Navigator.push(context, createPageRoute(const UserNotificationsScreen()));
+            },
+          ),
+        ],
+        SizedBox(height: !isCurrentUser ? 20 : 35),
         ProfileSettingsItem(
-          icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
-          title: 'Управление хранилищем',
-          subtitle: '77 KB',
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {},
-        ),
-        SizedBox(height: 6),
-        ProfileSettingsItem(
-          icon: const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey, size: 25),
-          title: S.of(context).notifications,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {
-            Navigator.push(context, createPageRoute(const UserNotificationsScreen()));
-          },
-        ),
-        SizedBox(height: 20),
-        ProfileSettingsItem(
-          icon: const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey, size: 25),
+          icon: const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey, size: 24),
           title: S.of(context).mediaVisibility,
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {
@@ -515,24 +550,28 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (!isCurrentUser) ...[
+          ProfileSettingsItem(
+            icon: const Icon(Icons.lock_outlined, color: ChatifyColors.darkGrey, size: 25),
+            title: S.of(context).encryption,
+            subtitle: S.of(context).callsProtectedEndToEndEncryption,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            onTap: () {},
+          ),
+          const SizedBox(height: 10),
+        ],
         ProfileSettingsItem(
-          icon: const Icon(Icons.lock_outlined, color: ChatifyColors.darkGrey, size: 25),
-          title: S.of(context).encryption,
-          subtitle: S.of(context).callsProtectedEndToEndEncryption,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {},
-        ),
-        const SizedBox(height: 10),
-        ProfileSettingsItem(
-          icon: const HugeIcon(icon: HugeIcons.strokeRoundedTimeQuarterPass, color: ChatifyColors.darkGrey),
+          icon: SvgPicture.asset(ChatifyVectors.timerOutline, width: 21, height: 21, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           title: S.of(context).disappearingMessages,
           subtitle: S.of(context).off,
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, createPageRoute(DisappearingMessagesScreen()));
+          },
         ),
         const SizedBox(height: 10),
         ProfileSettingsItem(
-          icon: const Iconify(Mdi.message_text_lock_outline, color: ChatifyColors.darkGrey),
+          icon: SvgPicture.asset(ChatifyVectors.messageLock, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           title: S.of(context).closingChat,
           subtitle: S.of(context).closeHideChatDevice,
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -543,9 +582,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 isCloseChatEnabled = value;
               });
             },
-            switchWidth: 58,
-            switchHeight: 35,
-            thumbSize: 27,
+            switchWidth: 55,
+            switchHeight: 33,
+            thumbSize: 25,
             thumbPadding: 3,
           ),
           onTap: () {
@@ -556,12 +595,36 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         ),
         const SizedBox(height: 10),
         ProfileSettingsItem(
-          icon: SvgPicture.asset(ChatifyVectors.shieldCheckeredFilled, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+          icon: SvgPicture.asset(ChatifyVectors.shieldCheckeredFilled, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           title: 'Расширенная защита конфиденциальности в чате',
           subtitle: 'Выкл.',
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {},
         ),
+        const SizedBox(height: 10),
+        ProfileSettingsItem(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          icon: isFavorite
+            ? SvgPicture.asset(ChatifyVectors.favoriteNone, width: 24, height: 24, colorFilter: const ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))
+            : Icon(Icons.favorite_outline, size: 25, color: ChatifyColors.darkGrey),
+          title: isFavorite ? 'Удалить из избранного' : 'Добавить в избранное',
+          onTap: () {
+            setState(() {
+              isFavorite = !isFavorite;
+            });
+          },
+        ),
+        if (!isCurrentUser) ...[
+          const SizedBox(height: 10),
+          ProfileSettingsItem(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            icon: SvgPicture.asset(ChatifyVectors.addToList, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+            title: 'Добавить в список',
+            onTap: () {
+              showAddListBottomSheetDialog(context);
+            },
+          ),
+        ],
       ],
     );
   }
@@ -664,22 +727,6 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 6),
-                ProfileSettingsItem(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  icon: SvgPicture.asset(ChatifyVectors.favoriteNone, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 25, height: 25),
-                  title: 'Удалить из избранного',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 4),
-                ProfileSettingsItem(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  icon: SvgPicture.asset(ChatifyVectors.addToList, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn), width: 25, height: 25),
-                  title: 'Добавить в список',
-                  onTap: () {
-                    showAddListBottomSheetDialog(context);
-                  },
-                ),
               ],
             ),
           ],
@@ -693,31 +740,33 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ProfileSettingsItem(
-          icon: const Icon(Icons.remove_circle_outline_outlined, size: 25),
+          icon: const Icon(Icons.remove_circle_outline_outlined, size: 24),
           title: 'Очистить чат',
           titleColor: ChatifyColors.danger,
           iconColor: ChatifyColors.danger,
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           onTap: () {},
         ),
-        const SizedBox(height: 8),
-        ProfileSettingsItem(
-          icon: const Icon(Icons.not_interested, size: 25),
-          title: '${S.of(context).block}: ${widget.user.name} ${widget.user.surname}',
-          titleColor: ChatifyColors.danger,
-          iconColor: ChatifyColors.danger,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          onTap: () {},
-        ),
-        const SizedBox(height: 8),
-        ProfileSettingsItem(
-          icon: const Icon(Icons.thumb_down_alt_outlined, size: 25),
-          title: '${S.of(context).complainAbout} ${widget.user.name} ${widget.user.surname}',
-          titleColor: ChatifyColors.danger,
-          iconColor: ChatifyColors.danger,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          onTap: () {},
-        ),
+        if (!isCurrentUser) ...[
+          const SizedBox(height: 8),
+          ProfileSettingsItem(
+            icon: const Icon(Icons.not_interested, size: 24),
+            title: '${S.of(context).block}: ${widget.user.name} ${widget.user.surname}',
+            titleColor: ChatifyColors.danger,
+            iconColor: ChatifyColors.danger,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            onTap: () {},
+          ),
+          const SizedBox(height: 8),
+          ProfileSettingsItem(
+            icon: const Icon(Icons.thumb_down_alt_outlined, size: 24),
+            title: '${S.of(context).complainAbout} ${widget.user.name} ${widget.user.surname}',
+            titleColor: ChatifyColors.danger,
+            iconColor: ChatifyColors.danger,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            onTap: () {},
+          ),
+        ],
       ],
     );
   }

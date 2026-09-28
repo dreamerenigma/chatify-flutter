@@ -1,15 +1,22 @@
 import 'package:chatify/utils/constants/app_vectors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:heroicons/heroicons.dart';
+import '../../../../api/apis.dart';
 import '../../../../common/widgets/tiles/list_tile/settings_menu_tile.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/popups/dialogs.dart';
+import '../../../authentication/screens/login_screen.dart';
 import '../../../chat/models/user_model.dart';
 import '../../widgets/dialogs/add_user_bottom_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
+import '../../widgets/dialogs/logout_dialog.dart';
 
 class LogoutScreen extends StatefulWidget {
   final UserModel user;
@@ -24,6 +31,39 @@ class LogoutScreen extends StatefulWidget {
 }
 
 class _LogoutScreenState extends State<LogoutScreen> {
+  Future<void> _logout() async {
+    Dialogs.showProgressBar(context);
+
+    final googleSignIn = GoogleSignIn.instance;
+
+    try {
+      await APIs.updateActiveStatus(false);
+      await APIs.auth.signOut();
+      await googleSignIn.signOut();
+
+      APIs.auth = FirebaseAuth.instance;
+
+      if (!mounted) return;
+
+      Dialogs.hideProgressBar(context);
+
+      Navigator.pushReplacement(context, createPageRoute(const LoginScreen()));
+    } catch (e) {
+      if (!mounted) return;
+
+      Dialogs.hideProgressBar(context);
+
+      CustomIconSnackBar.showAnimatedSnackBar(
+        context,
+        S.of(context).errorLogout,
+        icon: const HeroIcon(HeroIcons.exclamationTriangle),
+        iconColor: ChatifyColors.error,
+      );
+
+      Dialogs.showSnackbar(context, S.of(context).errorDuringLogout);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,28 +122,44 @@ class _LogoutScreenState extends State<LogoutScreen> {
             iconColor: ChatifyColors.darkGrey,
             title: 'Необходимо освободить место в хранилище',
             titleColor: ChatifyColors.danger,
-            onTap: () => Navigator.push(context, createPageRoute(LogoutScreen(user: widget.user))),
+            onTap: () {},
           ),
           _buildSettingsMenuTile(
             icon: Icons.folder_outlined,
             iconColor: ChatifyColors.darkGrey,
             title: 'Создать резервную копию чата',
             titleColor: ChatifyColors.danger,
-            onTap: () => Navigator.push(context, createPageRoute(LogoutScreen(user: widget.user))),
+            onTap: () {},
           ),
           _buildSettingsMenuTile(
             icon: Icons.folder_outlined,
             iconColor: ChatifyColors.darkGrey,
             title: 'Необходимо освободить место в хранилище',
             titleColor: ChatifyColors.danger,
-            onTap: () => Navigator.push(context, createPageRoute(LogoutScreen(user: widget.user))),
+            onTap: () {},
           ),
           _buildSettingsMenuTile(
             icon: SvgPicture.asset(ChatifyVectors.exit, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.danger, BlendMode.srcIn)),
             iconColor: ChatifyColors.danger,
             title: S.of(context).logout,
             titleColor: ChatifyColors.danger,
-            onTap: () => Navigator.push(context, createPageRoute(LogoutScreen(user: widget.user))),
+            onTap: () async {
+              await LogoutDialog.showLogoutDialog(
+                context,
+                onConfirm: () async {
+                  Navigator.pop(context);
+                  await _logout();
+                },
+                onCancel: () {
+                  Navigator.pop(context);
+                },
+                logoutTitle: S.of(context).logout,
+                logoutMessage: S.of(context).sureLogoutAccount,
+                cancelText: S.of(context).cancel,
+                confirmText: S.of(context).sure,
+                colorScheme: Theme.of(context).colorScheme,
+              );
+            },
           ),
         ],
       ),

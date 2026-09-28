@@ -1,4 +1,4 @@
-import 'package:chatify/features/personalization/widgets/dialogs/custom_radio_list_tile.dart';
+import 'package:chatify/features/utils/widgets/tiles/custom_radio_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';

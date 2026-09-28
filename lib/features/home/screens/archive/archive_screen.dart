@@ -12,7 +12,7 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
-import '../../widgets/app_bars/selection_app_bar.dart';
+import '../../widgets/bars/app_bars/selection_app_bar.dart';
 import '../../widgets/dialogs/no_sound_dialog.dart';
 import '../../widgets/infos/private_messages_protected_notice.dart';
 

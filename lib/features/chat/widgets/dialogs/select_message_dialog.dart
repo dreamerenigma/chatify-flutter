@@ -139,13 +139,12 @@ Widget _buildIconTextRow({
   String? trailingText,
   VoidCallback? onTap,
 }) {
-  final isDark = context.isDarkMode;
 
   Widget leadingIcon;
   if (svgAsset != null) {
     leadingIcon = SvgPicture.asset(svgAsset, width: iconSize, height: iconSize, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn));
   } else if (icon != null) {
-    leadingIcon = Icon(icon, size: iconSize, color: isDark ? ChatifyColors.white : ChatifyColors.black);
+    leadingIcon = Icon(icon, size: iconSize, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black);
   } else {
     leadingIcon = const SizedBox.shrink();
   }
@@ -158,8 +157,8 @@ Widget _buildIconTextRow({
         onTap: onTap,
         mouseCursor: SystemMouseCursors.basic,
         splashColor: ChatifyColors.transparent,
-        highlightColor: isDark ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
-        hoverColor: isDark ? ChatifyColors.softNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.softNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey,
         borderRadius: BorderRadius.circular(6),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
@@ -168,12 +167,12 @@ Widget _buildIconTextRow({
               leadingIcon,
               const SizedBox(width: 10),
               Expanded(
-                child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: isDark ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300)),
+                child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300)),
               ),
               if (trailingText != null)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(trailingText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: isDark ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300)),
+                child: Text(trailingText, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontWeight: FontWeight.w300)),
               ),
             ],
           ),

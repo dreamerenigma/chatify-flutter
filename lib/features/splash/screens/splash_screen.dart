@@ -24,52 +24,59 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
-      SystemUiOverlay.top,
-      SystemUiOverlay.bottom,
-    ]);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: ChatifyColors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: ChatifyColors.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeApp();
-    });
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [
+        SystemUiOverlay.top,
+        SystemUiOverlay.bottom,
+      ],
+    );
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: ChatifyColors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: ChatifyColors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    _initializeApp();
   }
 
   Future<void> _initializeApp() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-
     if (kIsWeb) {
-      Future.delayed(const Duration(seconds: 3), () => _navigateToNextScreen());
+      await _navigateToNextScreen();
       return;
     }
 
     if (Platform.isAndroid || Platform.isIOS) {
-      ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+      try {
+        final value = await ReceiveSharingIntent.instance.getInitialMedia();
+
+        if (!mounted) return;
+
         if (value.isNotEmpty) {
           _navigateToSendFileScreen(value.first.path);
         } else {
-          Future.delayed(const Duration(seconds: 3), _navigateToNextScreen);
+          await _navigateToNextScreen();
         }
-      }).catchError((error) {
-        Future.delayed(const Duration(seconds: 3), _navigateToNextScreen);
-      });
+      } catch (e) {
+        await _navigateToNextScreen();
+      }
 
       ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
-        if (value.isNotEmpty) {
+        if (value.isNotEmpty && mounted) {
           _navigateToSendFileScreen(value.first.path);
         }
       });
-    } else if (Platform.isWindows) {
-      Future.delayed(const Duration(seconds: 3), _navigateToNextScreen);
+
+      return;
+    }
+
+    if (Platform.isWindows) {
+      await _navigateToNextScreen();
     }
   }
 

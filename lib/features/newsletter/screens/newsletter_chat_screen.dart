@@ -1,19 +1,29 @@
+import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../../api/apis.dart';
 import '../../../generated/l10n/l10n.dart';
+import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
-import '../../home/widgets/app_bars/newsletter_app_bar.dart';
+import '../../chat/models/message_model.dart';
+import '../../chat/widgets/input/chat_input.dart';
+import '../widgets/bars/app_bars/newsletter_chat_app_bar.dart';
 import '../../home/widgets/dialogs/chats_calls_privacy_sheet_dialog.dart';
+import '../../utils/widgets/cards/info_card.dart';
+import '../models/newsletter_model.dart';
 
 class NewsletterChatScreen extends StatefulWidget {
+  final NewsletterModel newsletter;
   final List<String> newsletters;
   final String createdAt;
 
   const NewsletterChatScreen({
     super.key,
+    required this.newsletter,
     required this.newsletters,
     required this.createdAt,
   });
@@ -23,6 +33,10 @@ class NewsletterChatScreen extends StatefulWidget {
 }
 
 class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
+  final FocusNode inputFocusNode = FocusNode();
+  bool showEmoji = false;
+  MessageModel? replyMessage;
+
   String get formattedDate {
     if (widget.createdAt.isEmpty) {
       return S.of(context).dateNotSpecified;
@@ -43,26 +57,49 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
     }
   }
 
+  void toggleEmojiKeyboard() {
+    setState(() {
+      showEmoji = !showEmoji;
+      if (showEmoji) {
+        inputFocusNode.unfocus();
+      } else {
+        inputFocusNode.requestFocus();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final backgroundImage = context.isDarkMode ? ChatifyImages.chatBackgroundDark : ChatifyImages.chatBackgroundLight;
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
-          color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
-          child: AppBar(automaticallyImplyLeading: false, flexibleSpace: NewsletterAppbar(newsletters: widget.newsletters)),
+          child: AppBar(
+            automaticallyImplyLeading: false,
+            flexibleSpace: NewsletterChatAppbar(newsletters: widget.newsletters),
+            titleSpacing: 0,
+            elevation: 0,
+            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+          ),
         ),
       ),
       body: Stack(
         children: [
-          Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover))),
+          Consumer<WallpaperProvider>(
+            builder: (context, wallpaperProvider, child) {
+              final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+
+              return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
+            },
+          ),
           Positioned(
-            top: 0,
+            top: 10,
             left: 0,
             right: 0,
             child: Align(
@@ -72,7 +109,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                 margin: const EdgeInsets.only(top: 4),
                 decoration: BoxDecoration(
                   color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                  borderRadius: BorderRadius.circular(9),
+                  borderRadius: BorderRadius.circular(6),
                   boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
                 ),
                 child: Text(
@@ -82,57 +119,71 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 22),
-                  InkWell(
-                    onTap: () {
-                      showChatsCallsPrivacyBottomSheet(context, headerText: S.of(context).chatsCallsConfidential, titleText: S.of(context).yourPrivateMessagesAndCalls);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 40, right: 40, top: 14),
-                      padding: const EdgeInsets.all(16),
+          ScrollConfiguration(
+            behavior: NoGlowScrollBehavior(),
+            child: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    InfoCard(
+                      icon: Icons.lock_outline,
+                      text: S.of(context).messagesCallsProtectedEncryption,
+                      onTap: () {
+                        showChatsCallsPrivacyBottomSheet(context, headerText: S.of(context).chatsCallsConfidential, titleText: S.of(context).yourPrivateMessagesAndCalls);
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 30),
                       decoration: BoxDecoration(
                         color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
                         borderRadius: BorderRadius.circular(8),
-                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
+                        boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
                       ),
-                      child: Center(
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              const WidgetSpan(child: Icon(Icons.lock_outline, color: ChatifyColors.yellow, size: 16), alignment: PlaceholderAlignment.middle),
-                              TextSpan(
-                                text: S.of(context).messagesCallsProtectedEncryption,
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.yellow, height: 1.5),
+                      child: Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          onTap: () {},
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                            decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
+                            child: Center(
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                '${S.of(context).youCreatedMailingList} ''${widget.newsletters.length} ''${S.of(context).recipients}',
+                                style: const TextStyle(color: ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400),
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 40),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.1 * 255).toInt()), blurRadius: 3, spreadRadius: 1)],
-                    ),
-                    child: Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        '${S.of(context).youCreatedMailingList} ${widget.newsletters.length} ${S.of(context).recipients}',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.bold, color: ChatifyColors.darkGrey),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : MediaQuery.of(context).viewPadding.bottom),
+              child: ChatInput(
+                focusNode: inputFocusNode,
+                onToggleEmojiKeyboard: toggleEmojiKeyboard,
+                isReplyVisible: replyMessage != null,
+                user: APIs.me,
+                chatTarget: widget.newsletter,
+                onSendMessage: (text) async {
+                  await widget.newsletter.sendText(text);
+                },
               ),
             ),
           ),

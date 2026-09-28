@@ -215,6 +215,70 @@ class DateUtil {
     return '$prefixDate $fullDate'.trim();
   }
 
+  /// -- Formats event date and time.
+  /// Today: Сегодня, 28 сент., 19:00
+  /// Yesterday: Вчера, 27 сент., 19:00
+  /// Older: 26 сент., 19:00
+  static String getEventDateTime({required BuildContext context, required Timestamp timestamp}) {
+    try {
+      final DateTime date = timestamp.toDate();
+      final DateTime now = DateTime.now();
+      final String formattedTime = TimeOfDay.fromDateTime(date).format(context);
+      final bool isToday = date.year == now.year && date.month == now.month && date.day == now.day;
+
+      if (isToday) {
+        return 'Сегодня, ${date.day} ${getMonth(date, context)}, $formattedTime';
+      }
+
+      final DateTime yesterday = now.subtract(const Duration(days: 1));
+
+      final bool isYesterday = date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day;
+
+      if (isYesterday) {
+        return 'Вчера, ${date.day} ${getMonth(date, context)}, $formattedTime';
+      }
+
+      if (date.year == now.year) {
+        return '${date.day} ${getMonth(date, context)}, $formattedTime';
+      }
+
+      return '${date.day} ${getMonth(date, context)} ${date.year}, $formattedTime';
+    } catch (e) {
+      log('Error formatting event date: $e');
+      return 'Invalid date';
+    }
+  }
+
+  /// .
+  static String getEventDateTimeShort({required BuildContext context, required Timestamp timestamp}) {
+    try {
+      final DateTime date = timestamp.toDate();
+      final DateTime now = DateTime.now();
+      final String formattedTime = TimeOfDay.fromDateTime(date).format(context);
+      final bool isToday = date.year == now.year && date.month == now.month && date.day == now.day;
+
+      if (isToday) {
+        return 'Сегодня, $formattedTime';
+      }
+
+      final DateTime yesterday = now.subtract(const Duration(days: 1));
+      final bool isYesterday = date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day;
+
+      if (isYesterday) {
+        return 'Вчера, $formattedTime';
+      }
+
+      if (date.year == now.year) {
+        return '${date.day} ${getMonth(date, context)}, $formattedTime';
+      }
+
+      return '${date.day} ${getMonth(date, context)} ${date.year}, $formattedTime';
+    } catch (e) {
+      log('Error formatting event date: $e');
+      return 'Invalid date';
+    }
+  }
+
   static String _capitalizeFirstLetter(String value) {
     if (value.isEmpty) return value;
 

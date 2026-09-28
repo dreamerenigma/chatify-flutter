@@ -16,9 +16,14 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/formatters/formatter.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../survey/widgets/cards/survey_message_card.dart';
+import '../../models/message_bubble_model.dart';
 import '../../models/message_model.dart';
+import '../../models/user_model.dart';
 import '../../screens/forward_message_screen.dart';
+import '../cards/event_message_card.dart';
 import '../dialogs/call_modal_bottom_sheet.dart';
+import '../dialogs/event_info_bottom_sheet_dialog.dart';
 import 'call_message.dart';
 import 'message_bubble.dart';
 import '../buttons/emoji_hover_button.dart';
@@ -30,15 +35,19 @@ import 'message_meta.dart';
 import 'message_text.dart';
 
 class RecipientMessage extends StatefulWidget {
+  final UserModel user;
   final MessageModel message;
   final List<MessageModel> messages;
   final bool hasReaction;
+  final String conversationId;
 
   const RecipientMessage({
     super.key,
+    required this.user,
     required this.message,
     required this.messages,
     required this.hasReaction,
+    required this.conversationId,
   });
 
   @override
@@ -137,7 +146,13 @@ class RecipientMessageState extends State<RecipientMessage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.voice)
+          if (!Platform.isWindows && widget.message.type != MessageType.call
+              && widget.message.type != MessageType.voice
+              && widget.message.type != MessageType.survey
+              && widget.message.type != MessageType.event
+              && widget.message.type != MessageType.location
+              && widget.message.type != MessageType.document
+            )
             Center(
               child: Container(
                 width: 35,
@@ -167,9 +182,14 @@ class RecipientMessageState extends State<RecipientMessage> {
         return _buildCallMessage();
       case MessageType.voice:
         return _buildVoiceRecordMessage();
+      case MessageType.survey:
+        return _buildSurveyMessage();
+      case MessageType.event:
+        return _buildEventMessage();
       case MessageType.image:
       case MessageType.gif:
       case MessageType.video:
+      case MessageType.audio:
       case MessageType.document:
         return _buildMediaMessage();
       default:
@@ -234,10 +254,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                   showInnerContainer: true,
                   showMetaCheck: false,
                   type: MessageBubbleType.recipient,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 170),
-                    child: CallMessage(message: widget.message, isSender: false),
-                  ),
+                  child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: CallMessage(message: widget.message, isSender: false)),
                 ),
                 _buildMessageTail(),
               ],
@@ -294,15 +311,16 @@ class RecipientMessageState extends State<RecipientMessage> {
   Widget _buildMessageTail() {
     final isCall = widget.message.type == MessageType.call;
     final isVoice = widget.message.type == MessageType.voice;
+    final isEvent = widget.message.type == MessageType.event;
 
     return Positioned(
-      top: isWebOrWindows ? 6 : isCall ? 3.5 : isVoice ? 5.5 : 5.5,
+      top: isWebOrWindows ? 6 : isCall ? 3.5 : isVoice ? 5.5 : isEvent ? 3.5 : 5.5,
       right: 7,
       child: CustomPaint(
         size: const Size(10, 10),
         painter: TrianglePainter(
-          fillColor: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageLight,
-          borderColor: ChatifyColors.greenMessageDivider,
+          fillColor: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBubbleRecipient,
+          borderColor: context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder,
         ),
       ),
     );
@@ -327,6 +345,7 @@ class RecipientMessageState extends State<RecipientMessage> {
             width: isHovered ? null : 0,
             constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
             clipBehavior: Clip.hardEdge,
+            decoration: const BoxDecoration(),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -347,7 +366,11 @@ class RecipientMessageState extends State<RecipientMessage> {
       case MessageType.video:
         bottomOffset = 1;
         break;
+      case MessageType.audio:
+        bottomOffset = 0;
       case MessageType.voice:
+        bottomOffset = -3;
+      case MessageType.document:
         bottomOffset = -3;
         break;
       default:
@@ -395,21 +418,23 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
                 : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.greenMessageDark : ChatifyColors.greenMessageLight,
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBorder),
+                color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBubbleRecipient,
+                border: Border.all(color: context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder),
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
               ),
               child: Stack(
                 children: [
                   MediaWidget(
                     message: widget.message,
-                    isSender: true,
+                    isSender: false,
                     isDownloading: isDownloading,
                     onDownload: () async {
                       setState(() {
                         isDownloading = true;
                       });
+
                       await Future.delayed(const Duration(seconds: 2));
+
                       setState(() {
                         isDownloading = false;
                       });
@@ -424,17 +449,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ],
               ),
             ),
-            Positioned(
-              top: 5,
-              right: 7,
-              child: CustomPaint(
-                size: const Size(10, 10),
-                painter: TrianglePainter(
-                  fillColor: context.isDarkMode ? ChatifyColors.greenMessageTriangleDark : ChatifyColors.greenMessageLight,
-                  borderColor: ChatifyColors.greenMessageBorderDark,
-                ),
-              ),
-            ),
+            _buildMessageTail(),
             if (isVideo)
               Positioned(
                 left: 30,
@@ -450,35 +465,59 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ),
               ),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
-              Positioned(
-                left: -35,
-                top: 0,
-                bottom: 0,
-                child: AnimatedSlide(
-                  offset: isHovered ? Offset.zero : const Offset(-1.0, 0),
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  child: AnimatedOpacity(
-                    opacity: isHovered ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeOutBack,
-                      width: isHovered ? null : 0,
-                      constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
-                      clipBehavior: Clip.hardEdge,
-                      decoration: const BoxDecoration(),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          EmojiHoverButton(containerKey: _containerKey),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _buildHoverActions(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSurveyMessage() {
+    final survey = widget.message.survey;
+
+    if (survey == null) {
+      return const SizedBox.shrink();
+    }
+
+    return SurveyMessageCard(message: widget.message, survey: survey, isMe: false, conversationId: widget.conversationId, user: widget.user);
+  }
+
+  Widget _buildEventMessage() {
+    final event = widget.message.event;
+
+    if (event == null) {
+      return const SizedBox.shrink();
+    }
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      child: GestureDetector(
+        onTap: () {
+          showEventInfoBottomSheetDialog(context, widget.user, widget.message);
+        },
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            MessageBubble(
+              key: _containerKey,
+              message: widget.message,
+              isWebOrWindows: isWebOrWindows,
+              isPressed: isPressed,
+              actions: [
+                MessageBubbleModel(title: 'Редактировать', onTap: () {}),
+                MessageBubbleModel(title: 'Добавить в календарь', onTap: () {}),
+              ],
+              onSecondaryTap: _handleSecondaryTap,
+              showInnerContainer: true,
+              showMetaCheck: true,
+              type: MessageBubbleType.recipient,
+              child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: EventMessageCard(event: event, ownerId: widget.user)),
+            ),
+            _buildMessageTail(),
+            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+              _buildHoverActions(),
           ],
         ),
       ),

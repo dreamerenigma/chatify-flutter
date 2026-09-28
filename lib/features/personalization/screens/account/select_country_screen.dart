@@ -19,10 +19,10 @@ class SelectCountryScreen extends StatefulWidget {
 }
 
 class SelectCountryScreenState extends State<SelectCountryScreen> {
-  bool _isSearching = false;
   final countryController = Get.put(CountryController());
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  bool _isSearching = false;
   List<Country> _filteredCountries = [];
 
   @override

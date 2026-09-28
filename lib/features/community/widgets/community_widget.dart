@@ -12,7 +12,7 @@ import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import '../screens/community_info_screen.dart';
-import '../screens/community_screen.dart';
+import '../screens/community_chat_screen.dart';
 import '../screens/general_chat_screen.dart';
 import 'package:chatify/features/community/models/community_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
@@ -119,7 +119,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
               onTap: () {
                 APIs.community = widget.community;
 
-                Navigator.push(context, createPageRoute(CommunityScreen(user: APIs.me)));
+                Navigator.push(context, createPageRoute(CommunityChatScreen(user: APIs.me)));
               },
               child: Container(
                 padding: const EdgeInsets.all(16),

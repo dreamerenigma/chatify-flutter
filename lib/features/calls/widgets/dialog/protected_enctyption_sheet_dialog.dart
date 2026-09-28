@@ -21,7 +21,7 @@ void showProtectedEncryptionBottomSheet(BuildContext context) {
                 children: [
                   const Icon(Icons.lock_outline, size: 16),
                   const SizedBox(width: 8),
-                  Text(S.of(context).protectedEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                  Text(S.of(context).protectedEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),
@@ -39,7 +39,7 @@ void showProtectedEncryptionBottomSheet(BuildContext context) {
                     onTap: () {},
                     child: Row(
                       children: [
-                        Text(S.of(context).shareScreen, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                        Text(S.of(context).shareScreen, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         const Spacer(),
                         const Icon(Icons.mobile_screen_share_outlined),
                       ],

@@ -145,18 +145,22 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                         });
                         _saveSetting('is_view_notification', isViewNotification);
                       },
+                      switchWidth: 55,
+                      switchHeight: 33,
+                      thumbSize: 25,
+                      thumbPadding: 3,
                       activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     ),
                     SizedBox(width: 12),
-                    Text(isViewNotification ? S.of(context).on : S.of(context).off, style: TextStyle(fontWeight: FontWeight.w300)),
+                    Text(isViewNotification ? S.of(context).on : S.of(context).off, style: TextStyle(fontWeight: FontWeight.w400)),
                   ],
                 ),
                 const SizedBox(height: 20),
                 RichText(
                   text: TextSpan(
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
+                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                     children: [
-                      TextSpan(text: S.of(context).receiveNotifyPhoneSecurityCode, style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black)),
+                      TextSpan(text: S.of(context).receiveNotifyPhoneSecurityCode, style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black, fontWeight: FontWeight.w400)),
                       WidgetSpan(
                         alignment: PlaceholderAlignment.baseline,
                         baseline: TextBaseline.alphabetic,
@@ -201,7 +205,7 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       child: Text(
                         S.of(context).howDeleteYourAccount,
-                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
+                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                       ),
                     ),
                   ),
@@ -222,7 +226,7 @@ class _AccountOptionWidgetState extends State<AccountOptionWidget> {
         children: [
           icon,
           const SizedBox(width: 10),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300))),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400))),
         ],
       ),
     );

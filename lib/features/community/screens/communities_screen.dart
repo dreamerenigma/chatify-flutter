@@ -15,7 +15,7 @@ import '../../calls/screens/calls_screen.dart';
 import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../chat/models/user_model.dart';
 import '../../home/screens/home_screen.dart';
-import '../../home/widgets/app_bars/home_app_bar.dart';
+import '../../home/widgets/bars/app_bars/home_app_bar.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../status/screens/status_screen.dart';

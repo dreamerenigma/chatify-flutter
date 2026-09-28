@@ -22,7 +22,7 @@ import '../../../personalization/widgets/dialogs/attach_files_dialog.dart';
 import '../../../personalization/widgets/dialogs/emoji_stickers_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/group_model.dart';
-import '../bars/group_chat_app_bar.dart';
+import '../bars/app_bars/group_chat_app_bar.dart';
 
 class GroupChatWidget extends StatefulWidget {
   final GroupModel group;

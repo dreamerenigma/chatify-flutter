@@ -27,7 +27,7 @@ class MessageMeta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Timestamp sent = message.sent;
-    final bool isRead = message.read.isNotEmpty;
+    final bool isRead = message.read.isNotEmpty || message.fromId == message.toId;
     final Color checkColor = isRead ? ChatifyColors.lightBlueLink : context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey;
     final String formattedTime = DateUtil.getFormattedTime(context: context, time: sent);
     final String formattedDate = DateUtil.getFormattedDateLabel(context: context, timestamp: sent);

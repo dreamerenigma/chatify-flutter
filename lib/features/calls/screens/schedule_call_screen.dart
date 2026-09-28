@@ -255,10 +255,10 @@ class _ScheduleCallScreenState extends State<ScheduleCallScreen> {
                         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                         onTap: () {},
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                           child: Row(
                             children: [
-                              SvgPicture.asset(ChatifyVectors.personTime, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                              SizedBox(width: 24, child: SvgPicture.asset(ChatifyVectors.personTime, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))),
                               const SizedBox(width: 14),
                               Expanded(child: Text('Для присоединения требуется одобрение', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
                               const SizedBox(width: 12),
@@ -269,9 +269,9 @@ class _ScheduleCallScreenState extends State<ScheduleCallScreen> {
                                     isApprovalRequired = newValue;
                                   });
                                 },
-                                switchWidth: 58,
-                                switchHeight: 35,
-                                thumbSize: 27,
+                                switchWidth: 55,
+                                switchHeight: 33,
+                                thumbSize: 25,
                                 thumbPadding: 3,
                               ),
                             ],
@@ -280,7 +280,7 @@ class _ScheduleCallScreenState extends State<ScheduleCallScreen> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
+                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                     SizedBox(height: 5),
                     Material(
                       color: ChatifyColors.transparent,

@@ -7,7 +7,8 @@ import '../../../utils/constants/app_images.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/info_app_model.dart';
 import '../widgets/bars/support_app_bar.dart';
-import '../widgets/widget/chat_date_bage_widget.dart';
+import '../widgets/dialogs/support_chat_bottom_sheet_dialog.dart';
+import '../widgets/widget/chat_date_badge_widget.dart';
 
 class InfoAppChatScreen extends StatelessWidget {
   final InfoAppModel infoApp;
@@ -50,7 +51,9 @@ class InfoAppChatScreen extends StatelessWidget {
                       splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                       highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                       hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
-                      onTap: () {},
+                      onTap: () {
+                        showSupportChatBottomSheetDialog(context);
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 6),
                         decoration: BoxDecoration(

@@ -85,7 +85,7 @@ class _GroupCardState extends State<GroupCard> {
             hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             onTap: () {
               final group = GroupModel(
-                id: '',
+                id: widget.group.id,
                 ownerId: APIs.user.uid,
                 groupName: widget.group.groupName,
                 groupImage: widget.group.groupImage,
@@ -100,7 +100,7 @@ class _GroupCardState extends State<GroupCard> {
               if (Platform.isWindows) {
                 widget.onGroupSelected(group);
               } else {
-                Navigator.push(context, createPageRoute(GroupChatScreen(group: group)));
+                Navigator.push(context, createPageRoute(GroupChatScreen(group: group, user: APIs.me)));
               }
             },
             child: Padding(
@@ -119,15 +119,7 @@ class _GroupCardState extends State<GroupCard> {
 
                           return GestureDetector(
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (_) => GroupDialog(
-                                  groupName: widget.group.groupName,
-                                  groupImage: imageUrl ?? '',
-                                  members: widget.group.members,
-                                  createdAt: widget.group.createdAt,
-                                ),
-                              );
+                              showDialog(context: context, builder: (_) => GroupDialog(group: widget.group));
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(23),
@@ -164,12 +156,23 @@ class _GroupCardState extends State<GroupCard> {
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                             ),
-                            child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
+                            child: const Icon(Icons.check, size: 16, color: ChatifyColors.black),
                           ),
                         ),
+                      Positioned(
+                        right: -3,
+                        bottom: -2,
+                        child: Container(
+                          width: 25,
+                          height: 25,
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.nightGrey, border: Border.all(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white, width: 2)),
+                          child: SvgPicture.asset(ChatifyVectors.timerOutline, width: 15, height: 15, colorFilter: const ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,6 +188,7 @@ class _GroupCardState extends State<GroupCard> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            SizedBox(width: 10),
                             Text(
                               DateUtil.formatDateTime(widget.group.createdAt),
                               style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),

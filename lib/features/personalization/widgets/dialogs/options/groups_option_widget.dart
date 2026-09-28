@@ -106,11 +106,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
               placeholder: (context, url) => CircleAvatar(
                 backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                 foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    colorsController.getColor(colorsController.selectedColorScheme.value),
-                  ),
-                ),
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
               ),
               errorWidget: (context, url, error) => CircleAvatar(
                 backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,

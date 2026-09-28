@@ -1,0 +1,253 @@
+import 'package:chatify/features/newsletter/models/newsletter_model.dart';
+import 'package:chatify/features/newsletter/widgets/dialogs/newsletter_dialog.dart';
+import 'package:chatify/utils/constants/app_vectors.dart';
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../../../../../utils/constants/app_colors.dart';
+import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../api/apis.dart';
+import '../../../../generated/l10n/l10n.dart';
+import '../../../../routes/custom_page_route.dart';
+import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/platforms/platform_utils.dart';
+import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
+import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../screens/newsletter_chat_screen.dart';
+
+class NewsletterCard extends StatefulWidget {
+  final NewsletterModel newsletter;
+  final ValueChanged<NewsletterModel> onNewsletterSelected;
+  final bool isSelected;
+  final bool isSelectionMode;
+
+  const NewsletterCard({
+    super.key,
+    required this.newsletter,
+    required this.onNewsletterSelected,
+    required this.isSelected,
+    this.isSelectionMode = false,
+  });
+
+  @override
+  State<NewsletterCard> createState() => _NewsletterCardState();
+}
+
+class _NewsletterCardState extends State<NewsletterCard> {
+  late Future<Map<String, String>> userNamesFuture;
+  bool isLongPressed = false;
+
+  String get formattedDate {
+    if (widget.newsletter.createdAt.isEmpty) {
+      return S.of(context).dateNotSpecified;
+    }
+    try {
+      final timestamp = int.tryParse(widget.newsletter.createdAt);
+      if (timestamp == null) {
+        return S.of(context).invalidDate;
+      }
+      final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      final formatted = DateFormat('dd.MM.yyyy').format(date);
+
+      return formatted;
+    } catch (e) {
+      return S.of(context).invalidDate;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userNamesFuture = APIs.fetchUserNames(widget.newsletter.members, shortenNames: true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.only(left: isWindows ? 16 : 8, right: isWindows ? 15 : 8),
+      elevation: isWindows ? widget.isSelected ? 2 : 0.5 : widget.isSelected ? 2 : 0.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onSecondaryTapDown: (details) {
+          if (isWindows) {
+            Future.delayed(Duration(milliseconds: 100), () {
+              showEditSettingsChatDialog(context, details.globalPosition);
+            });
+          }
+        },
+        onLongPress: () {
+          if (isWindows) {
+            setState(() {
+              isLongPressed = true;
+            });
+          } else {
+            widget.onNewsletterSelected(widget.newsletter);
+          }
+        },
+        onLongPressUp: () {
+          if (isWindows) {
+            setState(() {
+              isLongPressed = false;
+            });
+          }
+        },
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: isWindows
+              ? isLongPressed || widget.isSelected
+                ? context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt())
+                : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground
+              : widget.isSelected
+                ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt())
+                : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
+          ),
+          child: InkWell(
+            splashFactory: NoSplash.splashFactory,
+            mouseCursor: SystemMouseCursors.basic,
+            borderRadius: BorderRadius.circular(15),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            onTap: () {
+              if (widget.isSelectionMode) {
+                widget.onNewsletterSelected(widget.newsletter);
+
+                return;
+              }
+
+              if (isWindows) {
+                widget.onNewsletterSelected(widget.newsletter);
+              } else {
+                Navigator.push(context, createPageRoute(NewsletterChatScreen(newsletters: widget.newsletter.members, createdAt: widget.newsletter.createdAt, newsletter: widget.newsletter)));
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Stack(
+                    alignment: Alignment.centerRight,
+                    clipBehavior: Clip.none,
+                    children: [
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          showDialog(context: context, builder: (_) => NewsletterInfoDialog(newsletters: widget.newsletter.members, newsletter: widget.newsletter));
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: widget.newsletter.newsletterImage,
+                          width: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                          height: isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                          imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
+                          placeholder: (context, url) => CircleAvatar(
+                            backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+                            foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+                            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
+                          ),
+                          errorWidget: (context, url, error) => CircleAvatar(
+                            backgroundColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                            foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+                            child: Padding(
+                              padding: const EdgeInsets.all(9),
+                              child: SvgPicture.asset(ChatifyVectors.newsletter, width: 25, height: 25, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, BlendMode.srcIn)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (!isWindows && widget.isSelected)
+                        Positioned(
+                          bottom: -3,
+                          right: -2,
+                          child: Container(
+                            width: 23,
+                            height: 23,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                            ),
+                            child: const Icon(Icons.check, color: ChatifyColors.black, size: 16),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            FutureBuilder<Map<String, String>>(
+                              future: userNamesFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Text(
+                                    S.of(context).loading,
+                                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                    S.of(context).errorLoadingNames,
+                                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                                  );
+                                }  else if (snapshot.hasData) {
+                                  final userNames = snapshot.data!;
+                                  final newsletterNames = widget.newsletter.members.map((id) {
+                                    final fullName = (userNames[id] ?? S.of(context).unknownUser).trim();
+
+                                    if (fullName.isEmpty) {
+                                      return S.of(context).unknownUser;
+                                    }
+
+                                    return fullName.split(RegExp(r'\s+')).first;
+                                  }).join(', ');
+
+                                  return Expanded(
+                                    child: Text(
+                                      newsletterNames,
+                                      style: TextStyle(fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold, fontFamily: 'Helvetica'),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                } else {
+                                  return Text(S.of(context).noMembers, style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400));
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            Center(
+                              child: Text(
+                                formattedDate.isNotEmpty ? formattedDate : S.of(context).invalidDate,
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontWeight: FontWeight.w300, fontFamily: 'Roboto'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${S.of(context).youCreatedMailingList} ${widget.newsletter.members.length} ${S.of(context).recipients}',
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

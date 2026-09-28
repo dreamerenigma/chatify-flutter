@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:chatify/features/personalization/screens/chats/select_wallpaper_screen.dart';
 import 'package:chatify/features/personalization/widgets/sliders/custom_slider.dart';
 import 'package:chatify/routes/custom_page_route.dart';
@@ -14,28 +13,27 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class WallpaperScreen extends StatefulWidget {
-  final String imagePath;
+  final String? imagePath;
 
-  const WallpaperScreen({super.key, required this.imagePath});
+
+  const WallpaperScreen({
+    super.key,
+    required this.imagePath,
+  });
 
   @override
   State<WallpaperScreen> createState() => _WallpaperScreenState();
 }
 
 class _WallpaperScreenState extends State<WallpaperScreen> {
-  double sliderValue = 0;
   final box = GetStorage();
   late String imagePath;
+  double sliderValue = 0;
 
   @override
   void initState() {
     super.initState();
-    imagePath = box.read('backgroundImagePath') ?? widget.imagePath;
-  }
-
-  void checkStoredData() {
-    final storedImagePath = box.read('backgroundImagePath');
-    log("Stored data check: $storedImagePath");
+    imagePath = box.read<String>('backgroundImagePath') ?? widget.imagePath ?? '';
   }
 
   @override
@@ -46,6 +44,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        elevation: 0,
         title: Text(context.isDarkMode ? S.of(context).wallpaperDarkTheme : S.of(context).wallpaperLightTheme, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, size: 25),
@@ -66,12 +65,12 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () async {
-                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen()));
+                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(const SelectWallpaperScreen()));
 
                     if (selectedImagePath != null) {
                       setState(() {
                         imagePath = selectedImagePath;
-                        box.write('selectedWallpaper', selectedImagePath);
+                        box.write('backgroundImagePath', selectedImagePath);
                       });
                     }
                   },
@@ -100,7 +99,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                                   children: [
                                     SvgPicture.asset(ChatifyVectors.profile, width: 20, height: 20),
                                     const SizedBox(width: 8.0),
-                                    Text(S.of(context).contactName, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 10)),
+                                    Text(S.of(context).contactName, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeXs)),
                                   ],
                                 ),
                               ),
@@ -214,7 +213,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(S.of(context).changeWallpaperLightTheme, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm), textAlign: TextAlign.center),
+                    child: Text(S.of(context).changeWallpaperLightTheme, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                   ),
                 ),
               ],

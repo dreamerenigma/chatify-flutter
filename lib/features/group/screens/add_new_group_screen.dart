@@ -303,9 +303,9 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
                               counterText: '',
                               hintText: S.of(context).groupNameRequired,
                               hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkerGrey)),
-                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkerGrey)),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkerGrey, width: 1.5)),
+                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ChatifyColors.darkerGrey, width: 1.5)),
+                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1.5)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                               suffix: textController.text.isNotEmpty
                                 ? Padding(

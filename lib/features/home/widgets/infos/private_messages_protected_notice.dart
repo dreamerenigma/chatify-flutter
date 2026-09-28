@@ -39,7 +39,7 @@ class PrivateMessagesProtectedNotice extends StatelessWidget {
                       recognizer: TapGestureRecognizer()..onTap = () {
                         showChatsCallsPrivacyBottomSheet(
                           context,
-                          headerText: S.of(context).yourChatsCallsConfidential,
+                          headerText: S.of(context).chatsCallsConfidential,
                           titleText: S.of(context).yourPrivateMessagesAndCalls,
                         );
                       },

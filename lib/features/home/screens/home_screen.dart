@@ -29,8 +29,8 @@ import '../../group/models/group_model.dart';
 import '../../personalization/controllers/user_controller.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/bars/nav_bars/bottom_nav.dart';
-import '../widgets/app_bars/home_app_bar_widget.dart';
-import '../widgets/app_bars/selection_app_bar.dart';
+import '../widgets/bars/app_bars/home_app_bar_widget.dart';
+import '../widgets/bars/app_bars/selection_app_bar.dart';
 import '../widgets/dialogs/delete_chat_dialog.dart';
 import '../widgets/dialogs/no_sound_dialog.dart';
 import '../widgets/items/home_item.dart';
@@ -561,59 +561,53 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 )
             : selectedIndex == 0
               ? HomeAppBarWidget(
-                isSearching: isSearching,
-                users: users,
-                searchList: searchList,
-                onSearch: (val) {
-                  searchList.clear();
-                  for (var i in users) {
-                    if (i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())) {
-                      searchList.add(i);
+                  isSearching: isSearching,
+                  users: users,
+                  searchList: searchList,
+                  onSearch: (val) {
+                    searchList.clear();
+                    for (var i in users) {
+                      if (i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())) {
+                        searchList.add(i);
+                      }
                     }
-                  }
-                  setState(() {
-                    searchList;
-                  });
-                },
-                onToggleSearch: () {
-                  setState(() {
-                    isSearching = !isSearching;
-                  });
-                },
-                onCameraPressed: () {
-                  Navigator.push(context, createPageRoute(CameraScreen(chatTarget: widget.user)));
-                },
-                hintText: S.of(context).search,
-              )
-            : null,
-        floatingActionButton: defaultTargetPlatform == TargetPlatform.windows
+                    setState(() {
+                      searchList;
+                    });
+                  },
+                  onToggleSearch: () {
+                    setState(() {
+                      isSearching = !isSearching;
+                    });
+                  },
+                  onCameraPressed: () {
+                    Navigator.push(context, createPageRoute(CameraScreen(chatTarget: widget.user)));
+                  },
+                  hintText: S.of(context).search,
+                )
+              : null,
+        floatingActionButton: defaultTargetPlatform == TargetPlatform.windows || selectedIndex != 0
           ? null
-          : selectedIndex == 0
-            ? isEmpty
-              ? FloatingActionButton.extended(
-                  heroTag: 'home',
-                  onPressed: () {
-                    Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
-                  },
-                  elevation: 2,
-                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value,),
-                  foregroundColor: ChatifyColors.white,
-                  icon: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
-                  label: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text('Отправить сообщение', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.black, fontWeight: FontWeight.w400)),
-                  ),
-                )
-              : FloatingActionButton(
-                  heroTag: 'home',
-                  onPressed: () {
-                    Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
-                  },
-                  elevation: 2,
-                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  foregroundColor: ChatifyColors.white,
-                  child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
-                )
+          : isEmpty
+            ? FloatingActionButton.extended(
+                heroTag: 'home',
+                onPressed: () {
+                  Navigator.push(context, createPageRoute(const HomeSelectUserScreen(),));
+                },
+                elevation: 2,
+                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                foregroundColor: ChatifyColors.white,
+                icon: SvgPicture.asset(
+                  ChatifyVectors.chatsAdd,
+                  width: 26,
+                  height: 26,
+                  colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
+                ),
+                label: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text('Отправить сообщение', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.black, fontWeight: FontWeight.w400)),
+                ),
+              )
             : FloatingActionButton(
                 heroTag: 'home',
                 onPressed: () {
@@ -623,7 +617,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 foregroundColor: ChatifyColors.white,
                 child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
-            ),
+              ),
         body: HomeScreenWidget(
           selectedIndex: selectedIndex,
           pageController: _pageController,

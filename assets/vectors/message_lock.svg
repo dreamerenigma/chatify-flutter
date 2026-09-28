@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 37.5 37.5"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="message_lock.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.27863046"
+     inkscape:cx="427.08899"
+     inkscape:cy="726.76908"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Message" />
+  <title
+     id="title1">Message</title>
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     transform="matrix(1.8560246,0,0,1.8560246,-3.5561467,-2.6044738)"
+     style="stroke-width:1.37454;stroke-dasharray:none">
+    <g
+       id="Message"
+       style="stroke-width:1.37454;stroke-dasharray:none">
+      <rect
+         id="Rectangle"
+         fill-rule="nonzero"
+         x="0"
+         y="0"
+         width="0"
+         height="0"
+         style="stroke-width:1.37454;stroke-dasharray:none" />
+      <path
+         d="m 5.3021911,9.7265439 c 0,-0.9392306 0.761396,-1.7006268 1.7006267,-1.7006268 H 17.206579 c 0.939255,0 1.700626,0.7613962 1.700626,1.7006268 v 6.8025071 c 0,0.939256 -0.761371,1.700626 -1.700626,1.700626 h -5.273216 c -0.112751,0 -0.220911,0.04482 -0.300586,0.124486 l -2.5509816,2.55094 c -0.2678318,0.267849 -0.7257855,0.07814 -0.7257855,-0.300585 v -1.949684 c 0,-0.234772 -0.1903511,-0.425157 -0.4251567,-0.425157 H 7.0028178 c -0.9392307,0 -1.7006267,-0.76137 -1.7006267,-1.700626 z"
+         id="Path"
+         stroke="#0c0310"
+         stroke-width="2"
+         stroke-linecap="round"
+         style="stroke-width:1.13650164;stroke-dasharray:none"
+         sodipodi:nodetypes="sssssssccssssss" />
+      <line
+         x1="8.7034445"
+         y1="11.427171"
+         x2="15.505952"
+         y2="11.427171"
+         id="line1"
+         stroke="#0c0310"
+         stroke-width="2"
+         stroke-linecap="round"
+         style="stroke-width:1.16879;stroke-dasharray:none" />
+      <line
+         x1="8.7034445"
+         y1="14.828424"
+         x2="11.254385"
+         y2="14.828424"
+         id="line2"
+         stroke="#0c0310"
+         stroke-width="2"
+         stroke-linecap="round"
+         style="stroke-width:1.16879;stroke-dasharray:none" />
+      <path
+         style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;fill:#000000;fill-rule:nonzero;stroke-width:1.13650164;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:146.2;stroke-dasharray:none;paint-order:stroke markers fill;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         d="m 16.707919,8.6001879 c 0.327111,3.06e-5 0.592295,-0.2651528 0.592265,-0.592264 0,-1.8812496 -0.737042,-4.8015469 -2.633641,-5.8965491 C 13.873816,1.6536947 12.890544,1.4187082 12.005026,1.4064152 11.070628,1.3934436 10.23371,1.6284302 9.3972254,2.1113748 7.6277041,3.1330086 6.7635841,6.1266741 6.7635841,8.0079239 c -3.02e-5,0.327111 0.2651531,0.5922942 0.592264,0.592264 H 12.032901 Z M 15.956904,7.4156598 H 12.032901 8.1068633 c 0.2711773,-1.7503023 0.781455,-3.1926007 1.9534677,-4.1958607 0.500082,-0.4280779 1.239186,-0.552198 1.897448,-0.5474312 0.693784,0.00502 1.463843,0.1551174 1.991271,0.6058718 1.165358,0.9959468 1.820216,2.926313 2.007854,4.1374201 z"
+         id="path2"
+         sodipodi:nodetypes="ccssscccccccaaac" />
+    </g>
+  </g>
+  <metadata
+     id="metadata2">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Message</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

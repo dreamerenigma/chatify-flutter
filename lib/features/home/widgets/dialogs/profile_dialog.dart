@@ -72,14 +72,15 @@ class _ProfileDialogState extends State<ProfileDialog> {
   Widget build(BuildContext context) {
     final user = APIs.me;
     final isMe = widget.user.id == user.id;
+    final mq = MediaQuery.of(context);
 
     return AlertDialog(
       contentPadding: EdgeInsets.zero,
       backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       content: SizedBox(
-        width: MediaQuery.of(context).size.width * .6,
-        height: MediaQuery.of(context).size.height * .35,
+        width: mq.size.width * .6,
+        height: mq.size.height * .35,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -140,7 +141,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 2),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -159,7 +160,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                         Navigator.pop(context);
                         Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user, onMinimize: () {})));
                       },
-                      icon: Icon(Icons.call, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 28),
+                      icon: Icon(Icons.call_outlined, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                     ),
                   ],
                   const SizedBox(width: 17),
@@ -169,7 +170,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                         Navigator.pop(context);
                         Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
                       },
-                      icon: Icon(Icons.video_call, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 28),
+                      icon: SvgPicture.asset(ChatifyVectors.videoCameraOutline, width: 26, height: 26, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
                     ),
                   ],
                   const Spacer(),
@@ -178,7 +179,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                       Navigator.pop(context);
                       Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
                     },
-                    icon: Icon(Icons.info_outline, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 28),
+                    icon: Icon(Icons.info_outline_rounded, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                   ),
                   SizedBox(width: isMe ? 34 : 17),
                 ],

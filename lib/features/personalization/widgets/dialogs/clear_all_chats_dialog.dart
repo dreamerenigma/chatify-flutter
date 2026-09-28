@@ -23,53 +23,67 @@ void showClearAllChatsDialog(BuildContext context) {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      clearMediaFiles = !clearMediaFiles;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: clearMediaFiles,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              clearMediaFiles = value ?? false;
-                            });
-                          },
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        ),
-                        Expanded(
-                          child: Text(S.of(context).deleteMediaFilesReceivedChatsDevice, style: TextStyle(color: ChatifyColors.darkGrey)),
-                        ),
-                      ],
+                Material(
+                  color: ChatifyColors.transparent,
+                  child: InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    onTap: () {
+                      setState(() {
+                        clearMediaFiles = !clearMediaFiles;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: clearMediaFiles,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                clearMediaFiles = value ?? false;
+                              });
+                            },
+                            activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          ),
+                          Expanded(
+                            child: Text(S.of(context).deleteMediaFilesReceivedChatsDevice, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      clearStarredMessages = !clearStarredMessages;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: clearStarredMessages,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              clearStarredMessages = value ?? false;
-                            });
-                          },
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        ),
-                        Expanded(child: Text(S.of(context).deleteFavoritePosts, style: TextStyle(color: ChatifyColors.darkGrey))),
-                      ],
+                Material(
+                  color: ChatifyColors.transparent,
+                  child: InkWell(
+                    splashFactory: NoSplash.splashFactory,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    onTap: () {
+                      setState(() {
+                        clearStarredMessages = !clearStarredMessages;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: clearStarredMessages,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                clearStarredMessages = value ?? false;
+                              });
+                            },
+                            activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          ),
+                          Expanded(child: Text(S.of(context).deleteFavoritePosts, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400))),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -96,7 +110,7 @@ void showClearAllChatsDialog(BuildContext context) {
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: Text(S.of(context).clearChats),
+                child: Text(S.of(context).clearChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
             ],
           );

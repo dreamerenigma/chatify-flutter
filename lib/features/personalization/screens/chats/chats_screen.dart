@@ -224,9 +224,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                   onChanged: (bool value) {
                                     settingsController.toggleSendWithEnter(value);
                                   },
-                                  switchWidth: 58,
-                                  switchHeight: 35,
-                                  thumbSize: 27,
+                                  switchWidth: 55,
+                                  switchHeight: 33,
+                                  thumbSize: 25,
                                   thumbPadding: 3,
                                 ),
                               ],
@@ -269,9 +269,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                     isVisibilityMedia = value;
                                   });
                                 },
-                                switchWidth: 58,
-                                switchHeight: 35,
-                                thumbSize: 27,
+                                switchWidth: 55,
+                                switchHeight: 33,
+                                thumbSize: 25,
                                 thumbPadding: 3,
                               ),
                             ],
@@ -346,9 +346,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                       isTranscriptVoiceMsg = value;
                                     });
                                   },
-                                  switchWidth: 58,
-                                  switchHeight: 35,
-                                  thumbSize: 27,
+                                  switchWidth: 55,
+                                  switchHeight: 33,
+                                  thumbSize: 25,
                                   thumbPadding: 3,
                                 ),
                               ),
@@ -397,9 +397,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                     isArchiveChats = value;
                                   });
                                 },
-                                switchWidth: 58,
-                                switchHeight: 35,
-                                thumbSize: 27,
+                                switchWidth: 55,
+                                switchHeight: 33,
+                                thumbSize: 25,
                                 thumbPadding: 3,
                               ),
                             ],

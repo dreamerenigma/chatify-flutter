@@ -35,7 +35,6 @@ class AddAccountScreenState extends State<AddAccountScreen> {
     int schemeIndex = int.tryParse(colorsController.selectedColorScheme.value.toString()) ?? 0;
 
     return Scaffold(
-      backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
       body: Stack(
         children: [
           if (widget.showBackButton)

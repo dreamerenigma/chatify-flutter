@@ -18,7 +18,7 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../../home/screens/home_screen.dart';
-import '../../home/widgets/app_bars/home_app_bar.dart';
+import '../../home/widgets/bars/app_bars/home_app_bar.dart';
 import '../../personalization/screens/favorite/favorite_screen.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
@@ -125,6 +125,7 @@ class CallsScreenState extends State<CallsScreen> {
               isSearching = !isSearching;
             });
           },
+          titleSpacing: 0,
           hintText: S.of(context).settingsSearch,
           title: Text(S.of(context).calls),
           popupMenuButton: _buildCallsPopupMenu(context),

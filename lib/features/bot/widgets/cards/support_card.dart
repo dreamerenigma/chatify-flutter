@@ -8,18 +8,22 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/helper/date_util.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../home/widgets/dialogs/bot_info_dialog.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../screens/support_info_screen.dart';
+import '../../models/info_app_model.dart';
+import '../../screens/support_chat_screen.dart';
 
 class SupportCard extends StatefulWidget {
   final SupportAppModel support;
+  final InfoAppModel? infoApp;
   final ValueChanged<SupportAppModel> onSupportSelected;
   final bool isSelected;
 
   const SupportCard({
     super.key,
     required this.support,
+    this.infoApp,
     required this.isSelected,
     required this.onSupportSelected,
   });
@@ -74,19 +78,19 @@ class _SupportCardState extends State<SupportCard> {
                 : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
           ),
           child: InkWell(
+            splashFactory: NoSplash.splashFactory,
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             onTap: () {
               if (isWindows) {
                 widget.onSupportSelected(widget.support);
               } else {
-                Navigator.push(context, createPageRoute(SupportInfoScreen(support: widget.support)));
+                Navigator.push(context, createPageRoute(SupportChatScreen(support: widget.support)));
               }
             },
-            splashFactory: NoSplash.splashFactory,
-            splashColor: ChatifyColors.transparent,
-            highlightColor: ChatifyColors.transparent,
-            hoverColor: context.isDarkMode ? ChatifyColors.mildNight.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -96,11 +100,20 @@ class _SupportCardState extends State<SupportCard> {
                     alignment: Alignment.centerRight,
                     clipBehavior: Clip.none,
                     children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        child: SvgPicture.asset(ChatifyVectors.logoApp, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => BotInfoDialog(support: widget.support, infoApp: widget.infoApp, title: '${widget.support.name} ${widget.support.surname}'),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 24,
+                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          child: SvgPicture.asset(ChatifyVectors.logoApp, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                        ),
                       ),
                       if (!isWindows && isSelected)
                         Positioned(

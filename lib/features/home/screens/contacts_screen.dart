@@ -11,6 +11,7 @@ class ContactsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        elevation: 0,
         title: Text(S.of(context).contacts, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         backgroundColor: ChatifyColors.blackGrey,
         leading: IconButton(

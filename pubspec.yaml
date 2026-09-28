@@ -1,7 +1,7 @@
 name: chatify
 description: Applications for messaging, calling and creating shared groups
 publish_to: 'none'
-version: 1.4.11+821
+version: 1.4.16+361
 repository: https://github.com/dreamerenigma/chatify-flutter
 
 environment:
@@ -78,6 +78,8 @@ dependencies:
   agora_rtc_engine: ^6.6.4
   just_audio: ^0.10.6
   shared_preferences: ^2.5.5
+  pdfx: ^2.11.0
+  open_filex_plus: ^4.7.3
 
   # Icons
   akar_icons_flutter: ^1.1.21

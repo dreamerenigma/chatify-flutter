@@ -19,7 +19,7 @@ import '../../chat/models/user_model.dart';
 import '../../chat/models/user_status_model.dart';
 import '../../community/screens/communities_screen.dart';
 import '../../home/screens/home_screen.dart';
-import '../../home/widgets/app_bars/home_app_bar.dart';
+import '../../home/widgets/bars/app_bars/home_app_bar.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';

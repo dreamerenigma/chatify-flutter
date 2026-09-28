@@ -39,8 +39,7 @@ class MessageText extends StatelessWidget {
                   children: parseMessageText(message.msg, context),
                   style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                 ),
-                contextMenuBuilder: (context, editableTextState,) =>
-                const SizedBox.shrink(),
+                contextMenuBuilder: (context, editableTextState,) => const SizedBox.shrink(),
               ),
             ),
           )

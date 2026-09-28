@@ -2631,7 +2631,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "You created this group",
     ),
     "youCreatedMailingList": MessageLookupByLibrary.simpleMessage(
-      "You have created a mailing list with ",
+      "You have created a mailing list with",
     ),
     "youForgottenYourSecretCode": MessageLookupByLibrary.simpleMessage(
       "If you forgot your secret code, you can reset it. This will delete messages, photos, and videos in private chats and open the chats themselves.",

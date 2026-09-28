@@ -442,7 +442,7 @@
     "leastTwoContactsMustBeSelected": "Debes seleccionar al menos 2 contactos",
     "yourPrivateMessagesAndCalls": "Con el cifrado de extremo a extremo, tus mensajes y llamadas privadas permanecen entre tú y las personas con las que te comunicas. Ni siquiera Chatify puede acceder a ellos. Estos incluyen:",
     "messagesCallsProtectedEncryption": "Los mensajes y las llamadas están protegidos por cifrado de extremo a extremo. Terceros, incluido Chatify, no pueden leer tus mensajes ni escuchar tus llamadas. Haz clic para obtener más información.",
-    "youCreatedMailingList": "Has creado una lista de correo con ",
+    "youCreatedMailingList": "Has creado una lista de correo con",
     "recipients": "destinatarios",
     "loading": "Cargando...",
     "errorLoadingNames": "Error al cargar los nombres",

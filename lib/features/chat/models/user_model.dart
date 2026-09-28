@@ -157,7 +157,7 @@ class UserModel implements ChatTarget, BaseChatEntity {
   }
 
   @override
-  Future<void> sendDocument(File file) async {
+  Future<void> sendDocument(File file, {String? fileSize}) async {
     await ChatApi.sendChatDocument(this, file);
   }
 

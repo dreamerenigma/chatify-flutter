@@ -37,30 +37,17 @@ class GroupApi {
   /// -- Return current user.
   static User get user => auth.currentUser!;
 
-  /// -- Useful for getting conversation id.
-  static String getGroupConversationId(String id) {
-    if (user.uid.isEmpty || id.isEmpty) {
-      log('Error: user.uid or groupId is empty! user.uid: ${user.uid}, groupId: $id');
-    }
-    final conversationId = user.uid.hashCode <= id.hashCode ? '${user.uid}_$id' : '${id}_${user.uid}';
-    log('Generated conversationId: $conversationId');
-
-    return conversationId;
-  }
-
-  /// -- Getting all message of a specific conversation from Firestore Database.
+  /// -- Getting all messages of a specific group.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupAllMessages(GroupModel group) {
-    final conversationId = getGroupConversationId(group.id);
-    if (conversationId.isEmpty) {
-      log('Error: conversationId is empty!');
+    if (group.id.isEmpty) {
+      log('Error: group.id is empty!');
       return Stream.empty();
     }
-    final path = 'Groups/$conversationId/messages/';
-    if (path.contains('//')) {
-      log('Error: Path contains //: $path');
-      return Stream.empty();
-    }
+
+    final path = 'Groups/${group.id}/messages';
+
     log('Firestore path: $path');
+
     return firestore.collection(path).orderBy('sent', descending: true).snapshots();
   }
 
@@ -163,10 +150,13 @@ class GroupApi {
   }
 
   /// -- Getting group message of a specific conversation from Firestore Database.
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupMessages(GroupModel group) {
-    final conversationId = getGroupConversationId(group.id);
-    assert(conversationId.isNotEmpty, 'Conversation ID cannot be empty.');
-    final path = 'Groups/$conversationId/messages/';
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupMessages(GroupModel group,) {
+    if (group.id.isEmpty) {
+      log('Error: group.id is empty!');
+      return Stream.empty();
+    }
+
+    final path = 'Groups/${group.id}/messages';
 
     log('Firestore collection path: $path');
 
@@ -197,14 +187,20 @@ class GroupApi {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = storage.ref().child('videos/${getGroupConversationId(group.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    if (group.id.isEmpty) {
+      log('Error: group.id is empty!');
+      return;
+    }
 
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final ref = FirebaseStorage.instance.ref().child('videos/${group.id}/$fileName');
     final contentType = 'video/$ext';
 
     await ref.putFile(file, SettableMetadata(contentType: contentType)).then((p0) async {
-      log('Data Transferred: ${p0.bytesTransferred / 100000} kb');
+      log('Data Transferred: ''${p0.bytesTransferred / 100000} kb');
 
       final videoUrl = await ref.getDownloadURL();
+
       await sendGroupMessage(group, videoUrl, MessageType.video);
     });
   }
@@ -231,25 +227,32 @@ class GroupApi {
     final ext = file.path.split('.').last.toLowerCase();
     log('Extension: $ext');
 
-    final ref = FirebaseStorage.instance.ref().child('documents/${getGroupConversationId(group.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    if (group.id.isEmpty) {
+      log('Error: group.id is empty!');
+      return;
+    }
 
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final ref = FirebaseStorage.instance.ref().child('documents/${group.id}/$fileName');
     final contentType = APIs.getContentType(ext);
+
     log('Content Type: $contentType');
 
     try {
       final uploadTask = ref.putFile(file, SettableMetadata(contentType: contentType));
+
       await uploadTask.whenComplete(() async {
         final documentUrl = await ref.getDownloadURL();
+
         log('Document URL: $documentUrl');
 
-        await sendGroupMessage(group, documentUrl, MessageType.document, fileName: file.path.split('/').last,
-        );
+        await sendGroupMessage(group, documentUrl, MessageType.document, fileName: file.path.split('/').last);
       });
     } on FirebaseException catch (e) {
       if (e.code == 'object-not-found') {
         log('File not found at the specified reference.');
       } else {
-        log('Unknown error occurred.');
+        log('Firebase error: ${e.code} - ${e.message}');
       }
     } catch (e) {
       log('An unexpected error occurred: $e');

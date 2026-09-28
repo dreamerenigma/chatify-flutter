@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../core/enums/call_status_type.dart';
 import '../../../../core/enums/call_type.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -50,7 +51,7 @@ class _CallMessageState extends State<CallMessage> {
     final status = isRinging ? 'Звонок' : isNoAnswer ? 'Нет ответа' : null;
     final icon = isMissedOutgoing ? (isVideo ? ChatifyVectors.videoCameraOutgoing : ChatifyVectors.phoneOutgoing) : (isVideo ? ChatifyVectors.videoCameraIncoming : ChatifyVectors.phoneOutgoing);
     final iconColor = isRinging ? ChatifyColors.green : ChatifyColors.darkGrey.withValues(alpha: 0.9);
-    final iconBackgroundColor = ChatifyColors.greenMessageButton.withValues(alpha: 0.4);
+    final iconBackgroundColor = context.isDarkMode ? ChatifyColors.greenMessageButton.withValues(alpha: 0.4) : ChatifyColors.greenMessageGreenLight;
 
     return _buildCallContent(title: title, status: status, icon: icon, iconColor: iconColor, iconBackgroundColor: iconBackgroundColor, isVideo: isVideo,);
   }
@@ -65,7 +66,7 @@ class _CallMessageState extends State<CallMessage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(color: iconBackgroundColor, shape: BoxShape.circle),
-            child: Center(child: SvgPicture.asset(icon,width: isVideo ? 17 : 15, height: isVideo ? 17 : 15, colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn))),
+            child: Center(child: SvgPicture.asset(icon, width: isVideo ? 17 : 15, height: isVideo ? 17 : 15, colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn))),
           ),
           const SizedBox(width: 10),
           Padding(

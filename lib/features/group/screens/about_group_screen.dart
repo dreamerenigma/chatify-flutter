@@ -213,11 +213,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               height: 80,
               child: OutlinedButton(
                 onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.all(0),
-                  side: const BorderSide(color: ChatifyColors.popupColor),
-                ),
+                style: OutlinedButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.all(0), side: const BorderSide(color: ChatifyColors.popupColor)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -225,10 +221,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                   children: [
                     Icon(Icons.call_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 26),
                     const SizedBox(height: 8),
-                    Text(S.of(context).audio, style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
-                    )),
+                    Text(S.of(context).audio, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
                   ],
                 ),
               ),
@@ -239,11 +232,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               height: 80,
               child: OutlinedButton(
                 onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.all(0),
-                  side: const BorderSide(color: ChatifyColors.popupColor),
-                ),
+                style: OutlinedButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.all(0), side: const BorderSide(color: ChatifyColors.popupColor)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -267,11 +256,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                 onPressed: () {
                   Navigator.push(context, createPageRoute(const AddUserScreen()));
                 },
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.all(0),
-                  side: const BorderSide(color: ChatifyColors.popupColor),
-                ),
+                style: OutlinedButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.all(0), side: const BorderSide(color: ChatifyColors.popupColor)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -293,13 +278,9 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
               height: 80,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.push(context, createPageRoute(GroupChatScreen(group: widget.group)));
+                  Navigator.push(context, createPageRoute(GroupChatScreen(group: widget.group, user: APIs.me)));
                 },
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.all(0),
-                  side: const BorderSide(color: ChatifyColors.popupColor),
-                ),
+                style: OutlinedButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.all(0), side: const BorderSide(color: ChatifyColors.popupColor)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,

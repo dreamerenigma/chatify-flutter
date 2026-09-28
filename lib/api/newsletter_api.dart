@@ -85,4 +85,24 @@ class NewsletterApi {
 
   /// -- Send message newsletter chat.
   static Future<void> sendMessageNewsletterChat({required String newsletterId, required String chatId, required String text}) async {}
+
+  /// -- Send image to newsletter chat.
+  static Future<void> sendNewsletterImage(NewsletterModel newsletter, File file) async {
+    log('sendNewsletterImage: ''newsletterId=${newsletter.id}, ''file=${file.path}');
+  }
+
+  /// -- Send video to newsletter chat.
+  static Future<void> sendNewsletterVideo(NewsletterModel newsletter, File file, {String? fileName, String? fileSize, int? videoDuration}) async {
+    log('sendNewsletterVideo: ''newsletterId=${newsletter.id}, ''file=${file.path}, ''fileName=$fileName, ''fileSize=$fileSize, ''videoDuration=$videoDuration');
+  }
+
+  /// -- Send document to newsletter chat.
+  static Future<void> sendNewsletterDocument(NewsletterModel newsletter, File file) async {
+    log('sendNewsletterDocument: ''newsletterId=${newsletter.id}, ''file=${file.path}');
+  }
+
+  /// -- Send audio to newsletter chat.
+  static Future<void> sendNewsletterAudio(NewsletterModel newsletter, File file, String fileName, {int? audioDuration}) async {
+    log('sendNewsletterAudio: ''newsletterId=${newsletter.id}, ''file=${file.path}, ''fileName=$fileName, ''audioDuration=$audioDuration');
+  }
 }

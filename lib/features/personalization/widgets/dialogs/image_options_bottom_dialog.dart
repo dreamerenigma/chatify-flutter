@@ -26,7 +26,7 @@ void showImageOptionsBottomSheet(BuildContext context, int index, List<AssetEnti
                 onRemoveImage(index);
               },
               child: Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -40,7 +40,7 @@ void showImageOptionsBottomSheet(BuildContext context, int index, List<AssetEnti
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm)),
+                        Text(S.of(context).delete, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400)),
                       ],
                     ),
                   ],

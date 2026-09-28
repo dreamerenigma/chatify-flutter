@@ -42,6 +42,13 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
     final imagePath = widget.user.image.trim();
 
     if (imagePath.isEmpty) {
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoaded = false;
+      });
+
       return;
     }
 
@@ -59,7 +66,9 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
       setState(() {
         _profileImageUrl = url;
         _isLoadingProfileImage = false;
+        _isLoaded = url != null && url.isNotEmpty;
       });
+
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
 
@@ -68,6 +77,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
       setState(() {
         _profileImageUrl = null;
         _isLoadingProfileImage = false;
+        _isLoaded = false;
       });
     }
   }

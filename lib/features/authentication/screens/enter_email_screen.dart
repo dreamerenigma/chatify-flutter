@@ -142,10 +142,7 @@ class EnterEmailScreenState extends State<EnterEmailScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1),
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(color: ChatifyColors.darkerGrey, width: 1),
-                                    ),
+                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: ChatifyColors.darkerGrey, width: 1)),
                                   ),
                                   keyboardType: TextInputType.emailAddress,
                                 ),
