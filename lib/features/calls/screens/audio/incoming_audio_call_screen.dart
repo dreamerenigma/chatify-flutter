@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
 import '../../../../config/config.dart';
 import '../../../../core/enums/call_state_type.dart';
 import '../../../../core/enums/call_status_type.dart';
@@ -27,16 +29,19 @@ import '../../widgets/dialog/message_audio_call_dialog.dart';
 import '../../widgets/dialog/protected_enctyption_sheet_dialog.dart';
 import '../../widgets/panels/call_control_panel.dart';
 import '../../widgets/panels/incoming_call_control_panel.dart';
+import '../add_participants_screen.dart';
 import '../video/outgoing_video_call_screen.dart';
 
 class IncomingAudioCallScreen extends StatefulWidget {
   final CallModel call;
   final UserModel user;
+  final VoidCallback? onMinimize;
 
   const IncomingAudioCallScreen({
     super.key,
     required this.call,
     required this.user,
+    this.onMinimize,
   });
 
   @override
@@ -50,6 +55,21 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
   bool isMuted = false;
   bool _isCallAccepted = false;
   bool isExternalSpeaker = false;
+  bool _isFinishing = false;
+  bool _showConnectionText = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
+  StreamSubscription<CallModel>? _callSubscription;
+  Timer? _callTimer;
+  DateTime? _acceptedAt;
+  Duration _callDuration = Duration.zero;
+
+  String _formatCallDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   void initState() {
@@ -57,12 +77,109 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
     AgoraTokenService.testServer();
     audioPlayer = AudioPlayer();
     prepareAgora();
+    _listenCall();
+    _loadProfileImage();
   }
 
   @override
   void dispose() {
+    _callSubscription?.cancel();
     audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _startCallTimer(DateTime acceptedAt) {
+    _callTimer?.cancel();
+
+    _acceptedAt = acceptedAt;
+
+    _updateCallDuration();
+
+    _callTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) {
+        _updateCallDuration();
+      },
+    );
+  }
+
+  void _updateCallDuration() {
+    if (!mounted || _acceptedAt == null) return;
+
+    final duration = DateTime.now().difference(_acceptedAt!);
+
+    setState(() {
+      _callDuration = duration;
+    });
+  }
+
+  void _listenCall() {
+    log(
+      '[INCOMING_AUDIO] 🔵 Listening call: ${widget.call.id}',
+      name: 'IncomingAudioCallScreen',
+    );
+
+    _callSubscription = _callService.observeCall(widget.call.id).listen((call) async {
+      log('[INCOMING_AUDIO] Call state: ${call.state.name}', name: 'IncomingAudioCallScreen');
+
+      switch (call.state) {
+        case CallStateType.ringing:
+          break;
+        case CallStateType.accepted:
+          log('[INCOMING_AUDIO] ✅ Call accepted', name: 'IncomingAudioCallScreen');
+          if (call.acceptedAt != null) {
+            _startCallTimer(call.acceptedAt!);
+          }
+          if (mounted) {
+            setState(() {
+              _isCallAccepted = true;
+            });
+          }
+          break;
+        case CallStateType.rejected:
+          log('[INCOMING_AUDIO] ❌ Call rejected', name: 'IncomingAudioCallScreen');
+          await _finishCall(CallStatusType.rejected);
+          break;
+        case CallStateType.ended:
+          log('[INCOMING_AUDIO] 🔴 Call ended by other side', name: 'IncomingAudioCallScreen');
+          await _finishCall(CallStatusType.noAnswer);
+          break;
+      }
+    });
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
   }
 
   Future<void> playClickButton(AudioPlayer audioPlayer) async {
@@ -150,6 +267,33 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
     }
   }
 
+  Future<void> _finishCall(CallStatusType status) async {
+    if (_isFinishing) {
+      log('[INCOMING_AUDIO] ⚠️ Already finishing call', name: 'IncomingAudioCallScreen');
+      return;
+    }
+
+    _isFinishing = true;
+
+    log('[INCOMING_AUDIO] 🔴 Finishing call: ${status.name}', name: 'IncomingAudioCallScreen');
+
+    await _stopRingingTone();
+    await _callSubscription?.cancel();
+    _callSubscription = null;
+
+    if (_agoraCallService.isJoined) {
+      log('[INCOMING_AUDIO] 🔴 Leaving Agora channel', name: 'IncomingAudioCallScreen');
+
+      await _agoraCallService.leaveChannel();
+    }
+
+    if (!mounted) return;
+
+    log('[INCOMING_AUDIO] 🟣 Navigator.pop()', name: 'IncomingAudioCallScreen');
+
+    Navigator.pop(context, CallResult(type: CallType.audio, status: status));
+  }
+
   Future<void> _rejectCall() async {
     try {
       await playClickButton(audioPlayer);
@@ -215,51 +359,171 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
       body: Stack(
         children: [
           Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover))),
-          Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
-              Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(ChatifyVectors.appLogoLight, width: 16, height: 16, colorFilter: const ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
-                  const SizedBox(width: 6),
-                  Text(widget.user.phoneNumber, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              const Spacer(),
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+          Positioned(
+            top: 30,
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .2),
-                      child: CachedNetworkImage(
-                        width: DeviceUtils.getScreenHeight(context) * .25,
-                        height: DeviceUtils.getScreenHeight(context) * .25,
-                        imageUrl: widget.user.image,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => CircleAvatar(
-                          backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .25, height: DeviceUtils.getScreenHeight(context) * .25),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Material(
+                        color: ChatifyColors.darkSlate,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () {
+                            widget.onMinimize?.call();
+                            Navigator.of(context).pop();
+                          },
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Center(
+                              child: SvgPicture.asset(
+                                ChatifyVectors.resize,
+                                width: 26,
+                                height: 26,
+                                colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
+                              ),
+                            ),
+                          ),
                         ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(context, createPageRoute(AddParticipantsScreen()));
+                        },
+                        child: const CircleAvatar(backgroundColor: ChatifyColors.darkSlate, radius: 25, child: Icon(Icons.person_add_alt_1_rounded, color: ChatifyColors.white)),
+                      ),
+                    ),
+                    Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        child:  _isCallAccepted
+                          ? Column(
+                              children: [
+                                Text(
+                                  '${widget.user.name} ${widget.user.surname}',
+                                  style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400), textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  _formatCallDuration(_callDuration),
+                                  key: const ValueKey('call_duration'),
+                                  style: TextStyle(
+                                    color: ChatifyColors.darkGrey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : _showConnectionText
+                            ? Column(
+                                children: [
+                                  Text(
+                                    '${widget.user.name} ${widget.user.surname}',
+                                    style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400), textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Соединение...',
+                                    key: const ValueKey('connecting'),
+                                    style: TextStyle(
+                                      color: ChatifyColors.darkGrey,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                      shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                key: const ValueKey('user_info'),
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                                  const SizedBox(height: 2),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 50),
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          WidgetSpan(
+                                            alignment: PlaceholderAlignment.middle,
+                                            child: Icon(
+                                              Icons.lock_outline,
+                                              color: ChatifyColors.white,
+                                              size: 14,
+                                              shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                            ),
+                                          ),
+                                          const WidgetSpan(child: SizedBox(width: 4)),
+                                          TextSpan(
+                                            text: S.of(context).protectedWithEndToEndEncryption,
+                                            style: TextStyle(
+                                                color: ChatifyColors.grey,
+                                                fontSize: ChatifySizes.fontSizeSm,
+                                                fontWeight: FontWeight.w400,
+                                                shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                                height: 1.4
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const Spacer(),
-              _isCallAccepted
-                ? CallControlPanel(
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .2),
+                  child: CachedNetworkImage(
+                    width: DeviceUtils.getScreenHeight(context) * .27,
+                    height: DeviceUtils.getScreenHeight(context) * .27,
+                    imageUrl: _profileImageUrl ?? '',
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      foregroundColor: ChatifyColors.white,
+                      child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .27, height: DeviceUtils.getScreenHeight(context) * .27),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _isCallAccepted
+            ? Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: CallControlPanel(
                     isExternalSpeaker: isExternalSpeaker,
                     isMuted: isMuted,
                     isVideoEnabled: false,
-
                     onMore: () {
                       showProtectedEncryptionBottomSheet(context);
                     },
-
                     onVideo: () async {
                       final bool? shouldNavigate = await showDialog<bool>(
                         context: context,
@@ -284,7 +548,6 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
                           );
                         },
                       );
-
                       if (shouldNavigate == true && context.mounted) {
                         Navigator.of(context).pushReplacement(createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
                       }
@@ -293,24 +556,31 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
                     onMicrophone: _toggleMicrophone,
                     onShare: () {},
                     onEndCall: () async {
-                      final navigator = Navigator.of(context);
+                      if (_isFinishing) return;
+
+                      log('[INCOMING_AUDIO] 🔴 END BUTTON PRESSED', name: 'IncomingAudioCallScreen');
 
                       await playClickButton(audioPlayer);
-                      await _stopRingingTone();
-                      await _agoraCallService.leaveChannel();
 
                       try {
+                        log('[INCOMING_AUDIO] 🔴 Calling endCall: ${widget.call.id}', name: 'IncomingAudioCallScreen');
+
                         await _callService.endCall(widget.call.id);
+
+                        log('[INCOMING_AUDIO] ✅ endCall completed', name: 'IncomingAudioCallScreen');
                       } catch (e, st) {
                         log('[INCOMING_AUDIO] ❌ Failed to end call: $e', name: 'IncomingAudioCallScreen', error: e, stackTrace: st);
                       }
 
-                      if (!mounted) return;
-
-                      navigator.pop(CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
+                      await _finishCall(CallStatusType.noAnswer);
                     },
-                  )
-                : IncomingCallControlPanel(
+                  ),
+              )
+            : Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                  child: IncomingCallControlPanel(
                     onAccept: _acceptCall,
                     onReject: _rejectCall,
                     onMessage: () {
@@ -322,8 +592,7 @@ class _IncomingAudioCallScreenState extends State<IncomingAudioCallScreen> {
                       );
                     },
                   ),
-            ],
-          ),
+                ),
         ],
       ),
     );

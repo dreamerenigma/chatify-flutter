@@ -18,11 +18,13 @@ import '../widgets/lists/group_chat_message_list.dart';
 class GroupChatScreen extends StatefulWidget {
   final GroupModel group;
   final UserModel user;
+  final Map<String, UserModel> users;
 
   const GroupChatScreen({
     super.key,
     required this.group,
     required this.user,
+    required this.users,
   });
 
   @override
@@ -69,7 +71,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
-      appBar: GroupChatAppBar(group: widget.group, userNamesFuture: userNamesFuture),
+      appBar: GroupChatAppBar(group: widget.group, userNamesFuture: userNamesFuture, users: widget.users),
       body: Stack(
         children: [
           Consumer<WallpaperProvider>(

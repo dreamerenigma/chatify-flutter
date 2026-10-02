@@ -271,7 +271,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
                     user: chatUser,
                     onUserSelected: (UserModel selectedUser) {
                       _toggleUserSelection(selectedUser);
-                    },
+                    }
                   ),
                 ],
               );

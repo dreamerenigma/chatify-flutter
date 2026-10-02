@@ -8,18 +8,22 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../group/models/group_model.dart';
+import '../../../group/screens/about_group_screen.dart';
 import '../../../group/screens/group_chat_screen.dart';
+import '../../../group/screens/group_image_viewer_screen.dart';
 import '../../../utils/widgets/dividers/custom_divider.dart';
-import '../../screens/profile/photo_group_screen.dart';
 import 'light_dialog.dart';
 
 class GroupDialog extends StatelessWidget {
   final GroupModel group;
+  final Map<String, UserModel> users;
 
   const GroupDialog({
     super.key,
     required this.group,
+    required this.users,
   });
 
   @override
@@ -47,7 +51,7 @@ class GroupDialog extends StatelessWidget {
                           width: double.infinity,
                           height: double.infinity,
                           color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          child: const Center(child: CircularProgressIndicator()),
+                          child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
                         );
                       }
 
@@ -55,9 +59,11 @@ class GroupDialog extends StatelessWidget {
 
                       return GestureDetector(
                         onTap: () {
+                          Navigator.pop(context);
+
                           if (imageUrl == null || imageUrl.isEmpty) return;
 
-                          Navigator.push(context, createPageRoute(PhotoGroupScreen(imageGroup: imageUrl, groupId: group.id)));
+                          Navigator.push(context, createPageRoute(GroupImageViewerScreen(group: group, image: imageUrl)));
                         },
                         child: ClipRRect(
                           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -85,7 +91,7 @@ class GroupDialog extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Container(
-                      decoration: BoxDecoration(color: ChatifyColors.black.withAlpha((0.7 * 255).toInt()), borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+                      decoration: BoxDecoration(color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()), borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
                       padding: EdgeInsets.symmetric(vertical: mq.size.width * .01, horizontal: mq.size.width * .05),
                       child: Text(
                         group.groupName,
@@ -103,6 +109,12 @@ class GroupDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
+                  icon: SvgPicture.asset(
+                    ChatifyVectors.messageOutline,
+                    width: 30,
+                    height: 30,
+                    colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
+                  ),
                   onPressed: () {
                     final chatGroup = GroupModel(
                       id: '',
@@ -117,33 +129,30 @@ class GroupDialog extends StatelessWidget {
                       lastMessageTimestamp: 0,
                     );
 
-                    Navigator.push(context, createPageRoute(GroupChatScreen(group: chatGroup, user: APIs.me)));
+                    Navigator.push(context, createPageRoute(GroupChatScreen(group: chatGroup, user: APIs.me, users: {})));
                   },
-                  icon: SvgPicture.asset(
-                    ChatifyVectors.messageOutline,
-                    width: 30,
-                    height: 30,
-                    colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
-                  ),
                 ),
                 const SizedBox(width: 17),
                 IconButton(
+                  icon: Icon(Icons.call_outlined, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.call, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 30),
                 ),
                 const SizedBox(width: 17),
                 IconButton(
+                  icon: Icon(Icons.videocam_outlined, size: 33, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.video_call, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 35),
                 ),
                 const SizedBox(width: 17),
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.info_outline, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 30),
+                  icon: Icon(Icons.info_outline_rounded, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, createPageRoute(AboutGroupScreen(group: group, users: users)));
+                  },
                 ),
                 const SizedBox(width: 17),
               ],

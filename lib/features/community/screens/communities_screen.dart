@@ -151,72 +151,72 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
         ),
         showSearch: false,
       ),
-      body: list.isEmpty ? Padding(
-        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
-        child: Column(
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-            Image.asset(ChatifyImages.community, width: 150, height: 150),
-            const SizedBox(height: 20),
-            Text(S.of(context).connectedCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-            const SizedBox(height: 10),
-            Text(S.of(context).communityThematic, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), textAlign: TextAlign.center),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {},
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(S.of(context).communityExamples, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
-                  const SizedBox(width: 5),
-                  Icon(Icons.arrow_forward_ios_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 13),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
-              child: SizedBox(
-                height: 45,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    side: BorderSide.none,
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Center(child: Text(S.of(context).createCommunity)),
-                ),
-              ),
-            ),
-          ],
-        ),
-      )
-      : Column(
-        children: [
-          NewCommunityCard(
-            onTap: () {
-              Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
-            },
-          ),
-          Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightGrey),
-          const SizedBox(height: 2),
-          Expanded(
+      body: list.isEmpty
+        ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
             child: Column(
               children: [
-                Flexible(child: CommunityList(communities: list, onCommunitySelected: (community) {})),
-                CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 6, bottom: 0),
-                const SizedBox(height: 6),
-                CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: APIs.community!, user: APIs.me),
-                Divider(height: 10, thickness: 10, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.lightGrey),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                Image.asset(ChatifyImages.community, width: 150, height: 150),
+                const SizedBox(height: 20),
+                Text(S.of(context).connectedCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                const SizedBox(height: 10),
+                Text(S.of(context).communityThematic, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), textAlign: TextAlign.center),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(S.of(context).communityExamples, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                      const SizedBox(width: 5),
+                      Icon(Icons.arrow_forward_ios_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 13),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
+                  child: SizedBox(
+                    height: 45,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        side: BorderSide.none,
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: Center(child: Text(S.of(context).createCommunity, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd,fontWeight: FontWeight.w400))),
+                    ),
+                  ),
+                ),
               ],
             ),
+          )
+        : Column(
+            children: [
+              NewCommunityCard(
+                onTap: () {
+                  Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
+                },
+              ),
+              CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
+              const SizedBox(height: 2),
+              Expanded(
+                child: Column(
+                  children: [
+                    Flexible(child: CommunityList(communities: list, onCommunitySelected: (community) {})),
+                    CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 6, bottom: 0),
+                    const SizedBox(height: 6),
+                    CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: APIs.community!, user: APIs.me),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

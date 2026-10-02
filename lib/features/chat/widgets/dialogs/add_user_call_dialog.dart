@@ -9,7 +9,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../chat/models/user_model.dart';
-import '../../../home/widgets/input/search_text_input.dart';
+import '../../../home/widgets/inputs/search_text_input.dart';
 import '../../../personalization/controllers/user_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 

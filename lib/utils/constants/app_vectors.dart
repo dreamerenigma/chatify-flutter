@@ -59,6 +59,7 @@ class ChatifyVectors {
   static const String messageFilled = "assets/vectors/message_filled.svg";
   static const String messageOutline = "assets/vectors/message_outline.svg";
   static const String messageLock = "assets/vectors/message_lock.svg";
+  static const String messagePrivacy = "assets/vectors/message_privacy.svg";
   static const String lock = "assets/vectors/lock.svg";
   static const String lockOutline = "assets/vectors/lock_outline.svg";
   static const String user = "assets/vectors/user.svg";
@@ -85,7 +86,7 @@ class ChatifyVectors {
   static const String filter = "assets/vectors/filter.svg";
   static const String cameraLink = "assets/vectors/camera_link.svg";
   static const String video = "assets/vectors/video.svg";
-  static const String videoOutlined = "assets/vectors/video_outlined.svg";
+  static const String videoOutline = "assets/vectors/video_outline.svg";
   static const String videoCameraOutline = "assets/vectors/video_camera_outline.svg";
   static const String newUser = "assets/vectors/new_user.svg";
   static const String newGroup = "assets/vectors/new_group.svg";
@@ -95,6 +96,7 @@ class ChatifyVectors {
   static const String twoLineHorizontal = "assets/vectors/two_line_horizontal.svg";
   static const String text = "assets/vectors/text.svg";
   static const String survey = "assets/vectors/survey.svg";
+  static const String surveyFilled = "assets/vectors/survey_filled.svg";
   static const String media = "assets/vectors/media.svg";
   static const String feather = "assets/vectors/feather.svg";
   static const String animal = "assets/vectors/animal.svg";
@@ -274,6 +276,11 @@ class ChatifyVectors {
   static const String emojiOutline = "assets/vectors/emoji_outline.svg";
   static const String emojiAdd = "assets/vectors/emoji_add.svg";
   static const String calendarEvent = "assets/vectors/calendar_event.svg";
+  static const String parentalControls = "assets/vectors/parental_controls.svg";
+  static const String smartphone = "assets/vectors/smartphone.svg";
+  static const String birthdayUser = "assets/vectors/birthday_user.svg";
+  static const String sort = "assets/vectors/sort.svg";
+  static const String relatedDevices = "assets/vectors/related_devices.svg";
 
   /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';

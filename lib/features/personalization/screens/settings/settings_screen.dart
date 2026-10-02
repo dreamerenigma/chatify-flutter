@@ -32,7 +32,10 @@ import '../qr_code/qr_code_screen.dart';
 class SettingsScreen extends StatefulWidget {
   final UserModel user;
 
-  const SettingsScreen({super.key, required this.user});
+  const SettingsScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   SettingsScreenState createState() => SettingsScreenState();
@@ -40,13 +43,14 @@ class SettingsScreen extends StatefulWidget {
 
 class SettingsScreenState extends State<SettingsScreen> {
   final box = GetStorage();
+  late final Rx<UserModel> user;
   final TextEditingController searchController = TextEditingController();
   final LanguagesController languageController = Get.put(LanguagesController());
   FocusNode searchFocusNode = FocusNode();
   bool isSearching = false;
   bool showFirst = true;
   bool showSecond = true;
-  bool _isLoadingProfileImage = false;
+  bool isLoadingProfileImage = false;
   String? _profileImageUrl;
 
   List<String> filteredSettingsOptions = [];
@@ -68,6 +72,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    user = widget.user.obs;
     filteredSettingsOptions.addAll(settingsOptions);
     _loadState();
     _loadProfileImage();
@@ -111,7 +116,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -122,7 +127,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
       setState(() {
         _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
       });
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
@@ -131,7 +136,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
       setState(() {
         _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
       });
     }
   }
@@ -154,6 +159,9 @@ class SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final settingsMap = getSettingsOptions(languageController);
+
+    log('USERNAME: "${widget.user.username}"');
+    log('STATUS: "${widget.user.status}"');
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -273,15 +281,27 @@ class SettingsScreenState extends State<SettingsScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(widget.user.name, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
-                                        Text('@${widget.user.username}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), overflow: TextOverflow.ellipsis),
-                                      ],
-                                    ),
-                                  ),
+                                  Obx(() {
+                                    final currentUser = user.value;
+
+                                    return Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${currentUser.name} ${currentUser.surname}',
+                                            style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400),
+                                          ),
+                                          Text(
+                                            currentUser.username.trim().isNotEmpty ? '@${currentUser.username}' : currentUser.status,
+                                            style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
                                   Row(
                                     children: [
                                       Obx(() {

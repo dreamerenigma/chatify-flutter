@@ -61,38 +61,17 @@ class YandexDiskService implements MediaService {
   }
 
   @override
-  Future<bool> uploadLargeFile({
-    required File file,
-    required String uploadUrl,
-    String contentType = 'application/octet-stream',
-  }) async {
+  Future<bool> uploadLargeFile({required File file, required String uploadUrl, String contentType = 'application/octet-stream'}) async {
     final client = http.Client();
 
     try {
       final fileLength = await file.length();
-
-      log('YANDEX DIRECT: started');
-      log('YANDEX DIRECT: file = ${file.path}');
-      log('YANDEX DIRECT: size = $fileLength');
-      log('YANDEX DIRECT: contentType = $contentType');
-
-      final request = http.StreamedRequest(
-        'PUT',
-        Uri.parse(uploadUrl),
-      );
+      final request = http.StreamedRequest('PUT', Uri.parse(uploadUrl));
 
       request.headers['Content-Type'] = contentType;
       request.contentLength = fileLength;
 
-      log('YANDEX DIRECT: request created');
-      log('YANDEX DIRECT: starting HTTP request...');
-
-      // КРИТИЧЕСКИ ВАЖНО:
-      // send() запускаем ДО записи данных в sink.
       final responseFuture = client.send(request);
-
-      log('YANDEX DIRECT: HTTP request started');
-      log('YANDEX DIRECT: sending file stream...');
 
       int uploaded = 0;
       int lastPercent = -1;
@@ -106,28 +85,14 @@ class YandexDiskService implements MediaService {
           final percent =
           ((uploaded / fileLength) * 100).floor();
 
-          if (percent != lastPercent &&
-              (percent % 5 == 0 || percent == 100)) {
+          if (percent != lastPercent && (percent % 5 == 0 || percent == 100)) {
             lastPercent = percent;
-
-            log(
-              'YANDEX DIRECT: progress '
-                  '$percent% '
-                  '($uploaded / $fileLength bytes)',
-            );
           }
         }
 
-        log('YANDEX DIRECT: file stream finished');
-
         await request.sink.close();
-
-        log('YANDEX DIRECT: request body closed');
       } catch (e, st) {
-        log(
-          'YANDEX DIRECT: stream error = $e',
-          stackTrace: st,
-        );
+        log('YANDEX DIRECT: stream error = $e', stackTrace: st);
 
         try {
           await request.sink.close();
@@ -135,46 +100,19 @@ class YandexDiskService implements MediaService {
 
         rethrow;
       }
-
-      log('YANDEX DIRECT: waiting response...');
-
       final response = await responseFuture;
 
-      log(
-        'YANDEX DIRECT: response status = '
-            '${response.statusCode}',
-      );
-
-      if (response.statusCode >= 200 &&
-          response.statusCode < 300) {
-        log('YANDEX DIRECT: upload successful');
-
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         client.close();
 
         return true;
       }
 
-      final responseBody =
-      await response.stream.bytesToString();
-
-      log(
-        'YANDEX DIRECT: upload failed: '
-            '${response.statusCode}',
-      );
-
-      log(
-        'YANDEX DIRECT: response body = '
-            '$responseBody',
-      );
-
       client.close();
 
       return false;
     } catch (e, st) {
-      log(
-        'YANDEX DIRECT: error = $e',
-        stackTrace: st,
-      );
+      log('YANDEX DIRECT: error = $e', stackTrace: st);
 
       client.close();
 

@@ -39,17 +39,17 @@ class GroupChatWidget extends StatefulWidget {
 }
 
 class _GroupChatWidgetState extends State<GroupChatWidget> {
-  List<MessageModel> list = [];
-  List<MessageModel> messages = [];
-  List<MessageModel> cachedMessages = [];
-  late Future<Map<String, String>> userNamesFuture;
   late final GroupModel group;
+  late Future<Map<String, String>> userNamesFuture;
   late TextEditingController textController;
-  Stream<QuerySnapshot<Map<String, dynamic>>>? messageStream;
   late FocusNode focusNode;
   bool hasText = false;
   bool isHovered = false;
   bool isTyping = false;
+  List<MessageModel> list = [];
+  List<MessageModel> messages = [];
+  List<MessageModel> cachedMessages = [];
+  Stream<QuerySnapshot<Map<String, dynamic>>>? messageStream;
 
   @override
   void initState() {
@@ -132,7 +132,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupChatAppBar(group: group, userNamesFuture: userNamesFuture),
+      appBar: GroupChatAppBar(group: group, userNamesFuture: userNamesFuture, users: {}),
       body: _buildBody(),
       bottomNavigationBar: _buildBottomInputBar(context),
     );

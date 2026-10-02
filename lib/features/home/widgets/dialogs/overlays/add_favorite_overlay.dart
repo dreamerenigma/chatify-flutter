@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
-import '../../input/search_text_input.dart';
+import '../../inputs/search_text_input.dart';
 
 Future<void> showAddFavoriteOverlay(BuildContext context, Offset position, TextEditingController userGroupController) async {
   final completer = Completer<void>();

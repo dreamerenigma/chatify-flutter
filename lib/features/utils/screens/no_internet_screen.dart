@@ -59,7 +59,7 @@ class NoInternetScreenState extends State<NoInternetScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _handleRetry,
-                  child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: Text(S.of(context).loadMore),
+                  child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: Text(S.of(context).reboot),
                   ),
                 ),
           ],

@@ -106,7 +106,7 @@ class ChatifyColors {
   static const Color blueGreenDark = Color(0xFF02968B);
 
   // Message colors
-  static const Color greenMessageBubbleRecipient = Color(0xFFDAFFB0);
+  static const Color greenMessageBubbleRecipient = Color(0xFFD9FDD3);
   static const Color messageBubbleRecipientBorder = Color(0xFFDAFFB0);
   static const Color greenMessageLight = Color(0xFFDAFFB0);
   static const Color greenMessageGreenLight = Color(0xFFDAFFB0);

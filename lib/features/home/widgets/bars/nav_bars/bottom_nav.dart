@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -11,15 +13,21 @@ import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 class BottomNav extends StatelessWidget {
   final int selectedIndex;
   final void Function(int) onItemTapped;
+  final int unreadChatsCount;
+  final int missedCallsCount;
 
   const BottomNav({
     super.key,
     required this.selectedIndex,
     required this.onItemTapped,
+    this.unreadChatsCount = 0,
+    this.missedCallsCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
+    log('[BOTTOM NAV] unreadChatsCount = $unreadChatsCount');
+
     return Container(
       decoration: BoxDecoration(
         boxShadow: [BoxShadow(color: context.isDarkMode ? ChatifyColors.white.withAlpha((0.2 * 255).toInt()) : ChatifyColors.black.withAlpha((0.2 * 255).toInt()), blurRadius: 4, spreadRadius: 2, offset: Offset(0, 4),)],
@@ -33,11 +41,17 @@ class BottomNav extends StatelessWidget {
             _buildBottomNavigationBarItem(
               context,
               colorsController: colorsController,
-              iconWidget: SvgPicture.asset(
-                selectedIndex == 0 ? ChatifyVectors.chats : ChatifyVectors.chatsRegular,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(selectedIndex == 0 ? colorsController.getColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black), BlendMode.srcIn),
+              iconWidget: _buildIconWithBadge(
+                count: unreadChatsCount,
+                icon: SvgPicture.asset(
+                  selectedIndex == 0 ? ChatifyVectors.chats : ChatifyVectors.chatsRegular,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    selectedIndex == 0 ? ChatifyColors.greenMessageBubbleRecipient : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
               label: S.of(context).chats,
               index: 0,
@@ -49,7 +63,10 @@ class BottomNav extends StatelessWidget {
                 ChatifyVectors.status,
                 width: 24,
                 height: 24,
-                colorFilter: ColorFilter.mode(selectedIndex == 1 ? colorsController.getColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black), BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  selectedIndex == 1 ? ChatifyColors.greenMessageBubbleRecipient : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                  BlendMode.srcIn,
+                ),
               ),
               label: S.of(context).status,
               index: 1,
@@ -57,21 +74,28 @@ class BottomNav extends StatelessWidget {
             _buildBottomNavigationBarItem(
               context,
               colorsController: colorsController,
-              iconWidget: Icon(selectedIndex == 2 ? Icons.groups : Icons.groups_outlined, size: 28),
+              iconWidget: Icon(
+                selectedIndex == 2 ? Icons.groups : Icons.groups_outlined, size: 28,
+                color: selectedIndex == 2 ? ChatifyColors.greenMessageBubbleRecipient : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+              ),
               label: S.of(context).community,
               index: 2,
             ),
             _buildBottomNavigationBarItem(
               context,
               colorsController: colorsController,
-              iconWidget: Icon(selectedIndex == 3 ? Icons.call : Icons.call_outlined),
+              iconWidget: _buildIconWithBadge(
+                count: missedCallsCount,
+                icon: Icon(selectedIndex == 3 ? Icons.call : Icons.call_outlined,
+                color: selectedIndex == 3 ? ChatifyColors.greenMessageBubbleRecipient : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+              ),
               label: S.of(context).calls,
               index: 3,
             ),
           ],
           currentIndex: selectedIndex,
-          selectedItemColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          unselectedItemColor: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black,
+          selectedItemColor: ChatifyColors.greenMessageBubbleRecipient,
+          unselectedItemColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
           selectedLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500),
           unselectedLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm),
           onTap: onItemTapped,
@@ -110,6 +134,30 @@ class BottomNav extends StatelessWidget {
       ),
       label: label,
       tooltip: '',
+    );
+  }
+
+  Widget _buildIconWithBadge({required Widget icon, required int count}) {
+    if (count <= 0) {
+      return icon;
+    }
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        icon,
+        Positioned(
+          top: -5,
+          right: -7,
+          child: Container(
+            constraints: const BoxConstraints(minWidth: 15, minHeight: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: Text(count > 99 ? '99+' : '$count', style: const TextStyle(color: ChatifyColors.black, fontSize: 11, fontWeight: FontWeight.w500)),
+          ),
+        ),
+      ],
     );
   }
 }

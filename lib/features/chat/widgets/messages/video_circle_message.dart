@@ -46,6 +46,16 @@ class _VideoCircleMessageState extends State<VideoCircleMessage> {
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
+  Duration get _displayDuration {
+    final position = widget.controller.value.position;
+
+    if (position == Duration.zero) {
+      return Duration(seconds: widget.message.videoDuration ?? 0);
+    }
+
+    return position;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = widget.isExpanded ? 260.0 : 200.0;
@@ -103,7 +113,7 @@ class _VideoCircleMessageState extends State<VideoCircleMessage> {
                     SizedBox(width: 6),
                   ],
                   Text(
-                    _formatDuration(widget.controller.value.position),
+                    _formatDuration(_displayDuration),
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: ChatifyColors.white, fontSize: 13, fontWeight: FontWeight.w600, shadows: [Shadow(color: ChatifyColors.black, blurRadius: 4)]),
                   ),

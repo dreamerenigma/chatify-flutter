@@ -6,13 +6,15 @@ import '../../../utils/constants/app_colors.dart';
 
 class ColorsController extends GetxController {
   static ColorsController get instance => Get.find<ColorsController>();
-  final RxString selectedColorScheme = 'blue'.obs;
   final GetStorage box = GetStorage();
+  final RxString selectedColorScheme = 'blue'.obs;
+  final RxString selectedTextColorScheme = 'default'.obs;
 
   @override
   void onInit() {
     super.onInit();
     selectedColorScheme.value = box.read('selectedColorScheme') ?? 'blue';
+    selectedTextColorScheme.value = box.read('selectedTextColorScheme') ?? 'default';
     applyColorScheme(selectedColorScheme.value);
   }
 
@@ -34,7 +36,7 @@ class ColorsController extends GetxController {
   Color getTextColor(String colorScheme) {
     switch (colorScheme) {
       case 'blue':
-        return ChatifyColors.white;
+        return ChatifyColors.lightBlue;
       case 'red':
         return ChatifyColors.white;
       case 'green':

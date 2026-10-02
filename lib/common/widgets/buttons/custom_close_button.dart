@@ -50,21 +50,25 @@ class CustomCloseButtonState extends State<CustomCloseButton> {
         return MouseRegion(
           onEnter: (_) => isHovered.value = true,
           onExit: (_) => isHovered.value = false,
-          child: Material(
-            color: ChatifyColors.transparent,
-            child: InkWell(
-              mouseCursor: SystemMouseCursors.basic,
-              splashColor: ChatifyColors.transparent,
-              highlightColor: widget.highlightColor,
-              hoverColor: widget.hoverColor,
-              onTap: () => windowManager.close(),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 10),
-                child: SvgPicture.asset(
-                  ChatifyVectors.close,
-                  width: 21,
-                  height: 21,
-                  colorFilter: ColorFilter.mode(hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn),
+          child: SizedBox(
+            width: 46,
+            height: 40,
+            child: Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                mouseCursor: SystemMouseCursors.basic,
+                splashColor: ChatifyColors.transparent,
+                highlightColor: widget.highlightColor,
+                hoverColor: widget.hoverColor,
+                onTap: () => windowManager.close(),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 6, right: 6, top: 8, bottom: 6),
+                  child: SvgPicture.asset(
+                    ChatifyVectors.close,
+                    width: 21,
+                    height: 21,
+                    colorFilter: ColorFilter.mode(hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn),
+                  ),
                 ),
               ),
             ),

@@ -6,7 +6,7 @@ import '../../../../../../../data/repositories/email/email_send_repository.dart'
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../images/support_image_selector.dart';
-import '../input/support_input.dart';
+import '../inputs/support_input.dart';
 
 class SupportForm extends StatefulWidget {
   final List<AssetEntity>? selectedImages;

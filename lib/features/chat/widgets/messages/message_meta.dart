@@ -66,7 +66,8 @@ class MessageMeta extends StatelessWidget {
             ),
             if (showCheck) ...[
               const SizedBox(width: 4),
-              SvgPicture.asset(ChatifyVectors.doubleCheck, width: isWebOrWindows ? 13 : 19, height: isWebOrWindows ? 13 : 19, colorFilter: ColorFilter.mode(checkColor, BlendMode.srcIn)),
+              SvgPicture.asset(ChatifyVectors.doubleCheck, width: isWebOrWindows ? 13 : 18, height: isWebOrWindows ? 13 : 18, colorFilter: ColorFilter.mode(checkColor, BlendMode.srcIn)),
+              const SizedBox(width: 2),
             ],
           ],
         ),

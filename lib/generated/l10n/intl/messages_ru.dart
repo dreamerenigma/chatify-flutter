@@ -302,7 +302,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Аудио успешно сохранено!",
     ),
     "audioVideoCalls": MessageLookupByLibrary.simpleMessage(
-      "Аудио- и видео- звонки",
+      "Аудио- и видеозвонки",
     ),
     "aug": MessageLookupByLibrary.simpleMessage("Авг."),
     "autoload": MessageLookupByLibrary.simpleMessage("Автозагрузка"),
@@ -542,7 +542,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "closingChat": MessageLookupByLibrary.simpleMessage("Закрытие чата"),
     "combineParticipantsThematicGroups": MessageLookupByLibrary.simpleMessage(
-      "Объединяйте участников \n\' \'в тематические группы",
+      "Объединяйте участников в тематические группы.",
     ),
     "communicationCompanies": MessageLookupByLibrary.simpleMessage(
       "Общение с компаниями",
@@ -817,7 +817,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Устройство подключено к сети.",
     ),
     "deviceStatus": MessageLookupByLibrary.simpleMessage(
-      "Состояние устройства",
+      "СОСТОЯНИЕ УСТРОЙСТВА",
     ),
     "diagnosticTechnicalInfoAboutDevice": MessageLookupByLibrary.simpleMessage(
       "Нажимая \"Далее\", вы даете согласие Chatify на проверку информации о диагностике и технических характеристиках устройства, а также на проверку метаданных, связанных с вашим аккаунтом, с целью поиска и устранения указанной проблемы. ",
@@ -1474,7 +1474,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Этот список обновляется дял вас автоматически, отображая все групповые чаты.",
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Списки"),
-    "loadMore": MessageLookupByLibrary.simpleMessage("Перезагрузить"),
     "loading": MessageLookupByLibrary.simpleMessage("Загрузка..."),
     "location": MessageLookupByLibrary.simpleMessage("Местоположение..."),
     "locationSharing": MessageLookupByLibrary.simpleMessage(
@@ -1556,6 +1555,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "messages": MessageLookupByLibrary.simpleMessage("Сообщения"),
     "messagesAIGeneratedInappropriate": MessageLookupByLibrary.simpleMessage(
       "Сообщения могут быть сгенерированы ИИ и могут быть неточными или неуместными. Нажмите, чтобы узнать подробнее.",
+    ),
+    "messagesCallsProtected": MessageLookupByLibrary.simpleMessage(
+      "Сообщения и звонки защищены сквозным шифрованием.",
     ),
     "messagesCallsProtectedEncryption": MessageLookupByLibrary.simpleMessage(
       "Сообщения и звонки защищены сквозным шифрованием. Прочитать, прослушать или переслать их могут только участники этого чата. ",
@@ -2787,7 +2789,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ваш список контактов обновлен!",
     ),
     "yourLists": MessageLookupByLibrary.simpleMessage("Ваши списки"),
-    "yourLocation": MessageLookupByLibrary.simpleMessage("Ваше местоположение"),
+    "yourLocation": MessageLookupByLibrary.simpleMessage("Передача геоданных"),
     "yourNameCannotEmpty": MessageLookupByLibrary.simpleMessage(
       "Ваше имя не может быть пустым.",
     ),

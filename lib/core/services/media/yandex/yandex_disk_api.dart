@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-
 import '../../../../utils/constants/app_links.dart';
 
 class YandexDiskApi {
@@ -34,7 +33,6 @@ class YandexDiskApi {
       );
 
       log('YANDEX API: upload URL status = ''${response.statusCode}');
-
       log('YANDEX API: upload URL body = ''${response.body}');
 
       if (response.statusCode < 200 || response.statusCode >= 300) {

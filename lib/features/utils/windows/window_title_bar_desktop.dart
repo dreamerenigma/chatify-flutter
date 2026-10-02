@@ -198,19 +198,21 @@ class _WindowTitleBarState extends State<WindowTitleBar>  with WindowListener {
                           ),
                         ),
                         Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onPanStart: (_) {
-                              windowManager.startDragging();
-                            },
-                            onDoubleTap: toggleWindow,
-                            onSecondaryTapDown: (details) {
-                              final renderBox = context.findRenderObject() as RenderBox;
-                              final offset = renderBox.localToGlobal(details.localPosition);
+                          child: DragToMoveArea(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onPanStart: (_) {
+                                windowManager.startDragging();
+                              },
+                              onDoubleTap: toggleWindow,
+                              onSecondaryTapDown: (details) {
+                                final renderBox = context.findRenderObject() as RenderBox;
+                                final offset = renderBox.localToGlobal(details.localPosition);
 
-                              showSystemMenu(context, offset);
-                            },
-                            child: const SizedBox.expand(),
+                                showSystemMenu(context, offset);
+                              },
+                              child: const SizedBox.expand(),
+                            ),
                           ),
                         ),
                         WindowButtons(isMaximizedNotifier: isMaximizedNotifier),

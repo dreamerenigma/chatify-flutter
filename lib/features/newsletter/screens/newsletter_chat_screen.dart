@@ -82,7 +82,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
           ),
           child: AppBar(
             automaticallyImplyLeading: false,
-            flexibleSpace: NewsletterChatAppbar(newsletters: widget.newsletters),
+            flexibleSpace: NewsletterChatAppbar(newsletters: widget.newsletters, newsletter: widget.newsletter),
             titleSpacing: 0,
             elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,

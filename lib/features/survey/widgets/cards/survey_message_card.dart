@@ -12,7 +12,6 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../chat/models/message_model.dart';
 import '../../../chat/widgets/messages/message_meta.dart';
@@ -43,8 +42,10 @@ class SurveyMessageCard extends StatefulWidget {
 }
 
 class _SurveyMessageCardState extends State<SurveyMessageCard> {
-  bool _isLoadingProfileImage = false;
-  String? _profileImageUrl;
+  final Map<String, UserModel> _voters = {};
+  final Set<String> _loadingVoters = {};
+  bool isLoadingProfileImage = false;
+  String? profileImageUrl;
 
   Stream<QuerySnapshot<Map<String, dynamic>>> _votesStream() {
     return FirebaseFirestore.instance.collection('Chats').doc(widget.conversationId).collection('messages').doc(widget.message.id).collection('votes').snapshots();
@@ -65,7 +66,7 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -75,8 +76,8 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
       if (!mounted) return;
 
       setState(() {
-        _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        profileImageUrl = url;
+        isLoadingProfileImage = false;
       });
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
@@ -84,17 +85,56 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
       if (!mounted) return;
 
       setState(() {
-        _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        profileImageUrl = null;
+        isLoadingProfileImage = false;
       });
+    }
+  }
+
+  Future<UserModel?> _loadVoter(String userId) async {
+    if (_voters.containsKey(userId)) {
+      return _voters[userId];
+    }
+
+    if (_loadingVoters.contains(userId)) {
+      return null;
+    }
+
+    _loadingVoters.add(userId);
+
+    try {
+      final doc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+
+      if (!doc.exists || doc.data() == null) {
+        return null;
+      }
+
+      final user = UserModel.fromJson(doc.data()!);
+
+      if (mounted) {
+        setState(() {
+          _voters[userId] = user;
+        });
+      }
+
+      return user;
+    } catch (e, stackTrace) {
+      log('LOAD VOTER ERROR [$userId]: $e', stackTrace: stackTrace);
+      return null;
+    } finally {
+      _loadingVoters.remove(userId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isSender = widget.isMe;
-    final messageColor = context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBubbleRecipient;
-    final messageBorderColor = context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder;
+    final messageColor = isSender
+      ? context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.lightGrey
+      : context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBubbleRecipient;
+    final messageBorderColor = isSender
+      ? context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey
+      : context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder;
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: _votesStream(),
@@ -124,8 +164,6 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
           return getVoteCount(option) / totalVotes;
         }
 
-        log('SURVEY allowMultipleAnswers: ${widget.survey.allowMultipleAnswers}');
-
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -154,39 +192,41 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              width: 13,
-                              height: 13,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white,
-                                border: Border.all(color: ChatifyColors.nightGrey, width: 0.5),
-                              ),
-                              child: Icon(Icons.check, size: 9, color: ChatifyColors.black),
-                            ),
-                            Positioned(
-                              left: 8,
-                              child: Container(
+                        if (widget.survey.allowMultipleAnswers)
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
                                 width: 13,
                                 height: 13,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white,
-                                  border: Border.all(color: ChatifyColors.nightGrey, width: 0.5),
-                                ),
+                                decoration: BoxDecoration(shape: BoxShape.circle, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white, border: Border.all(color: ChatifyColors.nightGrey, width: 0.5)),
                                 child: Icon(Icons.check, size: 9, color: ChatifyColors.black),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 14),
+                              Positioned(
+                                left: 8,
+                                child: Container(
+                                  width: 13,
+                                  height: 13,
+                                  decoration: BoxDecoration(shape: BoxShape.circle, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white, border: Border.all(color: ChatifyColors.nightGrey, width: 0.5)),
+                                  child: Icon(Icons.check, size: 9, color: ChatifyColors.black),
+                                ),
+                              ),
+                            ],
+                          )
+                        else
+                          Container(
+                            width: 13,
+                            height: 13,
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.white, border: Border.all(color: ChatifyColors.nightGrey, width: 0.5)),
+                            child: Icon(Icons.check, size: 9, color: ChatifyColors.black),
+                          ),
+                        SizedBox(width: widget.survey.allowMultipleAnswers ? 14 : 8),
                         Expanded(
                           child: Text(
-                            'Выберите один или несколько вариантов',
-                            style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1.3, overflow: TextOverflow.ellipsis), maxLines: 2,
+                            widget.survey.allowMultipleAnswers ? 'Выберите один или несколько вариантов' : 'Выберите один вариант',
+                            style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1.3),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -225,13 +265,13 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
                                   Icon(
                                     selected ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
                                     size: 24,
-                                    color: selected ? ChatifyColors.greenSlate : ChatifyColors.grey,
+                                    color: selected ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.grey,
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(child: Text(option, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
                                   if (hasVotes) ...[
-                                    _buildAvatar(context, mySelectedOptions),
-                                    const SizedBox(width: 2),
+                                    _buildVoterAvatars(context, votesByUser.entries.where((entry) => entry.value.contains(option)).map((entry) => entry.key).toList()),
+                                    const SizedBox(width: 10),
                                   ],
                                   Text('$voteCount', style: TextStyle(fontSize: 13, color: ChatifyColors.grey, fontWeight: FontWeight.w400)),
                                 ],
@@ -249,7 +289,9 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
                                       return LinearProgressIndicator(
                                         value: animatedProgress,
                                         minHeight: 8,
-                                        backgroundColor: hasVotes ? (context.isDarkMode ? ChatifyColors.greenMessageBorderLight : ChatifyColors.lightGrey) : ChatifyColors.greenMessageBorderLight,
+                                        backgroundColor: isSender
+                                          ? context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.softGrey
+                                          : hasVotes ? (context.isDarkMode ? ChatifyColors.greenMessageBorderLight : ChatifyColors.lightGrey) : ChatifyColors.greenMessageBorderLight,
                                         valueColor: AlwaysStoppedAnimation(hasVotes ? voteColor : ChatifyColors.transparent),
                                       );
                                     },
@@ -266,44 +308,49 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: MessageMeta(message: widget.message, isWebOrWindows: isWebOrWindows, showCheck: true),
                   ),
-                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 4, bottom: 0, color: ChatifyColors.greenMessageButton),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          createPageRoute(
-                            DataSurveyScreen(
-                              conversationId: widget.conversationId,
-                              messageId: widget.message.id,
-                              survey: widget.survey,
-                              selectedOption: mySelectedOptions.isNotEmpty ? mySelectedOptions.first : '',
-                              user: widget.user,
-                            ),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 4, bottom: 0, color: isSender ? ChatifyColors.popupColor : ChatifyColors.greenMessageButton),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        createPageRoute(
+                          DataSurveyScreen(
+                            conversationId: widget.conversationId,
+                            messageId: widget.message.id,
+                            survey: widget.survey,
+                            selectedOption: mySelectedOptions.isNotEmpty ? mySelectedOptions.first : '',
+                            user: widget.user,
                           ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Center(
-                          child: Text(
-                            'Показать голоса',
-                            style: TextStyle(
-                              color: mySelectedOptions.isNotEmpty ? ChatifyColors.greenSlate : ChatifyColors.greenMessageButton,
-                              fontSize: ChatifySizes.fontSizeMd,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Center(
+                        child: Text(
+                          'Показать голоса',
+                          style: TextStyle(
+                            color: mySelectedOptions.isNotEmpty ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.greenMessageButton,
+                            fontSize: ChatifySizes.fontSizeMd,
+                            fontWeight: FontWeight.w400,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
             Positioned(
               top: 5.5,
-              right: 7,
-              child: CustomPaint(size: const Size(10, 10), painter: TrianglePainter(fillColor: messageColor, borderColor: messageBorderColor)),
+              left: isSender ? 7 : null,
+              right: isSender ? null : 7,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()..scaleByDouble(isSender ? -1.0 : 1.0, 1.0, 1.0, 1.0),
+                child: CustomPaint(size: const Size(10, 10), painter: TrianglePainter(fillColor: messageColor, borderColor: messageBorderColor)),
+              ),
             ),
           ],
         );
@@ -311,42 +358,91 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
     );
   }
 
-  Widget _buildAvatar(BuildContext context, List<String> mySelectedOptions) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          createPageRoute(
-            DataSurveyScreen(
-              conversationId: widget.conversationId,
-              messageId: widget.message.id,
-              survey: widget.survey,
-              selectedOption: mySelectedOptions.isNotEmpty ? mySelectedOptions.first : '',
-              user: widget.user,
+  Widget _buildVoterAvatars(BuildContext context, List<String> voterIds,) {
+
+    final visibleVoterIds = voterIds.reversed.take(5).toList();
+
+    final remainingCount = voterIds.length - visibleVoterIds.length;
+
+    return SizedBox(
+      height: 24,
+      width: visibleVoterIds.length * 14.0 +
+          (remainingCount > 0 ? 25 : 0),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Рисуем справа налево, чтобы левая аватарка
+          // лежала поверх следующей справа.
+          for (int i = visibleVoterIds.length - 1; i >= 0; i--)
+            Positioned(
+              left: i * 14.0,
+              top: 1,
+              child: _buildVoterAvatar(
+                context,
+                visibleVoterIds[i],
+              ),
+            ),
+
+          if (remainingCount > 0)
+            Positioned(
+              left: visibleVoterIds.length * 14.0 + 3,
+              top: 3,
+              child: Text(
+                '+$remainingCount',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: ChatifyColors.grey,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVoterAvatar(BuildContext context, String userId) {
+    final voter = _voters[userId];
+
+    if (voter == null) {
+      _loadVoter(userId);
+
+      return Container(
+        width: 22,
+        height: 22,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: ChatifyColors.blackGrey,
+          border: Border.all(color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.white, width: 1.5),
+        ),
+      );
+    }
+
+    return FutureBuilder<String?>(
+      future: APIs.getMediaUrl(voter.image),
+      builder: (context, snapshot) {
+        final imageUrl = snapshot.data ?? '';
+
+        return Container(
+          width: 22,
+          height: 22,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.blackGrey, border: Border.all(color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.white, width: 1.5)),
+          child: ClipOval(
+            child: imageUrl.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  width: 22,
+                  height: 22,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) {
+                    return SvgPicture.asset(ChatifyVectors.profile, width: 15, height: 15);
+                  },
+                )
+              : SvgPicture.asset(ChatifyVectors.profile, width: 15, height: 15,
             ),
           ),
         );
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .04),
-        child: CachedNetworkImage(
-          width: 25,
-          height: 25,
-          imageUrl: _profileImageUrl ?? '',
-          fit: BoxFit.cover,
-          placeholder: (context, url) {
-            return Container(width: 25, height: 25, color: ChatifyColors.blackGrey);
-          },
-          errorWidget: (context, url, error) {
-            return Container(
-              width: 40,
-              height: 40,
-              alignment: Alignment.center,
-              child: SvgPicture.asset(ChatifyVectors.profile, width: 19, height: 19),
-            );
-          },
-        ),
-      ),
     );
   }
 }

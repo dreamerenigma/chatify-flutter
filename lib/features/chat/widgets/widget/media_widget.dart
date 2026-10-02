@@ -35,6 +35,8 @@ class MediaWidget extends StatefulWidget {
   final bool isDownloading;
   final Function onDownload;
   final List<String> imageUrls;
+  final ValueChanged<Duration>? onVideoPositionChanged;
+  final VoidCallback? onVideoStarted;
 
   const MediaWidget({
     super.key,
@@ -43,6 +45,8 @@ class MediaWidget extends StatefulWidget {
     required this.isDownloading,
     required this.onDownload,
     required this.imageUrls,
+    this.onVideoPositionChanged,
+    this.onVideoStarted,
   });
 
   @override
@@ -226,7 +230,7 @@ class MediaWidgetState extends State<MediaWidget> {
       case MessageType.video:
         final urls = widget.message.msg.split(',').map((e) => e.trim()).toList();
 
-        return VideoPlayerWidget(videoUrls: urls, message: widget.message);
+        return VideoPlayerWidget(videoUrls: urls, message: widget.message, onPositionChanged: widget.onVideoPositionChanged, onVideoStarted: widget.onVideoStarted);
       case MessageType.audio:
         if (_isAudioLoading) {
           return SizedBox(width: 300, height: 100, child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))));
@@ -244,7 +248,7 @@ class MediaWidgetState extends State<MediaWidget> {
           audioDuration: widget.message.audioDuration,
         );
       case MessageType.document:
-        return DocumentMessageWidget(isSender: widget.isSender, message: widget.message);
+        return SizedBox(width: 280, height: 160, child: DocumentMessageWidget(isSender: widget.isSender, message: widget.message));
       default:
         return const SizedBox.shrink();
     }

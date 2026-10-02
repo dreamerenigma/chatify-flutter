@@ -23,12 +23,13 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
 import '../../bot/models/info_app_model.dart';
+import '../../chat/models/my_user_model.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/models/community_model.dart';
 import '../../group/models/group_model.dart';
 import '../../personalization/controllers/user_controller.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../utils/widgets/bars/nav_bars/bottom_nav.dart';
+import '../widgets/bars/nav_bars/bottom_nav.dart';
 import '../widgets/bars/app_bars/home_app_bar_widget.dart';
 import '../widgets/bars/app_bars/selection_app_bar.dart';
 import '../widgets/dialogs/delete_chat_dialog.dart';
@@ -70,6 +71,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   List<UserModel> users = [];
   List<SupportAppModel> supports = [];
   List<InfoAppModel> infosApp = [];
+  List<MyUserModel> myUsers = [];
   List<HomeItem> homeItems = [];
   ChatListType chatListType = ChatListType.all;
   SelectionType selectionType = SelectionType.none;
@@ -78,6 +80,29 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   bool get isSelecting => selectionType != SelectionType.none;
   bool get isEmpty => users.isEmpty && groups.isEmpty && communities.isEmpty;
+
+  int get unreadChatsCount {
+    debugPrint(
+      '[UNREAD TOTAL] myUsers.length = ${myUsers.length}',
+    );
+
+    for (final chat in myUsers) {
+      debugPrint(
+        '[UNREAD TOTAL] userId=${chat.userId}, '
+            'unreadCount=${chat.unreadCount}',
+      );
+    }
+
+    final count = myUsers
+        .where((chat) => chat.unreadCount > 0)
+        .length;
+
+    debugPrint(
+      '[UNREAD TOTAL] unreadChatsCount = $count',
+    );
+
+    return count;
+  }
 
   @override
   void initState() {
@@ -259,6 +284,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       final newPinnedChats = <String>{};
       final newMutedChats = <String>{};
+      final newMyUsers = <MyUserModel>[];
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
@@ -274,12 +300,19 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         if (data['muted'] == true) {
           newMutedChats.add(doc.id);
         }
+
+        final myUser = MyUserModel.fromFirestore(doc);
+
+        newMyUsers.add(myUser);
       }
 
       if (userIds.isEmpty) {
         if (mounted) {
           setState(() {
             users = [];
+            myUsers = [];
+            pinnedChats..clear()..addAll(newPinnedChats);
+            mutedChats..clear()..addAll(newMutedChats);
             _rebuildHomeItems();
           });
         }
@@ -293,6 +326,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         setState(() {
           users = loadedUsers;
+          myUsers = newMyUsers;
+          pinnedChats..clear()..addAll(newPinnedChats);
+          mutedChats..clear()..addAll(newMutedChats);
           _rebuildHomeItems();
         });
       });
@@ -645,7 +681,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           pinnedChats: pinnedChats,
           mutedChats: mutedChats,
         ),
-        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped) : null,
+        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped, unreadChatsCount: unreadChatsCount) : null,
       ),
     );
   }

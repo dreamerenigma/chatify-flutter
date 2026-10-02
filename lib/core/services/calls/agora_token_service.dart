@@ -12,7 +12,7 @@ class AgoraTokenService {
 
     try {
       final response = await http.post(
-        Uri.parse('${AppLinks.agoraServer}/agora/token'),
+        Uri.parse('${AppLinks.baseUrl}/agora/token'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'channelName': channelName,
@@ -55,7 +55,7 @@ class AgoraTokenService {
 
   static Future<void> testServer() async {
     try {
-      final url = Uri.parse('https://chatify-agora-server.onrender.com');
+      final url = Uri.parse(AppLinks.baseUrl);
 
       log('[AGORA_TEST] 🌐 Testing URL: $url', name: 'AgoraTokenService');
 

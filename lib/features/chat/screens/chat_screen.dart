@@ -23,7 +23,7 @@ import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/devices/device_utility.dart';
 import '../../../utils/helper/date_util.dart';
-import '../../../utils/popups/app_loaders.dart';
+import '../../../utils/popups/dialogs.dart';
 import '../../calls/models/call_model.dart';
 import '../../calls/models/call_result.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
@@ -760,7 +760,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: context.isDarkMode ? ChatifyColors.deepNight.withAlpha(220) : ChatifyColors.white.withAlpha(220),
+          color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.softGrey,
           borderRadius: BorderRadius.circular(6),
           boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
         ),

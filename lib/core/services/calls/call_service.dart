@@ -68,6 +68,7 @@ class CallService extends GetxService {
   Future<void> acceptCall(String callId) async {
     await _calls.doc(callId).update({
       'state': CallStateType.accepted.name,
+      'acceptedAt': FieldValue.serverTimestamp(),
     });
   }
 

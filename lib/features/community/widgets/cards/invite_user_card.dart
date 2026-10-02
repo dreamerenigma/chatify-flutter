@@ -10,15 +10,18 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../utils/widgets/texts/highlighted_text.dart';
 
 class InviteUserCard extends StatefulWidget {
   final Contact contact;
+  final String searchQuery;
   final Function(Contact) onContactSelected;
   final VoidCallback onInvite;
 
   const InviteUserCard({
     super.key,
     required this.contact,
+    this.searchQuery = '',
     required this.onContactSelected,
     required this.onInvite,
   });
@@ -78,7 +81,7 @@ class InviteUserCardState extends State<InviteUserCard> {
                     height: DeviceUtils.getScreenHeight(context) * .055,
                     decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03)),
                     alignment: Alignment.center,
-                    child: SvgPicture.asset(ChatifyVectors.person, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                    child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .055, height: DeviceUtils.getScreenHeight(context) * .055),
                   ),
                   SizedBox(width: 12),
                   Expanded(
@@ -86,7 +89,11 @@ class InviteUserCardState extends State<InviteUserCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(widget.contact.displayName, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
+                        HighlightedText(
+                          text: widget.contact.displayName,
+                          query: widget.searchQuery,
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis),
+                        ),
                         Text(widget.contact.phones.isNotEmpty ? widget.contact.phones.first.number : S.of(context).noPhone,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -110,7 +117,7 @@ class InviteUserCardState extends State<InviteUserCard> {
                       shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
                     ),
-                    child: Text(S.of(context).invite, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                    child: Text(S.of(context).invite, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ],
               ),

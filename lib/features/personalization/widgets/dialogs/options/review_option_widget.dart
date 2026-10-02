@@ -32,7 +32,7 @@ import '../../../../home/widgets/dialogs/confirmation_dialog.dart';
 import '../../../../home/widgets/dialogs/options/overlays/sounds_overlay_entry.dart';
 import '../../../../home/widgets/dialogs/overlays/no_sound_overlay.dart';
 import '../../../../home/widgets/dialogs/overlays/select_country_overlay.dart';
-import '../../../../home/widgets/input/search_text_input.dart';
+import '../../../../home/widgets/inputs/search_text_input.dart';
 import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../light_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

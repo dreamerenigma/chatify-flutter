@@ -18,7 +18,7 @@ import '../../../personalization/widgets/lists/group_list.dart';
 import '../../../newsletter/models/newsletter_model.dart';
 import '../dialogs/filter_chats_dialog.dart';
 import '../dialogs/new_chat_dialog.dart';
-import '../input/search_text_input.dart';
+import '../inputs/search_text_input.dart';
 import '../lists/infos_app_list.dart';
 import '../lists/newsletter_list.dart';
 import '../lists/support_list.dart';
@@ -203,6 +203,11 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                           color: ChatifyColors.transparent,
                           child: InkWell(
                             key: _newChatIconKey,
+                            mouseCursor: SystemMouseCursors.basic,
+                            splashFactory: NoSplash.splashFactory,
+                            borderRadius: BorderRadius.circular(8.0),
+                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                             onTap: () async {
                               final RenderBox renderBox = _newChatIconKey.currentContext?.findRenderObject() as RenderBox;
                               final position = renderBox.localToGlobal(Offset.zero);
@@ -213,11 +218,6 @@ class _ChatsWidgetState extends State<ChatsWidget> {
 
                               setState(() => _isNewChatDialogOpen = false);
                             },
-                            mouseCursor: SystemMouseCursors.basic,
-                            splashFactory: NoSplash.splashFactory,
-                            borderRadius: BorderRadius.circular(8.0),
-                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                             child: Container(
                               decoration: BoxDecoration(color: _isNewChatDialogOpen ? hoverBackgroundColor : ChatifyColors.transparent, borderRadius: BorderRadius.circular(8)),
                               child: Padding(padding: EdgeInsets.all(12), child: SvgPicture.asset(ChatifyVectors.edit, width: 15, height: 15, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
@@ -234,6 +234,11 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                         color: ChatifyColors.transparent,
                         child: InkWell(
                           key: _newFilterChatsIconKey,
+                          mouseCursor: SystemMouseCursors.basic,
+                          splashFactory: NoSplash.splashFactory,
+                          borderRadius: BorderRadius.circular(8.0),
+                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                           onTap: () async {
                             final RenderBox renderBox = _newFilterChatsIconKey.currentContext?.findRenderObject() as RenderBox;
                             final position = renderBox.localToGlobal(Offset.zero);
@@ -252,11 +257,6 @@ class _ChatsWidgetState extends State<ChatsWidget> {
 
                             setState(() => _isFilterDialogOpen = false);
                           },
-                          mouseCursor: SystemMouseCursors.basic,
-                          splashFactory: NoSplash.splashFactory,
-                          borderRadius: BorderRadius.circular(8.0),
-                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
                           child: Container(
                             decoration: BoxDecoration(color: _isFilterDialogOpen ? hoverBackgroundColor : ChatifyColors.transparent, borderRadius: BorderRadius.circular(8)),
                             child: Padding(
@@ -278,6 +278,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
             focusNode: _focusNode,
             wrapInScrollView: false,
             padding: EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 8),
+            prefixIconConstraints: const BoxConstraints(minWidth: 20, minHeight: 20),
           ),
           Expanded(
             child: ScrollbarTheme(
@@ -299,9 +300,11 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                           child: Obx(() {
                             final userController = Get.find<UserController>();
                             final currentUserName = userController.currentUser.name;
+
                             return GroupList(
                               groups: widget.groups,
                               currentUser: currentUserName,
+                              user: {},
                               onGroupSelected: (group) {
                                 setState(() {
                                   selectedGroup = group;
@@ -391,10 +394,10 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                             },
                           ),
                         ),
-                        Visibility(
-                          visible: widget.infosApp.isNotEmpty,
-                          child: InfosAppList(
+                        if (widget.infosApp.isNotEmpty && widget.supports.isNotEmpty)
+                          InfosAppList(
                             infosApp: widget.infosApp,
+                            support: widget.supports.first,
                             selectedInfoApp: selectedInfoApp,
                             onInfoAppSelected: (infoApp) {
                               setState(() {
@@ -405,9 +408,8 @@ class _ChatsWidgetState extends State<ChatsWidget> {
                                 selectedUser = null;
                               });
                               widget.onInfoAppSelected(infoApp);
-                            }, support: widget.supports.first,
+                            },
                           ),
-                        ),
                         SizedBox(height: 8),
                       ],
                     ),

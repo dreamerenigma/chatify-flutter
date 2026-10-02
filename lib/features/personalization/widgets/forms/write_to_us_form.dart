@@ -8,7 +8,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../screens/help/help_center_screen.dart';
 import '../dialogs/light_dialog.dart';
-import '../input/write_to_us_input.dart';
+import '../inputs/write_to_us_input.dart';
 
 class WriteToUsForm extends StatefulWidget {
   const WriteToUsForm({super.key, this.selectedImages, required this.onFieldsFilledChanged});

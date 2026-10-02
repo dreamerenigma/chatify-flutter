@@ -5284,11 +5284,11 @@ class S {
     return Intl.message('Encryption', name: 'encryption', desc: '', args: []);
   }
 
-  /// `Messages and calls are protected end-to-end encrypted. Only members of this chat can read, listen to, or forward them. Select to learn more.`
-  String get messagesCallsProtectedEndToEndEncryption {
+  /// `Messages and calls are end-to-end encrypted. Learn more.`
+  String get messagesCallsProtected {
     return Intl.message(
-      'Messages and calls are protected end-to-end encrypted. Only members of this chat can read, listen to, or forward them. Select to learn more.',
-      name: 'messagesCallsProtectedEndToEndEncryption',
+      'Messages and calls are end-to-end encrypted. Learn more.',
+      name: 'messagesCallsProtected',
       desc: '',
       args: [],
     );
@@ -5334,10 +5334,10 @@ class S {
     );
   }
 
-  /// `Combine participants \n' 'into thematic groups`
+  /// `Combine participants into thematic groups.`
   String get combineParticipantsThematicGroups {
     return Intl.message(
-      'Combine participants \n\' \'into thematic groups',
+      'Combine participants into thematic groups.',
       name: 'combineParticipantsThematicGroups',
       desc: '',
       args: [],
@@ -5379,10 +5379,10 @@ class S {
     return Intl.message('Leave group', name: 'leaveGroup', desc: '', args: []);
   }
 
-  /// `Report group`
+  /// `Report the group`
   String get reportGroup {
     return Intl.message(
-      'Report group',
+      'Report the group',
       name: 'reportGroup',
       desc: '',
       args: [],
@@ -6299,6 +6299,16 @@ class S {
     );
   }
 
+  /// `Messages and calls are protected end-to-end encrypted. Only members of this chat can read, listen to, or forward them. Select to learn more.`
+  String get messagesCallsProtectedEndToEndEncryption {
+    return Intl.message(
+      'Messages and calls are protected end-to-end encrypted. Only members of this chat can read, listen to, or forward them. Select to learn more.',
+      name: 'messagesCallsProtectedEndToEndEncryption',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Groups you are a member of`
   String get groupsYouMember {
     return Intl.message(
@@ -6614,10 +6624,10 @@ class S {
     );
   }
 
-  /// `Device Status`
+  /// `DEVICE STATUS`
   String get deviceStatus {
     return Intl.message(
-      'Device Status',
+      'DEVICE STATUS',
       name: 'deviceStatus',
       desc: '',
       args: [],
@@ -11102,11 +11112,6 @@ class S {
       desc: '',
       args: [],
     );
-  }
-
-  /// `Перезагрузить`
-  String get loadMore {
-    return Intl.message('Перезагрузить', name: 'loadMore', desc: '', args: []);
   }
 }
 

@@ -39,7 +39,7 @@ class MainScreenWidget extends StatelessWidget {
                       SizedBox(height: 25),
                       Text(
                         S.of(context).appForWindows,
-                        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300, color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.white : ChatifyColors.black),
+                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 19, fontWeight: FontWeight.w400),
                       ),
                       SizedBox(height: 12),
                       LayoutBuilder(
@@ -48,12 +48,12 @@ class MainScreenWidget extends StatelessWidget {
                           double containerWidth = screenWidth > 1080 ? screenWidth * 0.7 : screenWidth;
 
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: SizedBox(
                               width: containerWidth,
                               child: Text(
                                 S.of(context).sendReceiveMessagesFourLinkDevice,
-                                style: TextStyle(fontWeight: FontWeight.w300, height: 1.3, fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.deepNight),
+                                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.deepNight, height: 1.3, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                                 textAlign: TextAlign.center,
                                 softWrap: true,
                               ),
@@ -79,9 +79,14 @@ class MainScreenWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          HeroIcon(HeroIcons.lockClosed, color: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.darkGrey : ChatifyColors.darkGrey, size: 12),
+          HeroIcon(HeroIcons.lockClosed, size: 12, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkGrey),
           SizedBox(width: 8),
-          Text(S.of(context).protectedEncryption, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+          Flexible(
+            child: Text(
+              S.of(context).protectedEncryption,
+              style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400), overflow: TextOverflow.ellipsis, maxLines: 2, textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );

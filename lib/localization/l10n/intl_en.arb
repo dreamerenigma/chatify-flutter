@@ -650,12 +650,12 @@
     "groupCreatedByYou": "Group created by you, ",
     "mediaLinksAndDocuments": "Media, links, and documents",
     "encryption": "Encryption",
-    "messagesCallsProtectedEndToEndEncryption": "Messages and calls are end-to-end encrypted. \n' 'Learn more.",
+    "messagesCallsProtected": "Messages and calls are end-to-end encrypted. Learn more.",
     "disappearingMessages": "Disappearing messages",
     "closingChat": "Closing chat",
     "closeAndHideChatDevice": "Close and hide this chat on this device.",
     "addGroupToCommunity": "Add a group to a community",
-    "combineParticipantsThematicGroups": "Combine participants \n' 'into thematic groups",
+    "combineParticipantsThematicGroups": "Combine participants into thematic groups.",
     "inviteViaLink": "Invite via link",
     "removeFromFavorites": "Remove from Favorites",
     "addToList": "Add to list",
@@ -811,7 +811,7 @@
     "chatsUnarchivedNewMessagesReceived": "These chats will be unarchived when new messages are received. Click to edit.",
     "archivedChatsWillNotUnarchived": "Archived chats will not be unzipped when a new message is received",
     "errorFetchingNewsletters": "Error fetching newsletters",
-    "deviceStatus": "Device Status",
+    "deviceStatus": "DEVICE STATUS",
     "selectDevicesSignOut": "Select devices to sign out.",
     "linkOtherDevicesToAccount": "You can link other devices to this account. ",
     "organizeLists": "Organize Lists",
@@ -1335,5 +1335,6 @@
     "complainAndLeave": "Complain and leave",
     "noInternetConnection": "No Internet Connection",
     "checkInternetSettings": "Please check your internet settings and try again.",
-    "loadMore": "Перезагрузить"
+    "reboot": "Reboot",
+    "reportGroup": "Report the group"
 }

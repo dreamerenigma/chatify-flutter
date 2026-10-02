@@ -54,7 +54,7 @@ class AutomaticTimerScreenState extends State<AutomaticTimerScreen> {
             titleSpacing: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 final result = _options.firstWhere((option) => option['value'] == _selectedOption)['label'] ?? S.of(context).off;
 

@@ -37,22 +37,23 @@ void showChatsCallsPrivacyBottomSheet(BuildContext context, {required String hea
               ),
             ),
             Center(child: SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.strongbox), width: 100, height: 100)),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Center(child: Text(headerText, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400), textAlign: TextAlign.center)),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 8),
               child: Center(
                 child: Text(titleText, style: TextStyle(fontSize: 15, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400, height: 1.5), textAlign: TextAlign.center),
               ),
             ),
-            const SizedBox(height: 16),
-            _buildIconTextRow(context, svgAsset: ChatifyVectors.messageOutline, text: S.of(context).textVoiceMessages),
-            _buildIconTextRow(context, icon: Icons.call_outlined, text: S.of(context).audioVideoCalls),
-            _buildIconTextRow(context, icon: Icons.attach_file, text: S.of(context).photosVideosDocuments),
+            const SizedBox(height: 10),
+            _buildIconTextRow(context, svgAsset: ChatifyVectors.messageOutline, text: S.of(context).textVoiceMessages, iconSize: 23),
+            _buildIconTextRow(context, icon: Icons.call_outlined, text: S.of(context).audioVideoCalls, iconSize: 22),
+            _buildIconTextRow(context, icon: Icons.attach_file, text: S.of(context).photosVideosDocuments, iconSize: 23),
             _buildIconTextRow(context, icon: Icons.location_on_outlined, text: S.of(context).yourLocation),
-            _buildIconTextRow(context, svgAsset: ChatifyVectors.status, text: S.of(context).statusUpdates, isSvg: true),
+            _buildIconTextRow(context, svgAsset: ChatifyVectors.status, text: S.of(context).statusUpdates, isSvg: true, iconSize: 22),
             const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -91,11 +92,11 @@ Widget _buildIconTextRow(BuildContext context, {IconData? icon, String? svgAsset
   }
 
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        leadingIcon,
+        SizedBox(width: 25, child: leadingIcon),
         const SizedBox(width: 16),
         Expanded(child: Text(text, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400))),
       ],

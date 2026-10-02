@@ -14,7 +14,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
-import '../../../utils/popups/app_loaders.dart';
+import '../../../utils/popups/dialogs.dart';
 import '../../authentication/models/country.dart';
 import '../../personalization/controllers/settings_controller.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
@@ -54,7 +54,7 @@ class _NewContactScreenState extends State<NewContactScreen> {
         S.of(context).failedToOpenContactAddScreen,
         icon: const Icon(Icons.warning_amber_rounded, size: 26),
         iconColor: ChatifyColors.yellow,
-        position: SnackBarPositionType.bottom
+        position: SnackBarPositionType.bottom,
       );
     }
   }

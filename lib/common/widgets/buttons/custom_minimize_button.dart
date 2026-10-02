@@ -50,21 +50,25 @@ class CustomMinimizeButtonState extends State<CustomMinimizeButton> {
         return MouseRegion(
           onEnter: (_) => isHovered.value = true,
           onExit: (_) => isHovered.value = false,
-          child: Material(
-            color: ChatifyColors.transparent,
-            child: InkWell(
-              onTap: () => windowManager.minimize(),
-              mouseCursor: SystemMouseCursors.basic,
-              splashColor: ChatifyColors.transparent,
-              highlightColor: widget.highlightColor,
-              hoverColor: widget.hoverColor,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 18, right: 18, top: 11, bottom: 14),
-                child: SvgPicture.asset(
-                  ChatifyVectors.remove,
-                  width: 17,
-                  height: 17,
-                  colorFilter: ColorFilter.mode(hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn) ,
+          child: SizedBox(
+            width: 46,
+            height: 40,
+            child: Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                onTap: () => windowManager.minimize(),
+                mouseCursor: SystemMouseCursors.basic,
+                splashColor: ChatifyColors.transparent,
+                highlightColor: widget.highlightColor,
+                hoverColor: widget.hoverColor,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 6, right: 6, top: 8, bottom: 6),
+                  child: SvgPicture.asset(
+                    ChatifyVectors.remove,
+                    width: 13,
+                    height: 13,
+                    colorFilter: ColorFilter.mode(hovered ? ChatifyColors.white : (isWindowActive ? widget.iconColor : ChatifyColors.darkGrey), BlendMode.srcIn) ,
+                  ),
                 ),
               ),
             ),

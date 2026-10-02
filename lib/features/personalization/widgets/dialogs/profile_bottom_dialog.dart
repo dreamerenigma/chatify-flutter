@@ -16,70 +16,74 @@ void showProfileBottomSheet(BuildContext context, void Function(String?) onImage
     showDragHandle: false,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(26))),
-    builder: (context) => Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 14),
-        Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
-        const SizedBox(height: 18),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: SizedBox(
-            height: 48,
-            child: Row(
+    builder: (context) {
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 14),
+            Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 18),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: SizedBox(
+                height: 48,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 48),
+                    Expanded(child: Center(child: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)))),
+                    SizedBox(
+                      width: 48,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.close_rounded, size: 25),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Column(
               children: [
-                const SizedBox(width: 48),
-                Expanded(child: Center(child: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)))),
-                SizedBox(
-                  width: 48,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.close, size: 26),
-                    onPressed: () => Navigator.of(context).pop(),
+                _buildIconContainer(
+                  icon: Icon(
+                    Icons.camera_alt_outlined,
+                    color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    size: 24,
                   ),
+                  label: S.of(context).camera,
+                  onTap: () => handleContainerTap(context, 0),
+                  context: context,
+                ),
+                _buildIconContainer(
+                  icon: Icon(
+                    Icons.photo_outlined,
+                    color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    size: 24,
+                  ),
+                  label: S.of(context).gallery,
+                  onTap: () => handleContainerTap(context, 1),
+                  context: context,
+                ),
+                _buildIconContainer(
+                  icon: SvgPicture.asset(
+                    ChatifyVectors.avatar,
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
+                  ),
+                  label: S.of(context).avatar,
+                  onTap: () => handleContainerTap(context, 2),
+                  context: context,
                 ),
               ],
             ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Column(
-          children: [
-            _buildIconContainer(
-              icon: Icon(
-                Icons.camera_alt_outlined,
-                color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                size: 24,
-              ),
-              label: S.of(context).camera,
-              onTap: () => handleContainerTap(context, 0),
-              context: context,
-            ),
-            _buildIconContainer(
-              icon: Icon(
-                Icons.photo_outlined,
-                color: colorsController.getColor(colorsController.selectedColorScheme.value),
-                size: 24,
-              ),
-              label: S.of(context).gallery,
-              onTap: () => handleContainerTap(context, 1),
-              context: context,
-            ),
-            _buildIconContainer(
-              icon: SvgPicture.asset(
-                ChatifyVectors.avatar,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
-              ),
-              label: S.of(context).avatar,
-              onTap: () => handleContainerTap(context, 2),
-              context: context,
-            ),
           ],
         ),
-      ],
-    ),
+      );
+    }
   );
 }
 

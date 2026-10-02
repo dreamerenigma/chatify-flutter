@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/edit_phone_screen.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -11,10 +12,12 @@ import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
+import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/user_model.dart';
 import '../../controllers/user_controller.dart';
 import '../../screens/profile/add_links_screen.dart';
@@ -49,7 +52,7 @@ class ProfileForm extends StatefulWidget {
 class ProfileFormState extends State<ProfileForm> {
   late UserController userController;
   bool _isVisible = false;
-  bool _isLoadingProfileImage = false;
+  bool isLoadingProfileImage = false;
   double _scale = 1.3;
   String? _profileImageUrl;
 
@@ -104,7 +107,7 @@ class ProfileFormState extends State<ProfileForm> {
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -115,7 +118,7 @@ class ProfileFormState extends State<ProfileForm> {
 
       setState(() {
         _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
       });
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
@@ -124,7 +127,7 @@ class ProfileFormState extends State<ProfileForm> {
 
       setState(() {
         _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
       });
     }
   }
@@ -132,7 +135,7 @@ class ProfileFormState extends State<ProfileForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Form(
           key: widget.formKey,
           child: SingleChildScrollView(
@@ -179,6 +182,9 @@ class ProfileFormState extends State<ProfileForm> {
                                 Material(
                                   color: ChatifyColors.transparent,
                                   child: InkWell(
+                                    borderRadius: BorderRadius.circular(80),
+                                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+                                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                                     onTap: () {
                                       final hasAvatar = widget.image != null || widget.user.image.isNotEmpty;
 
@@ -188,9 +194,6 @@ class ProfileFormState extends State<ProfileForm> {
                                         showProfileBottomSheet(context, widget.onImagePicked);
                                       }
                                     },
-                                    borderRadius: BorderRadius.circular(80),
-                                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-                                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
                                     child: Container(
                                       width: DeviceUtils.getScreenHeight(context) * .2,
                                       height: DeviceUtils.getScreenHeight(context) * .2,
@@ -232,7 +235,7 @@ class ProfileFormState extends State<ProfileForm> {
                 Obx(() =>
                   _buildAddLink(
                     context,
-                    title: 'Добавьте ссылки на подтвержденый профиль',
+                    title: 'Добавьте ссылки на подтвержденный профиль',
                     subtitle: 'Помогите людям связаться с вами ВКонтакте и в Одноклассники. ',
                     actionText: 'Добавить ссылку',
                     onActionTap: () async {},
@@ -283,10 +286,14 @@ class ProfileFormState extends State<ProfileForm> {
                 }),
                 _buildProfileInfo(Icons.mail_outline_rounded, S.of(context).email, widget.user.email, ChatifyColors.darkGrey, () {
                   Clipboard.setData(ClipboardData(text: widget.user.email));
-                  Get.snackbar(
-                    S.of(context).copied,
+
+                  CustomIconSnackBar.showAnimatedSnackBar(
+                    context,
                     S.of(context).emailCopied,
-                    messageText: Text(S.of(context).emailCopied, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, fontFamily: 'Roboto')),
+                    icon: const Icon(BootstrapIcons.check_circle),
+                    iconColor: ChatifyColors.success,
+                    position: SnackBarPositionType.bottom,
+                    offset: 20,
                   );
                 }),
                 _buildProfileInfo(Icons.link, S.of(context).links, S.of(context).addLinks, colorsController.getColor(colorsController.selectedColorScheme.value), () {

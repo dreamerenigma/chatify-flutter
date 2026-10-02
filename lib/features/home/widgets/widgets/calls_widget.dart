@@ -15,7 +15,7 @@ import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../dialogs/overlays/add_favorite_overlay.dart';
 import '../dialogs/overlays/favorite_call_overlay.dart';
-import '../input/search_text_input.dart';
+import '../inputs/search_text_input.dart';
 
 class CallsWidget extends StatefulWidget {
   final String groupName;

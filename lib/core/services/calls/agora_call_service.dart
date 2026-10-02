@@ -6,11 +6,10 @@ class AgoraCallService extends GetxService {
   late final RtcEngine engine;
   bool _initialized = false;
   bool _joined = false;
-  String? _currentChannel;
-
   bool get isInitialized => _initialized;
   bool get isJoined => _joined;
   String? get currentChannel => _currentChannel;
+  String? _currentChannel;
 
   Future<void> initialize({required String appId}) async {
     if (_initialized) {
@@ -28,10 +27,8 @@ class AgoraCallService extends GetxService {
         onJoinChannelSuccess: (connection, elapsed) {
           _joined = true;
           _currentChannel = connection.channelId;
-
           log('[AGORA] 🟢 onJoinChannelSuccess ''channel=${connection.channelId} ''uid=${connection.localUid}', name: 'AgoraCallService');
         },
-
         onLeaveChannel: (connection, stats) {
           _joined = false;
           _currentChannel = null;
@@ -41,14 +38,7 @@ class AgoraCallService extends GetxService {
           log('[AGORA] ❌ onError: $err / $msg', name: 'AgoraCallService');
         },
         onConnectionStateChanged: (connection, state, reason) {
-          log(
-            '[AGORA] 🔄 connectionStateChanged '
-                'state=$state '
-                'reason=$reason '
-                'channel=${connection.channelId} '
-                'uid=${connection.localUid}',
-            name: 'AgoraCallService',
-          );
+          log('[AGORA] 🔄 connectionStateChanged ''state=$state ''reason=$reason ''channel=${connection.channelId} ''uid=${connection.localUid}', name: 'AgoraCallService');
         },
       ),
     );
@@ -58,60 +48,25 @@ class AgoraCallService extends GetxService {
     _initialized = true;
   }
 
-  Future<void> joinChannel({
-    required String channelName,
-    required String token,
-  }) async {
+  Future<void> joinChannel({required String channelName, required String token}) async {
     if (!_initialized) {
       throw StateError('AgoraCallService is not initialized');
     }
 
     if (_joined) {
-      throw StateError(
-        'Already joined Agora channel: $_currentChannel',
-      );
+      throw StateError('Already joined Agora channel: $_currentChannel');
     }
 
-    log(
-      '[AGORA] 🔵 joinChannel: channel=$channelName',
-      name: 'AgoraCallService',
-    );
-
-    log(
-      '[AGORA] 🔎 BEFORE JOIN '
-          'initialized=$_initialized '
-          'joined=$_joined '
-          'currentChannel=$_currentChannel',
-      name: 'AgoraCallService',
-    );
-
-    log(
-      '[AGORA] token empty=${token.isEmpty}',
-      name: 'AgoraCallService',
-    );
+    log('[AGORA] 🔵 joinChannel: channel=$channelName', name: 'AgoraCallService');
 
     try {
-      await engine.joinChannel(
-        token: token,
-        channelId: channelName,
-        uid: 0,
-        options: const ChannelMediaOptions(
-          publishMicrophoneTrack: true,
-          autoSubscribeAudio: true,
-        ),
-      );
+      await engine.enableAudio();
 
-      log(
-        '[AGORA] ✅ joinChannel request completed',
-        name: 'AgoraCallService',
-      );
+      await engine.joinChannel(token: token, channelId: channelName, uid: 0, options: const ChannelMediaOptions(publishMicrophoneTrack: true, autoSubscribeAudio: true));
+
+      log('[AGORA] ✅ joinChannel request completed', name: 'AgoraCallService');
     } catch (e, stackTrace) {
-      log(
-        '[AGORA] ❌ joinChannel ERROR: $e',
-        name: 'AgoraCallService',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      log('[AGORA] ❌ joinChannel ERROR: $e', name: 'AgoraCallService', error: e, stackTrace: stackTrace);
 
       rethrow;
     }
@@ -150,9 +105,30 @@ class AgoraCallService extends GetxService {
   }
 
   Future<void> leaveChannel() async {
-    if (!_initialized) return;
+    if (!_initialized) {
+      log('[AGORA] ⚠️ leaveChannel: engine not initialized', name: 'AgoraCallService');
+      return;
+    }
 
-    await engine.leaveChannel();
+    if (!_joined) {
+      log('[AGORA] ⚠️ leaveChannel: not joined', name: 'AgoraCallService');
+      return;
+    }
+
+    log('[AGORA] 🔴 Leaving channel: $_currentChannel', name: 'AgoraCallService');
+
+    try {
+      await engine.leaveChannel();
+
+      _joined = false;
+      _currentChannel = null;
+
+      log('[AGORA] ✅ Left channel', name: 'AgoraCallService');
+    } catch (e, stackTrace) {
+      log('[AGORA] ❌ leaveChannel error: $e', name: 'AgoraCallService', error: e, stackTrace: stackTrace);
+
+      rethrow;
+    }
   }
 
   Future<void> disposeEngine() async {

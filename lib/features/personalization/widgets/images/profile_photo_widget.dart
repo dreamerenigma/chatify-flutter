@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,7 +6,7 @@ import '../../../../api/apis.dart';
 import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/popups/app_loaders.dart';
+import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/user_model.dart';
 import '../dialogs/light_dialog.dart';
 
@@ -102,6 +101,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
             icon: const Icon(Icons.warning_amber_rounded, size: 26),
             iconColor: ChatifyColors.yellow,
             position: SnackBarPositionType.bottom,
+
           );
 
           return;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../painters/voice_track_painter.dart';
+import '../painters/voice_waveform_painter.dart';
 
-class VoiceTrackWidget extends StatelessWidget {
+class VoiceTrackWidget extends StatefulWidget {
   final double progress;
   final ValueChanged<double> onChanged;
   final Color color;
@@ -17,6 +17,13 @@ class VoiceTrackWidget extends StatelessWidget {
     required this.markerColor,
   });
 
+  @override
+  State<VoiceTrackWidget> createState() => _VoiceTrackWidgetState();
+}
+
+class _VoiceTrackWidgetState extends State<VoiceTrackWidget> {
+  final List<double> _amplitudes = [];
+
   double _calculateProgress(Offset localPosition, double width) {
     return (localPosition.dx / width).clamp(0.0, 1.0);
   }
@@ -28,13 +35,13 @@ class VoiceTrackWidget extends StatelessWidget {
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapDown: (details) {
-            onChanged(_calculateProgress(details.localPosition, constraints.maxWidth));
+            widget.onChanged(_calculateProgress(details.localPosition, constraints.maxWidth));
           },
           onHorizontalDragUpdate: (details) {
-            onChanged(_calculateProgress(details.localPosition, constraints.maxWidth));
+            widget.onChanged(_calculateProgress(details.localPosition, constraints.maxWidth));
           },
           child: CustomPaint(
-            painter: VoiceTrackPainter(progress: progress, color: color, activeColor: activeColor, markerColor: markerColor),
+            painter: VoiceWaveformPainter(progress: widget.progress, color: widget.color, activeColor: widget.activeColor, markerColor: widget.markerColor, amplitudes: _amplitudes),
             size: Size(constraints.maxWidth, 30),
           ),
         );

@@ -9,7 +9,7 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../models/message_model.dart';
 import '../../models/user_model.dart';
-import '../painters/voice_track_painter.dart';
+import '../painters/voice_waveform_painter.dart';
 
 class VoiceRecordMessage extends StatefulWidget {
   final MessageModel message;
@@ -29,6 +29,7 @@ class VoiceRecordMessage extends StatefulWidget {
 
 class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final List<double> _amplitudes = [];
   bool _isPlaying = false;
   bool isLoadingProfileImage = false;
   String? _profileImageUrl;
@@ -43,6 +44,18 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
+  Duration get _messageDuration {
+    return Duration(seconds: widget.message.audioDuration ?? 0);
+  }
+
+  Duration get _displayDuration {
+    if (_currentPosition == Duration.zero) {
+      return _messageDuration;
+    }
+
+    return _currentPosition;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +63,7 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
       if (!mounted) return;
 
       final playerDuration = _audioPlayer.duration;
-      final totalDuration = playerDuration ?? Duration(milliseconds: widget.message.audioDuration ?? 0);
+      final totalDuration = playerDuration ?? Duration(seconds: widget.message.audioDuration ?? 0);
 
       setState(() {
         _currentPosition = position;
@@ -182,8 +195,6 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
 
   @override
   Widget build(BuildContext context) {
-    final duration = Duration(milliseconds: widget.message.audioDuration ?? 0);
-
     return SizedBox(
       height: 50,
       child: Row(
@@ -216,7 +227,7 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
                       decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black.withValues(alpha: 0.25) : ChatifyColors.grey, borderRadius: BorderRadius.circular(30)),
                       child: Text(
                         '${_playbackSpeed % 1 == 0 ? _playbackSpeed.toInt() : _playbackSpeed}x',
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
+                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600),
                       ),
                     )
                   : SizedBox(
@@ -271,8 +282,8 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 38),
                   child: Text(
-                    _formatDuration(duration),
-                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, height: 1),
+                    _formatDuration(_displayDuration),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1),
                   ),
                 ),
               ],
@@ -301,11 +312,12 @@ class _VoiceRecordMessageState extends State<VoiceRecordMessage> {
         width: double.infinity,
         height: 30,
         child: CustomPaint(
-          painter: VoiceTrackPainter(
+          painter: VoiceWaveformPainter(
             progress: _progress,
             color: context.isDarkMode ? ChatifyColors.darkGrey.withValues(alpha: 0.5) : ChatifyColors.grey,
             activeColor: ChatifyColors.darkGrey,
             markerColor: ChatifyColors.lightBlueLink,
+            amplitudes: _amplitudes,
           ),
         ),
       ),

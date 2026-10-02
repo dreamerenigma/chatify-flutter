@@ -11,6 +11,7 @@ import '../../../newsletter/models/newsletter_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../newsletter/screens/newsletter_chat_screen.dart';
 import '../../../newsletter/screens/photo_newsletter_screen.dart';
+import '../../screens/newsletter_settings_screen.dart';
 
 class NewsletterInfoDialog extends StatefulWidget {
   final NewsletterModel newsletter;
@@ -99,6 +100,7 @@ class _NewsletterInfoDialogState extends State<NewsletterInfoDialog> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                       onPressed: () {
+                        Navigator.pop(context);
                         Navigator.push(context, createPageRoute(NewsletterChatScreen(newsletters: widget.newsletters, createdAt: widget.newsletter.createdAt, newsletter: widget.newsletter)));
                       },
                       icon: SvgPicture.asset(ChatifyVectors.messageOutline, width: 30, height: 30, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
@@ -109,7 +111,10 @@ class _NewsletterInfoDialogState extends State<NewsletterInfoDialog> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, createPageRoute(NewsletterSettingsScreen(newsletter: widget.newsletter, newsletters: widget.newsletters)));
+                      },
                       icon: Icon(Icons.info_outline_rounded, size: 27, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                     ),
                   ),

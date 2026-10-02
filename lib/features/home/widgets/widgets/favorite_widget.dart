@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../input/search_text_input.dart';
+import '../inputs/search_text_input.dart';
 
 class FavoriteWidget extends StatefulWidget {
   const FavoriteWidget({super.key});
@@ -13,8 +13,8 @@ class FavoriteWidget extends StatefulWidget {
 
 class _FavoriteWidgetState extends State<FavoriteWidget> {
   final TextEditingController favoriteController = TextEditingController();
-  bool hasResults = false;
   final List<String> favoriteMessages = [];
+  bool hasResults = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(S.of(context).favoriteMessages, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
+                Text(S.of(context).favoriteMessages, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w400)),
               ],
             ),
           ),

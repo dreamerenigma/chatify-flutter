@@ -21,6 +21,7 @@ class SearchTextInput extends StatefulWidget {
   final bool showTooltip;
   final bool wrapInScrollView;
   final int? maxLines;
+  final BoxConstraints? prefixIconConstraints;
   final Color? enabledBorderColor;
   final Color? underlineBorderColor;
   final ValueChanged<String>? onChanged;
@@ -42,6 +43,7 @@ class SearchTextInput extends StatefulWidget {
     this.showTooltip = true,
     this.wrapInScrollView = true,
     this.maxLines = 1,
+    this.prefixIconConstraints,
     this.enabledBorderColor,
     this.underlineBorderColor,
     this.onChanged,
@@ -158,7 +160,7 @@ class SearchTextInputState extends State<SearchTextInput> {
             keyboardType: widget.allowOnlyDigits ? TextInputType.number : TextInputType.text,
             inputFormatters: widget.allowOnlyDigits ? [PhoneNumberInputFormatter()] : [],
             decoration: InputDecoration(
-              prefixIconConstraints: BoxConstraints(minWidth: 32, minHeight: 32),
+              prefixIconConstraints: widget.prefixIconConstraints ?? const BoxConstraints(minWidth: 32, minHeight: 32),
               prefixIcon: widget.showPrefixIcon
                 ? Transform(
                     alignment: Alignment.center,

@@ -1,14 +1,17 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
-class VoiceTrackPainter extends CustomPainter {
+class VoiceWaveformPainter extends CustomPainter {
   final double progress;
+  final List<double> amplitudes;
   final Color color;
   final Color activeColor;
   final Color markerColor;
 
-  const VoiceTrackPainter({
+  const VoiceWaveformPainter({
     required this.progress,
+    required this.amplitudes,
     required this.color,
     required this.activeColor,
     required this.markerColor,
@@ -31,6 +34,7 @@ class VoiceTrackPainter extends CustomPainter {
     for (int i = 0; i < barCount; i++) {
       final x = minX + i * spacing;
       final wave = math.sin(i * 0.8) * 0.5 + 0.5;
+      // final wave = amplitudes[i]; // New method (version 1.4.16+361)
       final height = 4 + wave * (size.height - 8);
       final isActive = i / (barCount - 1) <= progress;
 
@@ -44,7 +48,7 @@ class VoiceTrackPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant VoiceTrackPainter oldDelegate) {
+  bool shouldRepaint(covariant VoiceWaveformPainter oldDelegate) {
     return oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.activeColor != activeColor || oldDelegate.markerColor != markerColor;
   }
 }

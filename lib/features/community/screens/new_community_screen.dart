@@ -154,7 +154,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
             elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, size: 24),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 _hideKeyboard();
 
@@ -188,7 +188,7 @@ class NewCommunityScreenState extends State<NewCommunityScreen> {
                               children: [
                                 TextSpan(
                                   text: S.of(context).viewExamples,
-                                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 15, fontWeight: FontWeight.w600),
+                                  style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 15, fontWeight: FontWeight.w400),
                                   recognizer: TapGestureRecognizer()..onTap = () {},
                                 ),
                                 TextSpan(text: S.of(context).differentCommunities, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),

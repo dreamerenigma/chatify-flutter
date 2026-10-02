@@ -8,7 +8,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../authentication/models/country.dart';
 import '../../../../authentication/widgets/lists/country_list.dart';
-import '../../input/search_text_input.dart';
+import '../../inputs/search_text_input.dart';
 
 Future<void> showSelectCountryOverlay(BuildContext context, Offset position, Function(Country) onCountrySelected) async {
   final completer = Completer<void>();

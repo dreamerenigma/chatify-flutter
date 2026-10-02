@@ -17,7 +17,7 @@ import '../../../chat/models/user_model.dart';
 import '../../../personalization/controllers/user_controller.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../buttons/country_selector_button.dart';
-import '../input/search_text_input.dart';
+import '../inputs/search_text_input.dart';
 import '../keys/ink_well_key.dart';
 import 'change_new_contact_dialog.dart';
 import 'overlays/select_country_overlay.dart';

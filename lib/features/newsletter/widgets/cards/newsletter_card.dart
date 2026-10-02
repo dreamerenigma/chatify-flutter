@@ -45,9 +45,11 @@ class _NewsletterCardState extends State<NewsletterCard> {
     }
     try {
       final timestamp = int.tryParse(widget.newsletter.createdAt);
+
       if (timestamp == null) {
         return S.of(context).invalidDate;
       }
+
       final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
       final formatted = DateFormat('dd.MM.yyyy').format(date);
 

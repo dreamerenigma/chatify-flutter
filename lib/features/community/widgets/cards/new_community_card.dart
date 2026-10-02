@@ -7,7 +7,10 @@ import '../../../personalization/widgets/dialogs/light_dialog.dart';
 class NewCommunityCard extends StatelessWidget {
   final VoidCallback? onTap;
 
-  const NewCommunityCard({super.key, this.onTap});
+  const NewCommunityCard({
+    super.key,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +35,8 @@ class NewCommunityCard extends StatelessWidget {
                     Container(
                       width: 50,
                       height: 50,
-                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(Icons.groups, size: 36, color: ChatifyColors.white),
+                      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey, borderRadius: BorderRadius.circular(12)),
+                      child: const Icon(Icons.groups, size: 36, color: ChatifyColors.darkGrey),
                     ),
                     Positioned(
                       bottom: -3,

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 800 800"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="smartphone.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     showguides="true"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="383.25188"
+     inkscape:cy="292.0351"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     fill="#000000"
+     d="m 183.79569,38.510983 c -7.5977,8.16539 -11.85429,21.358266 -11.85429,31.289985 V 735.95509 c 0,5.15921 3.21536,21.85802 12.89683,31.5395 10.50733,10.50731 25.66101,15.9716 33.121,15.9716 h 355.64369 c 10.70056,0 23.22825,-7.60179 31.1365,-16.23013 7.46823,-8.14824 12.71308,-22.00779 12.71308,-30.62502 V 68.84396 c 0,-10.975502 -5.35073,-22.280706 -12.80878,-30.332977 C 596.73157,29.968418 585.24161,22.5 573.59783,22.5 H 218.32872 c -10.94198,0 -25.88993,6.722081 -34.53303,16.010983 z m 172.73032,20.656595 h 76.26855 c 8.09882,0.0022 14.66301,6.568227 14.66301,14.667037 0,8.098811 -6.56419,14.664809 -14.66301,14.667027 h -76.26855 c -8.10195,0.0022 -14.67104,-6.565087 -14.67104,-14.667027 0,-8.101951 6.56909,-14.669256 14.67104,-14.667037 z m 37.25425,705.066462 c -14.2819,0 -27.15762,-8.60326 -32.62275,-21.79779 -5.46512,-13.19449 -2.44333,-28.3816 7.65546,-38.48038 10.09879,-10.09879 25.2859,-13.12059 38.48039,-7.65546 13.19453,5.46514 21.79778,18.34086 21.79778,32.62276 0,19.50166 -15.80922,35.31087 -35.31088,35.31087 z M 586.28505,682.63035 H 199.44209 V 119.66909 h 386.84296 z"
+     id="path1"
+     style="stroke-width:1.83338"
+     sodipodi:nodetypes="asssssassassaccsccscssssssccccc" />
+</svg>

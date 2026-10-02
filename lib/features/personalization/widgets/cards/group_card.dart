@@ -12,6 +12,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/helper/date_util.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../group/models/group_model.dart';
 import '../../../group/screens/group_chat_screen.dart';
 import '../../../home/widgets/dialogs/edit_settings_chat_dialog.dart';
@@ -23,11 +24,13 @@ class GroupCard extends StatefulWidget {
   final bool showMembers;
   final bool isSelected;
   final String currentUser;
+  final Map<String, UserModel> users;
   final ValueChanged<GroupModel> onGroupSelected;
 
   const GroupCard({
     super.key,
     required this.group,
+    required this.users,
     required this.currentUser,
     required this.onGroupSelected,
     required this.isSelected,
@@ -72,9 +75,9 @@ class _GroupCardState extends State<GroupCard> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: isHighlighted ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : context.isDarkMode
-              ? ChatifyColors.blackGrey
-              : ChatifyColors.lightBackground,
+            color: isHighlighted
+              ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt())
+              : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
           ),
           child: InkWell(
             mouseCursor: SystemMouseCursors.basic,
@@ -100,7 +103,7 @@ class _GroupCardState extends State<GroupCard> {
               if (Platform.isWindows) {
                 widget.onGroupSelected(group);
               } else {
-                Navigator.push(context, createPageRoute(GroupChatScreen(group: group, user: APIs.me)));
+                Navigator.push(context, createPageRoute(GroupChatScreen(group: group, user: APIs.me, users: widget.users)));
               }
             },
             child: Padding(
@@ -119,7 +122,7 @@ class _GroupCardState extends State<GroupCard> {
 
                           return GestureDetector(
                             onTap: () {
-                              showDialog(context: context, builder: (_) => GroupDialog(group: widget.group));
+                              showDialog(context: context, builder: (_) => GroupDialog(group: widget.group, users: widget.users));
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(23),

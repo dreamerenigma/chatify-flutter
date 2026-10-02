@@ -516,7 +516,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "closingChat": MessageLookupByLibrary.simpleMessage("Closing chat"),
     "combineParticipantsThematicGroups": MessageLookupByLibrary.simpleMessage(
-      "Combine participants \n\' \'into thematic groups",
+      "Combine participants into thematic groups.",
     ),
     "communicationCompanies": MessageLookupByLibrary.simpleMessage(
       "Communication with companies",
@@ -781,7 +781,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "deutschLanguage": MessageLookupByLibrary.simpleMessage("German"),
     "deviceIsOnline": MessageLookupByLibrary.simpleMessage("Device is online."),
-    "deviceStatus": MessageLookupByLibrary.simpleMessage("Device Status"),
+    "deviceStatus": MessageLookupByLibrary.simpleMessage("DEVICE STATUS"),
     "diagnosticTechnicalInfoAboutDevice": MessageLookupByLibrary.simpleMessage(
       "By clicking Next, you agree to Chatify to check diagnostic information and technical specifications of the device, as well as to check metadata associated with your account in order to find and fix the reported problem. ",
     ),
@@ -1425,7 +1425,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "This list is updated automatically for you to display all group chats.",
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Lists"),
-    "loadMore": MessageLookupByLibrary.simpleMessage("Перезагрузить"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "location": MessageLookupByLibrary.simpleMessage("Location..."),
     "locationSharing": MessageLookupByLibrary.simpleMessage("Location sharing"),
@@ -1503,6 +1502,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "messages": MessageLookupByLibrary.simpleMessage("Messages"),
     "messagesAIGeneratedInappropriate": MessageLookupByLibrary.simpleMessage(
       "Messages may be AI-generated and may be inaccurate or inappropriate. Click to learn more.",
+    ),
+    "messagesCallsProtected": MessageLookupByLibrary.simpleMessage(
+      "Messages and calls are end-to-end encrypted. Learn more.",
     ),
     "messagesCallsProtectedEncryption": MessageLookupByLibrary.simpleMessage(
       " Messages and calls are protected by end-to-end encryption. Third parties, including Chatify, cannot read your messages or listen to your calls. Click to learn more.",
@@ -1991,7 +1993,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Replacing text with emoji",
     ),
     "reportBug": MessageLookupByLibrary.simpleMessage("Report a bug"),
-    "reportGroup": MessageLookupByLibrary.simpleMessage("Report group"),
+    "reportGroup": MessageLookupByLibrary.simpleMessage("Report the group"),
     "reportGroupApp": MessageLookupByLibrary.simpleMessage(
       "Report this group to Chatify?",
     ),

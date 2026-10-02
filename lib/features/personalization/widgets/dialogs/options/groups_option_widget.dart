@@ -11,7 +11,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/devices/device_utility.dart';
 import '../../../../group/models/group_model.dart';
-import '../../../../home/widgets/input/search_text_input.dart';
+import '../../../../home/widgets/inputs/search_text_input.dart';
 import '../light_dialog.dart';
 
 class GroupsOptionWidget extends StatefulWidget {

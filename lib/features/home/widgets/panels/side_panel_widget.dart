@@ -116,185 +116,185 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
             Row(
               children: [
                 if (!hideSidePanel)
-                Flexible(
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    decoration: BoxDecoration(
-                      color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(12)),
-                      border: Border(
-                        top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
-                        bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
-                        left: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
-                        right: BorderSide.none,
+                  Flexible(
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      decoration: BoxDecoration(
+                        color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(12)),
+                        border: Border(
+                          top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
+                          bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
+                          left: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
+                          right: BorderSide.none,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          if (widget.selectedIndex == 0)
+                            ChatsWidget(
+                              user: widget.user,
+                              groups: widget.groups,
+                              newsletters: widget.newsletters,
+                              communities: widget.communities,
+                              users: widget.users,
+                              supports: widget.supports,
+                              infosApp:  widget.infosApp,
+                              isSearching: widget.isSearching,
+                              searchList: widget.searchList,
+                              selectedUser: selectedUser,
+                              pinnedChats: widget.pinnedChats,
+                              mutedChats: widget.mutedChats,
+                              onGroupSelected: (group) {
+                                setState(() {
+                                  selectedGroup = group;
+                                  selectedNewsletter = null;
+                                  selectedCommunity = null;
+                                  selectedUser = null;
+                                  selectedSupport = null;
+                                  selectedInfoApp = null;
+                                });
+                              },
+                              onNewsletterSelected: (newsletter) {
+                                setState(() {
+                                  selectedNewsletter = newsletter;
+                                  selectedGroup = null;
+                                  selectedCommunity = null;
+                                  selectedUser = null;
+                                  selectedSupport = null;
+                                  selectedInfoApp = null;
+                                });
+                              },
+                              onCommunitySelected: (community) {
+                                setState(() {
+                                  selectedCommunity = community;
+                                  selectedUser = null;
+                                  selectedGroup = null;
+                                  selectedNewsletter = null;
+                                  selectedSupport = null;
+                                  selectedInfoApp = null;
+                                });
+                              },
+                              onUserSelected: (chatUser) {
+                                setState(() {
+                                  selectedUser = chatUser;
+                                  selectedGroup = null;
+                                  selectedNewsletter = null;
+                                  selectedCommunity = null;
+                                  selectedSupport = null;
+                                  selectedInfoApp = null;
+                                });
+                              },
+                              onSupportSelected: (support) {
+                                setState(() {
+                                  selectedSupport = support;
+                                  selectedGroup = null;
+                                  selectedNewsletter = null;
+                                  selectedUser = null;
+                                  selectedCommunity = null;
+                                  selectedInfoApp = null;
+                                });
+                              },
+                              onInfoAppSelected: (infoApp) {
+                                setState(() {
+                                  selectedInfoApp = infoApp;
+                                  selectedGroup = null;
+                                  selectedNewsletter = null;
+                                  selectedCommunity = null;
+                                  selectedUser = null;
+                                  selectedSupport = null;
+                                });
+                              },
+                              selectedUserIds: widget.selectedUserIds,
+                            )
+                          else if (widget.selectedIndex == 1)
+                            CallsWidget(
+                              groupName: '',
+                              groupImage: '',
+                              showCurrentCall: showCurrentCall,
+                              onStartCall: () {
+                                setState(() => showCurrentCall = true);
+                              },
+                            )
+                          else if (widget.selectedIndex == 2)
+                            StatusWidget()
+                          else if (widget.selectedIndex == 3)
+                            FavoriteWidget()
+                          else if (widget.selectedIndex == 4)
+                            ArchiveWidget(isSearching: widget.isSearching, searchList: widget.searchList, users: widget.users, archivedUsers: [], user: widget.user)
+                          else
+                            SizedBox.shrink(),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        if (widget.selectedIndex == 0)
-                          ChatsWidget(
-                            user: widget.user,
-                            groups: widget.groups,
-                            newsletters: widget.newsletters,
-                            communities: widget.communities,
-                            users: widget.users,
-                            supports: widget.supports,
-                            infosApp:  widget.infosApp,
-                            isSearching: widget.isSearching,
-                            searchList: widget.searchList,
-                            selectedUser: selectedUser,
-                            pinnedChats: widget.pinnedChats,
-                            mutedChats: widget.mutedChats,
-                            onGroupSelected: (group) {
-                              setState(() {
-                                selectedGroup = group;
-                                selectedNewsletter = null;
-                                selectedCommunity = null;
-                                selectedUser = null;
-                                selectedSupport = null;
-                                selectedInfoApp = null;
-                              });
-                            },
-                            onNewsletterSelected: (newsletter) {
-                              setState(() {
-                                selectedNewsletter = newsletter;
-                                selectedGroup = null;
-                                selectedCommunity = null;
-                                selectedUser = null;
-                                selectedSupport = null;
-                                selectedInfoApp = null;
-                              });
-                            },
-                            onCommunitySelected: (community) {
-                              setState(() {
-                                selectedCommunity = community;
-                                selectedUser = null;
-                                selectedGroup = null;
-                                selectedNewsletter = null;
-                                selectedSupport = null;
-                                selectedInfoApp = null;
-                              });
-                            },
-                            onUserSelected: (chatUser) {
-                              setState(() {
-                                selectedUser = chatUser;
-                                selectedGroup = null;
-                                selectedNewsletter = null;
-                                selectedCommunity = null;
-                                selectedSupport = null;
-                                selectedInfoApp = null;
-                              });
-                            },
-                            onSupportSelected: (support) {
-                              setState(() {
-                                selectedSupport = support;
-                                selectedGroup = null;
-                                selectedNewsletter = null;
-                                selectedUser = null;
-                                selectedCommunity = null;
-                                selectedInfoApp = null;
-                              });
-                            },
-                            onInfoAppSelected: (infoApp) {
-                              setState(() {
-                                selectedInfoApp = infoApp;
-                                selectedGroup = null;
-                                selectedNewsletter = null;
-                                selectedCommunity = null;
-                                selectedUser = null;
-                                selectedSupport = null;
-                              });
-                            },
-                            selectedUserIds: widget.selectedUserIds,
-                          )
-                        else if (widget.selectedIndex == 1)
-                          CallsWidget(
-                            groupName: '',
-                            groupImage: '',
-                            showCurrentCall: showCurrentCall,
-                            onStartCall: () {
-                              setState(() => showCurrentCall = true);
-                            },
-                          )
-                        else if (widget.selectedIndex == 2)
-                          StatusWidget()
-                        else if (widget.selectedIndex == 3)
-                          FavoriteWidget()
-                        else if (widget.selectedIndex == 4)
-                          ArchiveWidget(isSearching: widget.isSearching, searchList: widget.searchList, users: widget.users, archivedUsers: [], user: widget.user)
-                        else
-                          SizedBox.shrink(),
-                      ],
-                    ),
                   ),
-                ),
-                if (isWideScreen) ...[
-                  Container(
-                    width: constraints.maxWidth - newSidePanelWidth,
-                    decoration: BoxDecoration(
-                      color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
-                      border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey, width: 1)),
-                    ),
-                    child: _buildCenteredContent(),
-                  ),
-                ] else if (selectedUser != null) ...[
-                  Expanded(
-                    child: Container(
+                  if (isWideScreen) ...[
+                    Container(
+                      width: constraints.maxWidth - newSidePanelWidth,
                       decoration: BoxDecoration(
                         color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
                         border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey, width: 1)),
                       ),
                       child: _buildCenteredContent(),
                     ),
-                  ),
+                  ] else if (selectedUser != null) ...[
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
+                          border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey, width: 1)),
+                        ),
+                        child: _buildCenteredContent(),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
-            ),
+              ),
             if (isWideScreen)
-            Positioned(
-              left: newSidePanelWidth,
-              top: 0,
-              bottom: 0,
-              width: 10,
-              child: MouseRegion(
-                cursor: isHovered || isClicked ? SystemMouseCursors.resizeLeftRight : SystemMouseCursors.basic,
-                onEnter: (_) {
-                  if (!isClicked) setState(() => isHovered = true);
-                },
-                onExit: (_) {
-                  if (!isClicked) setState(() => isHovered = false);
-                },
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onPanStart: (_) => setState(() => isClicked = true),
-                  onPanEnd: (_) {
-                    setState(() => isClicked = false);
-                    _saveWidth();
+              Positioned(
+                left: newSidePanelWidth,
+                top: 0,
+                bottom: 0,
+                width: 10,
+                child: MouseRegion(
+                  cursor: isHovered || isClicked ? SystemMouseCursors.resizeLeftRight : SystemMouseCursors.basic,
+                  onEnter: (_) {
+                    if (!isClicked) setState(() => isHovered = true);
                   },
-                  onPanCancel: () => setState(() => isClicked = false),
-                  onPanUpdate: (details) {
-                    if (isClicked) {
-                      setState(() {
-                        newSidePanelWidth += details.delta.dx;
-                        newSidePanelWidth = newSidePanelWidth.clamp(widget.minSidePanelWidth, widget.maxSidePanelWidth);
-                        widget.onWidthChanged(newSidePanelWidth);
-                      });
-                    }
+                  onExit: (_) {
+                    if (!isClicked) setState(() => isHovered = false);
                   },
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: isHovered || isClicked ? 7 : 1,
-                      height: double.infinity,
-                      color: isClicked ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : isHovered
-                        ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt())
-                        : (context.isDarkMode ? ChatifyColors.cardColor : ChatifyColors.grey),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onPanStart: (_) => setState(() => isClicked = true),
+                    onPanEnd: (_) {
+                      setState(() => isClicked = false);
+                      _saveWidth();
+                    },
+                    onPanCancel: () => setState(() => isClicked = false),
+                    onPanUpdate: (details) {
+                      if (isClicked) {
+                        setState(() {
+                          newSidePanelWidth += details.delta.dx;
+                          newSidePanelWidth = newSidePanelWidth.clamp(widget.minSidePanelWidth, widget.maxSidePanelWidth);
+                          widget.onWidthChanged(newSidePanelWidth);
+                        });
+                      }
+                    },
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: isHovered || isClicked ? 7 : 1,
+                        height: double.infinity,
+                        color: isClicked ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : isHovered
+                          ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt())
+                          : (context.isDarkMode ? ChatifyColors.cardColor : ChatifyColors.grey),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         );
       },

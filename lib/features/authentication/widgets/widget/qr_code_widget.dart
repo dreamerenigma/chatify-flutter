@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../utils/widgets/widgets/qr_code.dart';
 
 class QrCodeWidget extends StatelessWidget {
   final bool isLoading;
@@ -76,15 +76,15 @@ class QrCodeWidget extends StatelessWidget {
                 else ...[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(25),
-                    child: QrImageView(
+                    child: ChatifyQrCode(
                       data: qrCodeData,
-                      version: QrVersions.auto,
                       size: qrSize * 0.85,
-                      gapless: false,
+                      finderScale: 0.75,
                       backgroundColor: ChatifyColors.white,
+                      foregroundColor: ChatifyColors.black,
                     ),
                   ),
-                  Positioned(child: SvgPicture.asset(ChatifyVectors.logo, height: logoHeight)),
+                  Positioned(child: SvgPicture.asset(ChatifyVectors.logo, width: logoHeight, height: logoHeight)),
                 ],
               ],
             ),

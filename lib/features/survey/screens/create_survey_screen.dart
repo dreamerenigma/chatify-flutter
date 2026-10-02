@@ -10,7 +10,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
-import '../../../utils/popups/app_loaders.dart';
+import '../../../utils/popups/dialogs.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 

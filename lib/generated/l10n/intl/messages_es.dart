@@ -482,7 +482,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Seleccione un país de la lista de países sugeridos. Esto completará automáticamente el código de país.",
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Listas"),
-    "loadMore": MessageLookupByLibrary.simpleMessage("Cargar más"),
     "loading": MessageLookupByLibrary.simpleMessage("Cargando..."),
     "locationSharing": MessageLookupByLibrary.simpleMessage(
       "Compartir ubicación",

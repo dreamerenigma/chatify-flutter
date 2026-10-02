@@ -131,7 +131,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             height: 40,
             color: avatarColors.background,
             alignment: Alignment.center,
-            child: SvgPicture.asset(ChatifyVectors.person, width: 19, height: 19, colorFilter: ColorFilter.mode(avatarColors.icon, BlendMode.srcIn)),
+            child: SvgPicture.asset(ChatifyVectors.profile, width: 40, height: 40),
           );
         },
       ),

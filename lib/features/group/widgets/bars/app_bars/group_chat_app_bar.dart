@@ -9,19 +9,22 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
+import '../../../../chat/models/user_model.dart';
 import '../../../../chat/widgets/bars/actions/app_bar_actions.dart';
 import '../../../../personalization/widgets/dialogs/group_settings_dialog.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../models/group_model.dart';
-import '../../../screens/group_data_screen.dart';
+import '../../../screens/about_group_screen.dart';
 
 class GroupChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final GroupModel group;
+  final Map<String, UserModel> users;
   final Future<Map<String, String>> userNamesFuture;
 
   const GroupChatAppBar({
     super.key,
     required this.group,
+    required this.users,
     required this.userNamesFuture,
   });
 
@@ -140,7 +143,7 @@ class _GroupChatAppBarState extends State<GroupChatAppBar> with SingleTickerProv
 
             showGroupSettingsDialog(context, position, initialIndex: 0);
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => GroupDataScreen(group: widget.group)));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => AboutGroupScreen(group: widget.group, users: widget.users)));
           }
         },
         child: Padding(

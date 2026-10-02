@@ -11,15 +11,19 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'add_email_screen.dart';
 
-class EmailAddressScreen extends StatelessWidget {
+class EmailAddressScreen extends StatefulWidget {
   const EmailAddressScreen({super.key});
 
-  static const Map<String, int> _schemeMap = {
-    'blue': 0,
-    'red': 1,
-    'green': 2,
-    'orange': 3,
-  };
+  @override
+  State<EmailAddressScreen> createState() => _EmailAddressScreenState();
+}
+
+class _EmailAddressScreenState extends State<EmailAddressScreen> {
+  static const Map<String, int> schemeMap = {'blue': 0, 'red': 1, 'green': 2, 'orange': 3};
+
+  int mapSchemeToIndex(String scheme) {
+    return schemeMap[scheme.toLowerCase().trim()] ?? 0;
+  }
 
   String getAsset(int schemeIndex) {
     switch (schemeIndex) {
@@ -36,10 +40,6 @@ class EmailAddressScreen extends StatelessWidget {
     }
   }
 
-  int mapSchemeToIndex(String scheme) {
-    return _schemeMap[scheme.toLowerCase().trim()] ?? 0;
-  }
-
   @override
   Widget build(BuildContext context) {
     Color dynamicIconColor = colorsController.getColor(colorsController.selectedColorScheme.value);
@@ -52,14 +52,7 @@ class EmailAddressScreen extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
@@ -93,7 +86,7 @@ class EmailAddressScreen extends StatelessWidget {
                   _buildItemInfo(icon: Icons.lock_outline_rounded, text: S.of(context).emailAddressDisplayedUsers, iconColor: dynamicIconColor),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Text(S.of(context).readMore, textAlign: TextAlign.center, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                    child: Text(S.of(context).readMore, textAlign: TextAlign.center, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ],
               ),
@@ -115,7 +108,7 @@ class EmailAddressScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(S.of(context).addEmailAddress, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: ChatifyColors.black)),
+                  Text(S.of(context).addEmailAddress, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),

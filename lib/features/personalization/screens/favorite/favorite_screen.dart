@@ -57,18 +57,24 @@ class FavoriteScreenState extends State<FavoriteScreen> {
             child: SvgPicture.asset(ChatifyVectors.favorite, width: 100, height: 100),
           ),
           const SizedBox(height: 30),
-          Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
+          Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Text(S.of(context).easierFindPeopleGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), textAlign: TextAlign.center),
+            child: Text(
+              S.of(context).easierFindPeopleGroups,
+              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center,
+            ),
           ),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey)),
+                Text(
+                  S.of(context).favorite,
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                ),
               ],
             ),
           ),
@@ -87,7 +93,7 @@ class FavoriteScreenState extends State<FavoriteScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
-                    child: const Icon(Icons.add, color: ChatifyColors.white),
+                    child: const Icon(Icons.add, size: 25, color: ChatifyColors.black),
                   ),
                   const SizedBox(width: 20),
                   Text(S.of(context).addToFavorites, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400)),
@@ -99,7 +105,7 @@ class FavoriteScreenState extends State<FavoriteScreen> {
             padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
             child: Text(
               S.of(context).favoritesChangeFavoritesCalls,
-              style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm),
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
           ),
@@ -125,8 +131,10 @@ class FavoriteScreenState extends State<FavoriteScreen> {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {},
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -147,14 +155,14 @@ class FavoriteScreenState extends State<FavoriteScreen> {
                 ),
               ),
               const SizedBox(width: 14),
-              Expanded(child: Text('${user.name} ${user.surname}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500))),
+              Expanded(child: Text('${user.name} ${user.surname}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
               IconButton(
                 onPressed: () {},
                 icon: const Icon(Icons.call_outlined, size: 22),
               ),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.more_vert, size: 22),
+                icon: const Icon(Icons.more_vert_rounded, size: 22),
               ),
             ],
           ),

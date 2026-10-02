@@ -49,9 +49,7 @@ class _StorageManagementScreenState extends State<StorageManagementScreen> {
         return;
       }
 
-      final usersSnapshot =
-      await APIs.getAllUsers(userIds).first;
-
+      final usersSnapshot = await APIs.getAllUsers(userIds).first;
       final loadedUsers = usersSnapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
 
       if (!mounted) return;

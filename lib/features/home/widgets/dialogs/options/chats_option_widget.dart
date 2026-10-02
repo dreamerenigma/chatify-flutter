@@ -24,13 +24,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
         children: [
           Text(S.of(context).chats, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
           const SizedBox(height: 25),
-          Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300)),
+          Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
           const SizedBox(height: 10),
           Row(
             children: [
-              SvgPicture.asset(ChatifyVectors.devices, width: 20, height: 20),
+              SvgPicture.asset(ChatifyVectors.devices, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
               const SizedBox(width: 10),
-              Text(S.of(context).syncedWithPhone, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+              Text(S.of(context).syncedWithPhone, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
             ],
           ),
           const SizedBox(height: 12),
@@ -55,13 +55,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                   hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                    child: Text(S.of(context).archiveAllChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).archiveAllChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ),
               ),
             ),
           ),
-          Text(S.of(context).receiveNewMessagesInArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+          Text(S.of(context).receiveNewMessagesInArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           const SizedBox(height: 14),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -82,13 +82,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                   hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(S.of(context).deleteAllMessages, style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).deleteAllMessages, style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ),
               ),
             ),
           ),
-          Text(S.of(context).deleteAllMessagesChatsAndGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+          Text(S.of(context).deleteAllMessagesChatsAndGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -109,13 +109,13 @@ class _ChatsOptionWidgetState extends State<ChatsOptionWidget> {
                   hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(S.of(context).deleteAllChats, style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).deleteAllChats, style: TextStyle(color: ChatifyColors.buttonRed, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ),
               ),
             ),
           ),
-          Text(S.of(context).deleteAllMessagesAndClearChatHistory, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200)),
+          Text(S.of(context).deleteAllMessagesAndClearChatHistory, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
         ],
       ),
     );

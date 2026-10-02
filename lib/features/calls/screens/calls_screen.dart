@@ -125,7 +125,6 @@ class CallsScreenState extends State<CallsScreen> {
               isSearching = !isSearching;
             });
           },
-          titleSpacing: 0,
           hintText: S.of(context).settingsSearch,
           title: Text(S.of(context).calls),
           popupMenuButton: _buildCallsPopupMenu(context),

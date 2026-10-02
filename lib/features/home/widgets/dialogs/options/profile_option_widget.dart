@@ -10,6 +10,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
+import '../../../../../utils/devices/device_utility.dart';
 import '../../../../../utils/helper/file_util.dart';
 import '../../../../../utils/popups/dialogs.dart';
 import '../../../../chat/models/user_model.dart';
@@ -17,7 +18,7 @@ import '../../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../../chat/widgets/dialogs/select_message_dialog.dart';
 import '../../../../personalization/controllers/user_controller.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../input/edit_text_input.dart';
+import '../../inputs/edit_text_input.dart';
 import '../confirmation_dialog.dart';
 import '../edit_profile_image_dialog.dart';
 
@@ -43,12 +44,13 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
   bool isEditingIntelligence = false;
   bool isPressedLogout = false;
   bool isHoveredLogout = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
 
   @override
   void initState() {
     super.initState();
     usernameController.text = widget.user.name.isNotEmpty ? widget.user.name : S.of(context).username;
-
     _userListener = ever(userController.user, (UserModel updatedUser) {
       if (!isEditingUsername && mounted) {
         usernameController.text = updatedUser.name;
@@ -115,16 +117,17 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  ClipOval(
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .5),
                     child: CachedNetworkImage(
                       width: 100,
                       height: 100,
-                      imageUrl: widget.user.image,
+                      imageUrl: _profileImageUrl ?? '',
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) => CircleAvatar(
-                        backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                        child: SvgPicture.asset(ChatifyVectors.avatar, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                        backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        foregroundColor: ChatifyColors.white,
+                        child: SvgPicture.asset(ChatifyVectors.profile, width: 100, height: 100),
                       ),
                     ),
                   ),
@@ -138,7 +141,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                   AnimatedOpacity(
                     opacity: isHovered ? 1.0 : 0.0,
                     duration: Duration(milliseconds: 200),
-                    child: SvgPicture.asset(ChatifyVectors.pencil, width: 20, height: 20, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn)),
+                    child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 20, height: 20, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn)),
                   ),
                 ],
               ),
@@ -197,7 +200,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                         final name = userController.user.value.name;
                         usernameController.value = usernameController.value.copyWith(text: name);
 
-                        return SelectableText(userController.user.value.name, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400, fontFamily: 'Roboto'));
+                        return SelectableText(userController.user.value.name, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400));
                       }),
                 ),
               ),
@@ -205,18 +208,18 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
               Material(
                 color: ChatifyColors.transparent,
                 child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  mouseCursor: SystemMouseCursors.basic,
+                  splashColor: ChatifyColors.transparent,
+                  highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                  hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
                   onTap: () {
                     setState(() {
                       isEditingUsername = true;
                       _focusNode.requestFocus();
                     });
                   },
-                  mouseCursor: SystemMouseCursors.basic,
-                  splashColor: ChatifyColors.transparent,
-                  highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                  hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencil, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn))),
+                  child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn))),
                 ),
               ),
             ],
@@ -225,7 +228,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.of(context).info, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
+              Text(S.of(context).info, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.2)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -270,7 +273,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                           ),
                           child: Obx(() {
                             intelligenceController.text = userController.user.value.status;
-                            return SelectableText(userController.user.value.status, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto'));
+                            return SelectableText(userController.user.value.status, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400));
                           }),
                         ),
                   ),
@@ -278,18 +281,18 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                   Material(
                     color: ChatifyColors.transparent,
                     child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      mouseCursor: SystemMouseCursors.basic,
+                      splashColor: ChatifyColors.transparent,
+                      highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                      hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
                       onTap: () {
                         setState(() {
                           isEditingIntelligence = true;
                           _focusNode.requestFocus();
                         });
                       },
-                      mouseCursor: SystemMouseCursors.basic,
-                      splashColor: ChatifyColors.transparent,
-                      highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                      hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencil, width: 18, height: 18, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn))),
+                      child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 18, height: 18, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn))),
                     ),
                   ),
                 ],
@@ -302,7 +305,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
             children: [
               Text(
                 S.of(context).phoneNumber,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.5),
+                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
               ),
               const SizedBox(height: 5),
               GestureDetector(
@@ -340,8 +343,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
                     style: TextStyle(
                       fontSize: ChatifySizes.fontSizeSm,
                       color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
-                      fontWeight: FontWeight.w300,
-                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w400,
                       height: 1.2,
                     ),
                   ),
@@ -427,7 +429,10 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
             ),
           ),
           SizedBox(height: 10),
-          Text(S.of(context).chatHistoryComputerClearedSignOut, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w200, height: 1.2)),
+          Text(
+            S.of(context).chatHistoryComputerClearedSignOut,
+            style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300, height: 1.2),
+          ),
         ],
       ),
     );

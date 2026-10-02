@@ -165,14 +165,8 @@ class EnterEmailScreenState extends State<EnterEmailScreen> {
                                     hintStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd),
                                     filled: true,
                                     fillColor: Theme.of(context).brightness == Brightness.dark ? ChatifyColors.popupColorDark.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.2 * 255).toInt()),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(color: ChatifyColors.darkerGrey, width: 1),
-                                    ),
+                                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 1)),
+                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: ChatifyColors.darkerGrey, width: 1)),
                                     suffixIcon: IconButton(
                                       icon: Icon(
                                         _isPasswordVisible ? Icons.visibility_off : Icons.visibility,

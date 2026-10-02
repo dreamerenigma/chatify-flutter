@@ -6,6 +6,7 @@ import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
 import '../../../../config/config.dart';
 import '../../../../core/enums/call_state_type.dart';
 import '../../../../core/enums/call_status_type.dart';
@@ -50,22 +51,147 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
   bool isMuted = false;
   bool showNewContent = false;
   bool isExternalSpeaker = false;
+  bool _isFinishing = false;
+  bool _showConnectionText = false;
+  bool _isCallAccepted = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
   String? _callId;
   StreamSubscription<CallModel>? _callSubscription;
+  Timer? _connectionTimer;
+  Timer? _callTimer;
+  DateTime? _acceptedAt;
+  Duration _callDuration = Duration.zero;
+
+  String _formatCallDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
+    _connectionTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted || _isCallAccepted) return;
+
+      setState(() {
+        _showConnectionText = true;
+      });
+    });
     _startRingingTone();
     _startCall();
+    _loadProfileImage();
   }
 
   @override
   void dispose() {
+    _connectionTimer?.cancel();
     _stopRingingTone();
     audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _listenCall(String callId) {
+    log('[OUTGOING_AUDIO] Listening call: $callId', name: 'OutgoingAudioCallScreen');
+
+    _callSubscription = _callService.observeCall(callId).listen((call) async {
+      log('[OUTGOING_AUDIO] Call state: ${call.state.name}', name: 'OutgoingAudioCallScreen');
+      switch (call.state) {
+        case CallStateType.ringing:
+          break;
+        case CallStateType.accepted:
+          log('[OUTGOING_AUDIO] ✅ Call accepted', name: 'OutgoingAudioCallScreen');
+
+          await _stopRingingTone();
+
+          _connectionTimer?.cancel();
+
+          if (!mounted) return;
+
+          setState(() {
+            _isCallAccepted = true;
+            _showConnectionText = false;
+          });
+
+          if (call.acceptedAt != null) {
+            _startCallTimer(call.acceptedAt!);
+          }
+
+          break;
+        case CallStateType.rejected:
+          log('[OUTGOING_AUDIO] Call rejected', name: 'OutgoingAudioCallScreen');
+          await _finishCall(CallStatusType.rejected);
+          break;
+        case CallStateType.ended:
+          log('[OUTGOING_AUDIO] Call ended', name: 'OutgoingAudioCallScreen');
+          await _finishCall(CallStatusType.noAnswer);
+          break;
+      }
+    });
+  }
+
+  void _startCallTimer(DateTime acceptedAt) {
+    _callTimer?.cancel();
+
+    _acceptedAt = acceptedAt;
+
+    _updateCallDuration();
+
+    _callTimer = Timer.periodic(
+      const Duration(seconds: 1),
+          (_) {
+        _updateCallDuration();
+      },
+    );
+  }
+
+  void _updateCallDuration() {
+    if (!mounted || _acceptedAt == null || !_isCallAccepted) {
+      return;
+    }
+
+    final duration = DateTime.now().difference(_acceptedAt!);
+
+    setState(() {
+      _callDuration = duration;
+    });
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
   }
 
   Future<void> _startCall() async {
@@ -99,6 +225,12 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
     } catch (e, stackTrace) {
       log('[OUTGOING_AUDIO] ❌ START CALL ERROR: $e', name: 'OutgoingAudioCallScreen', error: e, stackTrace: stackTrace);
 
+      await _stopRingingTone();
+
+      if (_agoraCallService.isJoined) {
+        await _agoraCallService.leaveChannel();
+      }
+
       if (!mounted) return;
 
       await _stopRingingTone();
@@ -106,22 +238,6 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
       Navigator.pop(context, CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
     }
   }
-
-  // Future<void> _startCall() async {
-  //   try {
-  //     final callId = await _callService.startCall(widget.user);
-  //
-  //     _callId = callId;
-  //
-  //     _listenCall(callId);
-  //   } catch (e) {
-  //     if (!mounted) return;
-  //
-  //     await _stopRingingTone();
-  //
-  //     Navigator.pop(context, CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
-  //   }
-  // }
 
   Future<void> prepareAgora() async {
     await _agoraCallService.initialize(appId: Config.appId);
@@ -155,10 +271,29 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
   }
 
   Future<void> _finishCall(CallStatusType status) async {
+    if (_isFinishing) {
+      log('[OUTGOING_AUDIO] ⚠️ Already finishing call', name: 'OutgoingAudioCallScreen');
+      return;
+    }
+
+    _isFinishing = true;
+    _callTimer?.cancel();
+    _callTimer = null;
+    _acceptedAt = null;
+
+    log('[OUTGOING_AUDIO] 🔴 Finishing call: ${status.name}', name: 'OutgoingAudioCallScreen');
+
     await _stopRingingTone();
 
     await _callSubscription?.cancel();
     _callSubscription = null;
+
+    if (_agoraCallService.isJoined) {
+      log('[OUTGOING_AUDIO] 🔴 Leaving Agora channel', name: 'OutgoingAudioCallScreen');
+
+      await _agoraCallService.leaveChannel();
+    }
+
 
     if (!mounted) return;
 
@@ -176,9 +311,15 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
 
   Future<void> _stopRingingTone() async {
     try {
+      log('[OUTGOING_AUDIO] 🔇 Stopping ringtone...', name: 'OutgoingAudioCallScreen');
+
+      log('[OUTGOING_AUDIO] 🔊 Player state BEFORE stop: ${audioPlayer.state}', name: 'OutgoingAudioCallScreen');
+
       await audioPlayer.stop();
-    } catch (e) {
-      log('${S.of(context).errorStopingRingingTone}: $e');
+
+      log('[OUTGOING_AUDIO] 🔇 Player state AFTER stop: ${audioPlayer.state}', name: 'OutgoingAudioCallScreen');
+    } catch (e, stackTrace) {
+      log('[OUTGOING_AUDIO] ❌ Error stopping ringtone: $e', name: 'OutgoingAudioCallScreen', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -188,29 +329,6 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
     } catch (e) {
       log('${S.of(context).errorPlayingSound}: $e');
     }
-  }
-
-  void _listenCall(String callId) {
-    log('[OUTGOING_AUDIO] Listening call: $callId', name: 'OutgoingAudioCallScreen');
-
-    _callSubscription = _callService.observeCall(callId).listen((call) async {
-      log('[OUTGOING_AUDIO] Call state: ${call.state.name}', name: 'OutgoingAudioCallScreen');
-      switch (call.state) {
-        case CallStateType.ringing:
-          break;
-        case CallStateType.accepted:
-          log('[OUTGOING_AUDIO] Call accepted', name: 'OutgoingAudioCallScreen');
-          break;
-        case CallStateType.rejected:
-          log('[OUTGOING_AUDIO] Call rejected', name: 'OutgoingAudioCallScreen');
-          await _finishCall(CallStatusType.rejected);
-          break;
-        case CallStateType.ended:
-          log('[OUTGOING_AUDIO] Call ended', name: 'OutgoingAudioCallScreen');
-          await _finishCall(CallStatusType.noAnswer);
-          break;
-      }
-    });
   }
 
   Future<void> _toggleMicrophone() async {
@@ -277,44 +395,86 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                     ),
                   ),
                   Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
-                        const SizedBox(height: 2),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 50),
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: Icon(
-                                    Icons.lock_outline,
-                                    color: ChatifyColors.white,
-                                    size: 14,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child:  _isCallAccepted
+                        ? Column(
+                            children: [
+                              Text(
+                                '${widget.user.name} ${widget.user.surname}',
+                                style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400), textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                  _formatCallDuration(_callDuration),
+                                  key: const ValueKey('call_duration'),
+                                  style: TextStyle(
+                                    color: ChatifyColors.darkGrey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
                                     shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
                                   ),
                                 ),
-                                const WidgetSpan(child: SizedBox(width: 4)),
-                                TextSpan(
-                                  text: S.of(context).protectedWithEndToEndEncryption,
-                                  style: TextStyle(
-                                    color: ChatifyColors.grey,
-                                    fontSize: ChatifySizes.fontSizeSm,
-                                    fontWeight: FontWeight.w400,
-                                    shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
-                                    height: 1.4
+                            ],
+                          )
+                        : _showConnectionText
+                          ? Column(
+                              children: [
+                                Text(
+                                  '${widget.user.name} ${widget.user.surname}',
+                                  style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400), textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                    'Соединение...',
+                                    key: const ValueKey('connecting'),
+                                    style: TextStyle(
+                                      color: ChatifyColors.darkGrey,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                      shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                    ),
+                                  ),
+                              ],
+                            )
+                          : Column(
+                              key: const ValueKey('user_info'),
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+                                const SizedBox(height: 2),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        WidgetSpan(
+                                          alignment: PlaceholderAlignment.middle,
+                                          child: Icon(
+                                            Icons.lock_outline,
+                                            color: ChatifyColors.white,
+                                            size: 14,
+                                            shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                          ),
+                                        ),
+                                        const WidgetSpan(child: SizedBox(width: 4)),
+                                        TextSpan(
+                                          text: S.of(context).protectedWithEndToEndEncryption,
+                                          style: TextStyle(
+                                            color: ChatifyColors.grey,
+                                            fontSize: ChatifySizes.fontSizeSm,
+                                            fontWeight: FontWeight.w400,
+                                            shadows: const [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Color.fromARGB(128, 0, 0, 0))],
+                                            height: 1.4
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ],
@@ -330,7 +490,7 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
                   child: CachedNetworkImage(
                     width: DeviceUtils.getScreenHeight(context) * .27,
                     height: DeviceUtils.getScreenHeight(context) * .27,
-                    imageUrl: widget.user.image,
+                    imageUrl: _profileImageUrl ?? '',
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) => CircleAvatar(
                       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -397,14 +557,21 @@ class OutgoingAudioCallScreenState extends State<OutgoingAudioCallScreen> {
             onMicrophone: _toggleMicrophone,
             onShare: () {},
             onEndCall: () async {
-              final navigator = Navigator.of(context);
-
               await playClickButton(audioPlayer);
-              await _stopRingingTone();
 
-              if (!mounted) return;
+              final callId = _callId;
 
-              navigator.pop(CallResult(type: CallType.audio, status: CallStatusType.noAnswer));
+              if (callId != null) {
+                try {
+                  await _callService.endCall(callId);
+
+                  log('[OUTGOING_AUDIO] ✅ Call ended in Firestore: $callId', name: 'OutgoingAudioCallScreen');
+                } catch (e, st) {
+                  log('[OUTGOING_AUDIO] ❌ Failed to end call: $e', name: 'OutgoingAudioCallScreen', error: e, stackTrace: st);
+                }
+              }
+
+              await _finishCall(CallStatusType.noAnswer);
             },
           ),
         ],

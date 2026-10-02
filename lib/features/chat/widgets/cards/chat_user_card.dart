@@ -48,9 +48,9 @@ class ChatUserCard extends StatefulWidget {
 }
 
 class ChatUserCardState extends State<ChatUserCard> {
-  bool _isLoadingProfileImage = false;
+  bool isLoadingProfileImage = false;
   bool isLongPressed = false;
-  String? _profileImageUrl;
+  String? profileImageUrl;
 
   String _formatDuration(int milliseconds) {
     final duration = Duration(milliseconds: milliseconds);
@@ -58,18 +58,6 @@ class ChatUserCardState extends State<ChatUserCard> {
     final seconds = duration.inSeconds % 60;
 
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
-  }
-
-  String _getPageText(int count) {
-    if (count % 10 == 1 && count % 100 != 11) {
-      return '$count страница';
-    }
-
-    if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
-      return '$count страницы';
-    }
-
-    return '$count страниц';
   }
 
   @override
@@ -87,7 +75,7 @@ class ChatUserCardState extends State<ChatUserCard> {
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -97,8 +85,8 @@ class ChatUserCardState extends State<ChatUserCard> {
       if (!mounted) return;
 
       setState(() {
-        _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        profileImageUrl = url;
+        isLoadingProfileImage = false;
       });
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
@@ -106,8 +94,8 @@ class ChatUserCardState extends State<ChatUserCard> {
       if (!mounted) return;
 
       setState(() {
-        _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        profileImageUrl = null;
+        isLoadingProfileImage = false;
       });
     }
   }
@@ -183,41 +171,52 @@ class ChatUserCardState extends State<ChatUserCard> {
                         alignment: Alignment.centerRight,
                         clipBehavior: Clip.none,
                         children: [
-                          InkWell(
-                            onTap: () {
-                              if (!isWindows) {
-                                showDialog(context: context, builder: (_) => ProfileDialog(user: widget.user));
-                              }
-                            },
-                            mouseCursor: SystemMouseCursors.basic,
-                            borderRadius: BorderRadius.circular(30),
-                            child: FutureBuilder<String?>(
-                              future: APIs.mediaService.getUrl(widget.user.image),
-                              builder: (context, snapshot) {
-                                final size = isWindows ? 46.0 : DeviceUtils.getScreenHeight(context) * .055;
-
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return ClipOval(child: ShimmerEffect(width: size, height: size, borderRadius: size, angle: -0.16));
+                          Material(
+                            color: ChatifyColors.transparent,
+                            child: InkWell(
+                              mouseCursor: SystemMouseCursors.basic,
+                              borderRadius: BorderRadius.circular(30),
+                              onTap: () {
+                                if (!isWindows) {
+                                  showDialog(context: context, builder: (_) => ProfileDialog(user: widget.user));
                                 }
-
-                                final url = snapshot.data;
-
-                                if (url == null || url.isEmpty) {
-                                  return ClipOval(child: _profileImageError(context, size));
-                                }
-
-                                return ClipOval(
-                                  child: CachedNetworkImage(
-                                    width: size,
-                                    height: size,
-                                    imageUrl: url,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) {
-                                      return _profileImageError(context, size);
-                                    },
-                                  ),
-                                );
                               },
+                              child: Builder(
+                                builder: (context) {
+                                  final size = isWindows
+                                      ? 46.0
+                                      : DeviceUtils.getScreenHeight(context) * .055;
+
+                                  if (isLoadingProfileImage) {
+                                    return ClipOval(
+                                      child: ShimmerEffect(
+                                        width: size,
+                                        height: size,
+                                        borderRadius: size,
+                                        angle: -0.16,
+                                      ),
+                                    );
+                                  }
+
+                                  if (profileImageUrl == null || profileImageUrl!.isEmpty) {
+                                    return ClipOval(
+                                      child: _profileImageError(context, size),
+                                    );
+                                  }
+
+                                  return ClipOval(
+                                    child: CachedNetworkImage(
+                                      width: size,
+                                      height: size,
+                                      imageUrl: profileImageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) {
+                                        return _profileImageError(context, size);
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           if (!isWindows && widget.isSelected)
@@ -239,57 +238,90 @@ class ChatUserCardState extends State<ChatUserCard> {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: StreamBuilder<int>(
+                          stream: ChatApi.getUnreadMessagesCount(widget.user),
+                          builder: (context, snapshot) {
+                            final unreadCount = snapshot.data ?? 0;
+                            final hasUnread = unreadCount > 0;
+                            final accentColor = colorsController.getColor(colorsController.selectedColorScheme.value);
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    widget.user.id == FirebaseAuth.instance.currentUser?.uid
-                                      ? '${widget.user.phoneNumber} (Вы)'
-                                      : '${widget.user.name}${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
-                                    style: TextStyle(
-                                      fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
-                                      fontFamily: 'Helvetica',
-                                      fontWeight: isWindows ? FontWeight.w400 : FontWeight.bold,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        widget.user.id == FirebaseAuth.instance.currentUser?.uid ? '${widget.user.phoneNumber} (Вы)' : '${widget.user.name}''${widget.user.surname.isNotEmpty ? ' ${widget.user.surname}' : ''}',
+                                        style: TextStyle(
+                                          fontSize: isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd,
+                                          fontFamily: 'Helvetica',
+                                          fontWeight:
+                                          isWindows ? FontWeight.w400 : FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                    const SizedBox(width: 10),
+                                    if (message != null)
+                                      Text(
+                                        DateUtil.getLastMessageTime(context: context, time: message.sent.toDate(), formatType: DateFormatType.numeric),
+                                        style: TextStyle(
+                                          color: hasUnread
+                                            ? accentColor : isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black
+                                            : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                                          fontSize: ChatifySizes.fontSizeLm,
+                                          fontWeight:
+                                          hasUnread ? FontWeight.w500 : FontWeight.w400,
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                                SizedBox(width: 10),
-                                if (message != null) ...[
-                                  Text(
-                                    DateUtil.getLastMessageTime(context: context, time: message.sent.toDate(), formatType: DateFormatType.numeric),
-                                    style: TextStyle(
-                                      color: isWindows ? context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-                                      fontSize: ChatifySizes.fontSizeLm,
-                                      fontWeight: FontWeight.w400,
+
+                                const SizedBox(height: 4),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: message != null
+                                        ? message.type == MessageType.call ? _buildCallPreview(context, message)
+                                        : message.msg.isNotEmpty ? _buildMessagePreview(context, message)
+                                        : Text(
+                                            widget.user.about,
+                                            style: TextStyle(
+                                              color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                                              fontSize: ChatifySizes.fontSizeSm,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : Text(
+                                            widget.user.about,
+                                            style: TextStyle(
+                                              color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                                              fontSize: ChatifySizes.fontSizeSm,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 8),
+                                    if (hasUnread)
+                                      Container(
+                                        constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                        decoration: BoxDecoration(color: accentColor, shape: BoxShape.circle),
+                                        alignment: Alignment.center,
+                                        child: Text(unreadCount > 99 ? '99+' : '$unreadCount', style: const TextStyle(color: ChatifyColors.black, fontSize: 10, fontWeight: FontWeight.w700)),
+                                      ),
+                                  ],
+                                ),
                               ],
-                            ),
-                            const SizedBox(height: 4),
-                            message != null
-                              ? message.type == MessageType.call
-                                ? _buildCallPreview(context, message)
-                                : message.msg.isNotEmpty
-                                  ? _buildMessagePreview(context, message)
-                                  : Text(
-                                      widget.user.about,
-                                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    )
-                              : Text(
-                                  widget.user.about,
-                                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -309,19 +341,14 @@ class ChatUserCardState extends State<ChatUserCard> {
       height: size,
       color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
       alignment: Alignment.center,
-      child: SvgPicture.asset(
-        ChatifyVectors.person,
-        width: 22,
-        height: 22,
-        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
-      ),
+      child: SvgPicture.asset(ChatifyVectors.profile, width: size, height: size),
     );
   }
 
   Widget _buildCallPreview(BuildContext context, MessageModel call) {
     final isMyCall = call.fromId == APIs.user.uid;
     final isVideo = call.callType == CallType.video;
-    final isMissed = call.callStatus == CallStatusType.missed || call.callStatus == CallStatusType.noAnswer;
+    final isMissed = !isMyCall && (call.callStatus == CallStatusType.missed || call.callStatus == CallStatusType.noAnswer);
 
     final title = isMissed
       ? (isVideo ? 'Пропущенный видеозвонок' : 'Пропущенный аудиозвонок')
@@ -338,7 +365,7 @@ class ChatUserCardState extends State<ChatUserCard> {
     return Row(
       children: [
         SvgPicture.asset(icon, width: 13, height: 13, colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn)),
-        const SizedBox(width: 5),
+        const SizedBox(width: 7),
         Flexible(
           child: Text(
             title,
@@ -380,8 +407,8 @@ class ChatUserCardState extends State<ChatUserCard> {
                   ),
                 ),
               ] else if (message.type == MessageType.video) ...[
-                Icon(Icons.videocam, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                const SizedBox(width: 5),
+                Icon(Icons.videocam, size: 22, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                const SizedBox(width: 4),
                 Flexible(
                   child: Text(
                     S.of(context).video,
@@ -434,6 +461,32 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
+              ] else if (message.type == MessageType.survey) ...[
+                Expanded(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Проголосовал(-а):',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      SvgPicture.asset(ChatifyVectors.surveyFilled, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode? ChatifyColors.darkGrey: ChatifyColors.textSecondary,BlendMode.srcIn)),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          message.survey?.question ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ] else if (message.type == MessageType.event) ...[
                 Icon(Icons.calendar_month_outlined, size: 18, color:context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
                 const SizedBox(width: 5),
@@ -457,7 +510,10 @@ class ChatUserCardState extends State<ChatUserCard> {
                       children: [
                         WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
-                          child: SvgPicture.asset(ChatifyVectors.doubleCheck, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                          child: SvgPicture.asset(ChatifyVectors.doubleCheck, width: 18, height: 18, colorFilter: ColorFilter.mode(
+                            message.read.isNotEmpty ? ChatifyColors.blue : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                            BlendMode.srcIn,
+                          )),
                         ),
                         const WidgetSpan(child: SizedBox(width: 4)),
                         TextSpan(

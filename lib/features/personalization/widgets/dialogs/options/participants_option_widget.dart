@@ -8,7 +8,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../chat/models/user_model.dart';
 import '../../../../community/models/community_model.dart';
-import '../../../../home/widgets/input/search_text_input.dart';
+import '../../../../home/widgets/inputs/search_text_input.dart';
 
 class ParticipantsOptionWidget extends StatefulWidget {
   final UserModel? user;

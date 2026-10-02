@@ -35,9 +35,11 @@ class EmojiPanel extends StatelessWidget {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
+        splashFactory: NoSplash.splashFactory,
         borderRadius: BorderRadius.circular(30),
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {},
         child: Padding(
           padding: const EdgeInsets.all(2),
@@ -51,6 +53,7 @@ class EmojiPanel extends StatelessWidget {
     return Material(
       color: ChatifyColors.transparent,
       child: InkWell(
+        splashFactory: NoSplash.splashFactory,
         borderRadius: BorderRadius.circular(30),
         splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,

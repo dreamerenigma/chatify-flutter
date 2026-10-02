@@ -77,13 +77,11 @@ class APIs {
       if (Platform.isAndroid || Platform.isIOS) {
         await fMessaging.requestPermission();
 
-        await fMessaging.getToken().then((t) {
-          if (t != null) {
-            me.pushToken = t;
-          }
-        });
-      } else {
-        log("Firebase Messaging не поддерживается на этой платформе.");
+        final token = await fMessaging.getToken();
+
+        if (token != null) {
+          me.pushToken = token;
+        }
       }
     } catch (e) {
       log("Ошибка при получении Firebase токена: $e");
@@ -206,6 +204,26 @@ class APIs {
     final mutedUntil = muted && duration > 0 ? Timestamp.fromDate(DateTime.now().add(Duration(hours: duration))) : null;
 
     await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).set({'muted': muted, 'mutedDuration': muted ? duration : 0, 'mutedUntil': mutedUntil}, SetOptions(merge: true));
+  }
+
+  /// -- Increment unread messages for a chat user.
+  static Future<void> incrementUnreadCount({required String ownerId, required String chatUserId}) async {
+    await firestore.collection('Users').doc(ownerId).collection('my_users').doc(chatUserId).set(
+      {
+        'unreadCount': FieldValue.increment(1),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  /// -- Reset unread messages for a chat user.
+  static Future<void> resetUnreadCount({required String userId}) async {
+    await firestore.collection('Users').doc(user.uid).collection('my_users').doc(userId).set(
+      {
+        'unreadCount': 0,
+      },
+      SetOptions(merge: true),
+    );
   }
 
   /// -- .

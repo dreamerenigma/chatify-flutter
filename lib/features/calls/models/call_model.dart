@@ -9,6 +9,7 @@ class CallModel {
   final CallStateType state;
   final String channelName;
   final DateTime createdAt;
+  final DateTime? acceptedAt;
 
   const CallModel({
     required this.id,
@@ -18,9 +19,42 @@ class CallModel {
     required this.state,
     required this.channelName,
     required this.createdAt,
+    this.acceptedAt,
   });
 
   factory CallModel.fromJson(String id, Map<String, dynamic> json) {
+    final createdAtValue = json['createdAt'];
+
+    DateTime createdAt;
+
+    if (createdAtValue is int) {
+      createdAt = DateTime.fromMillisecondsSinceEpoch(createdAtValue);
+    } else if (createdAtValue is double) {
+      createdAt = DateTime.fromMillisecondsSinceEpoch(
+        createdAtValue.toInt(),
+      );
+    } else {
+      createdAt = DateTime.now();
+    }
+
+    final acceptedAtValue = json['acceptedAt'];
+
+    DateTime? acceptedAt;
+
+    if (acceptedAtValue is DateTime) {
+      acceptedAt = acceptedAtValue;
+    } else if (acceptedAtValue is int) {
+      acceptedAt = DateTime.fromMillisecondsSinceEpoch(acceptedAtValue);
+    } else if (acceptedAtValue is double) {
+      acceptedAt = DateTime.fromMillisecondsSinceEpoch(acceptedAtValue.toInt());
+    } else {
+      try {
+        acceptedAt = acceptedAtValue?.toDate();
+      } catch (_) {
+        acceptedAt = null;
+      }
+    }
+
     return CallModel(
       id: id,
       callerId: json['callerId'] ?? '',
@@ -28,7 +62,8 @@ class CallModel {
       type: CallType.values.firstWhere((e) => e.name == json['type'], orElse: () => CallType.audio),
       state: CallStateType.values.firstWhere((e) => e.name == json['state'], orElse: () => CallStateType.ringing),
       channelName: json['channelName'] ?? '',
-      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] ?? 0),
+      createdAt: createdAt,
+      acceptedAt: acceptedAt,
     );
   }
 
@@ -40,6 +75,8 @@ class CallModel {
       'state': state.name,
       'channelName': channelName,
       'createdAt': createdAt.millisecondsSinceEpoch,
+      if (acceptedAt != null)
+        'acceptedAt': acceptedAt!.millisecondsSinceEpoch,
     };
   }
 }

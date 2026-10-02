@@ -13,10 +13,12 @@ import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/helper/avatar_color_util.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../home/widgets/dialogs/profile_dialog.dart';
+import '../../../utils/widgets/texts/highlighted_text.dart';
 import '../dialogs/light_dialog.dart';
 
 class UseAppUserCard extends StatefulWidget {
   final UserModel user;
+  final String searchQuery;
   final bool isSelected;
   final bool showSelectionButton;
   final EdgeInsetsGeometry? margin;
@@ -29,6 +31,7 @@ class UseAppUserCard extends StatefulWidget {
   const UseAppUserCard({
     super.key,
     required this.user,
+    this.searchQuery = '',
     this.isSelected = false,
     this.showSelectionButton = false,
     this.onUserSelected,
@@ -188,7 +191,10 @@ class UseAppUserCardState extends State<UseAppUserCard> {
                   //   ),
                 ],
               ),
-              title: Text('${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
+              title: HighlightedText(
+                text: '${widget.user.name} ${widget.user.surname}', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                query: widget.searchQuery,
+              ),
               subtitle: Text(S.of(context).aboutText, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),
               trailing: widget.showSelectionButton
                 ? InkWell(
@@ -221,7 +227,7 @@ class UseAppUserCardState extends State<UseAppUserCard> {
       height: DeviceUtils.getScreenHeight(context) * .055,
       alignment: Alignment.center,
       decoration: BoxDecoration(color: avatarColors.background, shape: BoxShape.circle),
-      child: SvgPicture.asset(ChatifyVectors.person, width: 21, height: 21, fit: BoxFit.contain, colorFilter: ColorFilter.mode(avatarColors.icon, BlendMode.srcIn)),
+      child: SvgPicture.asset(ChatifyVectors.profile, width: DeviceUtils.getScreenHeight(context) * .055, height: DeviceUtils.getScreenHeight(context) * .055, fit: BoxFit.contain),
     );
   }
 }

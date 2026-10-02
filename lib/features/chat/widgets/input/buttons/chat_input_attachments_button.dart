@@ -64,8 +64,8 @@ class _ChatInputAttachmentsState extends State<ChatInputAttachments> {
         angle: -45 * math.pi / 180,
         child: SvgPicture.asset(
           ChatifyVectors.attach,
-          width: 25,
-          height: 25,
+          width: 24,
+          height: 24,
           colorFilter: const ColorFilter.mode(ChatifyColors.textSecondary, BlendMode.srcIn),
         ),
       ),

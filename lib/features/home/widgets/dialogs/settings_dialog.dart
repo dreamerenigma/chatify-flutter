@@ -180,13 +180,13 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
     {'icon': BootstrapIcons.laptop, 'text': S.of(context).general, 'iconSize': 18, 'iconWidth': 20},
     {'icon': FluentIcons.key_32_regular, 'text': S.of(context).account, 'iconSize': 23, 'iconWidth': 15},
     {'icon': IconsaxPlusLinear.messages_1, 'text': S.of(context).chats, 'iconSize': 20, 'iconWidth': 17},
-    {'icon': ChatifyVectors.videoOutlined, 'text': S.of(context).videoAudio, 'iconSize': 18, 'iconWidth': 18},
+    {'icon': ChatifyVectors.videoOutline, 'text': S.of(context).videoAudio, 'iconSize': 18, 'iconWidth': 18, 'isSvg': true},
     {'icon': ChatifyVectors.notification, 'text': S.of(context).notifications, 'iconSize': 21, 'iconWidth': 16, 'isSvg': true},
     {'icon': BootstrapIcons.brush, 'text': S.of(context).personalization, 'iconSize': 18, 'iconWidth': 18},
     {'icon': FluentIcons.storage_20_regular, 'text': S.of(context).storage, 'iconSize': 19, 'iconWidth': 17},
     {'icon': FluentIcons.keyboard_16_regular, 'text': S.of(context).hotKeys, 'iconSize': 18, 'iconWidth': 18},
     {'icon': BootstrapIcons.info, 'text': S.of(context).help, 'iconSize': 19, 'iconWidth': 17},
-    {'icon': HugeIcons.strokeRoundedUser, 'text': S.of(context).profile, 'iconSize': 19, 'iconWidth': 17},
+    {'icon': ChatifyVectors.notification, 'text': S.of(context).notifications, 'iconSize': 21, 'iconWidth': 16, 'isSvg': true},
   ];
 
   return Padding(
@@ -212,14 +212,18 @@ Widget _buildOption(BuildContext context, int index, ValueNotifier<int> selected
               ),
               child: Row(
                 children: [
-                  (options[index].containsKey('isSvg') && options[index]['isSvg'])
+                  options[index]['isSvg'] == true
                     ? SvgPicture.asset(
-                        options[index]['icon'],
+                        options[index]['icon'] as String,
                         width: options[index]['iconSize']?.toDouble() ?? 24.0,
                         height: options[index]['iconSize']?.toDouble() ?? 24.0,
-                        colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn) ,
+                        colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                       )
-                    : Icon(options[index]['icon'], size: options[index]['iconSize']?.toDouble(), color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                    : Icon(
+                        options[index]['icon'] as IconData,
+                        size: options[index]['iconSize']?.toDouble(),
+                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      ),
                   SizedBox(width: (options[index]['iconWidth']?.toDouble() ?? 24.0)),
                   Text(options[index]['text'], style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
                 ],

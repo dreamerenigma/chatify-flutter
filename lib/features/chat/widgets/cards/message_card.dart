@@ -66,6 +66,29 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
     return widget.message.isMe != widget.previousMessage!.isMe;
   }
 
+  double _getMessageMaxWidth() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    switch (widget.message.type) {
+      case MessageType.document:
+        return screenWidth * 0.9;
+      case MessageType.survey:
+        return screenWidth * 0.9;
+      case MessageType.event:
+        return screenWidth * 0.9;
+      case MessageType.video:
+        return screenWidth * 0.85;
+      case MessageType.audio:
+        return screenWidth * 0.9;
+      case MessageType.voice:
+        return screenWidth * 0.9;
+      case MessageType.call:
+        return screenWidth * 0.85;
+      default:
+        return screenWidth * 0.8;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -267,10 +290,10 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                       ? _buildVideoMessageCard(isMe: isMe)
                       : IntrinsicWidth(
                           child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (widget.message.type == MessageType.call ? 0.85 : 0.8)),
+                            constraints: BoxConstraints(maxWidth: _getMessageMaxWidth()),
                             child: isMe
                               ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, conversationId: ChatApi.getConversationId(widget.user.id), user: APIs.me)
-                              : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, user: widget.user),
+                              : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, user: widget.user, conversationId: ChatApi.getConversationId(widget.user.id)),
                           ),
                         ),
                   ),

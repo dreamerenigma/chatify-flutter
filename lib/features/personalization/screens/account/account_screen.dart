@@ -146,7 +146,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     icon: Icons.email_outlined,
                     title: S.of(context).emailAddress,
                     titleColor: ChatifyColors.grey,
-                    onTap: () => Navigator.push(context, createPageRoute(const EmailAddressScreen())),
+                    onTap: () => Navigator.push(context, createPageRoute(EmailAddressScreen())),
                   ),
                   _buildSettingsMenuTile(
                     icon: ChatifyVectors.shieldCheckeredFilled,

@@ -66,7 +66,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
   void initState() {
     super.initState();
     _loadData();
-    _searchController.addListener(_filterContacts);
+    _searchController.addListener(_onSearchChanged);
     if (widget.isFavoritesMode) {
       isSearching = true;
 
@@ -76,6 +76,14 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
         }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -115,6 +123,11 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
         isFetchingChatUsers = false;
       });
     }
+  }
+
+  void _onSearchChanged() {
+    _filterContacts();
+    setState(() {});
   }
 
   void _findContactsOnApp() {
@@ -421,7 +434,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
             thumbVisibility: false,
             child: ListView(
               children: [
-                if (!widget.isFavoritesMode)
+                if (!widget.isFavoritesMode && _searchController.text.isEmpty)
                   Column(
                     children: [
                       SizedBox(height: 8),
@@ -460,12 +473,22 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                   ),
                 if (matchedChatUsers.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+                    child: Text(S.of(context).contactsOnApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
-                ...chatUsers.map((chatUser) =>
-                  UseAppUserCard(
+                  ...chatUsers.where((chatUser) {
+                    final query = _searchController.text.trim().toLowerCase();
+
+                    if (query.isEmpty) {
+                      return true;
+                    }
+
+                    final name = '${chatUser.name} ${chatUser.surname}'.toLowerCase();
+
+                    return name.contains(query);
+                  }).map((chatUser) => UseAppUserCard(
                     user: chatUser,
+                    searchQuery: _searchController.text,
                     isSelected: selectedUsers.any((user) => user.id == chatUser.id),
                     onUserSelected: _toggleUserSelection,
                     onLongPress: _handleLongPress,
@@ -473,12 +496,13 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 25, bottom: 8),
+                  child: Text(S.of(context).inviteOnApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ),
                 ...filteredContacts.map((contact) =>
                   InviteUserCard(
                     contact: contact,
+                    searchQuery: _searchController.text,
                     onInvite: () {},
                     onContactSelected: (Contact selectedContact) {},
                   ),
@@ -486,7 +510,13 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                 _buildOptionItem(
                   icon: Icons.share,
                   text: 'Поделиться приглашением',
-                  onTap: () {},
+                  onTap: () async {
+                    SharePlus.instance.share(
+                      ShareParams(
+                        text:'Давай будем общаться в Chatify! Это быстрое, удобное и безопасное приложение для бесплатного общения друг с другом. Скачать: https://chatify.ru/dl/',
+                      ),
+                    );
+                  },
                 ),
                 _buildOptionItem(
                   icon: Icons.question_mark_rounded,
@@ -512,7 +542,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
         key: textFieldKey,
         focusNode: _searchFocusNode,
         controller: _searchController,
-        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, letterSpacing: 0.5),
         keyboardType: isNumericMode ? TextInputType.number : TextInputType.text,
         decoration: InputDecoration(
           hintText: S.of(context).searchContacts,
@@ -532,28 +562,31 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
       width: 45,
       height: 45,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-      child: Icon(icon, color: ChatifyColors.black, size: iconSize),
+      child: Icon(icon, size: iconSize, color: ChatifyColors.black),
     );
   }
 
   Widget _buildOptionItem({required IconData icon, required String text, required VoidCallback onTap}) {
-    return InkWell(
-      splashFactory: NoSplash.splashFactory,
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-      hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 16),
-        child: Row(
-          children: [
-            Icon(icon, size: 25, color: ChatifyColors.darkGrey),
-            const SizedBox(width: 25),
-            Expanded(
-              child: Text(text, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
-            ),
-          ],
+    return Material(
+      color: ChatifyColors.transparent,
+      child: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 16),
+          child: Row(
+            children: [
+              Icon(icon, size: 25, color: ChatifyColors.darkGrey),
+              const SizedBox(width: 25),
+              Expanded(
+                child: Text(text, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+              ),
+            ],
+          ),
         ),
       ),
     );

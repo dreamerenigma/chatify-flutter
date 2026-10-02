@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/chat/widgets/messages/voice_record_message.dart';
+import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:chatify/utils/platforms/platform_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:heroicons/heroicons.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -60,8 +61,9 @@ class RecipientMessageState extends State<RecipientMessage> {
   bool isDownloading = false;
   bool isPressed = false;
   bool isDialogVisible = false;
+  bool _videoHasStarted = false;
+  int _videoPosition = 0;
   Timer? hoverTimer;
-  Duration? videoDuration;
 
   bool get isHovered => hoveredMessage == widget.message;
 
@@ -121,6 +123,48 @@ class RecipientMessageState extends State<RecipientMessage> {
     showEditMessageDialog(context, position, _containerKey);
   }
 
+  void _updateVideoPosition(Duration position) {
+    if (!mounted) return;
+
+    final seconds = position.inSeconds;
+
+    if (_videoHasStarted && _videoPosition != seconds) {
+      setState(() {
+        _videoPosition = seconds;
+      });
+    }
+  }
+
+  void _onVideoStarted() {
+    if (!mounted) return;
+
+    setState(() {
+      _videoHasStarted = true;
+      _videoPosition = 0;
+    });
+  }
+
+  Future<void> _openCalendar() async {
+    final event = widget.message.event;
+
+    if (event == null) return;
+
+    final DateTime start = event.startEvent.toDate();
+    final intent = AndroidIntent(
+      action: 'android.intent.action.INSERT',
+      data: 'content://com.android.calendar/events',
+      arguments: {
+        'beginTime': start.millisecondsSinceEpoch,
+        'endTime': start.add(const Duration(hours: 1)).millisecondsSinceEpoch,
+        'title': event.name,
+        'description': event.location,
+        'eventLocation': event.location,
+      },
+    );
+
+    await intent.launch();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -151,7 +195,6 @@ class RecipientMessageState extends State<RecipientMessage> {
               && widget.message.type != MessageType.survey
               && widget.message.type != MessageType.event
               && widget.message.type != MessageType.location
-              && widget.message.type != MessageType.document
             )
             Center(
               child: Container(
@@ -292,7 +335,7 @@ class RecipientMessageState extends State<RecipientMessage> {
                   showMetaCheck: true,
                   type: MessageBubbleType.recipient,
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 250),
+                    constraints: const BoxConstraints(minWidth: 280),
                     child: VoiceRecordMessage(message: widget.message, isSender: false, user: APIs.me),
                   ),
                 ),
@@ -440,6 +483,8 @@ class RecipientMessageState extends State<RecipientMessage> {
                       });
                     },
                     imageUrls: widget.messages.where((m) => m.type == MessageType.image).map((m) => m.msg.trim()).toList(),
+                    onVideoPositionChanged: _updateVideoPosition,
+                    onVideoStarted: _onVideoStarted,
                   ),
                   Positioned(
                     bottom: bottomOffset,
@@ -452,15 +497,18 @@ class RecipientMessageState extends State<RecipientMessage> {
             _buildMessageTail(),
             if (isVideo)
               Positioned(
-                left: 30,
+                left: 25,
                 bottom: 12,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    HeroIcon(HeroIcons.videoCamera, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, size: 13),
+                    Icon(Icons.videocam_rounded, size: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                     const SizedBox(width: 4),
-                    Text(Formatter.formatDurationVideo(videoDuration), style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1)),
+                    Text(
+                      Formatter.formatDurationVideo(_videoHasStarted ? _videoPosition : widget.message.videoDuration),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w600, letterSpacing: 1),
+                    ),
                   ],
                 ),
               ),
@@ -507,13 +555,13 @@ class RecipientMessageState extends State<RecipientMessage> {
               isPressed: isPressed,
               actions: [
                 MessageBubbleModel(title: 'Редактировать', onTap: () {}),
-                MessageBubbleModel(title: 'Добавить в календарь', onTap: () {}),
+                MessageBubbleModel(title: 'Добавить в календарь', onTap: _openCalendar),
               ],
               onSecondaryTap: _handleSecondaryTap,
               showInnerContainer: true,
               showMetaCheck: true,
               type: MessageBubbleType.recipient,
-              child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: EventMessageCard(event: event, ownerId: widget.user)),
+              child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: EventMessageCard(event: event, ownerId: widget.user, user: widget.user)),
             ),
             _buildMessageTail(),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)

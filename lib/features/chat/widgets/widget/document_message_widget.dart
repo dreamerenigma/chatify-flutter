@@ -9,7 +9,6 @@ import 'package:open_filex_plus/open_filex_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
 import '../../../../api/apis.dart';
-import '../../../../data/file_extensions_data.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -49,15 +48,11 @@ class _DocumentMessageWidgetState extends State<DocumentMessageWidget> {
     try {
       final mediaPath = widget.message.msg;
 
-      log('DOCUMENT PREVIEW: path = $mediaPath');
-
       final url = await APIs.getMediaUrl(mediaPath);
 
       if (url == null || url.isEmpty) {
         throw Exception('Document URL is empty');
       }
-
-      log('DOCUMENT PREVIEW: url = $url');
 
       final response = await Dio().get<List<int>>(url, options: Options(responseType: ResponseType.bytes));
       final bytes = Uint8List.fromList(response.data!);
@@ -121,7 +116,7 @@ class _DocumentMessageWidgetState extends State<DocumentMessageWidget> {
   Widget build(BuildContext context) {
     final fileName = widget.message.documentName ?? 'Unknown';
     final fileExtension = fileName.split('.').last.toLowerCase();
-    final fileTypeDescription = FileExtensionsData.fileTypeDescriptions[fileExtension] ?? fileExtension.toUpperCase();
+    final fileTypeDescription = fileExtension.toUpperCase();
     final fileSizeValue = widget.message.fileSize ?? '';
     final cleanedFileSize = Formatter.cleanFileSizeString(fileSizeValue);
     final double fileSizeBytes = double.tryParse(cleanedFileSize) ?? 0;

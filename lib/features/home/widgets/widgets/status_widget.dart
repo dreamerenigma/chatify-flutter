@@ -50,95 +50,88 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                 children: [
                   Text(S.of(context).status, style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
                   if (kIsWeb)
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline_rounded),
-                        tooltip: S.of(context).help,
-                        onPressed: () {
-                          showMenu(
-                            context: context,
-                            position: RelativeRect.fromLTRB(1000, 100, 0, 0),
-                            items: [
-                              PopupMenuItem(
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.photo_camera, size: 20),
-                                    SizedBox(width: 8),
-                                    Text(S.of(context).photosAndVideos),
-                                  ],
-                                ),
-                                onTap: () {
-
-                                },
-                              ),
-                              PopupMenuItem(
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.text_fields, size: 20),
-                                    SizedBox(width: 8),
-                                    Text(S.of(context).text),
-                                  ],
-                                ),
-                                onTap: () {},
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      IconButton(
-                        key: _statusPrivacyKey,
-                        icon: const Icon(Icons.more_vert),
-                        tooltip: S.of(context).more,
-                        onPressed: () {
-                          final RenderBox renderBox = _statusPrivacyKey.currentContext?.findRenderObject() as RenderBox;
-                          final position = renderBox.localToGlobal(Offset.zero);
-
-                          showMenu(
-                            context: context,
-                            color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
-                            position: RelativeRect.fromLTRB(
-                              position.dx,
-                              position.dy,
-                              position.dx + renderBox.size.width,
-                              0,
-                            ),
-                            items: [
-                              PopupMenuItem(
-                                value: 1,
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.privacy_tip, size: 20),
-                                    SizedBox(width: 8),
-                                    Text(S.of(context).statusPrivacy),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                          ).then((value) {
-                            if (value == 1) {
-                              Future.delayed(Duration(milliseconds: 100), () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: Text(S.of(context).statusPrivacy),
-                                    content: Text(S.of(context).statusPrivacySettings),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text(S.of(context).close),
-                                      ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline_rounded),
+                          tooltip: S.of(context).help,
+                          onPressed: () {
+                            showMenu(
+                              context: context,
+                              position: RelativeRect.fromLTRB(1000, 100, 0, 0),
+                              items: [
+                                PopupMenuItem(
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.photo_camera, size: 20),
+                                      SizedBox(width: 8),
+                                      Text(S.of(context).photosAndVideos),
                                     ],
                                   ),
-                                );
-                              });
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                                  onTap: () {},
+                                ),
+                                PopupMenuItem(
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.text_fields, size: 20),
+                                      SizedBox(width: 8),
+                                      Text(S.of(context).text),
+                                    ],
+                                  ),
+                                  onTap: () {},
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        IconButton(
+                          key: _statusPrivacyKey,
+                          icon: const Icon(Icons.more_vert),
+                          tooltip: S.of(context).more,
+                          onPressed: () {
+                            final RenderBox renderBox = _statusPrivacyKey.currentContext?.findRenderObject() as RenderBox;
+                            final position = renderBox.localToGlobal(Offset.zero);
+
+                            showMenu(
+                              context: context,
+                              color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
+                              position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx + renderBox.size.width, 0),
+                              items: [
+                                PopupMenuItem(
+                                  value: 1,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.privacy_tip, size: 20),
+                                      SizedBox(width: 8),
+                                      Text(S.of(context).statusPrivacy, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                            ).then((value) {
+                              if (value == 1) {
+                                Future.delayed(Duration(milliseconds: 100), () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: Text(S.of(context).statusPrivacy),
+                                      content: Text(S.of(context).statusPrivacySettings),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: Text(S.of(context).close, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -159,6 +152,7 @@ class _StatusWidgetState extends State<StatusWidget> with SingleTickerProviderSt
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       child: Row(
                         children: [
+
                           CircleAvatar(
                             backgroundImage: userController.currentUser.image.isNotEmpty ? NetworkImage(userController.currentUser.image) : null,
                             radius: 24,

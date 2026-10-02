@@ -115,7 +115,7 @@ Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsO
       noRoundedCorners: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-      onTap: () => Navigator.push(context, createPageRoute(const ParentalControlsScreen())),
+      onTap: () => Navigator.push(context, createPageRoute(ParentalControlsScreen(user: APIs.me))),
     ),
     'Application language': (context, iconColor) => SettingsMenuTile(
       icon: Icons.language,

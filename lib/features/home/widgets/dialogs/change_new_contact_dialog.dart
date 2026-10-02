@@ -18,7 +18,7 @@ import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/dialog_controller.dart';
-import '../input/search_text_input.dart';
+import '../inputs/search_text_input.dart';
 
 Future<void> showChangeNewContactDialog(
   BuildContext context, {
@@ -115,7 +115,7 @@ Future<void> showChangeNewContactDialog(
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w600)),
+                                                Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                                                 if (showDeleteIcon)
                                                 InkWell(
                                                   onTap: () {

@@ -50,11 +50,17 @@ class Formatter {
     }
   }
 
-  static String formatDurationVideo(Duration? duration) {
-    if (duration == null) return '0:00';
-    final minutes = duration.inMinutes.remainder(60).toString().padLeft(1, '0');
-    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+  static String formatDurationVideo(int? seconds) {
+    if (seconds == null || seconds <= 0) {
+      return '0:00';
+    }
 
-    return '$minutes:$seconds';
+    final duration = Duration(seconds: seconds);
+
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(1, '0');
+    final remainingSeconds =
+    duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+
+    return '$minutes:$remainingSeconds';
   }
 }

@@ -97,45 +97,24 @@ class _RecipientVideoMessageState extends State<RecipientVideoMessage> {
     try {
       final path = widget.message.msg;
 
-      log('VIDEO INIT: started');
-      log('VIDEO INIT: path = $path');
-
       if (path.isEmpty) {
-        log('VIDEO INIT: path is empty');
         return;
       }
 
-      log('VIDEO INIT: requesting download URL...');
-
       final videoUrl = await _yandexDiskApi.getDownloadUrl(path);
 
-      log('VIDEO INIT: download URL received');
-      log('VIDEO INIT: url = $videoUrl');
-
       if (videoUrl == null || videoUrl.isEmpty) {
-        log('VIDEO INIT: download URL is null/empty');
         return;
       }
 
       final uri = Uri.parse(videoUrl);
-
-      log('VIDEO INIT: creating VideoPlayerController');
-      log('VIDEO INIT: host = ${uri.host}');
-
       final controller = VideoPlayerController.networkUrl(uri);
 
-      log('VIDEO INIT: initializing controller...');
-
       await controller.initialize();
-
-      log('VIDEO INIT: controller initialized');
-      log('VIDEO INIT: duration = ${controller.value.duration}');
-      log('VIDEO INIT: size = ${controller.value.size}');
 
       controller.addListener(_videoListener);
 
       if (!mounted) {
-        log('VIDEO INIT: widget disposed during initialization');
         await controller.dispose();
         return;
       }
@@ -144,8 +123,6 @@ class _RecipientVideoMessageState extends State<RecipientVideoMessage> {
         _videoController = controller;
         videoProgress = 0.0;
       });
-
-      log('VIDEO INIT: controller assigned to state');
 
       _updateVideoVolume();
     } catch (e, stackTrace) {

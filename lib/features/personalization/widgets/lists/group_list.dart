@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../group/models/group_model.dart';
 import '../cards/group_card.dart';
 
 class GroupList extends StatefulWidget {
   final List<GroupModel> groups;
   final String currentUser;
+  final Map<String, UserModel> user;
   final Function(GroupModel) onGroupSelected;
   final Set<String> selectedGroupIds;
 
   const GroupList({
     super.key,
     required this.groups,
+    required this.user,
     required this.currentUser,
     required this.onGroupSelected,
     this.selectedGroupIds = const {},
@@ -32,6 +35,7 @@ class GroupListState extends State<GroupList> {
 
         return GroupCard(
           group: group,
+          users: widget.user,
           currentUser: widget.currentUser,
           isSelected: isSelected,
           onGroupSelected: (selected) => widget.onGroupSelected(selected),

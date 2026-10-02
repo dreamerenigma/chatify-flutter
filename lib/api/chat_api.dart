@@ -170,7 +170,7 @@ class ChatApi {
         throw Exception('Voice file is empty: $localPath');
       }
 
-      final yandexPath = YandexDiskPaths.messageAudio(conversationId, messageId);
+      final yandexPath = YandexDiskPaths.messageVoice(conversationId, messageId);
       final uploadedPath = await mediaService.uploadFile(file: file, path: yandexPath);
 
       if (uploadedPath == null || uploadedPath.isEmpty) {
@@ -317,6 +317,29 @@ class ChatApi {
     await batch.commit();
   }
 
+  /// -- .
+  static Stream<int> getUnreadMessagesCount(UserModel user) {
+    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (currentUid == null) {
+      return Stream.value(0);
+    }
+
+    final conversationId = getConversationId(user.id);
+
+    return FirebaseFirestore.instance
+      .collection('Chats')
+      .doc(conversationId)
+      .collection('messages')
+      .where('toId', isEqualTo: currentUid)
+      .where('read', isEqualTo: '')
+      .snapshots()
+      .map((snapshot) {
+
+      return snapshot.docs.length;
+    });
+  }
+
   /// -- Send chat image.
   static Future<void> sendChatImage(UserModel chatUser, File file) async {
     final ext = file.path.split('.').last.toLowerCase();
@@ -378,8 +401,7 @@ class ChatApi {
         chatUser,
         path,
         MessageType.video,
-        fileName:
-        fileName ?? generatedFileName,
+        fileName: fileName ?? generatedFileName,
         fileSize: fileSize,
         videoDuration: videoDuration,
       );
@@ -654,13 +676,14 @@ class ChatApi {
     final now = Timestamp.now();
     final messageId = DateTime.now().millisecondsSinceEpoch.toString();
     final conversationId = getConversationId(chatUser.id);
+    final isSelfChat = chatUser.id == user.uid;
     final survey = SurveyModel(question: question, options: options, allowMultipleAnswers: allowMultipleAnswers);
 
     final message = MessageModel(
       id: messageId,
       toId: chatUser.id,
       msg: question,
-      read: '',
+      read: isSelfChat ? messageId : '',
       fromId: user.uid,
       sent: now,
       type: MessageType.survey,

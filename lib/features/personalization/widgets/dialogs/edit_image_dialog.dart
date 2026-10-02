@@ -253,9 +253,7 @@ Future<void> showEditImageDialog(BuildContext context, Offset position, File sel
                                                               decoration: BoxDecoration(
                                                                 color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
                                                                 borderRadius: BorderRadius.circular(8),
-                                                                boxShadow: [
-                                                                  BoxShadow(color: ChatifyColors.black, blurRadius: 6, offset: Offset(0, 4)),
-                                                                ],
+                                                                boxShadow: [BoxShadow(color: ChatifyColors.black, blurRadius: 6, offset: Offset(0, 4))],
                                                               ),
                                                               child: Column(
                                                                 mainAxisSize: MainAxisSize.min,

@@ -1,3 +1,4 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/popups/dialogs.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../api/chat_api.dart';
+import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
@@ -28,11 +30,11 @@ class PhotoProfileScreen extends StatefulWidget {
 }
 
 class PhotoProfileScreenState extends State<PhotoProfileScreen> {
-  bool _isAppBarVisible = true;
-  bool _isLoadingProfileImage = false;
-  String? _profileImageUrl;
-  TransformationController transformationController = TransformationController();
+  bool isLoadingProfileImage = false;
+  bool _isZoomed = false;
+  String? profileImageUrl;
   TapDownDetails _doubleTapDetails = TapDownDetails();
+  TransformationController transformationController = TransformationController();
 
   @override
   void initState() {
@@ -49,7 +51,7 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -59,8 +61,8 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
       if (!mounted) return;
 
       setState(() {
-        _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        profileImageUrl = url;
+        isLoadingProfileImage = false;
       });
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
@@ -68,8 +70,8 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
       if (!mounted) return;
 
       setState(() {
-        _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        profileImageUrl = null;
+        isLoadingProfileImage = false;
       });
     }
   }
@@ -88,7 +90,14 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
       Get.find<UserController>().clearUserImage();
 
       if (mounted) {
-        Dialogs.showSnackbar(context, S.of(context).profilePhotoDeleted);
+        CustomIconSnackBar.showAnimatedSnackBar(
+          context,
+          S.of(context).profilePhotoDeleted,
+          icon: const Icon(BootstrapIcons.check_circle),
+          iconColor: ChatifyColors.success,
+          position: SnackBarPositionType.bottom,
+          offset: 20,
+        );
         Navigator.of(context).pop(true);
       }
     } catch (e) {
@@ -100,24 +109,27 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
   }
 
   void _handleDoubleTap() {
-    if (transformationController.value != Matrix4.identity()) {
-      transformationController.value = Matrix4.identity();
-
+    if (_isZoomed) {
       setState(() {
-        _isAppBarVisible = true;
+        _isZoomed = false;
+        transformationController.value = Matrix4.identity();
       });
-    } else {
-      const scale = 2.0;
-      final position = _doubleTapDetails.localPosition;
-      final x = -position.dx * (scale - 1);
-      final y = -position.dy * (scale - 1);
-
-      transformationController.value = Matrix4.identity()..translateByDouble(x, y, 0, 1)..scaleByDouble(scale, scale, 1, 1);
-
-      setState(() {
-        _isAppBarVisible = false;
-      });
+      return;
     }
+
+    final position = _doubleTapDetails.localPosition;
+
+    const scale = 2.0;
+
+    final matrix = Matrix4.identity()
+      ..translateByDouble(position.dx, position.dy, 0, 1)
+      ..scaleByDouble(scale, scale, 1, 1)
+      ..translateByDouble(-position.dx, -position.dy, 0, 1);
+
+    setState(() {
+      _isZoomed = true;
+      transformationController.value = matrix;
+    });
   }
 
   @override
@@ -126,56 +138,54 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
     final currentUser = APIs.auth.currentUser;
 
     return Scaffold(
-      appBar: _isAppBarVisible
-        ? PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: Container(
-              decoration: BoxDecoration(
-                color: ChatifyColors.black,
-                boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
-              ),
-              child: AppBar(
-                titleSpacing: 0,
-                elevation: 0,
-                backgroundColor: ChatifyColors.transparent,
-                title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-                actions: [
-                  if (currentUser != null && currentUser.uid == widget.user.id)
-                  IconButton(
-                    icon: const Icon(Icons.mode_edit_outlined),
-                    onPressed: () {
-                      showEditImageBottomDialog(
-                        context,
-                        title: 'Картинка профиля',
-                        onImageSelected: (String value) {},
-                        onEmojiSelected: (Color color, String emoji) {},
-                        onDeletePressed: () {},
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.share_outlined, size: 26),
-                    onPressed: () {
-                      controller.shareImage(context);
-                    },
-                  ),
-                ],
-              ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            color: ChatifyColors.black,
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
+          ),
+          child: AppBar(
+            titleSpacing: 0,
+            elevation: 0,
+            backgroundColor: ChatifyColors.transparent,
+            title: Text(S.of(context).profilePhoto, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Get.back();
+              },
             ),
-          )
-        : null,
+            actions: [
+              if (currentUser != null && currentUser.uid == widget.user.id)
+              IconButton(
+                icon: const Icon(Icons.mode_edit_outlined),
+                onPressed: () {
+                  showEditImageBottomDialog(
+                    context,
+                    title: 'Картинка профиля',
+                    onImageSelected: (String value) {},
+                    onEmojiSelected: (Color color, String emoji) {},
+                    onDeletePressed: () {},
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.share_outlined, size: 26),
+                onPressed: () {
+                  controller.shareImage(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Container(
         color: ChatifyColors.black,
         child: Center(
           child: Builder(
             builder: (context) {
-              final imageUrl = _profileImageUrl;
+              final imageUrl = widget.image;
               final hasImage = imageUrl != null && imageUrl.isNotEmpty;
 
               return GestureDetector(
@@ -188,9 +198,16 @@ class PhotoProfileScreenState extends State<PhotoProfileScreen> {
                   minScale: 1,
                   maxScale: 4,
                   child: hasImage
-                    ? CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.contain, width: double.infinity, height: double.infinity)
-                    : Text(S.of(context).noProfilePhoto, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                  ),
+                    ? CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: _isZoomed ? BoxFit.cover : BoxFit.contain,
+                        width: double.infinity,
+                        height: double.infinity,
+                      )
+                    : Text(
+                        S.of(context).noProfilePhoto,
+                        style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                      ),
                 ),
               );
             },

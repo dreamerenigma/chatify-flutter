@@ -7,7 +7,6 @@ import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -17,6 +16,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/user_model.dart';
+import '../../../utils/widgets/widgets/qr_code.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import 'gallery_screen.dart';
 
@@ -36,7 +36,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
   late String shareLink;
   CameraController? _cameraController;
   bool _isFlashOn = false;
-  bool _isLoadingProfileImage = false;
+  bool isLoadingProfileImage = false;
   String? _profileImageUrl;
 
   @override
@@ -86,7 +86,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -97,7 +97,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
 
       setState(() {
         _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
       });
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
@@ -106,7 +106,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
 
       setState(() {
         _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
       });
     }
   }
@@ -226,7 +226,12 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: QrImageView(data: shareLink, version: QrVersions.auto, size: 180, gapless: false, backgroundColor: ChatifyColors.white),
+                            child: ChatifyQrCode(
+                              data: shareLink,
+                              size: 180,
+                              backgroundColor: ChatifyColors.white,
+                              foregroundColor: ChatifyColors.black,
+                            ),
                           ),
                           SvgPicture.asset(ChatifyVectors.logo, height: 35),
                         ],
@@ -261,7 +266,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
               ],
             ),
           ),
-          const SizedBox(height: 24.0),
+          const SizedBox(height: 24),
           Text(S.of(context).yourQrCodePrivateContacts, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 14)),
         ],
       ),
@@ -302,7 +307,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
               ),
               child: Text(
                 S.of(context).save,
-                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
+                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
               ),
             ),
             TextButton(
@@ -319,7 +324,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> with SingleTickerProviderSt
               ),
               child: Text(
                 S.of(context).reset,
-                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
+                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
               ),
             ),
           ],

@@ -3,11 +3,9 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../core/enums/snack_bar_position_type.dart';
 import '../../features/personalization/widgets/dialogs/light_dialog.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
-import 'animated_snackbar.dart';
 
 class AppLoaders {
   static void hideSnackBar() => ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();
@@ -125,56 +123,5 @@ class AppLoaders {
     return Center(
       child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
     );
-  }
-}
-
-class CustomIconSnackBar {
-  static bool _isSnackBarVisible = false;
-
-  static Future<void> showAnimatedSnackBar(
-    BuildContext context,
-    String message, {
-    Widget? icon,
-    Color? iconColor,
-    Color? backgroundColor,
-    SnackBarPositionType position = SnackBarPositionType.top,
-  }) async {
-    if (_isSnackBarVisible) return;
-
-    final OverlayState overlayState = Overlay.of(context);
-    final GlobalKey<AnimatedSnackBarState> snackBarKey = GlobalKey<AnimatedSnackBarState>();
-
-    late OverlayEntry overlayEntry;
-
-    overlayEntry = OverlayEntry(
-      builder: (context) {
-        final mediaQuery = MediaQuery.of(context);
-        final topPadding = mediaQuery.padding.top;
-        final bottomPadding = mediaQuery.padding.bottom;
-
-        return Positioned(
-          left: 16,
-          right: 16,
-          top: position == SnackBarPositionType.top ? topPadding + kToolbarHeight + 8 : null,
-          bottom: position == SnackBarPositionType.bottom ? bottomPadding + 8 : null,
-          child: AnimatedSnackBar(key: snackBarKey, message: message, icon: icon, iconColor: iconColor, position: position),
-        );
-      },
-    );
-
-    overlayState.insert(overlayEntry);
-    _isSnackBarVisible = true;
-
-    await Future.delayed(const Duration(seconds: 4));
-
-    if (snackBarKey.currentState != null) {
-      await snackBarKey.currentState!.hideSnackBar();
-    }
-
-    if (overlayEntry.mounted) {
-      overlayEntry.remove();
-    }
-
-    _isSnackBarVisible = false;
   }
 }

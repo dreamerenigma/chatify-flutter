@@ -10,7 +10,7 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../home/controllers/emoji_stickers_controller.dart';
-import '../../../home/widgets/input/search_text_input.dart';
+import '../../../home/widgets/inputs/search_text_input.dart';
 import '../../models/gif_model.dart';
 import '../dialogs/light_dialog.dart';
 import '../dialogs/overlays/select_gif_overlay.dart';

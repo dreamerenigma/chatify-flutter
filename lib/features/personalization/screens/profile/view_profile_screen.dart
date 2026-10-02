@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:math' hide log;
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/api/chat_api.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
-import 'package:chatify/features/personalization/screens/data_storage/disappearing_messages_screen.dart';
 import 'package:chatify/features/personalization/screens/profile/photo_profile_screen.dart';
+import 'package:chatify/features/personalization/screens/profile/user_storage_management_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
@@ -18,8 +21,12 @@ import '../../../../../utils/helper/date_util.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/enums/date_format_type.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
+import '../../../../core/enums/chat_media_type.dart';
+import '../../../../core/enums/message_type.dart';
+import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../chat/models/message_model.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/screens/chat_screen.dart';
 import '../../../group/models/group_model.dart';
@@ -30,10 +37,14 @@ import '../../widgets/dialogs/add_new_contact_bottom_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/media_visibility_dialog.dart';
 import '../../widgets/images/profile_photo_widget.dart';
+import '../../widgets/items/chat_media_item.dart';
 import '../../widgets/items/profile_settings_item.dart';
 import '../../widgets/lists/group_list.dart';
+import '../../widgets/media/chat_media_preview.dart';
 import '../notifications/user_notifications_screen.dart';
+import '../privacy/privacy_protection_screen.dart';
 import 'change_contact_screen.dart';
+import 'disappearing_messages_chat_screen.dart';
 
 class ViewProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -50,15 +61,80 @@ class ViewProfileScreen extends StatefulWidget {
 class ViewProfileScreenState extends State<ViewProfileScreen> {
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
   final ScrollController _scrollController = ScrollController();
+  late final Stream<List<ChatMediaItem>> _mediaStream;
   late List<String> mediaThumbnails;
   late List<GroupModel> groups;
   bool isCloseChatEnabled = false;
   bool isProfilePhotoLoaded = false;
-  bool _isLoadingProfileImage = false;
+  bool isLoadingProfileImage = false;
   bool isFavorite = false;
   String? _profileImageUrl;
+  int mediaVisibility = 1;
+  int disappearingMessagesDuration = 3;
+  List<UserModel> get disappearingMessagesUsers => [APIs.me, widget.user];
 
   bool get isCurrentUser => APIs.auth.currentUser?.uid == widget.user.id;
+
+  String? getMediaVisibilitySubtitle(int? value) {
+    switch (value) {
+      case 1:
+        return null;
+      case 2:
+        return 'Вкл.';
+      case 3:
+        return 'Выкл.';
+      default:
+        return null;
+    }
+  }
+
+  String get disappearingMessagesSubtitle {
+    switch (disappearingMessagesDuration) {
+      case 0:
+        return '24 часа';
+      case 1:
+        return '7 дней';
+      case 2:
+        return '90 дней';
+      case 3:
+      default:
+        return S.of(context).off;
+    }
+  }
+
+  Stream<List<ChatMediaItem>> _createMediaStream() {
+    final conversationId = ChatApi.getConversationId(widget.user.id);
+
+    return APIs.firestore.collection('Chats').doc(conversationId).collection('messages').orderBy('sent', descending: true).snapshots().map((snapshot) {
+      final result = <ChatMediaItem>[];
+
+      for (final doc in snapshot.docs) {
+        final message = MessageModel.fromJson(doc.data(), id: doc.id);
+        final media = _createMediaItem(message);
+
+        if (media != null) {
+          result.add(media);
+        }
+      }
+
+      return result;
+    });
+  }
+
+  ChatMediaItem? _createMediaItem(MessageModel message) {
+    switch (message.type) {
+      case MessageType.image:
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.image, path: message.msg, sent: message.sent);
+      case MessageType.video:
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.video, path: message.msg, sent: message.sent, duration: message.videoDuration);
+      case MessageType.audio:
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.audio, path: message.msg, sent: message.sent, duration: message.audioDuration);
+      case MessageType.document:
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.document, path: message.msg, fileName: message.documentName, fileSize: message.fileSize, sent: message.sent);
+      default:
+        return null;
+    }
+  }
 
   @override
   void initState() {
@@ -71,6 +147,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       });
     });
     _loadProfileImage();
+    _mediaStream = _createMediaStream();
   }
 
   @override
@@ -88,7 +165,6 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
   Future<void> _loadProfileImage() async {
     final UserModel profileUser = isCurrentUser ? APIs.me : widget.user;
-
     final String imagePath = profileUser.image.trim();
 
     if (imagePath.isEmpty) {
@@ -104,7 +180,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
     if (mounted) {
       setState(() {
-        _isLoadingProfileImage = true;
+        isLoadingProfileImage = true;
       });
     }
 
@@ -115,7 +191,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
       setState(() {
         _profileImageUrl = url;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
         isProfilePhotoLoaded = url != null && url.isNotEmpty;
       });
 
@@ -128,7 +204,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
       setState(() {
         _profileImageUrl = null;
-        _isLoadingProfileImage = false;
+        isLoadingProfileImage = false;
         isProfilePhotoLoaded = true;
       });
     }
@@ -159,8 +235,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildProfileInfo(widget.user, context),
-                              if (!isCurrentUser)
-                                _buildMedia(),
+                              _buildMedia(),
                               _buildInfo(),
                               _buildChat(),
                               if (!isCurrentUser)
@@ -385,7 +460,14 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           child: GestureDetector(
             onTap: () {
               Clipboard.setData(ClipboardData(text: user.email));
-              Dialogs.showSnackbar(context, S.of(context).emailCopied);
+              CustomIconSnackBar.showAnimatedSnackBar(
+                context,
+                S.of(context).emailCopied,
+                icon: const Icon(BootstrapIcons.check_circle),
+                iconColor: ChatifyColors.success,
+                position: SnackBarPositionType.bottom,
+                offset: 20,
+              );
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -395,7 +477,15 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 GestureDetector(
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: user.email));
-                    Dialogs.showSnackbar(context, S.of(context).emailCopied);
+
+                    CustomIconSnackBar.showAnimatedSnackBar(
+                      context,
+                      S.of(context).emailCopied,
+                      icon: const Icon(BootstrapIcons.check_circle),
+                      iconColor: ChatifyColors.success,
+                      position: SnackBarPositionType.bottom,
+                      offset: 20,
+                    );
                   },
                   child: Icon(Icons.copy, size: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black),
                 ),
@@ -472,40 +562,40 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   Widget _buildMedia() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          StreamBuilder<firestore.QuerySnapshot>(
-            stream: APIs.firestore.collection('Users').doc(widget.user.id).collection('Documents').snapshots(),
-            builder: (context, snapshot) {
-              final int documentCount = snapshot.data?.docs.length ?? 0;
+      child: StreamBuilder<List<ChatMediaItem>>(
+        stream: _mediaStream,
+        builder: (context, snapshot) {
+          final media = snapshot.data ?? [];
 
-              return Row(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
                   Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                   const Spacer(),
-                  Text('$documentCount', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                  Text('${media.length}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
                 ],
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          if (mediaThumbnails.isNotEmpty)
-            SizedBox(
-              height: 100,
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 8, mainAxisSpacing: 8),
-                itemCount: mediaThumbnails.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(onTap: () {}, child: Image.network(mediaThumbnails[index], width: 120, height: 120, fit: BoxFit.cover));
-                },
               ),
-            ),
-        ],
+              const SizedBox(height: 10),
+              if (media.isNotEmpty)
+                SizedBox(
+                  height: 100,
+                  child: GridView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: min(media.length, 5),
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisExtent: 100, mainAxisSpacing: 8),
+                    itemBuilder: (context, index) {
+                      return ChatMediaPreview(key: ValueKey(media[index].messageId), media: media[index]);
+                    },
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -514,14 +604,16 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        ProfileSettingsItem(
+          icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+          title: 'Управление хранилищем',
+          subtitle: '77 KB',
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          onTap: () {
+            Navigator.push(context, createPageRoute(UserStorageManagementScreen(user: widget.user, mediaStream: _mediaStream)));
+          },
+        ),
         if (!isCurrentUser) ...[
-          ProfileSettingsItem(
-            icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
-            title: 'Управление хранилищем',
-            subtitle: '77 KB',
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            onTap: () {},
-          ),
           SizedBox(height: 6),
           ProfileSettingsItem(
             icon: const Icon(Icons.notifications_none, color: ChatifyColors.darkGrey, size: 25),
@@ -532,13 +624,22 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             },
           ),
         ],
-        SizedBox(height: !isCurrentUser ? 20 : 35),
+        SizedBox(height: !isCurrentUser ? 20 : 10),
         ProfileSettingsItem(
           icon: const Icon(Icons.image_outlined, color: ChatifyColors.darkGrey, size: 24),
           title: S.of(context).mediaVisibility,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          subtitle: getMediaVisibilitySubtitle(mediaVisibility),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           onTap: () {
-            showMediaVisibilityDialog(context);
+            showMediaVisibilityDialog(
+              context,
+              selectedValue: mediaVisibility,
+              onSelected: (int value) {
+                setState(() {
+                  mediaVisibility = value;
+                });
+              },
+            );
           },
         ),
         SizedBox(height: 20),
@@ -563,10 +664,19 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         ProfileSettingsItem(
           icon: SvgPicture.asset(ChatifyVectors.timerOutline, width: 21, height: 21, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
           title: S.of(context).disappearingMessages,
-          subtitle: S.of(context).off,
+          subtitle: disappearingMessagesSubtitle,
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {
-            Navigator.push(context, createPageRoute(DisappearingMessagesScreen()));
+          onTap: () async {
+            final result = await Navigator.push<int>(
+              context,
+              createPageRoute(DisappearingMessagesChatScreen(users: disappearingMessagesUsers, selectedDuration: disappearingMessagesDuration)),
+            );
+
+            if (result != null) {
+              setState(() {
+                disappearingMessagesDuration = result;
+              });
+            }
           },
         ),
         const SizedBox(height: 10),
@@ -599,7 +709,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           title: 'Расширенная защита конфиденциальности в чате',
           subtitle: 'Выкл.',
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, createPageRoute(PrivacyProtectionScreen()));
+          },
         ),
         const SizedBox(height: 10),
         ProfileSettingsItem(
@@ -655,7 +767,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GroupList(groups: groups, currentUser: APIs.me.name, onGroupSelected: (group) {}),
+              child: GroupList(groups: groups, currentUser: APIs.me.name, onGroupSelected: (group) {}, user: {}),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

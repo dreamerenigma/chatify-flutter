@@ -102,7 +102,8 @@ class SplashScreenState extends State<SplashScreen> {
       backgroundColor: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey.withAlpha((0.7 * 255).toInt()),
       body: Stack(
         children: [
-          if (isWebOrWindows) Center(child: Image.asset(logoAsset, width: mq.size.width * .15))
+          if (isWebOrWindows)
+            Center(child: SvgPicture.asset(logoAsset, width: mq.size.width * .15))
           else
             Positioned(top: mq.size.height * 0.35, left: 0, right: 0, child: Center(child: SvgPicture.asset(logoAsset, width: mq.size.width * .5, height: mq.size.width * .5))),
           Align(

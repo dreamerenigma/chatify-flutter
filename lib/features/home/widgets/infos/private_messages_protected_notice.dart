@@ -8,10 +8,19 @@ import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../dialogs/chats_calls_privacy_sheet_dialog.dart';
 
 class PrivateMessagesProtectedNotice extends StatelessWidget {
-  const PrivateMessagesProtectedNotice({super.key});
+  final double? fontSize;
+  final String? additionalText;
+
+  const PrivateMessagesProtectedNotice({
+    super.key,
+    this.fontSize,
+    this.additionalText,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final textFontSize = fontSize ?? ChatifySizes.fontSizeLm;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -26,16 +35,16 @@ class PrivateMessagesProtectedNotice extends StatelessWidget {
                       alignment: PlaceholderAlignment.middle,
                       child: Padding(
                         padding: const EdgeInsets.only(right: 6),
-                        child: Icon(Icons.lock_outline, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, size: 14),
+                        child: Icon(Icons.lock_outline, size: 14, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
                       ),
                     ),
                     TextSpan(
                       text: S.of(context).yourPrivateMessagesProtected,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontWeight: FontWeight.w400),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: textFontSize, fontWeight: FontWeight.w400, height: 1.5),
                     ),
                     TextSpan(
                       text: S.of(context).endToEndEncryption,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: textFontSize, fontWeight: FontWeight.bold, height: 1.5),
                       recognizer: TapGestureRecognizer()..onTap = () {
                         showChatsCallsPrivacyBottomSheet(
                           context,
@@ -44,6 +53,11 @@ class PrivateMessagesProtectedNotice extends StatelessWidget {
                         );
                       },
                     ),
+                    if (additionalText != null)
+                      TextSpan(
+                        text: ' $additionalText',
+                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: textFontSize, fontWeight: FontWeight.w400, height: 1.5),
+                      ),
                   ],
                 ),
               ),

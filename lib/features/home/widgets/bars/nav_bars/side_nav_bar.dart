@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/constants/app_colors.dart';
@@ -5,14 +6,15 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
-import '../../../../generated/l10n/l10n.dart';
-import '../../../../utils/constants/app_sizes.dart';
-import '../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/popups/custom_tooltip.dart';
-import '../../../chat/models/user_model.dart';
-import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../dialogs/settings_dialog.dart';
+import '../../../../../api/apis.dart';
+import '../../../../../generated/l10n/l10n.dart';
+import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/constants/app_vectors.dart';
+import '../../../../../utils/devices/device_utility.dart';
+import '../../../../../utils/popups/custom_tooltip.dart';
+import '../../../../chat/models/user_model.dart';
+import '../../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../dialogs/settings_dialog.dart';
 
 class SideNavBar extends StatefulWidget {
   final UserModel user;
@@ -41,6 +43,8 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
   late Animation<double> _rotationAnimation;
   late AnimationController _pulseController;
   bool isRotated = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
 
   @override
   void initState() {
@@ -49,6 +53,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
     _rotationAnimation = Tween<double>(begin: 0.0, end: 3.14159).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
     _pulseController = AnimationController(vsync: this, duration: Duration(seconds: 1))..repeat(reverse: true);
     APIs.loadUserDataFromFirestore();
+    _loadProfileImage();
   }
 
   @override
@@ -56,6 +61,40 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
     _animationController.dispose();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
   }
 
   @override
@@ -195,7 +234,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                           fit: FlexFit.tight,
                           child: Text(
                             label,
-                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                            style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -251,7 +290,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
       verticalOffset: -50,
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       message: S.of(context).openNavigation,
-      textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
+      textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
       decoration: BoxDecoration(
         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
         borderRadius: BorderRadius.circular(8),
@@ -302,7 +341,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                       Expanded(
                         child: Text(
                           S.of(context).menu,
-                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
+                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -329,7 +368,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
       verticalOffset: -50,
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       message: S.of(context).profile,
-      textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
+      textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
       decoration: BoxDecoration(
         color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
         borderRadius: BorderRadius.circular(8),
@@ -356,20 +395,18 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ClipOval(
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .2),
                   child: CachedNetworkImage(
                     width: 24,
                     height: 24,
-                    imageUrl: widget.user.image,
+                    imageUrl: _profileImageUrl ?? '',
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => CircleAvatar(
-                      backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                      foregroundColor:  context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                      child: SvgPicture.asset(
-                        ChatifyVectors.newUser,
-                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn),
-                        width: 24,
-                        height: 24,
+                    errorWidget: (context, url, error) =>
+                      CircleAvatar(
+                        backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        foregroundColor: ChatifyColors.white,
+                        child: SvgPicture.asset(ChatifyVectors.profile, width: 24, height: 24,
                       ),
                     ),
                   ),
@@ -379,7 +416,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                   Expanded(
                     child: Text(
                       S.of(context).profile,
-                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

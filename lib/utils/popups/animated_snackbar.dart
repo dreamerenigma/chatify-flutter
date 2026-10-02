@@ -65,7 +65,7 @@ class AnimatedSnackBarState extends State<AnimatedSnackBar> with SingleTickerPro
                   end: Alignment.bottomRight,
                   colors: context.isDarkMode ? [ChatifyColors.white.withAlpha(35), ChatifyColors.white.withAlpha(15)] : [ChatifyColors.white.withAlpha(150), ChatifyColors.white.withAlpha(80)],
                 ),
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white.withAlpha(180), width: 1),
+                border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withValues(alpha: 0.15) : ChatifyColors.white.withAlpha(180), width: 1),
                 boxShadow: [
                   BoxShadow(color: ChatifyColors.black.withAlpha(context.isDarkMode ? 70 : 25), blurRadius: 20, spreadRadius: 1, offset: const Offset(0, 6)),
                   BoxShadow(color: ChatifyColors.white.withAlpha(context.isDarkMode ? 12 : 70,), blurRadius: 10, spreadRadius: -2, offset: const Offset(0, -2)),

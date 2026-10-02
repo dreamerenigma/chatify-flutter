@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:chatify/features/chat/widgets/messages/voice_record_message.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:heroicons/heroicons.dart';
-import '../../../../../utils/constants/app_sizes.dart';
-import '../../../../../utils/helper/date_util.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -17,17 +15,22 @@ import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../survey/widgets/cards/survey_message_card.dart';
+import '../../models/message_bubble_model.dart';
 import '../../models/message_model.dart';
 import '../../models/user_model.dart';
 import '../../screens/forward_message_screen.dart';
 import '../buttons/emoji_hover_button.dart';
+import '../cards/event_message_card.dart';
 import '../dialogs/call_modal_bottom_sheet.dart';
 import '../dialogs/edit_message_dialog.dart';
+import '../dialogs/event_info_bottom_sheet_dialog.dart';
 import '../widget/media_widget.dart';
 import '../painters/triangle_painter.dart';
 import 'call_message.dart';
 import 'emoji_message.dart';
 import 'message_bubble.dart';
+import 'message_meta.dart';
 import 'message_text.dart';
 
 class SenderMessage extends StatefulWidget {
@@ -35,6 +38,7 @@ class SenderMessage extends StatefulWidget {
   final MessageModel message;
   final List<MessageModel> messages;
   final bool hasReaction;
+  final String conversationId;
 
   const SenderMessage({
     super.key,
@@ -42,6 +46,7 @@ class SenderMessage extends StatefulWidget {
     required this.message,
     required this.messages,
     required this.hasReaction,
+    required this.conversationId,
   });
 
   @override
@@ -54,6 +59,8 @@ class SenderMessageState extends State<SenderMessage> {
   bool isDownloading = false;
   bool isPressed = false;
   bool isDialogVisible = false;
+  bool _videoHasStarted = false;
+  int _videoPosition = 0;
   Duration? videoDuration;
   Timer? hoverTimer;
 
@@ -128,6 +135,48 @@ class SenderMessageState extends State<SenderMessage> {
     showEditMessageDialog(context, position, _containerKey);
   }
 
+  void _updateVideoPosition(Duration position) {
+    if (!mounted) return;
+
+    final seconds = position.inSeconds;
+
+    if (_videoHasStarted && _videoPosition != seconds) {
+      setState(() {
+        _videoPosition = seconds;
+      });
+    }
+  }
+
+  void _onVideoStarted() {
+    if (!mounted) return;
+
+    setState(() {
+      _videoHasStarted = true;
+      _videoPosition = 0;
+    });
+  }
+
+  Future<void> _openCalendar() async {
+    final event = widget.message.event;
+
+    if (event == null) return;
+
+    final DateTime start = event.startEvent.toDate();
+    final intent = AndroidIntent(
+      action: 'android.intent.action.INSERT',
+      data: 'content://com.android.calendar/events',
+      arguments: {
+        'beginTime': start.millisecondsSinceEpoch,
+        'endTime': start.add(const Duration(hours: 1)).millisecondsSinceEpoch,
+        'title': event.name,
+        'description': event.location,
+        'eventLocation': event.location,
+      },
+    );
+
+    await intent.launch();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -178,9 +227,14 @@ class SenderMessageState extends State<SenderMessage> {
         return _buildCallMessage();
       case MessageType.voice:
         return _buildVoiceRecordMessage();
+      case MessageType.survey:
+        return _buildSurveyMessage();
+      case MessageType.event:
+        return _buildEventMessage();
       case MessageType.image:
       case MessageType.gif:
       case MessageType.video:
+      case MessageType.audio:
       case MessageType.document:
         return _buildMediaMessage();
       default:
@@ -398,13 +452,18 @@ class SenderMessageState extends State<SenderMessage> {
 
   Widget _buildMediaMessage() {
     final isVideo = widget.message.type == MessageType.video;
-
     final double bottomOffset;
+
     switch (widget.message.type) {
       case MessageType.video:
         bottomOffset = 1;
         break;
       case MessageType.audio:
+        bottomOffset = -3;
+        break;
+      case MessageType.voice:
+        bottomOffset = -3;
+      case MessageType.document:
         bottomOffset = -3;
         break;
       default:
@@ -452,7 +511,7 @@ class SenderMessageState extends State<SenderMessage> {
                 ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
                 : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+                color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.lightGrey,
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey),
                 borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
               ),
@@ -474,18 +533,13 @@ class SenderMessageState extends State<SenderMessage> {
                       });
                     },
                     imageUrls: widget.messages.where((m) => m.type == MessageType.image).map((m) => m.msg.trim()).toList(),
+                    onVideoPositionChanged: _updateVideoPosition,
+                    onVideoStarted: _onVideoStarted,
                   ),
                   Positioned(
                     bottom: bottomOffset,
-                    right: 6,
-                    child: Text(
-                      DateUtil.getFormattedTime(context: context, time: widget.message.sent),
-                      style: TextStyle(
-                        color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
-                        fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    right: 2,
+                    child: MessageMeta(message: widget.message, isWebOrWindows: isWebOrWindows, showCheck: true, isSender: true),
                   ),
                 ],
               ),
@@ -499,42 +553,66 @@ class SenderMessageState extends State<SenderMessage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    HeroIcon(HeroIcons.videoCamera, color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, size: 13),
+                    Icon(Icons.videocam_rounded, size: 18, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.darkGrey),
                     const SizedBox(width: 4),
-                    Text(Formatter.formatDurationVideo(videoDuration), style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1)),
+                    Text(
+                      Formatter.formatDurationVideo(_videoHasStarted ? _videoPosition : widget.message.videoDuration),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1),
+                    ),
                   ],
                 ),
               ),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
-              Positioned(
-                right: -35,
-                top: 0,
-                bottom: 0,
-                child: AnimatedSlide(
-                  offset: isHovered ? Offset.zero : const Offset(-1.0, 0),
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  child: AnimatedOpacity(
-                    opacity: isHovered ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeOutBack,
-                      width: isHovered ? null : 0,
-                      constraints: isHovered ? const BoxConstraints() : const BoxConstraints(maxWidth: 0),
-                      clipBehavior: Clip.hardEdge,
-                      decoration: const BoxDecoration(),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          EmojiHoverButton(containerKey: _containerKey),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _buildHoverActions(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSurveyMessage() {
+    final survey = widget.message.survey;
+
+    if (survey == null) {
+      return const SizedBox.shrink();
+    }
+
+    return SurveyMessageCard(message: widget.message, survey: survey, isMe: true, conversationId: widget.conversationId, user: widget.user);
+  }
+
+  Widget _buildEventMessage() {
+    final event = widget.message.event;
+
+    if (event == null) {
+      return const SizedBox.shrink();
+    }
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      child: GestureDetector(
+        onTap: () {
+          showEventInfoBottomSheetDialog(context, widget.user, widget.message);
+        },
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            MessageBubble(
+              key: _containerKey,
+              message: widget.message,
+              isWebOrWindows: isWebOrWindows,
+              isPressed: isPressed,
+              actions: [MessageBubbleModel(title: 'Показать голоса', onTap: () {})],
+              onSecondaryTap: _handleSecondaryTap,
+              showInnerContainer: true,
+              showMetaCheck: true,
+              type: MessageBubbleType.recipient,
+              child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: EventMessageCard(event: event, ownerId: widget.user, user: widget.user)),
+            ),
+            _buildMessageTail(),
+            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+              _buildHoverActions(),
           ],
         ),
       ),

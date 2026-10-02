@@ -8,19 +8,21 @@ import '../../../../../../utils/constants/app_sizes.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../models/newsletter_model.dart';
 import '../../../screens/newsletter_settings_screen.dart';
 
 class NewsletterChatAppbar extends StatefulWidget {
+  final NewsletterModel newsletter;
   final List<String> newsletters;
 
   const NewsletterChatAppbar({
     super.key,
+    required this.newsletter,
     required this.newsletters,
   });
 
   @override
-  State<NewsletterChatAppbar> createState() =>
-      _NewsletterChatAppbarState();
+  State<NewsletterChatAppbar> createState() => _NewsletterChatAppbarState();
 }
 
 class _NewsletterChatAppbarState extends State<NewsletterChatAppbar> {
@@ -66,18 +68,6 @@ class _NewsletterChatAppbarState extends State<NewsletterChatAppbar> {
             shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
             overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
           ),
-          onSelected: (value) {
-            if (value == 1) {
-            } else if (value == 2) {
-
-            } else if (value == 3) {
-
-            } else if (value == 4) {
-
-            } else if (value == 5) {
-
-            }
-          },
           itemBuilder: (context) => [
             PopupMenuItem<int>(
               value: 1,
@@ -144,7 +134,7 @@ class _NewsletterChatAppbarState extends State<NewsletterChatAppbar> {
         highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
         onTap: () {
-          Navigator.push(context, createPageRoute(const NewsletterSettingsScreen()));
+          Navigator.push(context, createPageRoute(NewsletterSettingsScreen(newsletter: widget.newsletter, newsletters: widget.newsletters)));
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

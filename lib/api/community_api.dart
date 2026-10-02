@@ -12,8 +12,7 @@ import '../features/community/models/community_model.dart';
 import '../generated/l10n/l10n.dart';
 import '../utils/constants/app_colors.dart';
 import '../utils/constants/app_vectors.dart';
-import '../utils/popups/app_loaders.dart';
-import '../utils/popups/dialogs.dart' hide CustomIconSnackBar;
+import '../utils/popups/dialogs.dart';
 import 'apis.dart';
 
 class CommunityApi {

@@ -47,65 +47,67 @@ class EditPhoneScreenState extends State<EditPhoneScreen> {
           ),
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  Center(child: SvgPicture.asset(asset, width: 70, height: 70)),
-                  const SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
-                    child: Text(S.of(context).changingYourPhoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.5)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 16),
-                    child: Text('Мероприятия и запланированные звонки не будут перенесены на ваш новый номер и будут удалены.', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.5)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      S.of(context).beforeContinueReceiveCallsNumber,
-                      style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    Center(child: SvgPicture.asset(asset, width: 70, height: 70)),
+                    const SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
+                      child: Text(S.of(context).changingYourPhoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.5)),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      S.of(context).changedPhoneYourNumber,
-                      style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 16),
+                      child: Text('Мероприятия и запланированные звонки не будут перенесены на ваш новый номер и будут удалены.', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.5)),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 20),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(context, createPageRoute(AddEditPhoneScreen(user: widget.user)));
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: ChatifyColors.white,
-                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  side: BorderSide.none,
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        S.of(context).beforeContinueReceiveCallsNumber,
+                        style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        S.of(context).changedPhoneYourNumber,
+                        style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Text(S.of(context).next, style: TextStyle( color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 20),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, createPageRoute(AddEditPhoneScreen(user: widget.user)));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ChatifyColors.white,
+                    backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    side: BorderSide.none,
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                  ),
+                  child: Text(S.of(context).next, style: TextStyle( color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

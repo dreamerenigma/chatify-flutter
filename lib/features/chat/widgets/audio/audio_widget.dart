@@ -294,8 +294,7 @@ class AudioWidgetState extends State<AudioWidget> {
                                     value: _downloadProgress,
                                     strokeWidth: 2.5,
                                     color: ChatifyColors.primary,
-                                    backgroundColor:
-                                    ChatifyColors.primary.withAlpha(40),
+                                    backgroundColor: ChatifyColors.primary.withAlpha(40),
                                   ),
                                 ),
                                 const Icon(Icons.close_rounded, size: 20, color: ChatifyColors.iconGrey),

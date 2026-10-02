@@ -104,18 +104,12 @@ class _IncomingCallControlPanelState extends State<IncomingCallControlPanel> {
                           onPressed: _acceptCall,
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          S.of(context).accept,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400, height: 1.3),
+                        Opacity(
+                          opacity: 1.0 - progress,
+                          child: Text(S.of(context).swipeUpToAccept, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400, height: 1.3)),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Opacity(
-                    opacity: 1.0 - progress,
-                    child: Text(S.of(context).swipeUpToAccept, textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 13, fontWeight: FontWeight.w400, height: 1.3)),
                   ),
                 ],
               ),
