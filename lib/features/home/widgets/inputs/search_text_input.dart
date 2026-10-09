@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,8 @@ import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/platforms/platform_utils.dart';
+import '../../../../utils/popups/custom_tooltip.dart';
 import '../../../authentication/widgets/inputs/phone_input_formatter.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
@@ -116,17 +117,10 @@ class SearchTextInputState extends State<SearchTextInput> {
   @override
   Widget build(BuildContext context) {
     Widget tooltipWidget = widget.showTooltip
-      ? Tooltip(
-          verticalOffset: -50,
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      ? CustomTooltip(
+          verticalOffset: -75,
+          horizontalOffset: -20,
           message: 'Ctrl+F',
-          textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300),
-          decoration: BoxDecoration(
-            color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
-          ),
           child: _buildSearchTextInput(),
         )
       : _buildSearchTextInput();
@@ -150,7 +144,7 @@ class SearchTextInputState extends State<SearchTextInput> {
           selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
         ),
         child: SizedBox(
-          height: widget.maxLines == 1 ? 32 : null,
+          height: widget.maxLines == 1 ? 38 : null,
           child: TextField(
             controller: _controller,
             focusNode: _focusNode,
@@ -160,12 +154,16 @@ class SearchTextInputState extends State<SearchTextInput> {
             keyboardType: widget.allowOnlyDigits ? TextInputType.number : TextInputType.text,
             inputFormatters: widget.allowOnlyDigits ? [PhoneNumberInputFormatter()] : [],
             decoration: InputDecoration(
-              prefixIconConstraints: widget.prefixIconConstraints ?? const BoxConstraints(minWidth: 32, minHeight: 32),
+              prefixIconConstraints: widget.prefixIconConstraints ?? BoxConstraints(minWidth: isWindows ? 12 : 32, minHeight: isWindows ? 12 : 32),
               prefixIcon: widget.showPrefixIcon
-                ? Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(math.pi),
-                    child: SvgPicture.asset(ChatifyVectors.searchOutline, width: 14, height: 14, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, BlendMode.srcIn)),
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 6),
+                    child: SvgPicture.asset(
+                      ChatifyVectors.searchOutline,
+                      width: 16,
+                      height: 16,
+                      colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, BlendMode.srcIn),
+                    ),
                   )
                 : null,
               suffixIconConstraints: BoxConstraints(minWidth: 28, minHeight: 28),
@@ -209,13 +207,13 @@ class SearchTextInputState extends State<SearchTextInput> {
                   )
                 : null,
               hintText: widget.hintText,
-              hintStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w200, overflow: TextOverflow.ellipsis),
+              hintStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.steelGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis),
               border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: widget.underlineBorderColor ?? widget.enabledBorderColor ?? (context.isDarkMode ? ChatifyColors.lightGrey : ChatifyColors.grey), width: 0.5), borderRadius: BorderRadius.circular(4)),
               focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2), borderRadius: BorderRadius.circular(4)),
-              contentPadding: widget.showPrefixIcon ? EdgeInsets.only(right: 12) : EdgeInsets.only(left: 12, right: 4, bottom: 18),
+              contentPadding: widget.showPrefixIcon ? EdgeInsets.only(left: 12, right: 12, bottom: 12) : EdgeInsets.only(left: 12, right: 4, bottom: 18),
             ),
-            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto', height: 1.3),
+            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3),
           ),
         ),
       ),

@@ -208,21 +208,8 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
             ],
       ),
       body: isLoading
-          ? Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(
-            colorsController.getColor(
-              colorsController.selectedColorScheme.value,
-            ),
-          ),
-        ),
-      )
-          : ScrollbarTheme(
-        data: ScrollbarThemeData(
-          thumbColor: WidgetStateProperty.all(
-            ChatifyColors.darkerGrey,
-          ),
-        ),
+        ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))
+        : ScrollbarTheme(data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
         child: Scrollbar(
           thickness: 4,
           thumbVisibility: false,
@@ -253,54 +240,25 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
                                         children: [
                                           ClipRRect(
                                             borderRadius:
-                                            BorderRadius.circular(
-                                              DeviceUtils.getScreenHeight(
-                                                context,
-                                              ) *
-                                                  .03,
-                                            ),
+                                            BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03),
                                             child: CachedNetworkImage(
-                                              width:
-                                              DeviceUtils.getScreenHeight(
-                                                context,
-                                              ) *
-                                                  .055,
-                                              height:
-                                              DeviceUtils.getScreenHeight(
-                                                context,
-                                              ) *
-                                                  .055,
+                                              width: DeviceUtils.getScreenHeight(context) * .055,
+                                              height: DeviceUtils.getScreenHeight(context) * .055,
                                               imageUrl: user.image,
                                               fit: BoxFit.cover,
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                  CircleAvatar(
-                                                    backgroundColor:
-                                                    colorsController.getColor(
-                                                      colorsController
-                                                          .selectedColorScheme
-                                                          .value,
-                                                    ),
-                                                    backgroundImage:
-                                                    NetworkImage(user.image),
-                                                    foregroundColor:
-                                                    ChatifyColors.white,
-                                                    child: const Icon(
-                                                      CupertinoIcons.person,
-                                                    ),
-                                                  ),
+                                              errorWidget: (context, url, error) =>
+                                                CircleAvatar(
+                                                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                                  backgroundImage: NetworkImage(user.image),
+                                                  foregroundColor: ChatifyColors.white,
+                                                  child: const Icon(CupertinoIcons.person),
+                                                ),
                                             ),
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            user.name.length > 7
-                                                ? '${user.name.substring(0, 7)}...'
-                                                : user.name,
-                                            style: TextStyle(
-                                              fontSize:
-                                              ChatifySizes.fontSizeLm,
-                                              fontWeight: FontWeight.w400,
-                                            ),
+                                            user.name.length > 7 ? '${user.name.substring(0, 7)}...' : user.name,
+                                            style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.center,
                                           ),
@@ -314,22 +272,12 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
                                             _toggleUserSelection(user);
                                           },
                                           child: Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: ChatifyColors.black,
-                                                width: 2,
-                                              ),
-                                            ),
+                                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
                                             child: const CircleAvatar(
                                               backgroundColor:
                                               ChatifyColors.grey,
                                               radius: 12,
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 16,
-                                                color: ChatifyColors.black,
-                                              ),
+                                              child: Icon(Icons.close, size: 16, color: ChatifyColors.black),
                                             ),
                                           ),
                                         ),

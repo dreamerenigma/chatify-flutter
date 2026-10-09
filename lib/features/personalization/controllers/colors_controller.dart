@@ -63,6 +63,21 @@ class ColorsController extends GetxController {
     }
   }
 
+  Color getSelectedColor(String colorScheme) {
+    switch (colorScheme) {
+      case 'blue':
+        return ChatifyColors.blueMessageLight;
+      case 'red':
+        return ChatifyColors.redMessageLight;
+      case 'green':
+        return ChatifyColors.greenMessageBubbleRecipient;
+      case 'orange':
+        return ChatifyColors.redMessageLight;
+      default:
+        return Get.isDarkMode ? ChatifyColors.white : ChatifyColors.black;
+    }
+  }
+
   String getAsset(ChatifyColorAssets assets) {
     return assets.get(selectedColorScheme.value);
   }

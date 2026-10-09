@@ -41,14 +41,7 @@ void showChatsCallsPrivacyOverlay(BuildContext context) {
                   decoration: BoxDecoration(
                     border: Border.all(color: ChatifyColors.darkerGrey, width: 1),
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -93,7 +86,7 @@ void showChatsCallsPrivacyOverlay(BuildContext context) {
                                       ),
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 6),
-                                        child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                                        child: Text(S.of(context).readMore, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                       ),
                                     ),
                                   ),
@@ -118,7 +111,7 @@ void showChatsCallsPrivacyOverlay(BuildContext context) {
                                       ),
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 6),
-                                        child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white)),
+                                        child: Text(S.of(context).ok, style: TextStyle(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                       ),
                                     ),
                                   ),

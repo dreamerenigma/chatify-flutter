@@ -22,10 +22,13 @@ import '../core/services/media/media_service.dart';
 import '../features/authentication/screens/add_account_screen.dart';
 import '../features/authentication/widgets/dialogs/consent_dialog.dart';
 import '../features/bot/models/info_app_model.dart';
+import '../features/chat/models/mention_data_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/chat/models/user_status_model.dart';
 import '../features/community/models/community_model.dart';
 import '../features/home/screens/home_screen.dart';
+import '../features/personalization/models/blocked_user_model.dart';
+import '../features/personalization/models/social_link_model.dart';
 import '../generated/l10n/l10n.dart';
 import '../routes/custom_page_route.dart';
 import '../utils/constants/app_links.dart';
@@ -59,7 +62,7 @@ class APIs {
   /// -- Accessing media service.
   static MediaService get mediaService => Get.find<MediaService>();
 
-  /// -- .
+  /// -- Get a temporary download URL for media stored on Yandex Disk.
   static Future<String?> getMediaUrl(String path) async {
     final mediaPath = path.trim();
 
@@ -277,6 +280,18 @@ class APIs {
     return null;
   }
 
+  /// Returns IDs of users from current user's contacts.
+  static Future<List<String>> getMyUserIds() async {
+    try {
+      final snapshot = await firestore.collection('Users').doc(me.id).collection('my_users').get();
+
+      return snapshot.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      log('Error fetching my user IDs: $e');
+      return [];
+    }
+  }
+
   /// -- Getting current user info.
   static Future<bool> checkIfUserExists(String id) async {
     try {
@@ -298,16 +313,18 @@ class APIs {
       name: userData['name'] ?? 'Неизвестный пользователь',
       surname: userData['surname'] ?? 'Неизвестный пользователь',
       username: userData['username'] ?? '',
+      links: (userData['links'] as List?)?.whereType<Map>().map((item) => SocialLinkModel.fromJson(Map<String, dynamic>.from(item)),).toList() ?? [],
       email: userData['email'] ?? '',
-      phoneNumber: userData['phoneNumber'] ?? '',
+      phoneNumber: userData['phone_number'] ?? '',
       about: userData['about'] ?? 'Привет я использую Chatify!',
       status: userData['status'] ?? 'Онлайн',
       image: userData['image'] ?? '',
-      createdAt: userData['createdAt'] ?? now,
-      lastActive: userData['lastActive'] ?? now,
-      isOnline: userData['isOnline'] ?? false,
-      pushToken: userData['pushToken'] ?? '',
-      isTyping: userData['isTyping'] ?? false,
+      createdAt: userData['created_at'] is Timestamp ? (userData['created_at'] as Timestamp).toDate() : now,
+      lastActive: userData['last_active'] is Timestamp ? (userData['last_active'] as Timestamp).toDate() : now,
+      isOnline: userData['is_online'] ?? false,
+      isFavorite: userData['is_favorite'] ?? false,
+      pushToken: userData['push_token'] ?? '',
+      isTyping: userData['is_typing'] ?? false,
       role: userData['role'] ?? 'User',
     );
   }
@@ -325,6 +342,7 @@ class APIs {
       name: name,
       surname: surname,
       username: username,
+      links: [],
       email: user.email.toString(),
       phoneNumber: user.phoneNumber?.isNotEmpty == true ? user.phoneNumber! : '',
       about: S.of(context).aboutText,
@@ -332,6 +350,7 @@ class APIs {
       image: user.photoURL.toString(),
       createdAt: time,
       isOnline: false,
+      isFavorite: false,
       lastActive: time,
       pushToken: '',
       isTyping: false,
@@ -398,7 +417,7 @@ class APIs {
   }
 
   /// -- Adding an user to my user when first message in send.
-  static Future<void> sendFirstMessage(UserModel chatUser, String msg, MessageType type) async {
+  static Future<void> sendFirstMessage(UserModel chatUser, String msg, MessageType type, {String? replyToMessageId, List<MentionDataModel>? mentions}) async {
     await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({}, SetOptions(merge: true));
     await ChatApi.sendMessage(chatUser, msg, type);
   }
@@ -756,6 +775,73 @@ class APIs {
     }
   }
 
+  /// -- Block user.
+  static Future<void> blockUser(UserModel user) async {
+    log('BLOCK USER: START');
+    log('BLOCK USER: currentUser = ${APIs.me.id}');
+    log('BLOCK USER: targetUser = ${user.id}');
+
+    final currentUser = APIs.me;
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(currentUser.id);
+    final blockedUserRef = userRef.collection('blocked_users').doc(user.id);
+    final blockedUser = BlockedUserModel(userId: user.id, userImage: user.image, phoneNumber: user.phoneNumber);
+    final batch = FirebaseFirestore.instance.batch();
+
+    log('BLOCK USER: setting blocked_users/${user.id}');
+
+    batch.set(blockedUserRef, blockedUser.toJson());
+
+    await batch.commit();
+
+    log('BLOCK USER: BATCH COMMITTED');
+  }
+
+  /// -- Unblock user.
+  static Future<void> unBlockUser(UserModel user) async {
+    final currentUser = APIs.me;
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(currentUser.id);
+    final blockedUserRef = userRef.collection('blocked_users').doc(user.id);
+
+    await blockedUserRef.delete();
+  }
+
+  /// -- Check block user.
+  static Future<bool> isUserBlocked(String userId) async {
+    final snapshot = await FirebaseFirestore.instance.collection('Users').doc(APIs.me.id).collection('blocked_users').doc(userId).get();
+
+    return snapshot.exists;
+  }
+
+  /// -- Submit complaint.
+  static Future<bool> submitComplaint({required String userId, required String reason, String? description}) async {
+    try {
+      log('SUBMIT COMPLAINT: START');
+      log('SUBMIT COMPLAINT: userId = $userId');
+      log('SUBMIT COMPLAINT: reason = $reason');
+      log('SUBMIT COMPLAINT: description = $description');
+
+      // final response = await ApiService.post(
+      //   '/complaints',
+      //   body: {
+      //     'user_id': userId,
+      //     'reason': reason,
+      //     'description': description,
+      //   },
+      // );
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      log('SUBMIT COMPLAINT: SUCCESS');
+
+      return true;
+    } catch (e, stackTrace) {
+      log('SUBMIT COMPLAINT: ERROR = $e');
+      log('$stackTrace');
+
+      return false;
+    }
+  }
+
   /// -- Delete account.
   static Future<void> deleteAccount() async {
     try {
@@ -784,6 +870,61 @@ class APIs {
       }
     } catch (e) {
       log('Failed to delete account: $e');
+    }
+  }
+
+  /// -- Add user to favorites.
+  static Future<void> addUserToFavorites(UserModel user) async {
+    final currentUser = APIs.me;
+
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(currentUser.id).collection('my_users').doc(user.id);
+
+    await userRef.set(
+      {
+        'is_favorite': true,
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  /// -- Remove user from favorites.
+  static Future<void> removeUserFromFavorites(UserModel user) async {
+    final currentUser = APIs.me;
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(currentUser.id).collection('my_users').doc(user.id);
+
+    await userRef.set(
+      {
+        'is_favorite': false,
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  /// -- Check if user is favorite.
+  static Future<bool> isUserFavorite(String userId) async {
+    final snapshot = await FirebaseFirestore.instance.collection('Users').doc(APIs.me.id).collection('my_users').doc(userId).get();
+
+    return snapshot.data()?['is_favorite'] == true;
+  }
+
+  /// -- Get favorite users.
+  static Future<List<UserModel>> getFavoriteUsers() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('Users').doc(APIs.me.id).collection('my_users').where('is_favorite', isEqualTo: true).get();
+      final users = <UserModel>[];
+
+      for (final doc in snapshot.docs) {
+        final user = await getUserById(doc.id);
+
+        if (user != null) {
+          users.add(user);
+        }
+      }
+
+      return users;
+    } catch (e) {
+      log('Error getting favorite users: $e');
+      return [];
     }
   }
 
@@ -833,6 +974,21 @@ class APIs {
       return true;
     } catch (e) {
       log('UPDATE USERNAME: error = $e');
+      return false;
+    }
+  }
+
+  /// -- Create social link.
+  static Future<bool> createLink(SocialLinkModel link) async {
+    try {
+      final userId = APIs.user.uid;
+      final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
+
+      await userRef.update({'links': FieldValue.arrayUnion([link.toJson()])});
+
+      return true;
+    } catch (e) {
+      log('CREATE LINK ERROR: $e');
       return false;
     }
   }
@@ -962,7 +1118,7 @@ class APIs {
     }
   }
 
-  /// ---
+  /// --- .
   static Stream<QuerySnapshot<Map<String, dynamic>>> getSupportMessages(String supportChatId) {
     return firestore.collection('SupportChats').doc(supportChatId).collection('messages').orderBy('timestamp', descending: false).snapshots();
   }

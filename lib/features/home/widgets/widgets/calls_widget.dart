@@ -83,14 +83,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                         color: context.isDarkMode ? ChatifyColors.youngNight.withAlpha((0.7 * 255).toInt()) : ChatifyColors.white,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.grey, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: Offset(1, 2),
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: Offset(1, 2))],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 16, right: 10, top: 14),
@@ -158,7 +151,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                 if (hasFavoriteCalls) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    child: Text(S.of(context).recent, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                    child: Text(S.of(context).recent, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
                 ],
               ],
@@ -208,7 +201,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                 const SizedBox(width: 12),
                 Text(
                   S.of(context).addToFavorites,
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                 ),
               ],
             ),

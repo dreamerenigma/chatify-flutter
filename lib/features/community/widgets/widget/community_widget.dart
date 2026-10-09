@@ -146,7 +146,7 @@ class _CommunityWidgetState extends State<CommunityWidget> {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
 
-          await showAttachFileDialog(context, position, onImageSelected);
+          await showAttachFileDialog(context, widget.user, position, onImageSelected);
         },
         onEmojiSelected: onEmojiSelected,
         onGifSelected: onGifSelected,

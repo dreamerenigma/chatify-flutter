@@ -4944,10 +4944,10 @@ class S {
     );
   }
 
-  /// `Top up your Favorites`
+  /// `Top up your favorites`
   String get topUpYourFavorites {
     return Intl.message(
-      'Top up your Favorites',
+      'Top up your favorites',
       name: 'topUpYourFavorites',
       desc: '',
       args: [],

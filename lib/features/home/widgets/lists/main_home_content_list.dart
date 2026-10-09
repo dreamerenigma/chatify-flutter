@@ -97,7 +97,7 @@ class MainHomeContentList extends StatelessWidget {
             ignoring: isSelectionMode,
             child: GroupList(
               groups: groups,
-              user: {},
+              users: {},
               currentUser: currentUserName,
               selectedGroupIds: selectedGroupIds,
               onGroupSelected: onGroupSelected,

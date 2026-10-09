@@ -12,9 +12,15 @@ import '../../../../utils/popups/dialogs.dart';
 
 class ViewWallpaperScreen extends StatefulWidget {
   final String imagePath;
+  final String wallpaperKey;
   final bool isDefaultWallpaper;
 
-  const ViewWallpaperScreen({super.key, required this.imagePath, required this.isDefaultWallpaper});
+  const ViewWallpaperScreen({
+    super.key,
+    required this.imagePath,
+    required this.wallpaperKey,
+    required this.isDefaultWallpaper,
+  });
 
   @override
   State<ViewWallpaperScreen> createState() => _ViewWallpaperScreenState();
@@ -174,7 +180,7 @@ class _ViewWallpaperScreenState extends State<ViewWallpaperScreen> {
 
                     final wallpaperProvider = Provider.of<WallpaperProvider>(context, listen: false);
 
-                    await wallpaperProvider.setBackgroundImage(widget.imagePath);
+                    await wallpaperProvider.setBackgroundImage(wallpaperKey: widget.wallpaperKey, imagePath: widget.imagePath);
 
                     if (!context.mounted) return;
 

@@ -173,6 +173,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
@@ -199,7 +200,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
                 style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
                 decoration: InputDecoration(
                   hintText: S.of(context).searchContacts,
-                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -209,7 +210,7 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(S.of(context).addToFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
+                Text('Добавить в список', style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
               ],
             ),
         actions: isSearching

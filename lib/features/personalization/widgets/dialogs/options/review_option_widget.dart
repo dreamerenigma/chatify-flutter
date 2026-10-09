@@ -9,12 +9,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:heroicons/heroicons.dart';
 import 'package:intl/intl.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../../generated/l10n/l10n.dart';
+import '../../../../../routes/custom_page_route.dart';
 import '../../../../../utils/constants/app_links.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -24,6 +24,8 @@ import '../../../../../utils/urls/url_utils.dart';
 import '../../../../authentication/models/country.dart';
 import '../../../../authentication/widgets/lists/country_list.dart';
 import '../../../../bot/models/support_model.dart';
+import '../../../../calls/screens/audio/outgoing_audio_call_screen.dart';
+import '../../../../calls/screens/video/outgoing_video_call_screen.dart';
 import '../../../../chat/models/user_model.dart';
 import '../../../../community/models/community_model.dart';
 import '../../../../group/models/group_model.dart';
@@ -33,6 +35,7 @@ import '../../../../home/widgets/dialogs/options/overlays/sounds_overlay_entry.d
 import '../../../../home/widgets/dialogs/overlays/no_sound_overlay.dart';
 import '../../../../home/widgets/dialogs/overlays/select_country_overlay.dart';
 import '../../../../home/widgets/inputs/search_text_input.dart';
+import '../../../../status/widgets/options/action_option.dart';
 import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../light_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -289,7 +292,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
 
                                   return CachedNetworkImage(
                                     imageUrl: imageUrl,
-                                    errorWidget: (context, url, error) => SvgPicture.asset(ChatifyVectors.newUser, width: 55, height: 55, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                                    errorWidget: (context, url, error) => SvgPicture.asset(ChatifyVectors.profile, width: 100, height: 100),
                                     imageBuilder: (context, imageProvider) => CircleAvatar(radius: 50, backgroundImage: imageProvider),
                                   );
                                 },
@@ -329,7 +332,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                                   borderRadius: BorderRadius.circular(6),
                                   child: Padding(
                                     padding: const EdgeInsets.all(9),
-                                    child: SvgPicture.asset(ChatifyVectors.pencil, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+                                    child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 21, height: 21, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
                                   ),
                                 ),
                               ),
@@ -381,53 +384,31 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                             ],
                           ],
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: 8),
                         Text(
                           [
-                            if (widget.user != null) "~${widget.user!.name.split(' ').first}",
+                            if (widget.user != null) widget.user!.phoneNumber,
                             if (widget.support?.description != null && widget.support!.description.isNotEmpty) widget.support!.description,
                           ].join(" · "),
-                          style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300),
+                          style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                         )
                       ] else ...[
-                        Text(S.of(context).userDataUnavailable, style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                        Text(S.of(context).userDataUnavailable, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                       ],
-                      if (widget.community == null) const SizedBox(height: 24),
-                      if (widget.user != null) ...[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildIconWithText(
-                              label: S.of(context).video,
-                              icon: HeroIcon(HeroIcons.videoCamera, size: 20),
-                            ),
-                            SizedBox(width: 2),
-                            _buildIconWithText(
-                              label: S.of(context).audio,
-                              icon: SvgPicture.asset(ChatifyVectors.calls, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-                            ),
-                          ],
-                        ),
-                      ] else if (widget.support != null) ...[
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildIconWithText(
-                                label: S.of(context).add,
-                                icon: SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (widget.community == null) const SizedBox(height: 20),
+                      if (widget.community == null)
+                        const SizedBox(height: 24),
+                      if (widget.user != null)
+                        _buildIconWithText(),
+                      if (widget.community == null)
+                        const SizedBox(height: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (widget.user != null) ...[
                             _buildInfoBlock(S.of(context).was, lastSeen),
                             _buildInfoBlock(S.of(context).info, widget.user!.about),
-                            if (widget.community == null) _buildInfoBlock(S.of(context).phoneNumber, widget.user!.phoneNumber),
+                            if (widget.community == null)
+                              _buildInfoBlock('Электронная почта', widget.user!.email),
                             _buildInfoBlock(S.of(context).disappearingMessages, S.of(context).off),
                           ]
                           else if (widget.support != null) ...[
@@ -599,56 +580,62 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
     );
   }
 
-  Widget _buildIconWithText({required Widget icon, required String label}) {
-    return Material(
-      color: ChatifyColors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-          border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
-        ),
-        child: InkWell(
+  Widget _buildIconWithText() {
+    final user = widget.user!;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ActionOption(
+          icon: Icons.call_outlined,
+          label: S.of(context).audio,
           onTap: () {
-            showChangeNewContactDialog(
-              context,
-              title: S.of(context).phoneNumber,
-              entity: widget.support,
-              showDeleteIcon: false,
-              contentBuilder: (context, setDialogState) => _buildAddPhoneNumber(
-                controller: _phoneController,
-                flagAssetPath: selectedFlagNotifier.value,
-                iconAssetPath: ChatifyVectors.arrowDown,
-                onCountrySelected: (flag, code) {
-                  setDialogState(() {
-                    selectedFlagNotifier.value = flag;
-                    selectedCountryCodeNotifier.value = code;
-                    _phoneController.text = code;
-                  });
-                },
-                countries: countries,
-              ),
-            );
+            Navigator.push(context, createPageRoute(OutgoingAudioCallScreen(user: user, onMinimize: () {})));
           },
-          mouseCursor: SystemMouseCursors.basic,
-          splashColor: ChatifyColors.transparent,
-          highlightColor: context.isDarkMode ? ChatifyColors.black.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
-          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
-          borderRadius: BorderRadius.circular(6),
-          child: SizedBox(
-            width: 145,
-            height: 65,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                icon,
-                Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300), textAlign: TextAlign.center),
-              ],
-            ),
-          ),
         ),
-      ),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.015),
+        ActionOption(
+          svgAsset: ChatifyVectors.videoCameraOutline,
+          label: S.of(context).video,
+          onTap: () {
+            Navigator.push(context, createPageRoute(OutgoingVideoCallScreen(user: user)));
+          },
+        ),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.015),
+        ActionOption(
+          icon: Icons.search,
+          label: S.of(context).search,
+          onTap: () {},
+        ),
+        if (widget.support != null) ...[
+          SizedBox(width: MediaQuery.of(context).size.width * 0.015),
+          ActionOption(
+            svgAsset: ChatifyVectors.addCallUser,
+            label: S.of(context).add,
+            onTap: () {
+              showChangeNewContactDialog(
+                context,
+                title: S.of(context).phoneNumber,
+                entity: widget.support,
+                showDeleteIcon: false,
+                contentBuilder: (context, setDialogState) => _buildAddPhoneNumber(
+                  controller: _phoneController,
+                  flagAssetPath: selectedFlagNotifier.value,
+                  iconAssetPath: ChatifyVectors.arrowDown,
+                  onCountrySelected: (flag, code) {
+                    setDialogState(() {
+                      selectedFlagNotifier.value = flag;
+                      selectedCountryCodeNotifier.value = code;
+                      _phoneController.text = code;
+                    });
+                  },
+                  countries: countries,
+                ),
+              );
+            },
+          ),
+        ],
+      ],
     );
   }
 
@@ -791,20 +778,19 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto')),
+          Text(title, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           SizedBox(height: 6),
           Row(
             children: [
               if (isDisappearingMessages && !isDisappearingOff)
                 SvgPicture.asset(ChatifyVectors.timer, width: 18, height: 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-              if (isDisappearingMessages && !isDisappearingOff) SizedBox(width: 8),
+              if (isDisappearingMessages && !isDisappearingOff)
+                SizedBox(width: 8),
               isDisappearingMessages
-                  ? Text(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300))
-                  : Theme(
-                data: Theme.of(context).copyWith(
-                  textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                ),
-                child: Flexible(child: SelectableText(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto'), maxLines: null)),
+                ? Text(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300))
+                : Theme(
+                data: Theme.of(context).copyWith(textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                child: Flexible(child: SelectableText(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400), maxLines: null)),
               ),
               if (trailing != null) ...[
                 const SizedBox(width: 8),
@@ -821,7 +807,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+        Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
         CompositedTransformTarget(
           link: _noSoundLink,
@@ -874,7 +860,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                       const SizedBox(width: 8),
                       Expanded(child: Padding(
                         padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(S.of(context).noSound, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                        child: Text(S.of(context).noSound, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       )),
                       const SizedBox(width: 14),
                       AnimatedContainer(
@@ -897,7 +883,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(S.of(context).notificationSound, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto')),
+        Text(S.of(context).notificationSound, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -992,7 +978,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
                       children: [
                         Icon(FluentIcons.music_note_2_24_regular, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: 20),
                         SizedBox(width: 10),
-                        Text(S.of(context).system, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, fontFamily: 'Roboto')),
+                        Text(S.of(context).system, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                         SizedBox(width: 8),
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
@@ -1036,7 +1022,7 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
               child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300, color: textColor ?? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: textColor ?? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
               ),
             ),
           ),
@@ -1051,9 +1037,9 @@ class _ReviewOptionWidgetState extends State<ReviewOptionWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+          Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           SizedBox(height: 12),
-          Text(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w300, fontFamily: 'Roboto')),
+          Text(subtitle, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
         ],
       ),
     );

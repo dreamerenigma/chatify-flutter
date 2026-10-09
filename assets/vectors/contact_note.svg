@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   fill="#000000"
+   viewBox="0 0 3200 3200"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="contact_note.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.5572609"
+     inkscape:cx="866.73944"
+     inkscape:cy="469.25955"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">ionicons-v5-j</title>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>ionicons-v5-j</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path2"
+     style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill-rule:evenodd;stroke-width:0.91168;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke fill markers;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+     d="m 1156.9412,263.64937 c -71.6654,0 -129.3613,57.69578 -129.3613,129.36131 V 511.72719 C 777.17605,514.9997 573.88208,720.31018 573.88208,971.46444 V 2462.5262 c 0,253.1819 206.5932,459.7827 459.77512,459.7827 h 1124.4117 c 253.1818,0 459.7827,-206.6008 459.7827,-459.7827 V 971.46444 c 0,-248.16392 -198.4905,-451.57445 -444.7829,-459.53997 v -118.8455 c 0,-71.6655 -57.6959,-129.36132 -129.3614,-129.36132 -71.6657,0 -129.3689,57.69582 -129.3689,129.36132 v 118.60271 h -628.0283 v -118.671 c 0,-71.66554 -57.7034,-129.36131 -129.3689,-129.36131 z m 449.3807,827.61643 c 69.9761,3.5864 137.8365,32.5873 189.4442,84.1949 82.5724,82.5722 107.2797,206.7482 62.5942,314.6325 -44.6852,107.8845 -149.9669,178.2303 -266.7423,178.2303 -76.5725,0 -150.0106,-30.4215 -204.1556,-84.5666 -54.1452,-54.1452 -84.5591,-127.5755 -84.5591,-204.1481 0,-116.7753 70.3457,-222.0569 178.2303,-266.7423 40.4565,-16.757 83.2027,-23.7525 125.1883,-21.6007 z m -14.7039,659.5455 c 178.9536,0 536.1932,110.5406 536.1932,329.9661 0,1e-4 -0.1442,41.6261 -0.1442,85.7048 0,43.893 -36.2274,79.2784 -100.5377,79.2784 h -854.3385 c -79.0067,0 -117.0018,-26.0475 -117.0018,-79.2176 0,-24.9266 -0.3566,-85.7656 -0.3566,-85.7656 10e-5,-219.4256 357.2322,-329.9661 536.1856,-329.9661 z" />
+</svg>

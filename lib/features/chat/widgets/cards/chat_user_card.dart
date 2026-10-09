@@ -145,6 +145,10 @@ class ChatUserCardState extends State<ChatUserCard> {
           child: InkWell(
             mouseCursor: SystemMouseCursors.basic,
             borderRadius: BorderRadius.circular(15),
+            splashFactory: NoSplash.splashFactory,
+            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             onTap: () {
               if (isWindows) {
                 widget.onUserSelected(widget.user);
@@ -152,10 +156,6 @@ class ChatUserCardState extends State<ChatUserCard> {
                 Navigator.push(context, createPageRoute(ChatScreen(user: widget.user)));
               }
             },
-            splashFactory: NoSplash.splashFactory,
-            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             child: StreamBuilder(
               stream: ChatApi.getLastMessage(widget.user),
               builder: (context, snapshot) {
@@ -183,25 +183,14 @@ class ChatUserCardState extends State<ChatUserCard> {
                               },
                               child: Builder(
                                 builder: (context) {
-                                  final size = isWindows
-                                      ? 46.0
-                                      : DeviceUtils.getScreenHeight(context) * .055;
+                                  final size = isWindows ? 46.0 : DeviceUtils.getScreenHeight(context) * .055;
 
                                   if (isLoadingProfileImage) {
-                                    return ClipOval(
-                                      child: ShimmerEffect(
-                                        width: size,
-                                        height: size,
-                                        borderRadius: size,
-                                        angle: -0.16,
-                                      ),
-                                    );
+                                    return ClipOval(child: ShimmerEffect(width: size, height: size, borderRadius: size, angle: -0.16));
                                   }
 
                                   if (profileImageUrl == null || profileImageUrl!.isEmpty) {
-                                    return ClipOval(
-                                      child: _profileImageError(context, size),
-                                    );
+                                    return ClipOval(child: _profileImageError(context, size));
                                   }
 
                                   return ClipOval(
@@ -219,6 +208,20 @@ class ChatUserCardState extends State<ChatUserCard> {
                               ),
                             ),
                           ),
+                          if (!isWindows && widget.user.isOnline)
+                            Positioned(
+                              right: 2,
+                              bottom: 0,
+                              child: Container(
+                                width: 11,
+                                height: 11,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: ChatifyColors.check,
+                                  border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
+                                ),
+                              ),
+                            ),
                           if (!isWindows && widget.isSelected)
                             Positioned(
                               bottom: -3,
@@ -278,7 +281,6 @@ class ChatUserCardState extends State<ChatUserCard> {
                                       ),
                                   ],
                                 ),
-
                                 const SizedBox(height: 4),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -315,7 +317,10 @@ class ChatUserCardState extends State<ChatUserCard> {
                                         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                                         decoration: BoxDecoration(color: accentColor, shape: BoxShape.circle),
                                         alignment: Alignment.center,
-                                        child: Text(unreadCount > 99 ? '99+' : '$unreadCount', style: const TextStyle(color: ChatifyColors.black, fontSize: 10, fontWeight: FontWeight.w700)),
+                                        child: Text(
+                                          unreadCount > 99 ? '99+' : '$unreadCount',
+                                          style: const TextStyle(color: ChatifyColors.black, fontSize: 10, fontWeight: FontWeight.w700),
+                                        ),
                                       ),
                                   ],
                                 ),

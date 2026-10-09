@@ -24,6 +24,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  bool _isNavigating = false;
+
   @override
   void initState() {
     super.initState();
@@ -42,11 +44,19 @@ class SplashScreenState extends State<SplashScreen> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-    _initializeApp();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _initializeApp();
+    });
   }
 
   Future<void> _initializeApp() async {
+    final minimumSplashTime = Future.delayed(const Duration(seconds: 2));
+
     if (kIsWeb) {
+      await minimumSplashTime;
+
+      if (!mounted) return;
       await _navigateToNextScreen();
       return;
     }
@@ -54,6 +64,8 @@ class SplashScreenState extends State<SplashScreen> {
     if (Platform.isAndroid || Platform.isIOS) {
       try {
         final value = await ReceiveSharingIntent.instance.getInitialMedia();
+
+        await minimumSplashTime;
 
         if (!mounted) return;
 
@@ -76,17 +88,33 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if (Platform.isWindows) {
+      await minimumSplashTime;
+
+      if (!mounted) return;
+
       await _navigateToNextScreen();
+      return;
     }
   }
 
-  void _navigateToSendFileScreen(String path) {
+  Future<void> _navigateToSendFileScreen(String path) async {
+    if (_isNavigating || !mounted) return;
+
+    _isNavigating = true;
+
     Get.off(() => SendFileScreen(fileToSend: path, linkToSend: ''));
   }
 
   Future<void> _navigateToNextScreen() async {
+    if (_isNavigating || !mounted) return;
+
+    _isNavigating = true;
+
     if (APIs.auth.currentUser != null) {
       await APIs.getSelfInfo();
+
+      if (!mounted) return;
+
       Get.off(() => HomeScreen(user: APIs.me));
     } else {
       Get.off(() => const AddAccountScreen(isFromSplashScreen: true, showBackButton: false));

@@ -41,6 +41,7 @@ class RecipientMessage extends StatefulWidget {
   final List<MessageModel> messages;
   final bool hasReaction;
   final String conversationId;
+  final bool hasReply;
 
   const RecipientMessage({
     super.key,
@@ -49,6 +50,7 @@ class RecipientMessage extends StatefulWidget {
     required this.messages,
     required this.hasReaction,
     required this.conversationId,
+    this.hasReply = false,
   });
 
   @override
@@ -257,10 +259,12 @@ class RecipientMessageState extends State<RecipientMessage> {
               type: MessageBubbleType.recipient,
               isWebOrWindows: isWebOrWindows,
               isPressed: isPressed,
+              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               onSecondaryTap: _handleSecondaryTap,
               child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: _handleSecondaryTap),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (widget.message.type == MessageType.emoji)
               EmojiMessage(emoji: widget.message.msg, isHovered: isHovered, isPressed: isPressed, borderColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
@@ -297,9 +301,11 @@ class RecipientMessageState extends State<RecipientMessage> {
                   showInnerContainer: true,
                   showMetaCheck: false,
                   type: MessageBubbleType.recipient,
+                  hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
                   child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: CallMessage(message: widget.message, isSender: false)),
                 ),
-                _buildMessageTail(),
+                if (!widget.hasReply)
+                  _buildMessageTail(),
               ],
             ),
 
@@ -334,12 +340,14 @@ class RecipientMessageState extends State<RecipientMessage> {
                   showInnerContainer: false,
                   showMetaCheck: true,
                   type: MessageBubbleType.recipient,
+                  hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minWidth: 280),
                     child: VoiceRecordMessage(message: widget.message, isSender: false, user: APIs.me),
                   ),
                 ),
-                _buildMessageTail(),
+                if (!widget.hasReply)
+                  _buildMessageTail(),
               ],
             ),
 
@@ -355,9 +363,28 @@ class RecipientMessageState extends State<RecipientMessage> {
     final isCall = widget.message.type == MessageType.call;
     final isVoice = widget.message.type == MessageType.voice;
     final isEvent = widget.message.type == MessageType.event;
+    final isImage = widget.message.type == MessageType.image;
+    final isVideo = widget.message.type == MessageType.video;
+    final isAudio = widget.message.type == MessageType.audio;
+    final isDocument = widget.message.type == MessageType.document;
+    final isGif = widget.message.type == MessageType.gif;
 
     return Positioned(
-      top: isWebOrWindows ? 6 : isCall ? 3.5 : isVoice ? 5.5 : isEvent ? 3.5 : 5.5,
+      top: isWebOrWindows
+        ? isEvent
+          ? 0.5
+          : isImage || isVideo
+            ? 5.5
+            : isAudio || isDocument || isGif
+              ? 5.5
+              : 0.5
+        : isCall
+          ? 3.5
+          : isVoice
+            ? 5.5
+            : isEvent
+              ? 3.5
+              : 5.5,
       right: 7,
       child: CustomPaint(
         size: const Size(10, 10),
@@ -456,14 +483,12 @@ class RecipientMessageState extends State<RecipientMessage> {
           children: [
             Container(
               key: _containerKey,
-              padding: EdgeInsets.all(DeviceUtils.getScreenWidth(context) * .008),
-              margin: isWebOrWindows
-                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
-                : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
                 color: context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBubbleRecipient,
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
               ),
               child: Stack(
                 children: [
@@ -494,7 +519,8 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ],
               ),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (isVideo)
               Positioned(
                 left: 25,
@@ -561,9 +587,11 @@ class RecipientMessageState extends State<RecipientMessage> {
               showInnerContainer: true,
               showMetaCheck: true,
               type: MessageBubbleType.recipient,
+              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: EventMessageCard(event: event, ownerId: widget.user, user: widget.user)),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
               _buildHoverActions(),
           ],

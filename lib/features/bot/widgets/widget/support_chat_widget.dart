@@ -13,6 +13,7 @@ import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/urls/url_utils.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/dialogs/calendar_dialog.dart';
 import '../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../chat/widgets/dialogs/select_message_dialog.dart';
@@ -27,11 +28,13 @@ import '../bars/support_app_bar.dart';
 
 class SupportChatWidget extends StatefulWidget {
   final SupportAppModel support;
+  final UserModel user;
   final double sidePanelWidth;
 
   const SupportChatWidget({
     super.key,
     required this.support,
+    required this.user,
     required this.sidePanelWidth,
   });
 
@@ -114,7 +117,7 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SupportAppBar(support: widget.support),
+      appBar: SupportAppBar(support: widget.support, user: widget.user),
       body: _buildBody(),
       bottomNavigationBar: BottomInput(
         textFieldKey: _textFieldKey,
@@ -132,7 +135,7 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
 
-          await showAttachFileDialog(context, position, onImageSelected);
+          await showAttachFileDialog(context, widget.user, position, onImageSelected);
         },
         onEmojiSelected: onEmojiSelected,
         onGifSelected: onGifSelected,

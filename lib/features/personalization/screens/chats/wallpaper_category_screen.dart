@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'view_wallpaper_screen.dart';
 
 class WallpaperCategoryScreen extends StatelessWidget {
   final String title;
+  final UserModel user;
+  final String wallpaperKey;
   final List<String> imagePaths;
 
   const WallpaperCategoryScreen({
     super.key,
     required this.title,
+    required this.user,
+    required this.wallpaperKey,
     required this.imagePaths,
   });
 
@@ -31,7 +36,7 @@ class WallpaperCategoryScreen extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: imagePath, isDefaultWallpaper: false)));
+                Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: imagePath, isDefaultWallpaper: false, wallpaperKey: wallpaperKey)));
               },
               child: Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover))),
             );

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:chatify/api/newsletter_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../domain/entities/chat_target.dart';
+import '../../chat/models/mention_data_model.dart';
 
 class NewsletterModel implements ChatTarget {
   String id;
@@ -43,27 +44,27 @@ class NewsletterModel implements ChatTarget {
   }
 
   @override
-  Future<void> sendText(String text) async {
-    await NewsletterApi.sendMessageNewsletterChat(newsletterId: id, chatId: 'main', text: text);
+  Future<void> sendText(String text, {String? replyToMessageId, List<MentionDataModel>? mentions}) async {
+    await NewsletterApi.sendMessageNewsletterChat(newsletterId: id, chatId: 'main', text: text, mentions: mentions ?? []);
   }
 
   @override
-  Future<void> sendImage(File file) async {
+  Future<void> sendImage(File file, {String? replyToMessageId}) async {
     await NewsletterApi.sendNewsletterImage(this, file);
   }
 
   @override
-  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration}) async {
+  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration, String? replyToMessageId}) async {
     await NewsletterApi.sendNewsletterVideo(this, file, fileName: fileName, fileSize: fileSize, videoDuration: videoDuration);
   }
 
   @override
-  Future<void> sendDocument(File file, {String? fileSize}) async {
+  Future<void> sendDocument(File file, {String? fileSize, String? replyToMessageId}) async {
     await NewsletterApi.sendNewsletterDocument(this, file);
   }
 
   @override
-  Future<void> sendAudio(File file, String fileName, {int? audioDuration}) async {
+  Future<void> sendAudio(File file, String fileName, {int? audioDuration, String? replyToMessageId}) async {
     await NewsletterApi.sendNewsletterAudio(this, file, fileName, audioDuration: audioDuration);
   }
 }

@@ -33,12 +33,16 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
         onExit: (_) => isHovered.value = false,
         child: InkWell(
           borderRadius: BorderRadius.circular(6),
+          mouseCursor: SystemMouseCursors.basic,
+          splashFactory: NoSplash.splashFactory,
+          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {
             final newValue = !selected;
             widget.selectedOptions[widget.index!] = newValue;
             widget.onChanged(newValue);
           },
-          mouseCursor: SystemMouseCursors.basic,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: 21,

@@ -19,7 +19,7 @@ class PressableText extends StatefulWidget {
 }
 
 class PressableTextState extends State<PressableText> {
-  double _fontSize = 16;
+  double _fontSize = 14;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class PressableTextState extends State<PressableText> {
         highlightColor: highlightColor,
         onHighlightChanged: (isHighlighted) {
           setState(() {
-            _fontSize = isHighlighted ? 14 : 16;
+            _fontSize = isHighlighted ? 13 : 14;
           });
         },
         child: Padding(

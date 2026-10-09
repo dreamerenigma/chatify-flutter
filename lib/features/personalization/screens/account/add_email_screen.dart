@@ -74,7 +74,7 @@ class _AddEmailScreenState extends State<AddEmailScreen> {
     });
 
     try {
-      await Dialogs.showProgressBarDialog(context, title: 'Отправка кода...');
+      Dialogs.showProgressBarDialog(context, title: 'Отправка кода...');
 
       if (!mounted) return;
 

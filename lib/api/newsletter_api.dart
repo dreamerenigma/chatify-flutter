@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../features/chat/models/mention_data_model.dart';
 import '../features/newsletter/models/newsletter_model.dart';
 import '../utils/popups/dialogs.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,7 @@ class NewsletterApi {
   }
 
   /// -- Send message newsletter chat.
-  static Future<void> sendMessageNewsletterChat({required String newsletterId, required String chatId, required String text}) async {}
+  static Future<void> sendMessageNewsletterChat({required String newsletterId, required String chatId, required String text, List<MentionDataModel>? mentions}) async {}
 
   /// -- Send image to newsletter chat.
   static Future<void> sendNewsletterImage(NewsletterModel newsletter, File file) async {

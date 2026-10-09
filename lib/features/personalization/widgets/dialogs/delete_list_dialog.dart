@@ -8,31 +8,32 @@ import '../../../../utils/constants/app_sizes.dart';
 import '../../../authentication/screens/login_screen.dart';
 import 'light_dialog.dart';
 
-void showDeleteListDialog(BuildContext context) {
+void showDeleteListDialog(BuildContext context, {required String title}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
         titlePadding: EdgeInsets.zero,
+        actionsPadding: EdgeInsets.only(left: 25, right: 25, bottom: 20),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: Text(S.of(context).deleteUnreadList, softWrap: true, maxLines: null),
+                padding: EdgeInsets.only(left: 25, right: 25, top: 12),
+                child: Text('Удалить список "$title"', softWrap: true, maxLines: null, style: TextStyle(fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400)),
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(Icons.close_rounded, size: 25, color: ChatifyColors.darkGrey),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
           ],
         ),
-        content: Text(S.of(context).deleteResetListHidden),
+        content: Text(S.of(context).deleteResetListHidden, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
         actions: [
           TextButton(
             onPressed: () {

@@ -2,12 +2,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../personalization/screens/chats/wallpaper_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/info_app_model.dart';
@@ -18,11 +21,13 @@ import '../../screens/support_info_screen.dart';
 class SupportAppBar extends StatefulWidget implements PreferredSizeWidget {
   final SupportAppModel? support;
   final InfoAppModel? infoApp;
+  final UserModel user;
 
   const SupportAppBar({
     super.key,
     this.support,
     this.infoApp,
+    required this.user,
   });
 
   @override
@@ -60,6 +65,8 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
   }
 
   Widget _buildSupportAppBar(BuildContext context) {
+    final wallpaperKey = ChatApi.getConversationId(widget.user.id);
+
     return Container(
       decoration: BoxDecoration(border: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey))),
       child: AppBar(
@@ -130,7 +137,7 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                   text: 'Тема чата',
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath)));
+                    Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath, user: APIs.me, wallpaperKey: wallpaperKey)));
                   },
                 ),
               ),

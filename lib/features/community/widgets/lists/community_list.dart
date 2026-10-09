@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chatify/features/community/models/community_model.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../home/widgets/cards/home_community_card.dart';
 import '../cards/community_card.dart';
 
@@ -11,6 +12,7 @@ class CommunityList extends StatelessWidget {
   final bool isSelectionMode;
   final Set<String> selectedCommunityIds;
   final ValueChanged<CommunityModel> onCommunitySelected;
+  final Color? cardColor;
 
   const CommunityList({
     super.key,
@@ -21,6 +23,7 @@ class CommunityList extends StatelessWidget {
     required this.onCommunitySelected,
     this.isSelectionMode = false,
     this.selectedCommunityIds = const {},
+    this.cardColor,
   });
 
   @override
@@ -39,7 +42,7 @@ class CommunityList extends StatelessWidget {
           final isSelected = selectedCommunityIds.contains(community.id);
 
           return Padding(
-            padding: EdgeInsets.only(bottom: index == communities.length - 1 ? 0 : 6),
+            padding: EdgeInsets.only(bottom: isHomeScreen && index != communities.length - 1 ? 6 : isWindows ? 6 : 0),
             child: isHomeScreen
               ? HomeCommunityCard(
                   community: community,
@@ -54,6 +57,7 @@ class CommunityList extends StatelessWidget {
                   community: community,
                   isValidDate: isValidDate,
                   fileToSend: fileToSend,
+                  cardColor: cardColor,
                 ),
           );
         },

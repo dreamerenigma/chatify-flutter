@@ -4,11 +4,12 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/edit_phone_screen.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -19,7 +20,9 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/user_model.dart';
+import '../../../home/widgets/cards/info_banner_card.dart';
 import '../../controllers/user_controller.dart';
+import '../../models/social_link_model.dart';
 import '../../screens/profile/add_links_screen.dart';
 import '../../screens/profile/profile_intelligence_screen.dart';
 import '../../screens/profile/photo_profile_screen.dart';
@@ -53,8 +56,26 @@ class ProfileFormState extends State<ProfileForm> {
   late UserController userController;
   bool _isVisible = false;
   bool isLoadingProfileImage = false;
+  bool _showLinksBanner = true;
   double _scale = 1.3;
   String? _profileImageUrl;
+
+  bool get _hasUserLinks {
+    return widget.user.links.isNotEmpty;
+  }
+
+  String _getSocialNetworkName(String type) {
+    switch (type.toLowerCase()) {
+      case 'vk':
+      case 'vkontakte':
+        return 'ВКонтакте';
+      case 'ok':
+      case 'odnoklassniki':
+        return 'Одноклассники';
+      default:
+        return type;
+    }
+  }
 
   @override
   void initState() {
@@ -66,6 +87,7 @@ class ProfileFormState extends State<ProfileForm> {
       });
     });
     _loadProfileImage();
+    _loadLinksBannerState();
   }
 
   void _navigateToProfileScreen() async {
@@ -95,6 +117,30 @@ class ProfileFormState extends State<ProfileForm> {
     setState(() {
       _scale = 1.3;
       _isVisible = true;
+    });
+  }
+
+  Future<void> _loadLinksBannerState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final dismissed = prefs.getBool('profile_links_banner_dismissed') ?? false;
+
+    if (!mounted) return;
+
+    setState(() {
+      _showLinksBanner = !dismissed;
+    });
+  }
+
+  Future<void> _dismissLinksBanner() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('profile_links_banner_dismissed', true);
+
+    if (!mounted) return;
+
+    setState(() {
+      _showLinksBanner = false;
     });
   }
 
@@ -134,6 +180,8 @@ class ProfileFormState extends State<ProfileForm> {
 
   @override
   Widget build(BuildContext context) {
+    final socialLinks = widget.user.links;
+
     return Scaffold(
       body: SafeArea(
         child: Form(
@@ -231,19 +279,17 @@ class ProfileFormState extends State<ProfileForm> {
                     ),
                   ],
                 ),
-                SizedBox(height: 18),
-                Obx(() =>
-                  _buildAddLink(
-                    context,
+                if (_showLinksBanner && !_hasUserLinks) ...[
+                  SizedBox(height: 18),
+                  InfoBannerCard(
                     title: 'Добавьте ссылки на подтвержденный профиль',
                     subtitle: 'Помогите людям связаться с вами ВКонтакте и в Одноклассники. ',
                     actionText: 'Добавить ссылку',
+                    iconAsset: ChatifyVectors.lamp,
                     onActionTap: () async {},
-                    onClose: () {
-                      Navigator.pop(context);
-                    },
+                    onClose: _dismissLinksBanner,
                   ),
-                ),
+                ],
                 SizedBox(height: 18),
                 _buildProfileInfo(Icons.person_outline_rounded, S.of(context).name, APIs.me.name, ChatifyColors.darkGrey, () {
                   showEnterNameBottomDialog(
@@ -296,13 +342,75 @@ class ProfileFormState extends State<ProfileForm> {
                     offset: 20,
                   );
                 }),
-                _buildProfileInfo(Icons.link, S.of(context).links, S.of(context).addLinks, colorsController.getColor(colorsController.selectedColorScheme.value), () {
-                  Navigator.push(context, createPageRoute(AddLinksScreen()));
-                }),
+                if (socialLinks.isEmpty)
+                  _buildProfileInfo(Icons.link, S.of(context).links, S.of(context).addLinks, colorsController.getColor(colorsController.selectedColorScheme.value), () {
+                    Navigator.push(context, createPageRoute(AddLinksScreen(user: widget.user)));
+                  })
+                else
+                  _buildSocialLinksContainer(context, socialLinks),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSocialLinksContainer(BuildContext context, List<SocialLinkModel> links) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(left: 20, right: 10, top: 12, bottom: 12),
+      decoration: BoxDecoration(
+        color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightBackground,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.link_rounded, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  S.of(context).links,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                ),
+                const SizedBox(height: 6),
+                for (int i = 0; i < links.length; i++) ...[
+                  _buildSocialLinkItem(context, links[i]),
+                  if (i < links.length - 1)
+                    const SizedBox(height: 10),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialLinkItem(BuildContext context, SocialLinkModel link) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () async {
+        final uri = Uri.tryParse(link.url);
+
+        if (uri == null) return;
+
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      },
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              _getSocialNetworkName(link.type),
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+            ),
+          ),
+          Icon(Icons.chevron_right_rounded, size: 28, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
+        ],
       ),
     );
   }
@@ -333,60 +441,14 @@ class ProfileFormState extends State<ProfileForm> {
                     width: MediaQuery.of(context).size.width - 100,
                     child: Text(
                       hasSubtitle ? subtitle : placeholder,
-                      style: TextStyle(
-                        color: hasSubtitle ? (valueColor ?? color) : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm), softWrap: true, overflow: TextOverflow.visible,
+                      style: TextStyle(color: hasSubtitle ? (valueColor ?? color) : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm),
+                      softWrap: true, overflow: TextOverflow.visible,
                     ),
                   ),
                 ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddLink(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required String actionText,
-    required VoidCallback onActionTap,
-    required VoidCallback onClose,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 8),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SvgPicture.asset(ChatifyVectors.lamp, width: 30, height: 30, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn)),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.3)),
-                  SizedBox(height: 4),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.2, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                      children: [
-                        TextSpan(text: subtitle),
-                        TextSpan(text: actionText, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorsController.getColor(colorsController.selectedColorScheme.value)), recognizer: TapGestureRecognizer()..onTap = onActionTap),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: onClose,
-              child: Icon(Icons.close_rounded, size: 22, color: ChatifyColors.borderSecondary),
-            ),
-          ],
         ),
       ),
     );

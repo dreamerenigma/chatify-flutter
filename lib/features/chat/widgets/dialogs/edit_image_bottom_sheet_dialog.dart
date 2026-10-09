@@ -22,6 +22,7 @@ import '../../../status/screens/add_detail_image_screen.dart';
 import '../../../status/widgets/dialogs/overlays/albums_overlay.dart';
 import '../../../status/widgets/images/camera_screen.dart';
 import '../../../survey/screens/create_survey_screen.dart';
+import '../../models/message_model.dart';
 import '../../models/user_model.dart';
 import '../../screens/contact_seeding_screen.dart';
 import '../../screens/create_event_screen.dart';
@@ -118,6 +119,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
   bool _showActionPanel = true;
   bool _isHdEnabled = false;
   int _page = 0;
+  MessageModel? replyMessage;
 
   static const int _pageSize = 100;
 
@@ -222,19 +224,12 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
     widget.setUploading(true);
 
     try {
-      log('SEND VIDEO UI: started');
-      log('SEND VIDEO UI: file = ${file.path}');
-      log('SEND VIDEO UI: size = ${await file.length()}');
-
-      await widget.chatTarget.sendVideo(file);
-
-      log('SEND VIDEO UI: finished');
+      await widget.chatTarget.sendVideo(file, replyToMessageId: replyMessage?.id);
     } catch (e, st) {
       log('SEND VIDEO UI: error = $e');
       log('SEND VIDEO UI: stack = $st');
     } finally {
       widget.setUploading(false);
-      log('SEND VIDEO UI: uploading = false');
     }
   }
 
@@ -244,8 +239,6 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
       await player.setSource(DeviceFileSource(file.path));
 
       final duration = await player.getDuration();
-
-      log('AUDIO DURATION: ${duration?.inSeconds} seconds');
 
       return duration?.inSeconds;
     } catch (e) {
@@ -640,7 +633,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
                   if (file.path == null) continue;
 
                   final documentFile = File(file.path!);
-                  await widget.chatTarget.sendDocument(documentFile);
+                  await widget.chatTarget.sendDocument(documentFile, replyToMessageId: replyMessage?.id);
                 }
 
                 widget.setUploading(false);
@@ -672,7 +665,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
                   final originalFileName = file.name;
                   final audioDuration = await getAudioDuration(documentFile);
 
-                  await widget.chatTarget.sendAudio(documentFile, originalFileName, audioDuration: audioDuration);
+                  await widget.chatTarget.sendAudio(documentFile, originalFileName, audioDuration: audioDuration, replyToMessageId: replyMessage?.id);
                 }
                 widget.setUploading(false);
               }

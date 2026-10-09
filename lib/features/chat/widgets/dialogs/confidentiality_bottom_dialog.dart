@@ -146,7 +146,7 @@ class _ConfidentialityStatusBottomSheetState extends State<ConfidentialityStatus
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     elevation: 0
                   ),
-                  child: Text(S.of(context).ready, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
+                  child: Text('Продолжить', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.white)),
                 ),
               ),
             ),

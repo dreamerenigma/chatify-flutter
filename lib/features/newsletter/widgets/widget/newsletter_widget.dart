@@ -126,7 +126,8 @@ class _NewsletterWidgetState extends State<NewsletterWidget> {
         showAttachFileDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
-          await showAttachFileDialog(context, position, onImageSelected);
+
+          await showAttachFileDialog(context, widget.user, position, onImageSelected);
         },
         onEmojiSelected: onEmojiSelected,
         onGifSelected: onGifSelected,

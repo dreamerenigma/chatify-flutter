@@ -11,8 +11,9 @@ import 'package:get/get.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/helper/file_util.dart';
+import '../../../chat/models/user_model.dart';
 
-Future<void> showAttachFileDialog(BuildContext context, Offset position, Future<void> Function(File) onImageSelected) async {
+Future<void> showAttachFileDialog(BuildContext context, UserModel user, Offset position, Future<void> Function(File) onImageSelected) async {
   final completer = Completer<void>();
   final overlay = Overlay.of(context);
   late OverlayEntry overlayEntry;
@@ -72,7 +73,7 @@ Future<void> showAttachFileDialog(BuildContext context, Offset position, Future<
                               }),
                               _buildFilterChats(context: context, iconPath: '', text: S.of(context).camera, iconSize: 20, icon: Icons.camera_alt_outlined, onTap: () async {
                                 overlayEntry.remove();
-                                showTakePhotoDialog(context);
+                                showTakePhotoDialog(context, user);
                                 closeOverlay();
                               }),
                               _buildFilterChats(context: context, iconPath: '', text: S.of(context).documents, iconSize: 20, icon: FluentIcons.document_16_regular, onTap: () {

@@ -22,7 +22,9 @@ import '../dialogs/light_dialog.dart';
 class GroupCard extends StatefulWidget {
   final GroupModel group;
   final bool showMembers;
+  final bool showDate;
   final bool isSelected;
+  final bool showBackground;
   final String currentUser;
   final Map<String, UserModel> users;
   final ValueChanged<GroupModel> onGroupSelected;
@@ -35,6 +37,8 @@ class GroupCard extends StatefulWidget {
     required this.onGroupSelected,
     required this.isSelected,
     this.showMembers = false,
+    this.showBackground = true,
+    this.showDate = true,
   });
 
   @override
@@ -44,16 +48,28 @@ class GroupCard extends StatefulWidget {
 class _GroupCardState extends State<GroupCard> {
   bool isLongPressed = false;
 
+  String _buildMembersText() {
+    final members = widget.group.members.map((id) => widget.users[id]).whereType<UserModel>().toList();
+
+    return members.take(3).map((user) => user.name.trim()).join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isCreatedByCurrentUser = widget.group.creatorName == widget.currentUser;
     final bool isHighlighted = widget.isSelected;
 
     return Card(
-      margin: EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8, bottom: 6),
+      margin: EdgeInsets.only(
+        left: widget.showBackground ? (Platform.isWindows ? 16 : 8) : 0,
+        right: widget.showBackground ? (Platform.isWindows ? 15 : 8) : 0,
+        bottom: widget.showBackground ? 6 : 0,
+      ),
       elevation: isHighlighted ? 4 : 0.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: isHighlighted ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.showBackground ? 15 : 0)),
+      color: widget.showBackground
+        ? (isHighlighted ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null)
+        : (context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white),
       child: GestureDetector(
         onLongPress: () {
           widget.onGroupSelected(widget.group);
@@ -74,14 +90,14 @@ class _GroupCardState extends State<GroupCard> {
         },
         child: Ink(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: isHighlighted
-              ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt())
-              : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground,
+            borderRadius: BorderRadius.circular(widget.showBackground ? 15 : 0),
+            color: widget.showBackground
+              ? (isHighlighted ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.lightBackground)
+              : (context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white),
           ),
           child: InkWell(
             mouseCursor: SystemMouseCursors.basic,
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(widget.showBackground ? 15 : 0),
             splashFactory: NoSplash.splashFactory,
             splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
             highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
@@ -127,8 +143,8 @@ class _GroupCardState extends State<GroupCard> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(23),
                               child: CachedNetworkImage(
-                                width: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
-                                height: Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055,
+                                width: widget.showBackground ? (Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055) : 40,
+                                height: widget.showBackground ? (Platform.isWindows ? 46 : DeviceUtils.getScreenHeight(context) * .055) : 40,
                                 imageUrl: imageUrl ?? '',
                                 fit: BoxFit.cover,
                                 imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
@@ -159,7 +175,7 @@ class _GroupCardState extends State<GroupCard> {
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                             ),
-                            child: const Icon(Icons.check, size: 16, color: ChatifyColors.black),
+                            child: const Icon(Icons.check_rounded, size: 16, color: ChatifyColors.black),
                           ),
                         ),
                       Positioned(
@@ -191,22 +207,29 @@ class _GroupCardState extends State<GroupCard> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(width: 10),
-                            Text(
-                              DateUtil.formatDateTime(widget.group.createdAt),
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
-                            ),
+                            if (widget.showDate) ...[
+                              SizedBox(width: 10),
+                              Text(
+                                DateUtil.formatDateTime(widget.group.createdAt),
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                              ),
+                            ],
                           ],
                         ),
-                        Text(
-                          isCreatedByCurrentUser ? S.of(context).youCreatedGroup : '${S.of(context).groupHasBeenCreated} ${widget.group.creatorName}',
-                          style: TextStyle(
-                            fontSize: ChatifySizes.fontSizeSm,
-                            fontWeight: FontWeight.w400,
-                            color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
+                        if (widget.showMembers)
+                          Text(
+                            _buildMembersText(),
+                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        else
+                          Text(
+                            isCreatedByCurrentUser ? S.of(context).youCreatedGroup : '${S.of(context).groupHasBeenCreated} ${widget.group.creatorName}',
+                            style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
                       ],
                     ),
                   ),

@@ -46,7 +46,7 @@ class UnreadListScreenState extends State<UnreadListScreen> {
               IconButton(
                 icon: const Icon(FluentIcons.delete_24_regular),
                 onPressed: () {
-                  showDeleteListDialog(context);
+                  showDeleteListDialog(context, title: S.of(context).deleteUnreadList);
                 },
               ),
             ],

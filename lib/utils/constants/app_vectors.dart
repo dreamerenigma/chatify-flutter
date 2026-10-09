@@ -19,8 +19,23 @@ class ChatifyVectors {
   static const String vk = "assets/vectors/logos/vk.svg";
   static const String ok = "assets/vectors/logos/ok.svg";
 
+  /// -- Banks Logos
+  static const String sbp = "assets/vectors/banks/sbp.svg";
+  static const String alfaBank = "assets/vectors/banks/alfa_bank.svg";
+  static const String vtbBank = "assets/vectors/banks/vtb_bank.svg";
+  static const String sovkomBank = "assets/vectors/banks/sovkom_bank.svg";
+  static const String akBarsBank = "assets/vectors/banks/ak_bars_bank.svg";
+  static const String otpBank = "assets/vectors/banks/otp_bank.svg";
+  static const String gazpromBank = "assets/vectors/banks/gazprom_bank.svg";
+  static const String mtsBank = "assets/vectors/banks/mts_bank.svg";
+  static const String ozonBank = "assets/vectors/banks/ozon_bank.svg";
+  static const String psbBank = "assets/vectors/banks/psb_bank.svg";
+  static const String bankRussia = "assets/vectors/banks/bank_russia.svg";
+
   /// -- Vectors
   static const String status = "assets/vectors/status.svg";
+  static const String statusFilled = "assets/vectors/status_filled.svg";
+  static const String archive = "assets/vectors/archive.svg";
   static const String profile = "assets/vectors/profile.svg";
   static const String favorite = "assets/vectors/favorite.svg";
   static const String logo = "assets/vectors/logo.svg";
@@ -43,6 +58,7 @@ class ChatifyVectors {
   static const String simCardOrange = "assets/vectors/sim_card_orange.svg";
   static const String document = "assets/vectors/document.svg";
   static const String documents = "assets/vectors/documents.svg";
+  static const String documentText = "assets/vectors/document_text.svg";
   static const String documentOutline = "assets/vectors/document_outline.svg";
   static const String documentFilled = "assets/vectors/document_filled.svg";
   static const String documentRed = "assets/vectors/document_red.svg";
@@ -82,6 +98,7 @@ class ChatifyVectors {
   static const String language = "assets/vectors/language.svg";
   static const String menu = "assets/vectors/menu.svg";
   static const String calls = "assets/vectors/calls.svg";
+  static const String callsFilled = "assets/vectors/calls_filled.svg";
   static const String callsAdd = "assets/vectors/calls_add.svg";
   static const String filter = "assets/vectors/filter.svg";
   static const String cameraLink = "assets/vectors/camera_link.svg";
@@ -93,9 +110,11 @@ class ChatifyVectors {
   static const String blockUser = "assets/vectors/block_user.svg";
   static const String messageNotification = "assets/vectors/message_notification.svg";
   static const String contact = "assets/vectors/contact.svg";
+  static const String contactNote = "assets/vectors/contact_note.svg";
   static const String twoLineHorizontal = "assets/vectors/two_line_horizontal.svg";
   static const String text = "assets/vectors/text.svg";
   static const String survey = "assets/vectors/survey.svg";
+  static const String surveys = "assets/vectors/surveys.svg";
   static const String surveyFilled = "assets/vectors/survey_filled.svg";
   static const String media = "assets/vectors/media.svg";
   static const String feather = "assets/vectors/feather.svg";
@@ -165,9 +184,15 @@ class ChatifyVectors {
   static const String aiOutline = "assets/vectors/ai_outline.svg";
   static const String question = "assets/vectors/question.svg";
   static const String questionSupport = "assets/vectors/question_support.svg";
-  static const String addFavorite = "assets/vectors/add_favorite.svg";
+  static const String addFavoriteRed = "assets/vectors/add_favorite_red.svg";
+  static const String addFavoriteGreen = "assets/vectors/add_favorite_green.svg";
+  static const String addFavoriteBlue = "assets/vectors/add_favorite_blue.svg";
+  static const String addFavoriteOrange = "assets/vectors/add_favorite_orange.svg";
   static const String specialFeatures = "assets/vectors/special_features.svg";
-  static const String createGroup = "assets/vectors/create_group.svg";
+  static const String createGroupRed = "assets/vectors/create_group_red.svg";
+  static const String createGroupGreen = "assets/vectors/create_group_green.svg";
+  static const String createGroupBlue = "assets/vectors/create_group_blue.svg";
+  static const String createGroupOrange = "assets/vectors/create_group_orange.svg";
   static const String megaphone = "assets/vectors/megaphone.svg";
   static const String megaphoneOutline = "assets/vectors/megaphone_outline.svg";
   static const String communityMessage = "assets/vectors/community_message.svg";
@@ -241,6 +266,7 @@ class ChatifyVectors {
   static const String pin = "assets/vectors/pin.svg";
   static const String unpin = "assets/vectors/unpin.svg";
   static const String groups = "assets/vectors/groups.svg";
+  static const String groupsOutline = "assets/vectors/groups_outline.svg";
   static const String addGroup = "assets/vectors/add_group.svg";
   static const String addToList = "assets/vectors/add_to_list.svg";
   static const String gif = "assets/vectors/gif.svg";
@@ -248,6 +274,9 @@ class ChatifyVectors {
   static const String videoCameraOutgoing = "assets/vectors/video_camera_outgoing.svg";
   static const String wizard = "assets/vectors/wizard.svg";
   static const String resize = "assets/vectors/resize.svg";
+  static const String resizeMap = "assets/vectors/resize_map.svg";
+  static const String minimizeMap = "assets/vectors/minimize_map.svg";
+  static const String myLocation = "assets/vectors/my_location.svg";
   static const String microphone = "assets/vectors/microphone.svg";
   static const String microphoneFilled = "assets/vectors/microphone_filled.svg";
   static const String createdCommunity = "assets/vectors/created_community.svg";
@@ -281,6 +310,12 @@ class ChatifyVectors {
   static const String birthdayUser = "assets/vectors/birthday_user.svg";
   static const String sort = "assets/vectors/sort.svg";
   static const String relatedDevices = "assets/vectors/related_devices.svg";
+  static const String communities = "assets/vectors/communities.svg";
+  static const String communitiesOutline = "assets/vectors/communities_outline.svg";
+  static const String pallete = "assets/vectors/pallete.svg";
+  static const String wallet = "assets/vectors/wallet.svg";
+  static const String phoneNumpadOutline = "assets/vectors/phone_numpad_outline.svg";
+  static const String closingChat = "assets/vectors/closing_chat.svg";
 
   /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';

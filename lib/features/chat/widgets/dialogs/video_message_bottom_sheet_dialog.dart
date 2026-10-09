@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../models/message_model.dart';
 import '../../models/user_model.dart';
 
-void showVideoMessageBottomSheetDialog(BuildContext context, UserModel user) {
+void showVideoMessageBottomSheetDialog(BuildContext context, UserModel user, {MessageModel? replyMessage}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -21,7 +22,7 @@ void showVideoMessageBottomSheetDialog(BuildContext context, UserModel user) {
       return VideoMessageBottomSheetContent(
         user: user,
         onRecordingFinished: (String localPath, int videoDuration) async {
-          await ChatApi.sendVideoMessage(user, localPath, videoDuration: videoDuration);
+          await ChatApi.sendVideoMessage(user, localPath, videoDuration: videoDuration, replyToMessageId: replyMessage?.id);
         },
       );
     },

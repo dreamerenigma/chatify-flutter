@@ -147,7 +147,7 @@ void showGroupSettingsDialog(BuildContext context, Offset position, {int initial
                                           } else if (selectedIndex == 1) {
                                             return ParticipantsOptionWidget();
                                           } else if (selectedIndex == 2) {
-                                            return MediaOptionWidget();
+                                            return MediaOptionWidget(user: APIs.me);
                                           } else if (selectedIndex == 3) {
                                             return FilesOptionWidget();
                                           } else if (selectedIndex == 4) {

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -98,12 +99,34 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return [
       if (onCameraPressed != null)
-        IconButton(icon: const Icon(Icons.camera_alt_outlined, size: 26), onPressed: onCameraPressed),
+        TooltipTheme(
+          data: TooltipThemeData(
+            decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
+            textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w400),
+          ),
+          child: Tooltip(
+            message: S.of(context).camera,
+            child: Theme(
+              data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+              child: IconButton(icon: const Icon(Icons.camera_alt_outlined, size: 26), onPressed: onCameraPressed),
+            ),
+          ),
+        ),
       const SizedBox(width: 4),
-
       if (showSearch)
-        IconButton(onPressed: onToggleSearch, icon: const Icon(Icons.search, size: 25)),
-
+        TooltipTheme(
+          data: TooltipThemeData(
+            decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
+            textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w400),
+          ),
+          child: Tooltip(
+            message: S.of(context).camera,
+            child: Theme(
+              data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+              child: IconButton(onPressed: onToggleSearch, icon: const Icon(Icons.search, size: 25)),
+            ),
+          ),
+        ),
       popupMenuButton,
     ];
   }

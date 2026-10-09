@@ -11,6 +11,7 @@ import '../core/enums/message_type.dart';
 import '../core/services/media/media_service.dart';
 import '../core/services/media/yandex/yandex_disk_paths.dart';
 import '../features/chat/models/event_model.dart';
+import '../features/chat/models/mention_data_model.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/survey/models/survey_model.dart';
@@ -49,8 +50,11 @@ class ChatApi {
     String? fileName,
     String? fileSize,
     String? imageUrl,
+    String? replyToMessageId,
     int? videoDuration,
-    int? audioDuration
+    int? audioDuration,
+    int? documentPagesCount,
+    List<MentionDataModel>? mentions,
   }) async {
     try {
       final now = Timestamp.now();
@@ -68,10 +72,13 @@ class ChatApi {
         fileSize: fileSize,
         audioDuration: audioDuration,
         videoDuration: videoDuration,
+        documentPagesCount: documentPagesCount,
+        replyToMessageId: replyToMessageId,
         deletedBy: [],
         reactions: {},
         deletedAt: null,
-        id: '',
+        id: messageId,
+        mentions: mentions ?? [],
       );
 
       final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
@@ -141,6 +148,7 @@ class ChatApi {
       fromId: user.uid,
       sent: now,
       deletedBy: [],
+      mentions: [],
       reactions: {},
       deletedAt: null,
     );
@@ -153,7 +161,7 @@ class ChatApi {
   }
 
   /// -- Send voice message.
-  static Future<String> sendVoiceMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize, int? audioDuration}) async {
+  static Future<String> sendVoiceMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize, int? audioDuration, String? replyToMessageId}) async {
     try {
       final now = Timestamp.now();
       final messageId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -188,7 +196,9 @@ class ChatApi {
         documentName: fileName,
         fileSize: fileSize ?? localFileSize.toString(),
         audioDuration: audioDuration,
+        replyToMessageId: replyToMessageId,
         deletedBy: [],
+        mentions: [],
         reactions: {},
         deletedAt: null,
       );
@@ -208,7 +218,7 @@ class ChatApi {
   }
 
   /// -- Send video message.
-  static Future<String> sendVideoMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize, int? videoDuration}) async {
+  static Future<String> sendVideoMessage(UserModel chatUser, String localPath, {String? fileName, String? fileSize, int? videoDuration, String? replyToMessageId}) async {
     try {
       final now = Timestamp.now();
       final messageId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -243,7 +253,9 @@ class ChatApi {
         documentName: fileName,
         fileSize: fileSize ?? localFileSize.toString(),
         videoDuration: videoDuration,
+        replyToMessageId: replyToMessageId,
         deletedBy: [],
+        mentions: [],
         reactions: {},
         deletedAt: null,
       );
@@ -341,7 +353,7 @@ class ChatApi {
   }
 
   /// -- Send chat image.
-  static Future<void> sendChatImage(UserModel chatUser, File file) async {
+  static Future<void> sendChatImage(UserModel chatUser, File file, {String? replyToMessageId}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final isGif = ext == 'gif';
     final chatId = getConversationId(chatUser.id);
@@ -356,7 +368,7 @@ class ChatApi {
         return;
       }
 
-      await sendMessage(chatUser, imagePath, isGif ? MessageType.gif : MessageType.image);
+      await sendMessage(chatUser, imagePath, isGif ? MessageType.gif : MessageType.image, replyToMessageId: replyToMessageId);
     } catch (e, st) {
       log('SEND IMAGE: error = $e');
       log('SEND IMAGE: stack = $st');
@@ -364,7 +376,7 @@ class ChatApi {
   }
 
   /// -- Send chat video.
-  static Future<bool> sendChatVideo(UserModel chatUser, File file, {String? fileName, String? fileSize, int? videoDuration}) async {
+  static Future<bool> sendChatVideo(UserModel chatUser, File file, {String? fileName, String? fileSize, int? videoDuration, String? replyToMessageId}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final chatId = getConversationId(chatUser.id);
     final generatedFileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
@@ -404,6 +416,7 @@ class ChatApi {
         fileName: fileName ?? generatedFileName,
         fileSize: fileSize,
         videoDuration: videoDuration,
+        replyToMessageId: replyToMessageId,
       );
 
       log('SEND VIDEO: message sent');
@@ -417,7 +430,7 @@ class ChatApi {
   }
 
   /// --- Send chat audio.
-  static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName, {int? audioDuration}) async {
+  static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName, {int? audioDuration, String? replyToMessageId}) async {
     final chatId = getConversationId(chatUser.id);
     final path = 'Chats/$chatId/messages/audio/$fileName';
 
@@ -432,7 +445,7 @@ class ChatApi {
         return;
       }
 
-      await sendMessage(chatUser, audioPath, MessageType.audio, fileName: fileName, fileSize: fileSize.toString(), audioDuration: audioDuration);
+      await sendMessage(chatUser, audioPath, MessageType.audio, fileName: fileName, fileSize: fileSize.toString(), audioDuration: audioDuration, replyToMessageId: replyToMessageId);
 
       log('SEND AUDIO: uploaded successfully');
     } catch (e, st) {
@@ -442,7 +455,7 @@ class ChatApi {
   }
 
   /// --- Send chat document.
-  static Future<void> sendChatDocument(UserModel chatUser, File file) async {
+  static Future<void> sendChatDocument(UserModel chatUser, File file, {String? replyToMessageId}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final chatId = getConversationId(chatUser.id);
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
@@ -460,7 +473,7 @@ class ChatApi {
         return;
       }
 
-      await sendMessage(chatUser, documentPath, MessageType.document, fileName: file.path.split('/').last, fileSize: fileSize.toString());
+      await sendMessage(chatUser, documentPath, MessageType.document, fileName: file.path.split('/').last, fileSize: fileSize.toString(), replyToMessageId: replyToMessageId);
 
       log('SEND DOCUMENT: uploaded successfully');
     } catch (e, st) {
@@ -689,6 +702,7 @@ class ChatApi {
       type: MessageType.survey,
       survey: survey,
       deletedBy: [],
+      mentions: [],
       reactions: {},
       deletedAt: null,
     );
@@ -777,6 +791,7 @@ class ChatApi {
       type: MessageType.event,
       event: event,
       deletedBy: [],
+      mentions: [],
       reactions: {},
       deletedAt: null,
     );

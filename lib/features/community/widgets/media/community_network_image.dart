@@ -7,7 +7,7 @@ import '../../../../core/services/media/media_service.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../shimmers/shimmer_effect.dart';
 
-class CommunityNetworkImage extends StatelessWidget {
+class CommunityNetworkImage extends StatefulWidget {
   final String imagePath;
   final double width;
   final double height;
@@ -26,33 +26,89 @@ class CommunityNetworkImage extends StatelessWidget {
   });
 
   @override
+  State<CommunityNetworkImage> createState() => _CommunityNetworkImageState();
+}
+
+class _CommunityNetworkImageState extends State<CommunityNetworkImage> {
+  String? _imageUrl;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    final imagePath = widget.imagePath;
+
+    if (imagePath.isEmpty) {
+      if (!mounted) return;
+
+      setState(() {
+        _imageUrl = null;
+        _isLoading = false;
+      });
+
+      return;
+    }
+
+    try {
+      final url = await Get.find<MediaService>().getUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _imageUrl = url;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        _imageUrl = null;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CommunityNetworkImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imagePath != widget.imagePath) {
+      _imageUrl = null;
+      _isLoading = true;
+      _loadImage();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      future: Get.find<MediaService>().getUrl(imagePath),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return ClipRRect(borderRadius: borderRadius ?? BorderRadius.zero, child: ShimmerEffect(width: width, height: height, borderRadius: 0, angle: angle));
-        }
+    if (_isLoading) {
+      return ClipRRect(
+        borderRadius: widget.borderRadius ?? BorderRadius.zero,
+        child: ShimmerEffect(width: widget.width, height: widget.height, borderRadius: 0, angle: widget.angle),
+      );
+    }
 
-        final url = snapshot.data;
+    if (_imageUrl == null || _imageUrl!.isEmpty) {
+      return _errorWidget(context);
+    }
 
-        if (url == null || url.isEmpty) {
+    return ClipRRect(
+      borderRadius: widget.borderRadius ?? BorderRadius.zero,
+      child: CachedNetworkImage(
+        width: widget.width,
+        height: widget.height,
+        imageUrl: _imageUrl!,
+        fit: BoxFit.cover,
+        placeholder: (context, url) {
+          return ShimmerEffect(width: widget.width, height: widget.height, borderRadius: 0, angle: widget.angle);
+        },
+        errorWidget: (context, error, stackTrace) {
           return _errorWidget(context);
-        }
-
-        return ClipRRect(
-          borderRadius: borderRadius ?? BorderRadius.zero,
-          child: CachedNetworkImage(
-            width: width,
-            height: height,
-            imageUrl: url,
-            fit: BoxFit.cover,
-            errorWidget: (context, error, stackTrace) {
-              return _errorWidget(context);
-            },
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

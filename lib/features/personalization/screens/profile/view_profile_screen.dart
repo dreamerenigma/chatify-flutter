@@ -19,21 +19,29 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/popups/dialogs.dart';
 import '../../../../../utils/helper/date_util.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/group_api.dart';
 import '../../../../common/enums/date_format_type.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../core/enums/chat_media_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../calls/widgets/dialog/save_contact_dialog.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/message_model.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../chat/screens/chat_screen.dart';
+import '../../../chat/widgets/dialogs/user_complain_dialog.dart';
 import '../../../group/models/group_model.dart';
+import '../../../group/screens/add_groups_screen.dart';
+import '../../../group/screens/new_group_screen.dart';
 import '../../../status/widgets/options/action_option.dart';
+import '../../../utils/dialogs/custom_dialog.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/add_list_bottom_sheet_dialog.dart';
 import '../../widgets/dialogs/add_new_contact_bottom_dialog.dart';
+import '../../widgets/dialogs/block_user_dialog.dart';
+import '../../widgets/dialogs/closing_chat_bottom_sheet_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/media_visibility_dialog.dart';
 import '../../widgets/images/profile_photo_widget.dart';
@@ -68,10 +76,13 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   bool isProfilePhotoLoaded = false;
   bool isLoadingProfileImage = false;
   bool isFavorite = false;
+  bool isUserBlocked = false;
   String? _profileImageUrl;
   int mediaVisibility = 1;
   int disappearingMessagesDuration = 3;
   List<UserModel> get disappearingMessagesUsers => [APIs.me, widget.user];
+  List<UserModel> selectedUsers = [];
+  Map<String, UserModel> groupUsers = {};
 
   bool get isCurrentUser => APIs.auth.currentUser?.uid == widget.user.id;
 
@@ -147,6 +158,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       });
     });
     _loadProfileImage();
+    _checkBlockedStatus();
+    _checkFavoriteStatus();
+    _fetchGroups();
     _mediaStream = _createMediaStream();
   }
 
@@ -161,6 +175,36 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     final UserModel profileUser = isCurrentUser ? APIs.me : user;
 
     Navigator.push(context, createPageRoute(PhotoProfileScreen(image: _profileImageUrl, user: profileUser)));
+  }
+
+  void _toggleClosingChat() {
+    if (isCloseChatEnabled) {
+      setState(() {
+        isCloseChatEnabled = false;
+      });
+      return;
+    }
+
+    showClosingChatBottomSheetDialog(
+      context,
+      onConfirmed: () {
+        if (!mounted) return;
+
+        setState(() {
+          isCloseChatEnabled = true;
+        });
+      },
+    );
+  }
+
+  Future<void> _checkBlockedStatus() async {
+    final blocked = await APIs.isUserBlocked(widget.user.id);
+
+    if (!mounted) return;
+
+    setState(() {
+      isUserBlocked = blocked;
+    });
   }
 
   Future<void> _loadProfileImage() async {
@@ -207,6 +251,109 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         isLoadingProfileImage = false;
         isProfilePhotoLoaded = true;
       });
+    }
+  }
+
+  Future<void> _unblockUser() async {
+    try {
+      Dialogs.showProgressBarDialog(context, title: 'Разблокировка', message: S.of(context).pleaseWait);
+
+      await APIs.unBlockUser(widget.user);
+
+      if (!mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      setState(() {
+        isUserBlocked = false;
+      });
+
+      CustomIconSnackBar.showAnimatedSnackBar(
+        context,
+        'Контакт разблокирован',
+        icon: const Icon(BootstrapIcons.check_circle),
+        iconColor: ChatifyColors.success,
+        position: SnackBarPositionType.bottom,
+        offset: 20,
+      );
+    } catch (e, st) {
+      log('UNBLOCK USER: ERROR = $e');
+      log('UNBLOCK USER: STACK = $st');
+
+      if (!mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      CustomIconSnackBar.showAnimatedSnackBar(
+        context,
+        'Не удалось разблокировать контакт',
+        icon: const Icon(BootstrapIcons.exclamation_circle),
+        iconColor: ChatifyColors.danger,
+        position: SnackBarPositionType.bottom,
+        offset: 20,
+      );
+    }
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    final favorite = await APIs.isUserFavorite(widget.user.id);
+
+    if (!mounted) return;
+
+    setState(() {
+      isFavorite = favorite;
+    });
+  }
+
+  Future<void> _fetchGroups() async {
+    try {
+      log('========== FETCH COMMON GROUPS ==========');
+      log('CURRENT USER: ${APIs.me.id}');
+      log('TARGET USER: ${widget.user.id}');
+
+      final fetchedGroups = await GroupApi.getGroups();
+
+      final commonGroups = fetchedGroups.where((group) {
+        return group.members.contains(APIs.me.id) && group.members.contains(widget.user.id);
+      }).toList();
+
+      log('COMMON GROUPS: ${commonGroups.length}');
+
+      final memberIds = commonGroups.expand((group) => group.members).toSet().toList();
+
+      log('MEMBER IDS: $memberIds');
+
+      if (memberIds.isNotEmpty) {
+        final snapshot = await firestore.FirebaseFirestore.instance.collection('Users').where(
+          firestore.FieldPath.documentId,
+          whereIn: memberIds,
+        )
+            .get();
+
+        final loadedUsers = <String, UserModel>{};
+
+        for (final doc in snapshot.docs) {
+          final user = UserModel.fromDocument(doc);
+
+          loadedUsers[user.id] = user;
+
+          log(
+            'LOADED GROUP USER: '
+                '${user.id} -> ${user.name} ${user.surname}',
+          );
+        }
+
+        groupUsers = loadedUsers;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        groups = commonGroups;
+      });
+    } catch (e, st) {
+      log('FETCH COMMON GROUPS ERROR: $e');
+      log('FETCH COMMON GROUPS STACK: $st');
     }
   }
 
@@ -261,6 +408,8 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   }
 
   Widget _buildAnimatedHeader() {
+    final selectedOption = SaveContactController.instance.getOption();
+
     return ValueListenableBuilder<double>(
       valueListenable: _scrollOffset,
       builder: (context, scrollOffset, child) {
@@ -279,7 +428,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
               children: [
                 Padding(padding: const EdgeInsets.only(left: 4), child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))),
                 Positioned(
-                  left: 55,
+                  left: 58,
                   child: Opacity(
                     opacity: progress,
                     child: Row(
@@ -288,8 +437,8 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                           borderRadius: BorderRadius.circular(21),
                           child: CachedNetworkImage(
                             imageUrl: _profileImageUrl ?? '',
-                            width: 42,
-                            height: 42,
+                            width: 40,
+                            height: 40,
                             fit: BoxFit.cover,
                             errorWidget: (context, url, error) {
                               return CircleAvatar(
@@ -351,7 +500,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                             text: 'Изменить',
                             onTap: () {
                               Navigator.pop(context);
-                              Navigator.push(context, createPageRoute(ChangeContactScreen()));
+                              Navigator.push(context, createPageRoute(ChangeContactScreen(selectedOption: selectedOption, user: widget.user)));
                             },
                           ),
                         ),
@@ -472,7 +621,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(user.email, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black)),
+                Text(user.email, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
@@ -542,12 +691,12 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd)),
+              Text(widget.user.about, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Text(
                   DateUtil.getLastMessageTime(context: context, time: widget.user.createdAt, showYear: true, formatType: DateFormatType.textual),
-                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm),
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                 ),
               ),
             ],
@@ -572,9 +721,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             children: [
               Row(
                 children: [
-                  Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                  Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   const Spacer(),
-                  Text('${media.length}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                  Text('${media.length}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
                 ],
@@ -687,21 +836,15 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           trailing: CustomSwitch(
             value: isCloseChatEnabled,
-            onChanged: (value) {
-              setState(() {
-                isCloseChatEnabled = value;
-              });
+            onChanged: (_) {
+              _toggleClosingChat();
             },
             switchWidth: 55,
             switchHeight: 33,
             thumbSize: 25,
             thumbPadding: 3,
           ),
-          onTap: () {
-            setState(() {
-              isCloseChatEnabled = !isCloseChatEnabled;
-            });
-          },
+          onTap: _toggleClosingChat,
         ),
         const SizedBox(height: 10),
         ProfileSettingsItem(
@@ -720,7 +863,15 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             ? SvgPicture.asset(ChatifyVectors.favoriteNone, width: 24, height: 24, colorFilter: const ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn))
             : Icon(Icons.favorite_outline, size: 25, color: ChatifyColors.darkGrey),
           title: isFavorite ? 'Удалить из избранного' : 'Добавить в избранное',
-          onTap: () {
+          onTap: () async {
+            if (isFavorite) {
+              await APIs.removeUserFromFavorites(widget.user);
+            } else {
+              await APIs.addUserToFavorites(widget.user);
+            }
+
+            if (!mounted) return;
+
             setState(() {
               isFavorite = !isFavorite;
             });
@@ -733,6 +884,18 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             icon: SvgPicture.asset(ChatifyVectors.addToList, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
             title: 'Добавить в список',
             onTap: () {
+              if (isUserBlocked) {
+                CustomIconSnackBar.showAnimatedSnackBar(
+                  context,
+                  'Разблокируйте, чтобы добавить в список.',
+                  icon: const Icon(Icons.warning_amber_rounded, size: 26),
+                  iconColor: ChatifyColors.yellow,
+                  position: SnackBarPositionType.bottom,
+                  offset: 20,
+                );
+                return;
+              }
+
               showAddListBottomSheetDialog(context);
             },
           ),
@@ -749,7 +912,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (groups.isNotEmpty)
+          if (groups.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text('Общих групп нет', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
@@ -764,11 +927,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GroupList(groups: groups, currentUser: APIs.me.name, onGroupSelected: (group) {}, user: {}),
-            ),
+            SizedBox(height: 5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -779,7 +938,18 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                     splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                     highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                     hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                    onTap: () {},
+                    onTap: () async {
+                      final isBlocked = await APIs.isUserBlocked(widget.user.id);
+
+                      if (!context.mounted) return;
+
+                      if (isBlocked) {
+                        showCustomDialog(context, widget.user);
+                        return;
+                      }
+
+                      Get.to(() => NewGroupScreen(selectedUsers: [widget.user]));
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
@@ -810,7 +980,18 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                     splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                     highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                     hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-                    onTap: () {},
+                    onTap: () async {
+                      final isBlocked = await APIs.isUserBlocked(widget.user.id);
+
+                      if (!context.mounted) return;
+
+                      if (isBlocked) {
+                        showCustomDialog(context, widget.user);
+                        return;
+                      }
+
+                      Get.to(() => AddGroupsScreen(selectedUsers: selectedUsers));
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
@@ -841,6 +1022,8 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 5),
+            GroupList(groups: groups, currentUser: widget.user.name, onGroupSelected: (group) {}, users: groupUsers, showBackground: false, showDate: false, showMembers: true),
           ],
         ],
       ),
@@ -863,11 +1046,27 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
           const SizedBox(height: 8),
           ProfileSettingsItem(
             icon: const Icon(Icons.not_interested, size: 24),
-            title: '${S.of(context).block}: ${widget.user.name} ${widget.user.surname}',
-            titleColor: ChatifyColors.danger,
-            iconColor: ChatifyColors.danger,
+            title: isUserBlocked ? 'Разблокировать: ${widget.user.name} ${widget.user.surname}' : '${S.of(context).block}: ${widget.user.name} ${widget.user.surname}',
+            titleColor: isUserBlocked ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black) : ChatifyColors.danger,
+            iconColor: isUserBlocked ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black) : ChatifyColors.danger,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            onTap: () {},
+            onTap: () {
+              if (isUserBlocked) {
+                _unblockUser();
+              } else {
+                showBlockUserDialog(
+                  context,
+                  widget.user,
+                  onBlocked: () {
+                    if (!mounted) return;
+
+                    setState(() {
+                      isUserBlocked = true;
+                    });
+                  },
+                );
+              }
+            },
           ),
           const SizedBox(height: 8),
           ProfileSettingsItem(
@@ -876,7 +1075,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             titleColor: ChatifyColors.danger,
             iconColor: ChatifyColors.danger,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            onTap: () {},
+            onTap: () {
+              showUserComplainDialog(context, widget.user);
+            },
           ),
         ],
       ],

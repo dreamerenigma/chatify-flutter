@@ -45,6 +45,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
   Widget build(BuildContext context) {
     final sharedGroups = widget.currentUserGroups.where((group) {
       final members = group.members;
+
       return members.contains(group.id) && members.contains(APIs.user.uid);
     }).toList();
     final sharedGroupCount = sharedGroups.length;
@@ -62,7 +63,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
                 style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w500),
               ),
               if (sharedGroupCount > 0)
-              Text('($sharedGroupCount)', style: TextStyle(fontSize: 21)),
+              Text('($sharedGroupCount)', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w400)),
             ],
           ),
         ),
@@ -85,9 +86,7 @@ class _GroupsOptionWidgetState extends State<GroupsOptionWidget> {
   }
 
   Widget _buildGeneralGroups() {
-    return Column(
-      children: groups.map((group) => _buildGroupItem(group, group.members.length)).toList(),
-    );
+    return Column(children: groups.map((group) => _buildGroupItem(group, group.members.length)).toList());
   }
 
   Widget _buildGroupItem(GroupModel group, int membersCount) {

@@ -7,6 +7,7 @@ import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../routes/custom_page_route.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../../utils/platforms/platform_utils.dart';
 import '../../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../../chat/models/user_model.dart';
 import '../../../../community/models/community_model.dart';
@@ -108,7 +109,10 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
           );
         }),
         popupMenuButton: TooltipTheme(
-          data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
+          data: TooltipThemeData(decoration: BoxDecoration(
+            color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
+            textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w400),
+          ),
           child: Theme(
             data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
             child: PopupMenuButton<int>(
@@ -117,7 +121,7 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
               offset: const Offset(-8, 0),
               menuPadding: EdgeInsets.symmetric(vertical: 4),
               constraints: const BoxConstraints(minWidth: 0, maxWidth: 250),
-              icon: const Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_vert_rounded, size: 25),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith((states) {
@@ -126,8 +130,8 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   }
                   return ChatifyColors.transparent;
                 }),
-                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(isWindows ? 6 : 40))),
+                overlayColor: WidgetStateProperty.all(ChatifyColors.darkGrey.withAlpha((0.1 * 255).toInt())),
               ),
               color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
               itemBuilder: (context) => [

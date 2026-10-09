@@ -60,7 +60,7 @@ class Dialogs {
     );
   }
 
-  static Future<void> showProgressBarDialog(
+  static void showProgressBarDialog(
     BuildContext context, {
     required String title,
     String? message,
@@ -71,7 +71,7 @@ class Dialogs {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         final color = colorsController.getColor(colorsController.selectedColorScheme.value);
 
         return AlertDialog(
@@ -118,8 +118,8 @@ class Dialogs {
     );
   }
 
-  static void hideProgressBar(BuildContext context) {
-    Navigator.of(context, rootNavigator: true).pop();
+  static void hideProgressBar() {
+    Get.back();
   }
 
   static Future<void> showCustomDialog({
@@ -142,7 +142,7 @@ class Dialogs {
           backgroundColor: ChatifyColors.transparent,
           child: Container(
             width: dialogWidth ?? 310,
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.8 * 255).toInt()) : ChatifyColors.white,
               borderRadius: BorderRadius.circular(12),

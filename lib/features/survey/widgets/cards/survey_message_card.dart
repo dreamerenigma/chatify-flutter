@@ -343,7 +343,7 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
               ),
             ),
             Positioned(
-              top: 5.5,
+              top: isWindows ? 6.5 : 5.5,
               left: isSender ? 7 : null,
               right: isSender ? null : 7,
               child: Transform(
@@ -358,43 +358,27 @@ class _SurveyMessageCardState extends State<SurveyMessageCard> {
     );
   }
 
-  Widget _buildVoterAvatars(BuildContext context, List<String> voterIds,) {
-
+  Widget _buildVoterAvatars(BuildContext context, List<String> voterIds) {
     final visibleVoterIds = voterIds.reversed.take(5).toList();
-
     final remainingCount = voterIds.length - visibleVoterIds.length;
 
     return SizedBox(
       height: 24,
-      width: visibleVoterIds.length * 14.0 +
-          (remainingCount > 0 ? 25 : 0),
+      width: visibleVoterIds.length * 14.0 + (remainingCount > 0 ? 25 : 0),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Рисуем справа налево, чтобы левая аватарка
-          // лежала поверх следующей справа.
           for (int i = visibleVoterIds.length - 1; i >= 0; i--)
             Positioned(
               left: i * 14.0,
               top: 1,
-              child: _buildVoterAvatar(
-                context,
-                visibleVoterIds[i],
-              ),
+              child: _buildVoterAvatar(context, visibleVoterIds[i]),
             ),
-
           if (remainingCount > 0)
             Positioned(
               left: visibleVoterIds.length * 14.0 + 3,
               top: 3,
-              child: Text(
-                '+$remainingCount',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: ChatifyColors.grey,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              child: Text('+$remainingCount', style: TextStyle(fontSize: 12, color: ChatifyColors.grey, fontWeight: FontWeight.w400)),
             ),
         ],
       ),

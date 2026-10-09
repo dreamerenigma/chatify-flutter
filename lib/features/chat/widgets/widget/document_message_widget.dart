@@ -37,7 +37,6 @@ class _DocumentMessageWidgetState extends State<DocumentMessageWidget> {
   @override
   void initState() {
     super.initState();
-
     final fileName = widget.message.documentName ?? 'Unknown';
     final fileExtension = fileName.split('.').last.toLowerCase();
 
@@ -57,11 +56,13 @@ class _DocumentMessageWidgetState extends State<DocumentMessageWidget> {
       final response = await Dio().get<List<int>>(url, options: Options(responseType: ResponseType.bytes));
       final bytes = Uint8List.fromList(response.data!);
       final document = await PdfDocument.openData(bytes);
+
       if (mounted) {
         setState(() {
           _pageCount = document.pagesCount;
         });
       }
+
       final page = await document.getPage(1);
       final pageImage = await page.render(width: page.width, height: page.height, format: PdfPageImageFormat.png);
 
@@ -190,7 +191,7 @@ class _DocumentMessageWidgetState extends State<DocumentMessageWidget> {
                           '${_pageCount ?? '...'} ${_pageCount == 1 ? 'страница' : 'страниц'} · ''$fileSize · $fileTypeDescription',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300, height: 1.2),
+                          style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400, height: 1.2),
                         ),
                       ],
                     ),

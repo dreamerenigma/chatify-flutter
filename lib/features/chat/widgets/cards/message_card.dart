@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../api/chat_api.dart';
+import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_vectors.dart';
@@ -22,6 +23,7 @@ import '../messages/recipient_video_message.dart';
 import '../messages/sender_message.dart';
 import '../messages/sender_video_message.dart';
 import '../painters/triangle_painter.dart';
+import '../widget/reply_message_widget.dart';
 
 class MessageCard extends StatefulWidget {
   final UserModel user;
@@ -70,6 +72,8 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
     final screenWidth = MediaQuery.of(context).size.width;
 
     switch (widget.message.type) {
+      case MessageType.text:
+        return screenWidth * (isWindows ? 0.5 : 0.8);
       case MessageType.document:
         return screenWidth * 0.9;
       case MessageType.survey:
@@ -87,6 +91,30 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
       default:
         return screenWidth * 0.8;
     }
+  }
+
+  MessageModel? get _repliedMessage {
+    final replyId = widget.message.replyToMessageId;
+
+    if (replyId == null || replyId.isEmpty) {
+      return null;
+    }
+
+    for (final message in widget.messages) {
+      if (message.id == replyId) {
+        return message;
+      }
+    }
+
+    return null;
+  }
+
+  UserModel _getReplyUser(MessageModel message) {
+    if (message.fromId == APIs.user.uid) {
+      return APIs.me;
+    }
+
+    return widget.user;
   }
 
   @override
@@ -286,16 +314,7 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
                   padding: EdgeInsets.only(bottom: isDifferentMessageType() && hasReaction ? 15 : 0),
                   child: Align(
                     alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: widget.message.type == MessageType.videoMessage
-                      ? _buildVideoMessageCard(isMe: isMe)
-                      : IntrinsicWidth(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: _getMessageMaxWidth()),
-                            child: isMe
-                              ? RecipientMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, conversationId: ChatApi.getConversationId(widget.user.id), user: APIs.me)
-                              : SenderMessage(message: widget.message, messages: widget.messages, hasReaction: hasReaction, user: widget.user, conversationId: ChatApi.getConversationId(widget.user.id)),
-                          ),
-                        ),
+                    child: IntrinsicWidth(child: ConstrainedBox(constraints: BoxConstraints(maxWidth: _getMessageMaxWidth()), child: _buildMessageBubble(isMe: isMe))),
                   ),
                 ),
               ),
@@ -352,6 +371,46 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble({required bool isMe}) {
+    final hasReaction = widget.message.reactions.isNotEmpty;
+    final repliedMessage = _repliedMessage;
+
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (repliedMessage != null)
+            ReplyMessageWidget(
+              message: repliedMessage,
+              user: _getReplyUser(repliedMessage),
+              type: isMe ? MessageBubbleType.recipient : MessageBubbleType.sender,
+              isPressed: widget.isSelected,
+            ),
+          widget.message.type == MessageType.videoMessage ? _buildVideoMessageCard(isMe: isMe) : isMe
+            ? RecipientMessage(
+                message: widget.message,
+                messages: widget.messages,
+                hasReaction: hasReaction,
+                hasReply: repliedMessage != null,
+                conversationId: ChatApi.getConversationId(widget.user.id),
+                user: APIs.me,
+              )
+            : SenderMessage(
+                message: widget.message,
+                messages: widget.messages,
+                hasReaction: hasReaction,
+                hasReply: repliedMessage != null,
+                user: widget.user,
+                conversationId: ChatApi.getConversationId(widget.user.id),
+              ),
+        ],
       ),
     );
   }

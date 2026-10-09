@@ -31,6 +31,7 @@ class SelectCountryScreenState extends State<SelectCountryScreen> {
     _filteredCountries = List.from(countries);
 
     final selectedCountry = countryController.selectedCountry.value;
+
     if (_filteredCountries.contains(selectedCountry)) {
       _filteredCountries.remove(selectedCountry);
       _filteredCountries.insert(0, selectedCountry!);

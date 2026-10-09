@@ -33,10 +33,12 @@ import 'contacts_screen.dart';
 import '../../newsletter/screens/new_newsletter_screen.dart';
 
 class HomeSelectUserScreen extends StatefulWidget {
+  final UserModel user;
   final bool isFavoritesMode;
 
   const HomeSelectUserScreen({
     super.key,
+    required this.user,
     this.isFavoritesMode = false,
   });
 
@@ -366,7 +368,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                       text: 'Настройки контакта',
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.push(context, createPageRoute(const ContactsScreen()));
+                        Navigator.push(context, createPageRoute(ContactsScreen(user: widget.user)));
                       },
                     ),
                   ),

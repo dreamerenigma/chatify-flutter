@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../api/chat_api.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../calls/models/call_result.dart';
 import '../../../calls/widgets/widget/outgoing_audio_call_widget.dart';
 import '../../../calls/widgets/widget/outgoing_video_call_widget.dart';
@@ -16,6 +18,7 @@ import '../../../home/widgets/dialogs/no_sound_dialog.dart';
 import '../../../personalization/screens/profile/view_profile_screen.dart';
 import '../../models/mini_call_data_model.dart';
 import '../../models/user_model.dart';
+import '../dialogs/payment_bottom_sheet_dialog.dart';
 import '../widget/user_info_widget.dart';
 import 'actions/app_bar_actions.dart';
 import 'mini_call_bar.dart';
@@ -138,14 +141,15 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
 
   Widget _buildWindowsAppBar(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey))),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.grey))),
       child: AppBar(
+        automaticallyImplyLeading: !isWindows,
         backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
         surfaceTintColor: ChatifyColors.transparent,
-        titleSpacing: 0,
+        titleSpacing: -10,
         elevation: 0,
         title: Padding(
-          padding: const EdgeInsets.only(left: 15, top: 10),
+          padding: EdgeInsets.only(left: isWindows ? 20 : 0, top: 10),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 235),
             child: Row(
@@ -155,16 +159,32 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
             ),
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, size: 25),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        leading: isWindows
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Center(
+                child: Material(
+                  color: ChatifyColors.transparent,
+                  borderRadius: BorderRadius.circular(35),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(35),
+                    mouseCursor: SystemMouseCursors.basic,
+                    splashFactory: NoSplash.splashFactory,
+                    hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const SizedBox(width: 36, height: 36, child: Icon(Icons.arrow_back_rounded, size: 25)),
+                  ),
+                ),
+              ),
+            ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10, top: 10),
             child: AppBarActions(
+              user: widget.user,
               onVideoCall: () {
                 widget.currentRouteNotifier?.value = '/video_call';
                 Navigator.push(context, createPageRoute(OutgoingVideoCallWidget(user: widget.user))).then((_) {
@@ -181,6 +201,14 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                 setState(() {
                   showSearchOverlay = true;
                 });
+              },
+              onPopupItemSelected: (value) {
+                if (value == 1) {
+                  log("Video call option 1");
+                }
+                if (value == 2) {
+                  log("Video call option 2");
+                }
               },
             ),
           ),
@@ -201,9 +229,9 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
             child: AppBar(
               leadingWidth: 55,
               titleSpacing: -5,
+              elevation: 0,
               surfaceTintColor: ChatifyColors.transparent,
               backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
-              elevation: 0,
               title: Padding(padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
                   children: [
@@ -213,24 +241,28 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                 ),
               ),
               actions: [
-                AppBarActions(
-                  onVideoCall: () async {
-                    final result =
-                    await Navigator.push<CallResult>(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: AppBarActions(
+                    user: widget.user,
+                    onVideoCall: () async {
+                      final result =
+                      await Navigator.push<CallResult>(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
 
-                    if (result == null || !mounted) return;
+                      if (result == null || !mounted) return;
 
-                    widget.onCallFinished?.call(result);
-                  },
-                  onAudioCall: () async {
-                    final result =
-                    await Navigator.push<CallResult>(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user, onMinimize: widget.onMinimizeCall)));
+                      widget.onCallFinished?.call(result);
+                    },
+                    onAudioCall: () async {
+                      final result =
+                      await Navigator.push<CallResult>(context, createPageRoute(OutgoingAudioCallScreen(user: widget.user, onMinimize: widget.onMinimizeCall)));
 
-                    if (result == null || !mounted) return;
+                      if (result == null || !mounted) return;
 
-                    widget.onCallFinished?.call(result);
-                  },
-                  onPopupItemSelected: _handlePopupAction,
+                      widget.onCallFinished?.call(result);
+                    },
+                    onPopupItemSelected: _handlePopupAction,
+                  ),
                 ),
               ],
             ),
@@ -250,15 +282,18 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   }
 
   Future<void> _handlePopupAction(int value) async {
+    final wallpaperKey = ChatApi.getConversationId(widget.user.id);
+
     switch (value) {
       case 1:
         break;
       case 2:
         break;
       case 3:
-        Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
+        showPaymentBottomSheetDialog(context, widget.user);
         break;
       case 4:
+        Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
         break;
       case 5:
         break;
@@ -268,6 +303,9 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       case 7:
         break;
       case 8:
+        if (imagePath != null && imagePath!.isNotEmpty) {
+          Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath!, user: widget.user, wallpaperKey: wallpaperKey)));
+        }
         break;
       case 10:
         break;
@@ -278,11 +316,10 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       case 13:
         break;
       case 14:
-        if (imagePath != null && imagePath!.isNotEmpty) {
-          Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath!)));
-        }
         break;
       case 15:
+        break;
+      case 16:
         break;
     }
   }

@@ -5,10 +5,12 @@ import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import '../../../../api/apis.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../generated/l10n/l10n.dart';
+import '../../../../provider/wallpaper_provider.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/popups/dialogs.dart';
@@ -37,19 +39,17 @@ class ChatWidget extends StatefulWidget {
 }
 
 class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateMixin {
-  List<MessageModel> list = [];
-  List<MessageModel> cachedMessages = [];
-  late FocusNode focusNode;
-  late Future<Map<String, String>> userNamesFuture;
-  late final MessageModel message;
-  late UserModel chat;
-  late final Animation<double> opacityAnimation;
-  late final AnimationController animationController;
   final FocusNode inputFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
   final overlayController = Get.put(OverlayColorController());
   final GlobalKey _textFieldKey = GlobalKey();
   final GlobalKey _newEmojiIconKey = GlobalKey();
+  late final Animation<double> opacityAnimation;
+  late final AnimationController animationController;
+  late FocusNode focusNode;
+  late Future<Map<String, String>> userNamesFuture;
+  late final MessageModel message;
+  late UserModel chat;
   TextEditingController textController = TextEditingController();
   Stream<QuerySnapshot<Map<String, dynamic>>>? messageStream;
   bool hasText = false;
@@ -60,10 +60,12 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
   bool isTyping = false;
   bool isIconVisible = false;
   bool isInside = false;
-  Set<int> selectedMessages = <int>{};
   Timer? _debounce;
   String? lastDisplayedDay;
   int hoveredIndex = -1;
+  List<MessageModel> list = [];
+  List<MessageModel> cachedMessages = [];
+  Set<int> selectedMessages = <int>{};
 
   @override
   void initState() {
@@ -271,7 +273,7 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
         showAttachFileDialog: () async {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
-          await showAttachFileDialog(context, position, onImageSelected);
+          await showAttachFileDialog(context, widget.user, position, onImageSelected);
         },
         onEmojiSelected: onEmojiSelected,
         onGifSelected: onGifSelected,
@@ -280,19 +282,18 @@ class ChatWidgetState extends State<ChatWidget>  with SingleTickerProviderStateM
   }
 
   Widget _buildBody() {
-    final backgroundImage = context.isDarkMode ? ChatifyImages.groupBackgroundDark : ChatifyImages.groupBackgroundLight;
     final Set<String> selectedReactions = selectedMessages.map((index) => list[index].reactions).whereType<String>().where((reaction) => reaction.isNotEmpty).toSet();
 
     return Stack(
       children: [
-        Positioned.fill(
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.none, repeat: ImageRepeat.repeat, alignment: Alignment.center),
-              ),
-            ),
-          ),
+        Consumer<WallpaperProvider>(
+          builder: (context, wallpaperProvider, child) {
+            final wallpaperKey = ChatApi.getConversationId(widget.user.id);
+            final defaultImage = context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight;
+            final backgroundImage = wallpaperProvider.getBackgroundImage(wallpaperKey, defaultImage: defaultImage);
+
+            return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
+          },
         ),
         Positioned.fill(
           child: Obx(() {

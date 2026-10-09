@@ -1446,7 +1446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "licenses": MessageLookupByLibrary.simpleMessage("Лицензии"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),
     "lightNotify": MessageLookupByLibrary.simpleMessage("Свет"),
-    "linkCopied": MessageLookupByLibrary.simpleMessage("Ссылка скопированна"),
+    "linkCopied": MessageLookupByLibrary.simpleMessage("Ссылка скопирована"),
     "linkOtherDevicesToAccount": MessageLookupByLibrary.simpleMessage(
       "Вы можете связать с этим аккаунтом другие устройства. ",
     ),
@@ -2365,7 +2365,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "status": MessageLookupByLibrary.simpleMessage("Статус"),
     "statusContacts": MessageLookupByLibrary.simpleMessage("Статус (Контакты)"),
     "statusPrivacy": MessageLookupByLibrary.simpleMessage(
-      "Статус Конфиденциальность",
+      "Конфиденциальность статуса",
     ),
     "statusPrivacySettings": MessageLookupByLibrary.simpleMessage(
       "Настройки конфиденциальности статуса.",
@@ -2514,7 +2514,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Слишком много сообщений",
     ),
     "topUpYourFavorites": MessageLookupByLibrary.simpleMessage(
-      "Пополните Избранное",
+      "Пополните избранное",
     ),
     "totalCountContacts": MessageLookupByLibrary.simpleMessage(" контактов"),
     "transferChatHistoryAndroidDevices": MessageLookupByLibrary.simpleMessage(

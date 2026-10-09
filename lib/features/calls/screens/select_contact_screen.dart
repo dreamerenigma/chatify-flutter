@@ -411,6 +411,7 @@ class SelectContactScreenState extends State<SelectContactScreen> {
         _buildActionTile(
           onTap: () {
             final selectedOption = SaveContactController.instance.getOption();
+
             Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
           },
           icon: SvgPicture.asset(ChatifyVectors.userAdd, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn), width: 23, height: 23),

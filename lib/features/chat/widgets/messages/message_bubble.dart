@@ -4,6 +4,7 @@ import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../../utils/platforms/platform_utils.dart';
 import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../models/message_bubble_model.dart';
 import '../../models/message_model.dart';
@@ -19,6 +20,7 @@ class MessageBubble extends StatefulWidget {
   final bool showInnerContainer;
   final bool showMetaCheck;
   final bool hasActions;
+  final bool hasReply;
   final List<MessageBubbleModel>? actions;
 
   const MessageBubble({
@@ -32,6 +34,7 @@ class MessageBubble extends StatefulWidget {
     this.showInnerContainer = false,
     this.showMetaCheck = true,
     this.hasActions = false,
+    this.hasReply = false,
     this.actions,
   });
 
@@ -44,6 +47,7 @@ class _MessageBubbleState extends State<MessageBubble> {
   Widget build(BuildContext context) {
     final bool isSender = widget.type == MessageBubbleType.sender;
     final bool hasActions = widget.actions?.isNotEmpty ?? false;
+    final bool hasReply = widget.hasReply;
 
     final content = widget.showInnerContainer
       ? Container(
@@ -67,26 +71,28 @@ class _MessageBubbleState extends State<MessageBubble> {
         Container(
           clipBehavior: Clip.none,
           padding: widget.isWebOrWindows
-            ? EdgeInsets.symmetric(horizontal: 12, vertical: isSender ? 4 : 8)
+            ? EdgeInsets.symmetric(horizontal: widget.showInnerContainer ? 2 : isWindows ? 10 : 12, vertical: isSender ? 2 : 2)
             : widget.showInnerContainer
-              ? const EdgeInsets.all(2)
-              : EdgeInsets.only(left: 10, right: 10, top: 10, bottom: isSender ? 3 : 0),
+              ? EdgeInsets.all(2)
+              : EdgeInsets.only(left: 10, right: 5, top: 10, bottom: isSender ? 3 : 0),
           margin: widget.isWebOrWindows
-            ? EdgeInsets.symmetric(horizontal: 16, vertical: isSender ? 10 : 6)
+            ? EdgeInsets.symmetric(horizontal: 16, vertical: isSender ? 10 : 0)
             : widget.showInnerContainer
               ? EdgeInsets.only(left: 16, right: 16, top: 3, bottom: widget.actions?.isNotEmpty == true ? 0 : widget.message.reactions.isNotEmpty ? 8 : 3)
-              : EdgeInsets.only(left: 16, right: 16, top: 5, bottom: widget.message.reactions.isNotEmpty ? 12 : isSender ? 5 : 5),
+              : EdgeInsets.only(left: 16, right: 16, top: hasReply ? 0 : 5, bottom: widget.message.reactions.isNotEmpty ? 12 : isSender ? 5 : 5),
           decoration: BoxDecoration(
             color: isSender ? widget.isPressed
               ? context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey
               : context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.lightGrey : context.isDarkMode ? ChatifyColors.greenMessageBorderDark : ChatifyColors.greenMessageBubbleRecipient,
             border: Border(
-              top: BorderSide(
-                color: isSender
-                  ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey)
-                  : (context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder),
-                width: 1,
-              ),
+              top: hasReply
+                ? BorderSide.none
+                : BorderSide(
+                    color: isSender
+                      ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey)
+                      : (context.isDarkMode ? ChatifyColors.greenMessageDivider : ChatifyColors.messageBubbleRecipientBorder),
+                    width: 1,
+                  ),
               left: BorderSide(
                 color: isSender
                   ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey)
@@ -110,18 +116,20 @@ class _MessageBubbleState extends State<MessageBubble> {
             ),
             borderRadius: isSender
               ? BorderRadius.only(
-                  topRight: const Radius.circular(15),
+                  topRight: hasReply ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
                   topLeft: Radius.zero,
-                  bottomLeft: widget.actions?.isNotEmpty == true ? Radius.zero : const Radius.circular(15),
-                  bottomRight: widget.actions?.isNotEmpty == true ? Radius.zero : const Radius.circular(15),
+                  bottomLeft: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 :15),
+                  bottomRight: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 :15),
                 )
               : BorderRadius.only(
-                  topLeft: const Radius.circular(15),
+                  topLeft: hasReply ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
                   topRight: Radius.zero,
-                  bottomLeft: widget.actions?.isNotEmpty == true ? Radius.zero : const Radius.circular(15),
-                  bottomRight: widget.actions?.isNotEmpty == true ? Radius.zero : const Radius.circular(15),
+                  bottomLeft: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
+                  bottomRight: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
             ),
-            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha(25), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 2))],
+            boxShadow: hasReply
+              ? const []
+              : [BoxShadow(color: ChatifyColors.black.withAlpha(25), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 2))],
           ),
           child: widget.showInnerContainer ? content
             : Column(
@@ -132,7 +140,6 @@ class _MessageBubbleState extends State<MessageBubble> {
                 ],
               ),
         ),
-
         if (widget.actions != null && widget.actions!.isNotEmpty)
           _buildActionsPanel(),
       ],

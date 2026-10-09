@@ -11,7 +11,6 @@ import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
-import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -39,6 +38,7 @@ class SenderMessage extends StatefulWidget {
   final List<MessageModel> messages;
   final bool hasReaction;
   final String conversationId;
+  final bool hasReply;
 
   const SenderMessage({
     super.key,
@@ -47,6 +47,7 @@ class SenderMessage extends StatefulWidget {
     required this.messages,
     required this.hasReaction,
     required this.conversationId,
+    this.hasReply = false,
   });
 
   @override
@@ -294,9 +295,11 @@ class SenderMessageState extends State<SenderMessage> {
                 showEditMessageDialog(context, position, _containerKey);
               },
               type: MessageBubbleType.sender,
+              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: () {}),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (widget.message.type == MessageType.emoji)
               EmojiMessage(emoji: widget.message.msg, isHovered: isHovered, isPressed: isPressed, borderColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
@@ -330,12 +333,11 @@ class SenderMessageState extends State<SenderMessage> {
               onSecondaryTap: _handleSecondaryTap,
               showInnerContainer: true,
               showMetaCheck: false,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 170),
-                child: CallMessage(message: widget.message, isSender: true),
-              ),
+              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
+              child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: CallMessage(message: widget.message, isSender: true)),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
               _buildHoverActions(),
           ],
@@ -367,12 +369,14 @@ class SenderMessageState extends State<SenderMessage> {
                   showInnerContainer: false,
                   showMetaCheck: true,
                   type: MessageBubbleType.sender,
+                  hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minWidth: 250),
                     child: VoiceRecordMessage(message: widget.message, isSender: true, user: widget.user),
                   ),
                 ),
-                _buildMessageTail(),
+                if (!widget.hasReply)
+                  _buildMessageTail(),
               ],
             ),
 
@@ -386,9 +390,12 @@ class SenderMessageState extends State<SenderMessage> {
 
   Widget _buildMessageTail() {
     final isCall = widget.message.type == MessageType.call;
+    final isVideo = widget.message.type == MessageType.video;
+    final isAudio = widget.message.type == MessageType.audio;
+    final isDocument = widget.message.type == MessageType.document;
 
     return Positioned(
-      top: isWebOrWindows ? 10 : isCall ? 3.5 : 5.5,
+      top: isWebOrWindows ? (isVideo || isAudio || isDocument ? 5.5 : 10.5) : (isCall ? 3.5 : 5.5),
       left: 7,
       child: Transform(
         alignment: Alignment.center,
@@ -506,10 +513,8 @@ class SenderMessageState extends State<SenderMessage> {
           children: [
             Container(
               key: _containerKey,
-              padding: EdgeInsets.all(DeviceUtils.getScreenWidth(context) * .008),
-              margin: isWebOrWindows
-                ? EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .028, vertical: DeviceUtils.getScreenHeight(context) * .003)
-                : EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
                 color: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.lightGrey,
                 border: Border.all(color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey),
@@ -544,7 +549,8 @@ class SenderMessageState extends State<SenderMessage> {
                 ],
               ),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (isVideo)
               Positioned(
                 left: 30,
@@ -607,10 +613,12 @@ class SenderMessageState extends State<SenderMessage> {
               onSecondaryTap: _handleSecondaryTap,
               showInnerContainer: true,
               showMetaCheck: true,
+              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               type: MessageBubbleType.recipient,
               child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: EventMessageCard(event: event, ownerId: widget.user, user: widget.user)),
             ),
-            _buildMessageTail(),
+            if (!widget.hasReply)
+              _buildMessageTail(),
             if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
               _buildHoverActions(),
           ],

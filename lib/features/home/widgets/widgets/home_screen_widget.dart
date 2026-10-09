@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../core/enums/chat_list_type.dart';
 import '../../../../core/enums/selection_type.dart';
@@ -15,6 +16,7 @@ import '../../../../core/theme/seasons/effects/rain_effect.dart';
 import '../../../../core/theme/seasons/effects/snow_effect.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
+import '../../../../utils/constants/app_color_assets.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../bot/models/info_app_model.dart';
@@ -25,19 +27,25 @@ import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
 import '../../../community/screens/communities_screen.dart';
 import '../../../group/models/group_model.dart';
+import '../../../group/screens/groups_management_screen.dart';
 import '../../../personalization/controllers/seasons_controller.dart';
 import '../../../personalization/controllers/user_controller.dart';
+import '../../../personalization/screens/favorite/favorite_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../personalization/widgets/dialogs/new_list_bottom_dialog.dart';
+import '../../../personalization/widgets/lists/group_list.dart';
 import '../../../status/screens/status_screen.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../../newsletter/models/newsletter_model.dart';
 import '../../controllers/chat_lists_controller.dart';
 import '../../models/list_item_data.dart';
 import '../../screens/home_select_user_screen.dart';
 import '../bars/nav_bars/side_nav_bar.dart';
+import '../cards/info_banner_card.dart';
 import '../dialogs/contexts/edit_tab_context_menu.dart';
 import '../lists/main_home_content_list.dart';
+import '../lists/user_list.dart';
 import '../sections/archive_privacy_section.dart';
 import '../sections/chat_info_section.dart';
 import '../texts/pressable_text.dart';
@@ -117,6 +125,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
   bool isCalling = false;
   bool showTabBar = true;
   bool showPasskeyCard = true;
+  bool showSurveysBanner = true;
 
   static const String _accessKeyHiddenUntilKey = 'access_key_hidden_until';
 
@@ -157,6 +166,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
     _tabController.index = 0;
     _tabController.addListener(_onTabChanged);
     _loadAccessKeyVisibility();
+    _loadSurveysBannerState();
   }
 
   @override
@@ -230,6 +240,30 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
     }
   }
 
+  Future<void> _loadSurveysBannerState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final dismissed = prefs.getBool('surveys_banner_dismissed') ?? false;
+
+    if (!mounted) return;
+
+    setState(() {
+      showSurveysBanner = !dismissed;
+    });
+  }
+
+  Future<void> _dismissSurveysBanner() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('surveys_banner_dismissed', true);
+
+    if (!mounted) return;
+
+    setState(() {
+      showSurveysBanner = false;
+    });
+  }
+
   Future<void> _checkAndShowDialog() async {
     final now = DateTime.now();
     final lastShownStr = GetStorage().read<String>('last_confirmation_dialog_shown');
@@ -295,6 +329,18 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                             return [
                                               SliverToBoxAdapter(child: SizedBox(height: 6)),
                                               SliverToBoxAdapter(child: _buildAccessKey()),
+                                              if (showSurveysBanner)
+                                                SliverToBoxAdapter(
+                                                  child: InfoBannerCard(
+                                                    title: 'Chatify Surveys',
+                                                    subtitle: 'Вы бы могли уделить несколько минут короткому опросу? ',
+                                                    actionText: 'Начать опрос',
+                                                    padding: EdgeInsetsGeometry.symmetric(horizontal: 8, vertical: 6),
+                                                    iconAsset: ChatifyVectors.surveys,
+                                                    onActionTap: () async {},
+                                                    onClose: _dismissSurveysBanner,
+                                                  ),
+                                                ),
                                               if (hasChats)
                                                 SliverToBoxAdapter(child: _buildCategoryMessages()),
                                             ];
@@ -534,11 +580,16 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(ChatifyVectors.circleCheck, width: 70, height: 70),
+            Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getSelectedColor(colorsController.selectedColorScheme.value)),
+              child: SvgPicture.asset(ChatifyVectors.circleCheck, width: 62, height: 62),
+            ),
             SizedBox(height: 25),
             Text(S.of(context).noUnreadChats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
             SizedBox(height: 20),
-            Text('На этом пока всё.', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm)),
+            Text('На этом пока всё.', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
             SizedBox(height: 20),
             PressableText(
               text: S.of(context).viewAllChats,
@@ -554,26 +605,61 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
   }
 
   Widget _buildFavoriteContent() {
-    return Center(
+    final favoriteUsers = widget.users.where((user) => user.isFavorite).toList();
+
+    if (favoriteUsers.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.addFavorite), width: 100, height: 100),
+            const SizedBox(height: 15),
+            Text(S.of(context).topUpYourFavorites, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Text(S.of(context).viewFavoritesChatsAndCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+            ),
+            const SizedBox(height: 25),
+            PressableText(
+              text: S.of(context).addUsersOrGroups,
+              style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+              onTap: () {
+                Navigator.push(context, createPageRoute(AddFavoriteScreen()));
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(ChatifyVectors.addFavorite, width: 120, height: 120),
-          const SizedBox(height: 15),
-          Text(S.of(context).topUpYourFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: Text(S.of(context).viewFavoritesChatsAndCalls, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+          UserList(
+            isSearching: widget.isSearching,
+            searchList: favoriteUsers,
+            list: favoriteUsers,
+            isSharing: false,
+            onUserSelected: widget.onUserSelected,
+            selectedUserIds: widget.selectedChats,
+            pinnedChats: widget.pinnedChats,
+            mutedChats: widget.mutedChats,
           ),
-          const SizedBox(height: 25),
-          PressableText(
-            text: S.of(context).addUsersOrGroups,
-            style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
-            onTap: () {
-              Navigator.push(context, createPageRoute(AddFavoriteScreen()));
-            },
+          CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Center(
+              child: PressableText(
+                text: 'Настроить: Избранное',
+                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
+                onTap: () {
+                  Navigator.push(context, createPageRoute(FavoriteScreen(user: widget.user)));
+                },
+              ),
+            ),
           ),
         ],
       ),
@@ -581,26 +667,63 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
   }
 
   Widget _buildGroupsContent() {
-    return Center(
+    final currentUserName = Get.find<UserController>().currentUser.name;
+
+    if (widget.groups.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(colorsController.getAsset(ChatifyColorAssetsList.createGroup), width: 200, height: 200),
+            const SizedBox(height: 5),
+            Text('Создайте группу', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 60),
+              child: Text(
+                'Достигайте целей вместе с людьми из вашего окружения.',
+                style: TextStyle(color: ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400, height: 1.2),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 25),
+            PressableText(
+              text: 'Создайте группу',
+              style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
+              onTap: () {
+                Navigator.push(context, createPageRoute(HomeSelectUserScreen(isFavoritesMode: true, user: widget.user)));
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(ChatifyVectors.createGroup, width: 200, height: 200),
-          const SizedBox(height: 5),
-          Text('Создайте группу', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-          const SizedBox(height: 10),
+          if (widget.groups.isNotEmpty)
+            GroupList(
+              groups: widget.groups,
+              users: {},
+              currentUser: currentUserName,
+              selectedGroupIds: widget.selectedGroupIds,
+              onGroupSelected: widget.onGroupSelected,
+            ),
+          CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 0),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60),
-            child: Text('Достигайте целей вместе с людьми из вашего окружения.', style: TextStyle(color: ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400, height: 1.2), textAlign: TextAlign.center),
-          ),
-          const SizedBox(height: 25),
-          PressableText(
-            text: 'Создайте группу',
-            style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
-            onTap: () {
-              Navigator.push(context, createPageRoute(HomeSelectUserScreen(isFavoritesMode: true)));
-            },
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Center(
+              child: PressableText(
+                text: 'Управление: Группы',
+                style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: 13, fontWeight: FontWeight.w400),
+                onTap: () {
+                  Navigator.push(context, createPageRoute(GroupsManagementScreen()));
+                },
+              ),
+            ),
           ),
         ],
       ),
@@ -734,7 +857,11 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
               children: [
                 const Text('Не рискуйте потерять доступ', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                 const SizedBox(height: 8),
-                Text('Убедитесь, что вы сможете выполнять вход ''на случай, если будут проблемы с SMS.', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, height: 1.4, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black), textAlign: TextAlign.center),
+                Text(
+                  'Убедитесь, что вы сможете выполнять вход ''на случай, если будут проблемы с SMS.',
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.4),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 16),
                 GestureDetector(
                   onTapDown: (_) {},
@@ -784,7 +911,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                 width: 32,
                 height: 32,
                 alignment: Alignment.center,
-                child: Icon(Icons.close, size: 24, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey),
+                child: Icon(Icons.close_rounded, size: 24, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey),
               ),
             ),
           ),

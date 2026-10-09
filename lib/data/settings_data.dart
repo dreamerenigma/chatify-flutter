@@ -67,7 +67,7 @@ Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsO
       noRoundedCorners: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-      onTap: () => Navigator.push(context, createPageRoute(const FavoriteScreen())),
+      onTap: () => Navigator.push(context, createPageRoute(FavoriteScreen(user: APIs.me))),
     ),
     'Chats': (context, iconColor) => SettingsMenuTile(
       icon: ChatifyVectors.messageOutline,
@@ -79,7 +79,7 @@ Map<String, Widget Function(BuildContext context, Color iconColor)> getSettingsO
       noRoundedCorners: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-      onTap: () => Navigator.push(context, createPageRoute(const ChatsScreen())),
+      onTap: () => Navigator.push(context, createPageRoute(ChatsScreen(user: APIs.me))),
     ),
     'Notifications': (context, iconColor) => SettingsMenuTile(
       icon: Icons.notifications_none_rounded,

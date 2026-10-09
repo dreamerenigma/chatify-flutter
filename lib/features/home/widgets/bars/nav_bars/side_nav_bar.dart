@@ -1,12 +1,11 @@
 import 'dart:developer';
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/utils/constants/app_colors.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../api/apis.dart';
+import '../../../../../core/enums/tooltip_position_type.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_vectors.dart';
@@ -115,11 +114,13 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
               children: [
                 _buildMenu(svgPath: ChatifyVectors.menu, isActive: widget.selectedIndex == -1, duration: Duration(milliseconds: 300)),
                 SizedBox(height: 8),
-                _buildIconButton(icon: FluentIcons.chat_24_regular, index: 0, size: 20, label: S.of(context).chats),
+                _buildIconButton(svgPath: ChatifyVectors.messageOutline, activeSvgPath: ChatifyVectors.messageFilled, index: 0, size: 22, label: S.of(context).chats),
                 SizedBox(height: 2),
-                _buildIconButton(svgPath: ChatifyVectors.calls, index: 1, size: 16, label: S.of(context).calls),
+                _buildIconButton(svgPath: ChatifyVectors.calls, activeSvgPath: ChatifyVectors.callsFilled, index: 1, size: 20, label: S.of(context).calls),
                 SizedBox(height: 2),
-                _buildIconButton(svgPath: ChatifyVectors.status, index: 2, label: S.of(context).status),
+                _buildIconButton(svgPath: ChatifyVectors.status, activeSvgPath: ChatifyVectors.statusFilled, index: 2, label: S.of(context).status),
+                SizedBox(height: 2),
+                _buildIconButton(svgPath: ChatifyVectors.communitiesOutline, activeSvgPath: ChatifyVectors.communities, index: 3, size: 20, label: S.of(context).communities),
               ],
             ),
           ),
@@ -130,15 +131,15 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildIconButton(svgPath: ChatifyVectors.star, index: 3, size: 18, label: S.of(context).featuredMessages, spacing: 13, leftPadding: 13),
+                _buildIconButton(svgPath: ChatifyVectors.star, activeSvgPath: ChatifyVectors.starFilled, index: 4, size: 20, label: S.of(context).featuredMessages, spacing: 13, leftPadding: 13),
                 SizedBox(height: 2),
-                _buildIconButton(icon: BootstrapIcons.archive, index: 4, size: 16, label: S.of(context).chatArchive, spacing: 13, leftPadding: 14),
+                _buildIconButton(svgPath: ChatifyVectors.archive, index: 5, size: 20, label: S.of(context).chatArchive, spacing: 13, leftPadding: 14),
                 SizedBox(height: 8),
                 SizedBox(width: widget.isMenuExpanded ? double.infinity : 32, child: Divider(height: 1, thickness: 1, color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.buttonDisabled)),
                 SizedBox(height: 8),
                 _buildIconButton(
                   svgPath: ChatifyVectors.settingsOutline,
-                  index: 5,
+                  index: 6,
                   size: 19,
                   label: S.of(context).settings,
                   spacing: 9,
@@ -146,23 +147,23 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                     final RenderBox renderBox = context.findRenderObject() as RenderBox;
                     final position = renderBox.localToGlobal(Offset.zero);
 
-                    showSettingsDialog(context, position, initialIndex: 0);
+                    showSettingsDialog(context, widget.user, position, initialIndex: 0);
                   },
                 ),
               ],
             ),
           ),
-          Padding(padding: const EdgeInsets.only(left: 4, right: 4, top: 6, bottom: 6), child:  _buildAvatar(widget.user)),
+          Padding(padding: const EdgeInsets.only(left: 4, right: 4, top: 6, bottom: 6), child: _buildAvatar(widget.user)),
         ],
       ),
     );
   }
 
   Widget _buildIconButton({
-    IconData? icon,
-    String? svgPath,
+    required String svgPath,
+    String? activeSvgPath,
     required int index,
-    double? size = 22,
+    double size = 22,
     VoidCallback? onTap,
     String? label,
     double spacing = 12,
@@ -182,12 +183,15 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
         tooltipMessage = S.of(context).status;
         break;
       case 3:
-        tooltipMessage = S.of(context).favoriteMessages;
+        tooltipMessage = S.of(context).communities;
         break;
       case 4:
-        tooltipMessage = S.of(context).archivedChats;
+        tooltipMessage = S.of(context).favoriteMessages;
         break;
       case 5:
+        tooltipMessage = S.of(context).archivedChats;
+        break;
+      case 6:
         tooltipMessage = S.of(context).settings;
         break;
       default:
@@ -200,21 +204,25 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
       child: Material(
         color: ChatifyColors.transparent,
         child: InkWell(
-          onTap: () {
-            if (onTap != null) {
-              onTap();
-            } else {
-              widget.onItemTapped(index);
-            }
-          },
           mouseCursor: SystemMouseCursors.basic,
           splashColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.darkGrey.withAlpha((0.1 * 255).toInt()),
           highlightColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.darkGrey.withAlpha((0.1 * 255).toInt()),
           borderRadius: BorderRadius.circular(ChatifySizes.borderRadiusMd),
+          onTap: () {
+            log('🔥 INKWELL CLICK: index = $index');
+
+            if (onTap != null) {
+              onTap();
+            } else {
+              log('➡️ onItemTapped($index)');
+              widget.onItemTapped(index);
+            }
+          },
           child: CustomTooltip(
             message: tooltipMessage,
             verticalOffset: -75,
-            horizontalOffset: -25,
+            horizontalOffset: 30,
+            position: TooltipPositionType.bottom,
             child: Stack(
               alignment: Alignment.centerLeft,
               children: [
@@ -225,9 +233,13 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                   padding: EdgeInsets.only(left: leftPadding),
                   child: Row(
                     children: [
-                      icon != null ? Icon(icon, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, size: size) : svgPath != null
-                        ? SvgPicture.asset(svgPath, width: 19, height: 19, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn), fit: BoxFit.contain)
-                        : SizedBox.shrink(),
+                      SvgPicture.asset(
+                        isActive && activeSvgPath != null ? activeSvgPath : svgPath,
+                        width: size,
+                        height: size,
+                        colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn),
+                        fit: BoxFit.contain,
+                      ),
                       if (widget.isMenuExpanded && label != null) ...[
                         SizedBox(width: spacing),
                         Flexible(
@@ -243,40 +255,40 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                   ),
                 ),
                 if (isActive)
-                Positioned(
-                  left: 0,
-                  top: 8,
-                  bottom: 8,
-                  child: Container(width: 2.5, decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(2))),
-                ),
-                if (index == 1 && widget.isCalling)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: AnimatedBuilder(
-                    animation: _pulseController,
-                    builder: (_, child) {
-                      double size = 12 + (_pulseController.value * 6);
-                      double opacity = 1 - _pulseController.value;
-
-                      return SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: size,
-                              height: size,
-                              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.green.withAlpha((opacity * 255).toInt()), width: 2)),
-                            ),
-                            Container(width: 12, height: 12, decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.green)),
-                          ],
-                        ),
-                      );
-                    },
+                  Positioned(
+                    left: 0,
+                    top: 8,
+                    bottom: 8,
+                    child: Container(width: 2.5, decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(2))),
                   ),
-                ),
+                if (index == 1 && widget.isCalling)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: AnimatedBuilder(
+                      animation: _pulseController,
+                      builder: (_, child) {
+                        double size = 12 + (_pulseController.value * 6);
+                        double opacity = 1 - _pulseController.value;
+
+                        return SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: size,
+                                height: size,
+                                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.green.withAlpha((opacity * 255).toInt()), width: 2)),
+                              ),
+                              Container(width: 12, height: 12, decoration: const BoxDecoration(shape: BoxShape.circle, color: ChatifyColors.green)),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
               ],
             ),
           ),
@@ -286,20 +298,18 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
   }
 
   Widget _buildMenu({String? svgPath, required bool isActive, required Duration duration}) {
-    return Tooltip(
-      verticalOffset: -50,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+    return CustomTooltip(
+      verticalOffset: -75,
+      horizontalOffset: 30,
+      position: TooltipPositionType.bottom,
       message: S.of(context).openNavigation,
-      textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
-      decoration: BoxDecoration(
-        color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
-      ),
       child: Material(
         color: ChatifyColors.transparent,
         child: InkWell(
+          mouseCursor: SystemMouseCursors.basic,
+          splashColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.grey,
+          highlightColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.grey,
+          borderRadius: BorderRadius.circular(ChatifySizes.borderRadiusMd),
           onTap: () {
             setState(() {
               isRotated = !isRotated;
@@ -311,10 +321,6 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
               widget.toggleMenu();
             });
           },
-          mouseCursor: SystemMouseCursors.basic,
-          splashColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.grey,
-          highlightColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.grey,
-          borderRadius: BorderRadius.circular(ChatifySizes.borderRadiusMd),
           child: Container(
             width: widget.isMenuExpanded ? 220 : 52,
             height: 36,
@@ -349,12 +355,12 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
                   ],
                 ),
                 if (isActive)
-                Positioned(
-                  left: 0,
-                  top: 8,
-                  bottom: 8,
-                  child: Container(width: 2.5, decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(2))),
-                ),
+                  Positioned(
+                    left: 0,
+                    top: 8,
+                    bottom: 8,
+                    child: Container(width: 2.5, decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(2))),
+                  ),
               ],
             ),
           ),
@@ -364,17 +370,10 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
   }
 
   Widget _buildAvatar(UserModel user) {
-    return Tooltip(
-      verticalOffset: -50,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+    return CustomTooltip(
+      verticalOffset: -40,
+      horizontalOffset: 30,
       message: S.of(context).profile,
-      textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
-      decoration: BoxDecoration(
-        color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: context.isDarkMode ? ChatifyColors.darkBackground.withAlpha((0.7 * 255).toInt()) : ChatifyColors.buttonGrey, width: 1),
-        boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.2 * 255).toInt()), spreadRadius: 1, blurRadius: 8, offset: Offset(0, 4))],
-      ),
       child: Material(
         color: ChatifyColors.transparent,
         child: InkWell(
@@ -382,7 +381,7 @@ class SideNavBarState extends State<SideNavBar> with TickerProviderStateMixin {
             final RenderBox renderBox = context.findRenderObject() as RenderBox;
             final position = renderBox.localToGlobal(Offset.zero);
 
-            showSettingsDialog(context, position);
+            showSettingsDialog(context, widget.user, position);
           },
           mouseCursor: SystemMouseCursors.basic,
           borderRadius: BorderRadius.circular(ChatifySizes.borderRadiusMd),

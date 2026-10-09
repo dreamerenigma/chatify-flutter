@@ -32,16 +32,30 @@ class ChatifyColorAssetsList {
   ChatifyColorAssetsList._();
 
   static const strongbox = ChatifyColorAssets(
-    blue: ChatifyVectors.strongboxBlue,
     red: ChatifyVectors.strongboxRed,
     green: ChatifyVectors.strongboxGreen,
+    blue: ChatifyVectors.strongboxBlue,
     orange: ChatifyVectors.strongboxOrange,
   );
 
   static final scheduledCalls = ChatifyColorAssets(
-    blue: ChatifyVectors.scheduledCallsBlue,
     red: ChatifyVectors.scheduledCallsRed,
     green: ChatifyVectors.scheduledCallsGreen,
+    blue: ChatifyVectors.scheduledCallsBlue,
     orange: ChatifyVectors.scheduledCallsOrange,
+  );
+
+  static final addFavorite = ChatifyColorAssets(
+    red: ChatifyVectors.addFavoriteRed,
+    green: ChatifyVectors.addFavoriteGreen,
+    blue: ChatifyVectors.addFavoriteBlue,
+    orange: ChatifyVectors.addFavoriteOrange,
+  );
+
+  static final createGroup = ChatifyColorAssets(
+    red: ChatifyVectors.createGroupRed,
+    green: ChatifyVectors.createGroupGreen,
+    blue: ChatifyVectors.createGroupBlue,
+    orange: ChatifyVectors.createGroupOrange,
   );
 }

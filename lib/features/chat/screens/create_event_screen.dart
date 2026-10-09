@@ -234,7 +234,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       return;
     }
 
-    await Dialogs.showProgressBarDialog(context, title: 'Создание мероприятия...');
+    Dialogs.showProgressBarDialog(context, title: 'Создание мероприятия...');
 
     try {
       await ChatApi.createEvent(

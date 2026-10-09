@@ -141,31 +141,6 @@ class MediaWidgetState extends State<MediaWidget> {
     }
   }
 
-  void _playGif() {
-    if (isGifPlaying) return;
-
-    _gifTimer?.cancel();
-
-    setState(() {
-      isGifPlaying = true;
-    });
-
-    _gifController.play();
-
-    _gifTimer = Timer(
-      const Duration(seconds: 5),
-      () {
-        if (!mounted) return;
-
-        _gifController.stop();
-
-        setState(() {
-          isGifPlaying = false;
-        });
-      },
-    );
-  }
-
   Future<void> _resolveImageUrls() async {
     try {
       final result = <String, String>{};
@@ -174,8 +149,24 @@ class MediaWidgetState extends State<MediaWidget> {
         final trimmedPath = path.trim();
         final url = await APIs.getMediaUrl(trimmedPath);
 
+        log('MEDIA WIDGET: path = $trimmedPath');
+        log('MEDIA WIDGET: resolved URL = $url');
+
         if (url != null && url.isNotEmpty) {
           result[trimmedPath] = url;
+        }
+      }
+
+      final gifPath = widget.message.msg.trim();
+
+      if (gifPath.isNotEmpty) {
+        final gifUrl = await APIs.getMediaUrl(gifPath);
+
+        log('GIF WIDGET: path = $gifPath');
+        log('GIF WIDGET: resolved URL = $gifUrl');
+
+        if (gifUrl != null && gifUrl.isNotEmpty) {
+          result[gifPath] = gifUrl;
         }
       }
 
@@ -186,7 +177,7 @@ class MediaWidgetState extends State<MediaWidget> {
         _isImageLoading = false;
       });
     } catch (e, st) {
-      log('MEDIA WIDGET: failed to resolve image URLs: $e');
+      log('MEDIA WIDGET: failed to resolve media URLs: $e');
       log('MEDIA WIDGET: stack = $st');
 
       if (!mounted) return;
@@ -255,7 +246,7 @@ class MediaWidgetState extends State<MediaWidget> {
   }
 
   Widget _buildImageWidget(BuildContext context) {
-    const borderRadius = BorderRadius.all(Radius.circular(10));
+    const borderRadius = BorderRadius.all(Radius.circular(14));
     final currentPath = widget.message.msg.trim();
     final currentUrl = _resolvedImageUrls[currentPath];
     final resolvedImageUrls = widget.imageUrls.map((path) => _resolvedImageUrls[path.trim()]).whereType<String>().where((url) => url.isNotEmpty).toList();
@@ -274,7 +265,7 @@ class MediaWidgetState extends State<MediaWidget> {
               builder: (context) => FullScreenImageWidget(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1)),
             );
           } else {
-            Navigator.push(context, createPageRoute(FullScreenImageScreen(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1))));
+            Navigator.push(context, createPageRoute(FullScreenImageScreen(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1), message: widget.message)));
           }
         },
         child: Container(
@@ -285,7 +276,7 @@ class MediaWidgetState extends State<MediaWidget> {
             ? Container(
                 width: 250,
                 height: 230,
-                decoration: const BoxDecoration(color: ChatifyColors.transparent), child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt(),), BlendMode.darken), child: const SizedBox.expand(),),
+                decoration: const BoxDecoration(color: ChatifyColors.transparent), child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt(),), BlendMode.darken), child: const SizedBox.expand()),
               )
             : CachedNetworkImage(
                 imageUrl: currentUrl,
@@ -309,39 +300,42 @@ class MediaWidgetState extends State<MediaWidget> {
   }
 
   Widget _buildGifWidget(BuildContext context) {
+    final gifUrl = _resolvedImageUrls[widget.message.msg.trim()];
+
+    if (gifUrl == null || gifUrl.isEmpty) {
+      return const SizedBox(width: 250, height: 230, child: Center(child: HeroIcon(HeroIcons.gif, size: 70)));
+    }
+
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(14),
       child: SizedBox(
         width: 250,
         height: 230,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            GifView.network(
-              widget.message.msg,
-              controller: _gifController,
-              width: 250,
-              height: 230,
-              fit: BoxFit.cover,
-              loop: true,
-              progressBuilder: (context) {
-                return const Padding(padding: EdgeInsets.all(8), child: GifLoadingIndicator(text: 'Gif'));
-              },
-              errorBuilder: (context, error, tryAgain) {
-                return const Center(child: HeroIcon(HeroIcons.gif, size: 70));
-              },
-            ),
-            if (!isGifPlaying)
-              GestureDetector(
-                onTap: _playGif,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.55), shape: BoxShape.circle),
-                  child: SvgPicture.asset(ChatifyVectors.gif, width: 38, height: 38, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
-                ),
-              ),
-          ],
+        child: GestureDetector(
+          onTap: () {
+            final imageUrls = [gifUrl];
+
+            if (Platform.isWindows) {
+              showDialog(context: context, builder: (context) => FullScreenImageWidget(imageUrls: imageUrls, initialIndex: 0));
+            } else {
+              Navigator.push(context, createPageRoute(FullScreenImageScreen(imageUrls: imageUrls, initialIndex: 0, message: widget.message)));
+            }
+          },
+          child: GifView.network(
+            gifUrl,
+            width: 250,
+            height: 230,
+            fit: BoxFit.cover,
+            loop: true,
+            progressBuilder: (context) {
+              return const Padding(padding: EdgeInsets.all(8), child: GifLoadingIndicator(text: 'Gif'));
+            },
+            errorBuilder: (context, error, tryAgain) {
+              log('GIF WIDGET: loading error = $error');
+
+              return const Center(child: HeroIcon(HeroIcons.gif, size: 70));
+            },
+          ),
         ),
       ),
     );

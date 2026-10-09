@@ -6,13 +6,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../controllers/dialog_controller.dart';
 import 'options/account_option_widget.dart';
@@ -25,7 +25,7 @@ import 'options/profile_option_widget.dart';
 import 'options/storage_option_widget.dart';
 import 'options/video_audio_option_widget.dart';
 
-void showSettingsDialog(BuildContext context, Offset position, {int initialIndex = 9}) {
+void showSettingsDialog(BuildContext context, UserModel user, Offset position, {int initialIndex = 9}) {
   final dialogController = Get.find<DialogController>();
   final overlay = Overlay.of(context);
   late OverlayEntry overlayEntry;
@@ -137,7 +137,7 @@ void showSettingsDialog(BuildContext context, Offset position, {int initialIndex
                                           } else if (selectedIndex == 4) {
                                             return NotificationsOptionWidget();
                                           } else if (selectedIndex == 5) {
-                                            return PersonalizedOptionWidget(overlayColorNotifier: overlayColorNotifier);
+                                            return PersonalizedOptionWidget(overlayColorNotifier: overlayColorNotifier, user: user);
                                           } else if (selectedIndex == 6) {
                                             return StorageOptionWidget();
                                           } else if (selectedIndex == 7) {

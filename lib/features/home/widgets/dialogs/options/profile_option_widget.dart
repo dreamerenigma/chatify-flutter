@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
@@ -5,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../api/apis.dart';
+import '../../../../../common/widgets/bars/scrollbar/custom_scrollbar.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
@@ -18,6 +21,7 @@ import '../../../../chat/widgets/dialogs/items/menu_item.dart';
 import '../../../../chat/widgets/dialogs/select_message_dialog.dart';
 import '../../../../personalization/controllers/user_controller.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../inputs/edit_text_input.dart';
 import '../confirmation_dialog.dart';
 import '../edit_profile_image_dialog.dart';
@@ -33,10 +37,11 @@ class ProfileOptionWidget extends StatefulWidget {
 }
 
 class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerProviderStateMixin {
-  final userController = Get.find<UserController>();
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController intelligenceController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final userController = Get.find<UserController>();
   late Worker _userListener;
   late Future<void> Function(File) onImageSelected;
   bool isHovered = false;
@@ -45,6 +50,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
   bool isPressedLogout = false;
   bool isHoveredLogout = false;
   bool _isLoadingProfileImage = false;
+  bool isInside = false;
   String? _profileImageUrl;
 
   @override
@@ -56,6 +62,7 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
         usernameController.text = updatedUser.name;
       }
     });
+    _loadProfileImage();
   }
 
   @override
@@ -78,362 +85,565 @@ class _ProfileOptionWidgetState extends State<ProfileOptionWidget> with TickerPr
     await APIs.updateProfilePicture(file);
   }
 
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+      });
+
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MouseRegion(
-            onEnter: (_) {
-              setState(() {
-                isHovered = true;
-              });
-            },
-            onExit: (_) {
-              setState(() {
-                isHovered = false;
-              });
-            },
-            child: GestureDetector(
-              onTap: () async {
-                if (userController.currentUser.image.isEmpty) {
-                  final String initialDirectory = "C:\\Users\\${await FileUtil.getUserName()}\\Pictures";
-                  final List<PlatformFile> result = await FilePicker.pickFiles(type: FileType.image, initialDirectory: initialDirectory);
+    return CustomScrollbar(
+      scrollController: _scrollController,
+      isInsidePersonalizedOption: isInside,
+      onHoverChange: (bool isHovered) {
+        setState(() {
+          isInside = isHovered;
+        });
+      },
+      child: ScrollConfiguration(
+        behavior: NoGlowScrollBehavior(),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        isHovered = true;
+                      });
+                    },
+                    onExit: (_) {
+                      setState(() {
+                        isHovered = false;
+                      });
+                    },
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (userController.currentUser.image.isEmpty) {
+                          final String initialDirectory = "C:\\Users\\${await FileUtil.getUserName()}\\Pictures";
+                          final List<PlatformFile> result = await FilePicker.pickFiles(type: FileType.image, initialDirectory: initialDirectory);
 
-                  if (result.isEmpty) {
-                    return;
-                  }
+                          if (result.isEmpty) {
+                            return;
+                          }
 
-                  final String filePath = result.single.path!;
-                  final File selectedFile = File(filePath);
+                          final String filePath = result.single.path!;
+                          final File selectedFile = File(filePath);
 
-                  await onImageSelected(selectedFile);
-                } else {
-                  showEditProfileImageDialog(context, this, _updateProfileImage);
-                }
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .5),
-                    child: CachedNetworkImage(
-                      width: 100,
-                      height: 100,
-                      imageUrl: _profileImageUrl ?? '',
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => CircleAvatar(
-                        backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                        foregroundColor: ChatifyColors.white,
-                        child: SvgPicture.asset(ChatifyVectors.profile, width: 100, height: 100),
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: AnimatedOpacity(
-                      opacity: isHovered ? 0.5 : 0.0,
-                      duration: Duration(milliseconds: 200),
-                      child: Container(decoration: BoxDecoration(color: ChatifyColors.black, borderRadius: BorderRadius.circular(80))),
-                    ),
-                  ),
-                  AnimatedOpacity(
-                    opacity: isHovered ? 1.0 : 0.0,
-                    duration: Duration(milliseconds: 200),
-                    child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 20, height: 20, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 22),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: isEditingUsername
-                  ? EditTextInput(
-                      controller: usernameController,
-                      focusNode: _focusNode,
-                      fontSize: ChatifySizes.fontSizeBg,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 15),
-                      onUnFocus: () async {
-                        String updatedName = usernameController.text.trim();
-
-                        if (updatedName.isEmpty) {
-                          showConfirmationDialog(
-                            context: context,
-                            width: 410,
-                            title: S.of(context).unableChangeYourName,
-                            description: S.of(context).yourNameCannotEmpty,
-                            cancelText: S.of(context).ok,
-                            cancelButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                            cancelTextColor: ChatifyColors.black,
-                            cancelButtonWidth: 180,
-                            confirmButton: true,
-                            onConfirm: () {
-                              setState(() {
-                                isEditingUsername = false;
-                              });
-                            },
-                          );
+                          await onImageSelected(selectedFile);
                         } else {
-                          final updatedUser = userController.currentUser.copyWith(name: updatedName);
-
-                          await userController.updateUser(updatedUser);
-                          usernameController.text = updatedName;
-
-                          Future.delayed(Duration(milliseconds: 100), () {
-                            setState(() {
-                              isEditingUsername = false;
-                            });
-                          });
+                          showEditProfileImageDialog(context, this, _updateProfileImage);
                         }
                       },
-                    )
-                  : Theme(
-                      data: Theme.of(context).copyWith(
-                        textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
-                      ),
-                      child: Obx(() {
-                        final name = userController.user.value.name;
-                        usernameController.value = usernameController.value.copyWith(text: name);
-
-                        return SelectableText(userController.user.value.name, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400));
-                      }),
-                ),
-              ),
-              if (!isEditingUsername)
-              Material(
-                color: ChatifyColors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  mouseCursor: SystemMouseCursors.basic,
-                  splashColor: ChatifyColors.transparent,
-                  highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                  hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
-                  onTap: () {
-                    setState(() {
-                      isEditingUsername = true;
-                      _focusNode.requestFocus();
-                    });
-                  },
-                  child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn))),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isEditingUsername ? 0 : 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(S.of(context).info, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.2)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: isEditingIntelligence
-                      ? EditTextInput(
-                          controller: intelligenceController,
-                          focusNode: _focusNode,
-                          fontSize: 15,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 17),
-                          onUnFocus: () {
-                            if (intelligenceController.text.trim().isEmpty) {
-                              showConfirmationDialog(
-                                context: context,
-                                title: S.of(context).unableEditYourDetails,
-                                description: S.of(context).informationCannotEmpty,
-                                cancelText: S.of(context).ok,
-                                confirmButton: true,
-                                onConfirm: () {
-                                  setState(() {
-                                    isEditingIntelligence = false;
-                                  });
-                                },
-                              );
-                            } else {
-                              final updatedStatus = intelligenceController.text.trim();
-
-                              final updatedUser = userController.currentUser.copyWith(status: updatedStatus);
-                              userController.updateUser(updatedUser);
-
-                              Future.delayed(Duration(milliseconds: 100), () {
-                                setState(() {
-                                  isEditingIntelligence = false;
-                                });
-                              });
-                            }
-                          },
-                        )
-                      : Theme(
-                          data: Theme.of(context).copyWith(
-                            textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .5),
+                            child: CachedNetworkImage(
+                              width: 100,
+                              height: 100,
+                              imageUrl: _profileImageUrl ?? '',
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => CircleAvatar(
+                                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                foregroundColor: ChatifyColors.white,
+                                child: SvgPicture.asset(ChatifyVectors.profile, width: 100, height: 100),
+                              ),
+                            ),
                           ),
-                          child: Obx(() {
-                            intelligenceController.text = userController.user.value.status;
-                            return SelectableText(userController.user.value.status, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400));
-                          }),
-                        ),
-                  ),
-                  if (!isEditingIntelligence)
-                  Material(
-                    color: ChatifyColors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      mouseCursor: SystemMouseCursors.basic,
-                      splashColor: ChatifyColors.transparent,
-                      highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
-                      hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
-                      onTap: () {
-                        setState(() {
-                          isEditingIntelligence = true;
-                          _focusNode.requestFocus();
-                        });
-                      },
-                      child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 18, height: 18, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn))),
+                          Positioned.fill(
+                            child: AnimatedOpacity(
+                              opacity: isHovered ? 0.5 : 0.0,
+                              duration: Duration(milliseconds: 200),
+                              child: Container(decoration: BoxDecoration(color: ChatifyColors.black, borderRadius: BorderRadius.circular(80))),
+                            ),
+                          ),
+                          AnimatedOpacity(
+                            opacity: isHovered ? 1.0 : 0.0,
+                            duration: Duration(milliseconds: 200),
+                            child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 20, height: 20, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: isEditingIntelligence ? 0 : 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                S.of(context).phoneNumber,
-                style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
-              ),
-              const SizedBox(height: 5),
-              GestureDetector(
-                onSecondaryTapDown: (details) {
-                  showSelectMessageDialog(
-                    context: context,
-                    position: details.globalPosition,
-                    items: [
-                      MenuItem(
-                        icon: Icons.copy,
-                        iconSize: 17,
-                        text: S.of(context).copy,
-                        trailingText: 'Ctrl+C',
-                        onTap: () {
-                          Clipboard.setData(ClipboardData(text: widget.user.phoneNumber));
-                        },
+                ),
+                SizedBox(height: 22),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: isEditingUsername
+                        ? EditTextInput(
+                            controller: usernameController,
+                            focusNode: _focusNode,
+                            fontSize: ChatifySizes.fontSizeBg,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 15),
+                            onUnFocus: () async {
+                              String updatedName = usernameController.text.trim();
+
+                              if (updatedName.isEmpty) {
+                                showConfirmationDialog(
+                                  context: context,
+                                  width: 410,
+                                  title: S.of(context).unableChangeYourName,
+                                  description: S.of(context).yourNameCannotEmpty,
+                                  cancelText: S.of(context).ok,
+                                  cancelButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                  cancelTextColor: ChatifyColors.black,
+                                  cancelButtonWidth: 180,
+                                  confirmButton: true,
+                                  onConfirm: () {
+                                    setState(() {
+                                      isEditingUsername = false;
+                                    });
+                                  },
+                                );
+                              } else {
+                                final updatedUser = userController.currentUser.copyWith(name: updatedName);
+
+                                await userController.updateUser(updatedUser);
+                                usernameController.text = updatedName;
+
+                                Future.delayed(Duration(milliseconds: 100), () {
+                                  setState(() {
+                                    isEditingUsername = false;
+                                  });
+                                });
+                              }
+                            },
+                          )
+                        : Theme(
+                            data: Theme.of(context).copyWith(
+                              textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                            ),
+                            child: Obx(() {
+                              final name = userController.user.value.name;
+
+                              usernameController.value = usernameController.value.copyWith(text: name);
+
+                              return SelectableText(userController.user.value.name, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400));
+                            }),
                       ),
-                      MenuItem(
-                        text: S.of(context).selectAll,
-                        trailingText: 'Ctrl+A',
-                        onTap: () {},
+                    ),
+                    if (!isEditingUsername)
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          borderRadius: BorderRadius.circular(8),
+                          splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                          onTap: () {
+                            setState(() {
+                              isEditingUsername = true;
+                              _focusNode.requestFocus();
+                            });
+                          },
+                          child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 18, height: 18, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn))),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: isEditingUsername ? 0 : 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(S.of(context).info, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.2)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.info_outline_rounded, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: isEditingIntelligence
+                            ? EditTextInput(
+                                controller: intelligenceController,
+                                focusNode: _focusNode,
+                                fontSize: 15,
+                                contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 17),
+                                onUnFocus: () {
+                                  if (intelligenceController.text.trim().isEmpty) {
+                                    showConfirmationDialog(
+                                      context: context,
+                                      title: S.of(context).unableEditYourDetails,
+                                      description: S.of(context).informationCannotEmpty,
+                                      cancelText: S.of(context).ok,
+                                      confirmButton: true,
+                                      onConfirm: () {
+                                        setState(() {
+                                          isEditingIntelligence = false;
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    final updatedStatus = intelligenceController.text.trim();
+
+                                    final updatedUser = userController.currentUser.copyWith(status: updatedStatus);
+                                    userController.updateUser(updatedUser);
+
+                                    Future.delayed(Duration(milliseconds: 100), () {
+                                      setState(() {
+                                        isEditingIntelligence = false;
+                                      });
+                                    });
+                                  }
+                                },
+                              )
+                            : Theme(
+                                data: Theme.of(context).copyWith(
+                                  textSelectionTheme: TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                ),
+                                child: Obx(() {
+                                  intelligenceController.text = userController.user.value.status;
+                                  return SelectableText(userController.user.value.status, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400));
+                                }),
+                              ),
+                        ),
+                        if (!isEditingIntelligence)
+                          Material(
+                            color: ChatifyColors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              mouseCursor: SystemMouseCursors.basic,
+                              splashColor: ChatifyColors.transparent,
+                              highlightColor: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey,
+                              hoverColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey.withAlpha((0.6 * 255).toInt()),
+                              onTap: () {
+                                setState(() {
+                                  isEditingIntelligence = true;
+                                  _focusNode.requestFocus();
+                                });
+                              },
+                              child: Padding(padding: const EdgeInsets.all(8), child: SvgPicture.asset(ChatifyVectors.pencilOutline, width: 18, height: 18, colorFilter: ColorFilter.mode( ChatifyColors.white, BlendMode.srcIn))),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: isEditingIntelligence ? 0 : 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).phoneNumber,
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.phone_outlined, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onSecondaryTapDown: (details) {
+                            showSelectMessageDialog(
+                              context: context,
+                              position: details.globalPosition,
+                              items: [
+                                MenuItem(
+                                  icon: Icons.copy,
+                                  iconSize: 17,
+                                  text: S.of(context).copy,
+                                  trailingText: 'Ctrl+C',
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(text: widget.user.phoneNumber));
+                                  },
+                                ),
+                                MenuItem(text: S.of(context).selectAll, trailingText: 'Ctrl+A', onTap: () {}),
+                              ],
+                            );
+                          },
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              textSelectionTheme: TextSelectionThemeData(
+                                selectionColor: ChatifyColors.info,
+                                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              ),
+                            ),
+                            child: SelectableText(
+                              widget.user.phoneNumber,
+                              style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontWeight: FontWeight.w400, height: 1.2),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Material(
+                          color: ChatifyColors.transparent,
+                          child: InkWell(
+                            splashFactory: NoSplash.splashFactory,
+                            borderRadius: BorderRadius.circular(8),
+                            splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: widget.user.phoneNumber));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Icon(Icons.copy, size: 16, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Электронная почта',
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(Icons.mail_outline_rounded, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground),
+                        SizedBox(width: 8),
+                        GestureDetector(
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              textSelectionTheme: TextSelectionThemeData(
+                                selectionColor: ChatifyColors.info,
+                                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              ),
+                            ),
+                            child: SelectableText(
+                              widget.user.email,
+                              style: TextStyle(
+                                fontSize: ChatifySizes.fontSizeSm,
+                                color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
+                                fontWeight: FontWeight.w400,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).username,
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(Icons.alternate_email_rounded, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              textSelectionTheme: TextSelectionThemeData(
+                                selectionColor: ChatifyColors.info,
+                                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                              ),
+                            ),
+                            child: SelectableText(
+                              widget.user.username,
+                              style: TextStyle(
+                                fontSize: ChatifySizes.fontSizeSm,
+                                color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
+                                fontWeight: FontWeight.w400,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                if (widget.user.links.isNotEmpty) ...[
+                  SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Ссылки',
+                        style: TextStyle(
+                          color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground,
+                          fontSize: ChatifySizes.fontSizeSm,
+                          fontWeight: FontWeight.w400,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      ...widget.user.links.map(
+                        (link) => Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () async {
+                                final uri = Uri.tryParse(link.url);
+
+                                if (uri == null) {
+                                  return;
+                                }
+
+                                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.link, size: 18, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkBackground),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      link.username,
+                                      style: TextStyle(
+                                        fontSize: ChatifySizes.fontSizeSm,
+                                        color: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
-                  );
-                },
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    textSelectionTheme: TextSelectionThemeData(
-                    selectionColor: ChatifyColors.info,
-                    selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    ),
                   ),
-                  child: SelectableText(
-                    widget.user.phoneNumber,
-                    style: TextStyle(
-                      fontSize: ChatifySizes.fontSizeSm,
-                      color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground,
-                      fontWeight: FontWeight.w400,
-                      height: 1.2,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 15),
-          Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
-          SizedBox(height: 15),
-          GestureDetector(
-            onLongPress: () {
-              setState(() {
-                isPressedLogout = true;
-              });
-            },
-            onLongPressEnd: (_) {
-              setState(() {
-                isPressedLogout = false;
-              });
-            },
-            onLongPressUp: () {
-              setState(() {
-                isPressedLogout = false;
-              });
-            },
-            child: MouseRegion(
-              onEnter: (_) {
-                setState(() {
-                  isHoveredLogout = true;
-                });
-              },
-              onExit: (_) {
-                setState(() {
-                  isHoveredLogout = false;
-                });
-              },
-              child: ElevatedButton(
-                onPressed: () async {
-                  setState(() {
-                    isPressedLogout = true;
-                  });
-                  showConfirmationDialog(
-                    context: context,
-                    width: 420,
-                    title: S.of(context).confirmExit,
-                    description: S.of(context).areYouSureYouLogout,
-                    confirmButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    reverseButtons: false,
-                    onConfirm: () async {
-                      widget.overlayEntry.remove();
-
-                      Dialogs.showProgressBarDialog(context, title: 'Выход', message: 'Не закрывайте это окно', verticalLayout: true, maxWidth: 400, maxHeight: 250);
-
-                      await Future.delayed(const Duration(seconds: 2));
-
-                      APIs.signOut();
-
-                      if (context.mounted) Navigator.of(context).pop();
+                ],
+                Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey),
+                SizedBox(height: 15),
+                GestureDetector(
+                  onLongPress: () {
+                    setState(() {
+                      isPressedLogout = true;
+                    });
+                  },
+                  onLongPressEnd: (_) {
+                    setState(() {
+                      isPressedLogout = false;
+                    });
+                  },
+                  onLongPressUp: () {
+                    setState(() {
+                      isPressedLogout = false;
+                    });
+                  },
+                  child: MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        isHoveredLogout = true;
+                      });
                     },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  backgroundColor: isPressedLogout ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100)) : isHoveredLogout
-                    ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
-                    : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
-                  foregroundColor: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.darkGrey,
-                  side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey, width: 1),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                  elevation: 0,
-                ).copyWith(
-                  splashFactory: NoSplash.splashFactory,
-                  shadowColor: WidgetStateProperty.all(ChatifyColors.transparent),
-                  mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
-                  elevation: WidgetStateProperty.all(0),
+                    onExit: (_) {
+                      setState(() {
+                        isHoveredLogout = false;
+                      });
+                    },
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          isPressedLogout = true;
+                        });
+                        showConfirmationDialog(
+                          context: context,
+                          width: 420,
+                          title: S.of(context).confirmExit,
+                          description: S.of(context).areYouSureYouLogout,
+                          confirmButtonColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          reverseButtons: false,
+                          onConfirm: () async {
+                            widget.overlayEntry.remove();
+
+                            Dialogs.showProgressBarDialog(context, title: 'Выход', message: 'Не закрывайте это окно', verticalLayout: true, maxWidth: 400, maxHeight: 250);
+
+                            await Future.delayed(const Duration(seconds: 2));
+
+                            APIs.signOut();
+
+                            if (context.mounted) Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                        backgroundColor: isPressedLogout ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100)) : isHoveredLogout
+                          ? (context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.8 * 255).toInt()) : ChatifyColors.black.withAlpha((0.3 * 255).toInt()))
+                          : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white),
+                        foregroundColor: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.darkGrey,
+                        side: BorderSide(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey, width: 1),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        elevation: 0,
+                      ).copyWith(
+                        splashFactory: NoSplash.splashFactory,
+                        shadowColor: WidgetStateProperty.all(ChatifyColors.transparent),
+                        mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                        elevation: WidgetStateProperty.all(0),
+                      ),
+                      child: Text(
+                        '${S.of(context).signOut[0].toUpperCase()}${S.of(context).signOut.substring(1)}',
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.error, fontWeight: FontWeight.w400),
+                      ),
+                    ),
+                  ),
                 ),
-                child: Text(
-                  '${S.of(context).signOut[0].toUpperCase()}${S.of(context).signOut.substring(1)}',
-                  style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.error, fontWeight: FontWeight.w400),
+                SizedBox(height: 10),
+                Text(
+                  S.of(context).chatHistoryComputerClearedSignOut,
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300, height: 1.2),
                 ),
-              ),
+              ],
             ),
           ),
-          SizedBox(height: 10),
-          Text(
-            S.of(context).chatHistoryComputerClearedSignOut,
-            style: TextStyle(color: context.isDarkMode ? ChatifyColors.grey : ChatifyColors.darkBackground, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300, height: 1.2),
-          ),
-        ],
+        ),
       ),
     );
   }

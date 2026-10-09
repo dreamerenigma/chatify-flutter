@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
+import '../../../../api/chat_api.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/seasons_controller.dart';
 import '../../controllers/settings_controller.dart';
@@ -21,7 +23,12 @@ import 'chat_backup_screen.dart';
 import 'chats_history_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
-  const ChatsScreen({super.key});
+  final UserModel user;
+
+  const ChatsScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   ChatSettingsScreenState createState() => ChatSettingsScreenState();
@@ -39,6 +46,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
     final seasonsController = Get.put(SeasonsController());
     final fontsController = Get.put(FontsController());
     final SettingsController settingsController = Get.put(SettingsController());
+    final wallpaperKey = ChatApi.getConversationId(widget.user.id);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -50,7 +58,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
           ),
           child: AppBar(
             automaticallyImplyLeading: false,
-            title: Text(S.of(context).chats, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+            title: Text(S.of(context).chats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, size: 25),
@@ -76,115 +84,127 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                     padding: const EdgeInsets.only(left: 20, top: 16, bottom: 8),
                     child: Text(S.of(context).screen, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                   ),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    onTap: () {
-                      themesController.showThemeSelectionDialog(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                      child: Row(
-                        children: [
-                          Obx(() {
-                            return Icon(Icons.brightness_6, color: colorsController.getColor(colorsController.selectedColorScheme.value));
-                          }),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(S.of(context).themes, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                              Obx(() {
-                                return Text(themesController.getThemeDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
-                              }),
-                            ],
-                          ),
-                        ],
+                  Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () {
+                        themesController.showThemeSelectionDialog(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return Icon(Icons.brightness_6, color: colorsController.getColor(colorsController.selectedColorScheme.value));
+                            }),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(S.of(context).themes, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                                Obx(() {
+                                  return Text(themesController.getThemeDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    onTap: () {
-                      seasonsController.showSeasonSelectionDialog(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                      child: Row(
-                        children: [
-                          Obx(() {
-                            return SvgPicture.asset(ChatifyVectors.seasons, width: 30, height: 30, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn));
-                          }),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(S.of(context).seasons, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                              Obx(() {
-                                return Text(seasonsController.getSeasonDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
-                              }),
-                            ],
-                          ),
-                        ],
+                  Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () {
+                        seasonsController.showSeasonSelectionDialog(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return SvgPicture.asset(ChatifyVectors.seasons, width: 30, height: 30, colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn));
+                            }),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(S.of(context).seasons, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                                Obx(() {
+                                  return Text(seasonsController.getSeasonDescription(), style: const TextStyle(color: ChatifyColors.darkGrey));
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    onTap: () {
-                      showColorSchemeSelectionDialog(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-                      child: Row(
-                        children: [
-                          Obx(() {
-                            return Icon(Icons.color_lens, size: 30, color: colorsController.getColor(colorsController.selectedColorScheme.value));
-                          }),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(S.of(context).appColor, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                              Obx(() {
-                                return Text(colorsController.getColorName(), style: const TextStyle(color: ChatifyColors.darkGrey));
-                              }),
-                            ],
-                          ),
-                        ],
+                  Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () {
+                        showColorSchemeSelectionDialog(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return Icon(Icons.color_lens, size: 30, color: colorsController.getColor(colorsController.selectedColorScheme.value));
+                            }),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(S.of(context).appColor, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                                Obx(() {
+                                  return Text(colorsController.getColorName(), style: const TextStyle(color: ChatifyColors.darkGrey));
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    onTap: () async {
-                      final selectedWallpaper = await Navigator.push(context, createPageRoute(const WallpaperScreen(imagePath: '')));
+                  Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () async {
+                        final selectedWallpaper = await Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: '', user: widget.user, wallpaperKey: wallpaperKey)));
 
-                      if (selectedWallpaper != null) {
-                        setState(() {});
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        children: [
-                          Obx(() {
-                            return Icon(Icons.wallpaper, color: colorsController.getColor(colorsController.selectedColorScheme.value));
-                          }),
-                          const SizedBox(width: 16),
-                          Text(S.of(context).wallpapers, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                        ],
+                        if (selectedWallpaper != null) {
+                          setState(() {});
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return Icon(Icons.wallpaper, color: colorsController.getColor(colorsController.selectedColorScheme.value));
+                            }),
+                            const SizedBox(width: 16),
+                            Text(S.of(context).wallpapers, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -198,38 +218,41 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                         child: Text(S.of(context).chatSettings, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       ),
                       Obx(() {
-                        return InkWell(
-                          splashFactory: NoSplash.splashFactory,
-                          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                          onTap: () {
-                            settingsController.toggleSendWithEnter(!settingsController.sendWithEnter.value);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(S.of(context).sendEnterKey, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                                      Text(S.of(context).subtitleSendEnterKey, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
-                                    ],
+                        return Material(
+                          color: ChatifyColors.transparent,
+                          child: InkWell(
+                            splashFactory: NoSplash.splashFactory,
+                            splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                            highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                            hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                            onTap: () {
+                              settingsController.toggleSendWithEnter(!settingsController.sendWithEnter.value);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(S.of(context).sendEnterKey, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                        Text(S.of(context).subtitleSendEnterKey, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                CustomSwitch(
-                                  value: settingsController.sendWithEnter.value,
-                                  onChanged: (bool value) {
-                                    settingsController.toggleSendWithEnter(value);
-                                  },
-                                  switchWidth: 55,
-                                  switchHeight: 33,
-                                  thumbSize: 25,
-                                  thumbPadding: 3,
-                                ),
-                              ],
+                                  CustomSwitch(
+                                    value: settingsController.sendWithEnter.value,
+                                    onChanged: (bool value) {
+                                      settingsController.toggleSendWithEnter(value);
+                                    },
+                                    switchWidth: 55,
+                                    switchHeight: 33,
+                                    thumbSize: 25,
+                                    thumbPadding: 3,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -239,111 +262,36 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      InkWell(
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        onTap: () {
-                          setState(() {
-                            isVisibilityMedia = !isVisibilityMedia;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                                    Text(S.of(context).subtitleMediaVisibility, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
-                                  ],
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          onTap: () {
+                            setState(() {
+                              isVisibilityMedia = !isVisibilityMedia;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(S.of(context).mediaVisibility, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      Text(S.of(context).subtitleMediaVisibility, style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              CustomSwitch(
-                                value: isVisibilityMedia,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    isVisibilityMedia = value;
-                                  });
-                                },
-                                switchWidth: 55,
-                                switchHeight: 33,
-                                thumbSize: 25,
-                                thumbPadding: 3,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        onTap: () {
-                          fontsController.showFontSelectionDialog(context);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context).fontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                                    Obx(() {
-                                      return Text(
-                                        fontsController.getFontDescription(context, FontsController.instance.selectedFont.value),
-                                        style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        onTap: () {
-                          setState(() {
-                            isTranscriptVoiceMsg = !isTranscriptVoiceMsg;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      S.of(context).decodingVoiceMessages,
-                                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(S.of(context).readNewVoiceMessages, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.centerRight,
-                                child: CustomSwitch(
-                                  value: isTranscriptVoiceMsg,
+                                CustomSwitch(
+                                  value: isVisibilityMedia,
                                   onChanged: (bool value) {
                                     setState(() {
-                                      isTranscriptVoiceMsg = value;
+                                      isVisibilityMedia = value;
                                     });
                                   },
                                   switchWidth: 55,
@@ -351,8 +299,92 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                   thumbSize: 25,
                                   thumbPadding: 3,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          onTap: () {
+                            fontsController.showFontSelectionDialog(context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(S.of(context).fontSize, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                                      Obx(() {
+                                        return Text(
+                                          fontsController.getFontDescription(context, FontsController.instance.selectedFont.value),
+                                          style: const TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          onTap: () {
+                            setState(() {
+                              isTranscriptVoiceMsg = !isTranscriptVoiceMsg;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        S.of(context).decodingVoiceMessages,
+                                        style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(S.of(context).readNewVoiceMessages, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: CustomSwitch(
+                                    value: isTranscriptVoiceMsg,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        isTranscriptVoiceMsg = value;
+                                      });
+                                    },
+                                    switchWidth: 55,
+                                    switchHeight: 33,
+                                    thumbSize: 25,
+                                    thumbPadding: 3,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -367,42 +399,45 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                         padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8, right: 12),
                         child: Text(S.of(context).archivedChats, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       ),
-                      InkWell(
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                        highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                        onTap: () {
-                          setState(() {
-                            isArchiveChats = !isArchiveChats;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context).subtitleArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                                    Text(S.of(context).archivedChatsUnarchived, style: const TextStyle(color: ChatifyColors.grey)),
-                                  ],
+                      Material(
+                        color: ChatifyColors.transparent,
+                        child: InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                          highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                          onTap: () {
+                            setState(() {
+                              isArchiveChats = !isArchiveChats;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 55, right: 12, top: 12, bottom: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(S.of(context).subtitleArchivedChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
+                                      Text(S.of(context).archivedChatsUnarchived, style: const TextStyle(color: ChatifyColors.grey)),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              CustomSwitch(
-                                value: isArchiveChats,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    isArchiveChats = value;
-                                  });
-                                },
-                                switchWidth: 55,
-                                switchHeight: 33,
-                                thumbSize: 25,
-                                thumbPadding: 3,
-                              ),
-                            ],
+                                CustomSwitch(
+                                  value: isArchiveChats,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      isArchiveChats = value;
+                                    });
+                                  },
+                                  switchWidth: 55,
+                                  switchHeight: 33,
+                                  thumbSize: 25,
+                                  thumbPadding: 3,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -410,45 +445,51 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Divider(height: 0, thickness: 1),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    onTap: () {
-                      Navigator.push(context, createPageRoute(const ChatBackupScreen()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        children: [
-                          Obx(() {
-                            return Icon(Icons.cloud_upload_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value));
-                          }),
-                          const SizedBox(width: 16),
-                          Text(S.of(context).chatsBackup, style: const TextStyle(fontSize: 16)),
-                        ],
+                  Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () {
+                        Navigator.push(context, createPageRoute(const ChatBackupScreen()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return Icon(Icons.cloud_upload_outlined, color: colorsController.getColor(colorsController.selectedColorScheme.value));
+                            }),
+                            const SizedBox(width: 16),
+                            Text(S.of(context).chatsBackup, style: const TextStyle(fontSize: 16)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
-                    highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                    onTap: () {
-                      Navigator.push(context, createPageRoute(const TransferringChatsScreen()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        children: [
-                          Obx(() {
-                            return Icon(FluentIcons.phone_arrow_right_24_regular, color: colorsController.getColor(colorsController.selectedColorScheme.value));
-                          }),
-                          const SizedBox(width: 16),
-                          Text(S.of(context).transferChats, style: const TextStyle(fontSize: 16)),
-                        ],
+                  Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      splashColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()),
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                      onTap: () {
+                        Navigator.push(context, createPageRoute(const TransferringChatsScreen()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return Icon(FluentIcons.phone_arrow_right_24_regular, color: colorsController.getColor(colorsController.selectedColorScheme.value));
+                            }),
+                            const SizedBox(width: 16),
+                            Text(S.of(context).transferChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -468,7 +509,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                             return Icon(Icons.home, color: colorsController.getColor(colorsController.selectedColorScheme.value));
                           }),
                           const SizedBox(width: 16),
-                          Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          Text(S.of(context).historiesChats, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         ],
                       ),
                     ),

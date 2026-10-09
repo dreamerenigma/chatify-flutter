@@ -8,6 +8,7 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
+import '../../../utils/platforms/platform_utils.dart';
 import '../../chat/models/user_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
@@ -16,6 +17,8 @@ import '../screens/community_chat_screen.dart';
 import '../screens/general_chat_screen.dart';
 import 'package:chatify/features/community/models/community_model.dart';
 import 'package:chatify/routes/custom_page_route.dart';
+
+import 'buttons/show_all_button.dart';
 
 class CommunityWidgets extends StatefulWidget {
   final UserModel user;
@@ -175,7 +178,15 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
               ),
             ),
           ),
-          if (widget.showAllButton) _buildAll(context),
+          if (isWindows)
+            ShowAllButton(
+              text: 'Показать все',
+              onTap: () {
+                Navigator.push(context, createPageRoute(CommunityInfoScreen(community: widget.community, isValidDate: widget.isValidDate, fileToSend: '')));
+              },
+            )
+          else
+            _buildAll(context),
         ],
       ),
     );

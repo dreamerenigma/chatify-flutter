@@ -52,14 +52,7 @@ Future<void> showFilterChatsDialog({required BuildContext context, required Offs
                       color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.lightGrey,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: context.isDarkMode ? ChatifyColors.cardColor.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 3))],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -161,7 +154,7 @@ Widget _buildFilterChats({
         highlightColor: ChatifyColors.grey.withAlpha((0.2 * 255).toInt()),
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
               if (iconPath.isNotEmpty)

@@ -17,6 +17,7 @@ import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/devices/device_utility.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../chat/models/message_model.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../chat/widgets/cards/message_card.dart';
 import '../../../personalization/widgets/dialogs/attach_files_dialog.dart';
 import '../../../personalization/widgets/dialogs/emoji_stickers_dialog.dart';
@@ -26,12 +27,16 @@ import '../bars/app_bars/group_chat_app_bar.dart';
 
 class GroupChatWidget extends StatefulWidget {
   final GroupModel group;
+  final UserModel user;
+  final Map<String, UserModel> users;
   final double sidePanelWidth;
 
   const GroupChatWidget({
     super.key,
     required this.sidePanelWidth,
     required this.group,
+    required this.user,
+    required this.users,
   });
 
   @override
@@ -132,7 +137,7 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupChatAppBar(group: group, userNamesFuture: userNamesFuture, users: {}),
+      appBar: GroupChatAppBar(group: group, userNamesFuture: userNamesFuture, users: widget.users, user: widget.user),
       body: _buildBody(),
       bottomNavigationBar: _buildBottomInputBar(context),
     );
@@ -253,7 +258,8 @@ class _GroupChatWidgetState extends State<GroupChatWidget> {
                 onTap: () {
                   final RenderBox renderBox = context.findRenderObject() as RenderBox;
                   final position = renderBox.localToGlobal(Offset.zero);
-                  showAttachFileDialog(context, position, onImageSelected);
+
+                  showAttachFileDialog(context, widget.user, position, onImageSelected);
                 },
                 hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.2 * 255).toInt()),
                 splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.darkerGrey.withAlpha((0.1 * 255).toInt()),

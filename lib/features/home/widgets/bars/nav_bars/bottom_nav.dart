@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -48,7 +47,7 @@ class BottomNav extends StatelessWidget {
                   width: 24,
                   height: 24,
                   colorFilter: ColorFilter.mode(
-                    selectedIndex == 0 ? ChatifyColors.greenMessageBubbleRecipient : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                    selectedIndex == 0 ? colorsController.getSelectedColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
                     BlendMode.srcIn,
                   ),
                 ),
@@ -60,11 +59,11 @@ class BottomNav extends StatelessWidget {
               context,
               colorsController: colorsController,
               iconWidget: SvgPicture.asset(
-                ChatifyVectors.status,
+                selectedIndex == 1 ? ChatifyVectors.statusFilled : ChatifyVectors.status,
                 width: 24,
                 height: 24,
                 colorFilter: ColorFilter.mode(
-                  selectedIndex == 1 ? ChatifyColors.greenMessageBubbleRecipient : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                  selectedIndex == 1 ? colorsController.getSelectedColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
                   BlendMode.srcIn,
                 ),
               ),
@@ -76,7 +75,7 @@ class BottomNav extends StatelessWidget {
               colorsController: colorsController,
               iconWidget: Icon(
                 selectedIndex == 2 ? Icons.groups : Icons.groups_outlined, size: 28,
-                color: selectedIndex == 2 ? ChatifyColors.greenMessageBubbleRecipient : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
+                color: selectedIndex == 2 ? colorsController.getSelectedColor(colorsController.selectedColorScheme.value) : (context.isDarkMode ? ChatifyColors.grey : ChatifyColors.black),
               ),
               label: S.of(context).community,
               index: 2,
@@ -87,14 +86,14 @@ class BottomNav extends StatelessWidget {
               iconWidget: _buildIconWithBadge(
                 count: missedCallsCount,
                 icon: Icon(selectedIndex == 3 ? Icons.call : Icons.call_outlined,
-                color: selectedIndex == 3 ? ChatifyColors.greenMessageBubbleRecipient : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                color: selectedIndex == 3 ? colorsController.getSelectedColor(colorsController.selectedColorScheme.value) : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
               ),
               label: S.of(context).calls,
               index: 3,
             ),
           ],
           currentIndex: selectedIndex,
-          selectedItemColor: ChatifyColors.greenMessageBubbleRecipient,
+          selectedItemColor: colorsController.getSelectedColor(colorsController.selectedColorScheme.value),
           unselectedItemColor: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
           selectedLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500),
           unselectedLabelStyle: TextStyle(fontSize: ChatifySizes.fontSizeSm),
@@ -124,7 +123,7 @@ class BottomNav extends StatelessWidget {
         child: Tooltip(
           message: label,
           decoration: BoxDecoration(color: tooltipColor, borderRadius: BorderRadius.circular(4)),
-          textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+          textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
           child: Container(
             decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(30)),
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),

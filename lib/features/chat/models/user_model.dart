@@ -5,6 +5,8 @@ import '../../../common/entities/base_chat_entity.dart';
 import '../../../core/enums/message_type.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../domain/entities/chat_target.dart';
+import '../../personalization/models/social_link_model.dart';
+import 'mention_data_model.dart';
 
 class UserModel implements ChatTarget, BaseChatEntity {
   @override
@@ -19,9 +21,11 @@ class UserModel implements ChatTarget, BaseChatEntity {
   @override
   late String surname;
   late String username;
+  late List<SocialLinkModel> links;
   @override
   late DateTime createdAt;
   late bool isOnline;
+  late bool isFavorite;
   late DateTime lastActive;
   late String pushToken;
   late String email;
@@ -37,8 +41,10 @@ class UserModel implements ChatTarget, BaseChatEntity {
     required this.name,
     required this.surname,
     required this.username,
+    required this.links,
     required this.createdAt,
     required this.isOnline,
+    required this.isFavorite,
     required this.lastActive,
     required this.pushToken,
     required this.email,
@@ -55,8 +61,10 @@ class UserModel implements ChatTarget, BaseChatEntity {
     String? name,
     String? surname,
     String? username,
+    List<SocialLinkModel>? links,
     DateTime? createdAt,
     bool? isOnline,
+    bool? isFavorite,
     DateTime? lastActive,
     String? pushToken,
     String? email,
@@ -72,8 +80,10 @@ class UserModel implements ChatTarget, BaseChatEntity {
       name: name ?? this.name,
       surname: surname ?? this.surname,
       username: username ?? this.username,
+      links: links ?? this.links,
       createdAt: createdAt ?? this.createdAt,
       isOnline: isOnline ?? this.isOnline,
+      isFavorite: isFavorite ?? this.isFavorite,
       lastActive: lastActive ?? this.lastActive,
       pushToken: pushToken ?? this.pushToken,
       email: email ?? this.email,
@@ -93,8 +103,10 @@ class UserModel implements ChatTarget, BaseChatEntity {
       name: data['name'] ?? '',
       surname: data['surname'] ?? '',
       username: data['username'] ?? '',
+      links: (data['links'] as List?)?.whereType<Map>().map((item) => SocialLinkModel.fromJson(Map<String, dynamic>.from(item))).toList() ?? [],
       createdAt: (data['created_at'] as Timestamp).toDate(),
       isOnline: data['is_online'] ?? false,
+      isFavorite: data['is_favorite'] ?? false,
       lastActive: (data['last_active'] as Timestamp).toDate(),
       pushToken: data['push_token'] ?? '',
       email: data['email'] ?? '',
@@ -111,9 +123,11 @@ class UserModel implements ChatTarget, BaseChatEntity {
     name = json['name'] ?? '';
     surname = json['surname'] ?? '';
     username = json['username'] ?? '';
+    links = (json['links'] as List?)?.whereType<Map>().map((item) => SocialLinkModel.fromJson(Map<String, dynamic>.from(item))).toList() ?? [];
     createdAt = DateUtil.parseDateTime(json['created_at']);
     lastActive = DateUtil.parseDateTime(json['last_active']);
     isOnline = json['is_online'] ?? false;
+    isFavorite = json['is_favorite'] ?? false;
     id = json['id'] ?? '';
     pushToken = json['push_token'] ?? '';
     email = json['email'] ?? '';
@@ -130,8 +144,10 @@ class UserModel implements ChatTarget, BaseChatEntity {
       'name': name,
       'surname': surname,
       'username': username,
+      'links': links,
       'created_at': createdAt.toIso8601String(),
       'is_online': isOnline,
+      'is_favorite': isFavorite,
       'last_active': lastActive.toIso8601String(),
       'id': id,
       'push_token': pushToken,
@@ -142,27 +158,27 @@ class UserModel implements ChatTarget, BaseChatEntity {
   }
 
   @override
-  Future<void> sendText(String text) async {
-    await ChatApi.sendMessage(this, text, MessageType.text);
+  Future<void> sendText(String text, {String? replyToMessageId, List<MentionDataModel>? mentions}) async {
+    await ChatApi.sendMessage(this, text, MessageType.text, replyToMessageId: replyToMessageId, mentions: mentions ?? []);
   }
 
   @override
-  Future<void> sendImage(File file) async {
-    await ChatApi.sendChatImage(this, file);
+  Future<void> sendImage(File file, {String? replyToMessageId}) async {
+    await ChatApi.sendChatImage(this, file, replyToMessageId: replyToMessageId);
   }
 
   @override
-  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration}) async {
-    await ChatApi.sendVideoMessage(this, file.path, fileName: fileName, fileSize: fileSize, videoDuration: videoDuration);
+  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration, String? replyToMessageId}) async {
+    await ChatApi.sendVideoMessage(this, file.path, fileName: fileName, fileSize: fileSize, videoDuration: videoDuration, replyToMessageId: replyToMessageId);
   }
 
   @override
-  Future<void> sendDocument(File file, {String? fileSize}) async {
-    await ChatApi.sendChatDocument(this, file);
+  Future<void> sendDocument(File file, {String? fileSize, String? replyToMessageId}) async {
+    await ChatApi.sendChatDocument(this, file, replyToMessageId: replyToMessageId);
   }
 
   @override
-  Future<void> sendAudio(File file, String fileName, {int? audioDuration}) async {
-    await ChatApi.sendChatAudio(this, file, fileName, audioDuration: audioDuration);
+  Future<void> sendAudio(File file, String fileName, {int? audioDuration, String? replyToMessageId}) async {
+    await ChatApi.sendChatAudio(this, file, fileName, audioDuration: audioDuration, replyToMessageId: replyToMessageId);
   }
 }

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_links.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/urls/url_utils.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import '../../models/social_link_model.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class AddDataAboutScreen extends StatefulWidget {
   final String title;
+  final String type;
 
-  const AddDataAboutScreen({super.key, required this.title});
+  const AddDataAboutScreen({
+    super.key,
+    required this.title,
+    required this.type,
+  });
 
   @override
   State<AddDataAboutScreen> createState() => _AddDataAboutScreenState();
@@ -159,11 +166,7 @@ class _AddDataAboutScreenState extends State<AddDataAboutScreen> {
                   children: [
                     TextSpan(
                       text: '${S.of(context).addUsername} ${widget.title} ${S.of(context).visibleYourAppProfile}',
-                      style: TextStyle(
-                        fontSize: ChatifySizes.fontSizeSm,
-                        color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
-                        height: 1.7,
-                      ),
+                      style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.7),
                     ),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.baseline,
@@ -181,7 +184,7 @@ class _AddDataAboutScreenState extends State<AddDataAboutScreen> {
                           },
                           splashColor: ChatifyColors.blueAccent.withAlpha((0.2 * 255).toInt()),
                           highlightColor: ChatifyColors.blueAccent.withAlpha((0.1 * 255).toInt()),
-                          child: Text(S.of(context).readMore, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500, color: ChatifyColors.blueAccent)),
+                          child: Text(S.of(context).readMore, style: TextStyle(color: ChatifyColors.lightBlueLink, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w600)),
                         ),
                       ),
                     ),
@@ -201,14 +204,44 @@ class _AddDataAboutScreenState extends State<AddDataAboutScreen> {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () async {
+            final username = textController.text.trim();
+
+            if (username.isEmpty) {
+              return;
+            }
+
+            final String url;
+
+            switch (widget.type) {
+              case 'vk':
+                url = 'https://vk.com/$username';
+                break;
+              case 'ok':
+                url = 'https://ok.ru/$username';
+                break;
+              default:
+                return;
+            }
+
+            final socialLink = SocialLinkModel(type: widget.type, username: username, url: url);
+            final success = await APIs.createLink(socialLink);
+
+            if (!success) {
+              return;
+            }
+
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             side: BorderSide.none,
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
-          child: Text(S.of(context).save, style: TextStyle(color: ChatifyColors.black, fontWeight: FontWeight.normal, fontSize: ChatifySizes.fontSizeMd)),
+          child: Text(S.of(context).save, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
         ),
       ),
     );

@@ -26,7 +26,7 @@ class AppRoutes {
     GetPage(name: ChatifyRoutes.addAccount, page: () => AddAccountScreen(isFromSplashScreen: true)),
     GetPage(name: ChatifyRoutes.support, page: () => SupportScreen(title: 'Поддержка')),
     GetPage(name: ChatifyRoutes.calls, page: () => CallsScreen(user: APIs.me)),
-    GetPage(name: ChatifyRoutes.chat, page: () => const ChatsScreen()),
+    GetPage(name: ChatifyRoutes.chat, page: () => ChatsScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.community, page: () => CommunityChatScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.communities, page: () => CommunitiesScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.status, page: () => StatusScreen(user: APIs.me)),

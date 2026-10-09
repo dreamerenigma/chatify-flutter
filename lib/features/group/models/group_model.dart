@@ -4,6 +4,7 @@ import '../../../api/group_api.dart';
 import '../../../core/enums/message_type.dart';
 import '../../../utils/helper/date_util.dart';
 import '../../../domain/entities/chat_target.dart';
+import '../../chat/models/mention_data_model.dart';
 
 class GroupModel implements ChatTarget {
   late String id;
@@ -92,27 +93,27 @@ class GroupModel implements ChatTarget {
   }
 
   @override
-  Future<void> sendText(String text) async {
+  Future<void> sendText(String text, {String? replyToMessageId, List<MentionDataModel>? mentions}) async {
     await GroupApi.sendGroupMessage(this, text, MessageType.text);
   }
 
   @override
-  Future<void> sendImage(File file) async {
+  Future<void> sendImage(File file, {String? replyToMessageId}) async {
     await GroupApi.sendGroupImage(this, file);
   }
 
   @override
-  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration}) async {
+  Future<void> sendVideo(File file, {String? fileName, String? fileSize, int? videoDuration, String? replyToMessageId}) async {
     await GroupApi.sendGroupVideo(this, members, file);
   }
 
   @override
-  Future<void> sendDocument(File file, {String? fileSize}) async {
+  Future<void> sendDocument(File file, {String? fileSize, String? replyToMessageId}) async {
     await GroupApi.sendGroupDocument(this, members, file);
   }
 
   @override
-  Future<void> sendAudio(File file, String fileName, {int? audioDuration}) async {
+  Future<void> sendAudio(File file, String fileName, {int? audioDuration, String? replyToMessageId}) async {
     await GroupApi.sendGroupAudio(this, file, fileName, audioDuration: audioDuration);
   }
 }

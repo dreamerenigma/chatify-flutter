@@ -18,12 +18,14 @@ import '../../../screens/about_group_screen.dart';
 
 class GroupChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final GroupModel group;
+  final UserModel user;
   final Map<String, UserModel> users;
   final Future<Map<String, String>> userNamesFuture;
 
   const GroupChatAppBar({
     super.key,
     required this.group,
+    required this.user,
     required this.users,
     required this.userNamesFuture,
   });
@@ -84,10 +86,10 @@ class _GroupChatAppBarState extends State<GroupChatAppBar> with SingleTickerProv
                     if (value == 1) {
                       log("Video call option 1");
                     }
-                    if (value == 12) {
+                    if (value == 2) {
                       log("Video call option 2");
                     }
-                  },
+                  }, user: widget.user,
                 ),
               ),
             ],
@@ -110,6 +112,7 @@ class _GroupChatAppBarState extends State<GroupChatAppBar> with SingleTickerProv
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
               child: AppBarActions(
+                user: widget.user,
                 isGroup: true,
                 onVideoCall: () => log("Video call"),
                 onSearch: () => _searchController.forward(),

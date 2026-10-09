@@ -6,6 +6,7 @@ import '../../../core/enums/message_type.dart';
 import '../../survey/models/survey_model.dart';
 import 'event_model.dart';
 import 'location_model.dart';
+import 'mention_data_model.dart';
 
 class MessageModel {
   late final String id;
@@ -19,11 +20,14 @@ class MessageModel {
   late final CallStatusType? callStatus;
   late final String? documentName;
   late final String? fileSize;
+  late final String? replyToMessageId;
   late final List<String> deletedBy;
+  late final List<MentionDataModel> mentions;
   late final Map<String, List<String>> reactions;
   late final DateTime? deletedAt;
   late final int? audioDuration;
   late final int? videoDuration;
+  late final int? documentPagesCount;
   late final SurveyModel? survey;
   late final EventModel? event;
   late final LocationModel? location;
@@ -40,11 +44,14 @@ class MessageModel {
     required this.sent,
     this.documentName,
     this.fileSize,
+    this.replyToMessageId,
     required this.deletedBy,
+    required this.mentions,
     required this.reactions,
     required this.deletedAt,
     this.audioDuration,
     this.videoDuration,
+    this.documentPagesCount,
     this.survey,
     this.event,
     this.location,
@@ -116,7 +123,10 @@ class MessageModel {
 
     documentName = json['documentName'] as String?;
     fileSize = json['fileSize'] as String?;
+    replyToMessageId = json['replyToMessageId']?.toString();
     deletedBy = List<String>.from(json['deletedBy'] ?? []);
+    mentions = (json['mentions'] as List<dynamic>? ?? []).map((e) => MentionDataModel.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+
     final reactionsJson = json['reactions'];
 
     if (reactionsJson is Map) {
@@ -156,6 +166,10 @@ class MessageModel {
     } else {
       videoDuration = int.tryParse(videoDurationValue?.toString() ?? '');
     }
+
+    final pages = json['documentPagesCount'];
+
+    documentPagesCount = pages is int ? pages : int.tryParse(pages?.toString() ?? '');
 
     final surveyJson = json['survey'];
 
@@ -217,6 +231,7 @@ class MessageModel {
     data['fromId'] = fromId;
     data['sent'] = sent;
     data['deletedBy'] = deletedBy;
+    data['mentions'] = mentions.map((mention) => mention.toJson()).toList();
 
     if (callType != null) {
       data['callType'] = callType!.name;
@@ -230,6 +245,9 @@ class MessageModel {
     if (fileSize != null) {
       data['fileSize'] = fileSize;
     }
+    if (replyToMessageId != null) {
+      data['replyToMessageId'] = replyToMessageId;
+    }
     if (reactions.isNotEmpty) {
       data['reactions'] = reactions;
     }
@@ -241,6 +259,9 @@ class MessageModel {
     }
     if (videoDuration != null) {
       data['videoDuration'] = videoDuration;
+    }
+    if (documentPagesCount != null) {
+      data['documentPagesCount'] = documentPagesCount;
     }
     if (survey != null) {
       data['survey'] = survey!.toJson();

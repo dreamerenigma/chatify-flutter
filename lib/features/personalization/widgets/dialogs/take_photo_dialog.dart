@@ -8,12 +8,13 @@ import '../../../../core/services/camera/camera_service.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../home/controllers/dialog_controller.dart';
 import '../../../home/widgets/dialogs/confirmation_dialog.dart';
 import '../../../home/widgets/dialogs/settings_dialog.dart';
 import 'light_dialog.dart';
 
-void showTakePhotoDialog(BuildContext context) async {
+void showTakePhotoDialog(BuildContext context, UserModel user) async {
   final dialogController = Get.find<DialogController>();
   final overlay = Overlay.of(context);
   late OverlayEntry overlayEntry;
@@ -121,7 +122,7 @@ void showTakePhotoDialog(BuildContext context) async {
                                     overlayEntry.remove();
                                     final RenderBox renderBox = context.findRenderObject() as RenderBox;
                                     final position = renderBox.localToGlobal(Offset.zero);
-                                    showSettingsDialog(context, position, initialIndex: 3);
+                                    showSettingsDialog(context, user, position, initialIndex: 3);
                                   },
                                   mouseCursor: SystemMouseCursors.basic,
                                   borderRadius: BorderRadius.circular(30),

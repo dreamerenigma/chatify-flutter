@@ -52,9 +52,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
             ),
             actions: [
               TooltipTheme(
-                data: TooltipThemeData(
-                  decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
-                ),
+                data: TooltipThemeData(decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, borderRadius: BorderRadius.circular(8))),
                 child: Theme(
                   data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
                   child: PopupMenuButton<int>(

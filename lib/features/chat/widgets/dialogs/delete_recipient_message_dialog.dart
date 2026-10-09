@@ -3,6 +3,7 @@ import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/user_model.dart';
 import '../../models/message_model.dart';
 
@@ -32,8 +33,8 @@ void showDeleteRecipientMessageDialog(BuildContext context, List<int> messageInd
                       Navigator.of(dialogContext).pop();
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: ChatifyColors.blue,
-                      backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
+                      foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                     ),
@@ -56,8 +57,8 @@ void showDeleteRecipientMessageDialog(BuildContext context, List<int> messageInd
                       }
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: ChatifyColors.blue,
-                      backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
+                      foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                     ),
@@ -72,8 +73,8 @@ void showDeleteRecipientMessageDialog(BuildContext context, List<int> messageInd
                       Navigator.of(dialogContext).pop();
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: ChatifyColors.blue,
-                      backgroundColor: ChatifyColors.blue.withAlpha((0.1 * 255).toInt()),
+                      foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                      backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),

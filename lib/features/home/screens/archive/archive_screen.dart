@@ -196,7 +196,7 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, createPageRoute(ChatsScreen()));
+                          Navigator.push(context, createPageRoute(ChatsScreen(user: user)));
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

@@ -6,11 +6,14 @@ import 'package:get_storage/get_storage.dart';
 import '../../chat/models/user_model.dart';
 import 'package:flutter/material.dart';
 
+import '../models/social_link_model.dart';
+
 class UserController extends GetxController {
   Rx<UserModel> user = Rx<UserModel>(UserModel(
     name: '',
     surname: '',
     username: '',
+    links: [],
     image: '',
     id: '',
     about: '',
@@ -18,6 +21,7 @@ class UserController extends GetxController {
     phoneNumber: '',
     createdAt: DateTime.now(),
     isOnline: false,
+    isFavorite: false,
     lastActive: DateTime.now(),
     pushToken: '',
     email: '',
@@ -32,11 +36,13 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      if (user != null) {
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
+      log('[USER CONTROLLER] auth user: ${firebaseUser?.uid}');
+
+      if (firebaseUser != null) {
         _loadUserData();
       } else {
-        log("[DEBUG] No user signed in yet");
+        log('[USER CONTROLLER] No user signed in yet');
       }
     });
   }
@@ -60,12 +66,14 @@ class UserController extends GetxController {
           name: data['name'] ?? '',
           surname: data['surname'] ?? '',
           username: data['username'] ?? '',
+          links: (data['links'] as List?)?.whereType<Map>().map((item) => SocialLinkModel.fromJson(Map<String, dynamic>.from(item))).toList() ?? [],
           image: data['image'] ?? '',
           about: data['about'] ?? '',
           status: data['status'] ?? '',
           phoneNumber: data['phone_number'] ?? '',
           createdAt: (data['created_at'] as Timestamp).toDate(),
           isOnline: data['is_online'] ?? false,
+          isFavorite: data['is_favorite'] ?? false,
           lastActive: (data['last_active'] as Timestamp).toDate(),
           pushToken: data['push_token'] ?? '',
           email: data['email'] ?? '',

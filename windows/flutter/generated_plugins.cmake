@@ -15,6 +15,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_storage
   flutter_webrtc
+  geolocator_windows
   iris_method_channel
   local_auth_windows
   media_kit_libs_windows_video

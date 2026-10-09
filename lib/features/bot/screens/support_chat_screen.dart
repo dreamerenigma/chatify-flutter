@@ -60,7 +60,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     }
 
     return Scaffold(
-      appBar: SupportAppBar(support: support, infoApp: widget.infoApp),
+      appBar: SupportAppBar(support: support, infoApp: widget.infoApp, user: APIs.me),
       body: _buildBodySection(context, support),
     );
   }
@@ -74,7 +74,10 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
         children: [
           Consumer<WallpaperProvider>(
             builder: (context, wallpaperProvider, child) {
-              final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+              final backgroundImage = wallpaperProvider.getBackgroundImage(
+                support.id,
+                defaultImage: context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight,
+              );
 
               return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
             },

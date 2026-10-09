@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/enums/custom_scrollbar_direction.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class CustomScrollbar extends StatefulWidget {
@@ -8,6 +9,7 @@ class CustomScrollbar extends StatefulWidget {
   final bool isInsidePersonalizedOption;
   final ValueChanged<bool> onHoverChange;
   final bool bottomPadding;
+  final CustomScrollbarDirectionType direction;
 
   const CustomScrollbar({
     super.key,
@@ -16,6 +18,7 @@ class CustomScrollbar extends StatefulWidget {
     required this.isInsidePersonalizedOption,
     required this.onHoverChange,
     this.bottomPadding = true,
+    this.direction = CustomScrollbarDirectionType.vertical,
   });
 
   @override
@@ -28,11 +31,15 @@ class _CustomScrollbarState extends State<CustomScrollbar> {
   bool _canScroll = false;
   Timer? _scrollTimer;
 
+  bool get _isVertical => widget.direction == CustomScrollbarDirectionType.vertical;
+
   @override
   void initState() {
     super.initState();
     widget.scrollController.addListener(_updateCanScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateCanScroll());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateCanScroll();
+    });
   }
 
   @override
@@ -45,28 +52,64 @@ class _CustomScrollbarState extends State<CustomScrollbar> {
   @override
   void didUpdateWidget(covariant CustomScrollbar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateCanScroll());
+    if (oldWidget.scrollController != widget.scrollController) {
+      oldWidget.scrollController.removeListener(_updateCanScroll);
+      widget.scrollController.addListener(_updateCanScroll);
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateCanScroll();
+    });
   }
 
   void _updateCanScroll() {
+    if (!widget.scrollController.hasClients) return;
+
     final canScrollNow = widget.scrollController.hasClients && widget.scrollController.position.maxScrollExtent > 0;
-    if (canScrollNow != _canScroll) {
+
+    if (canScrollNow != _canScroll && mounted) {
       setState(() {
         _canScroll = canScrollNow;
       });
     }
   }
 
-  void startAutoScroll(bool up) {
+  void _scrollPrevious() {
+    final position = widget.scrollController.position;
+
+    widget.scrollController.animateTo(
+      (widget.scrollController.offset - 50).clamp(0.0, position.maxScrollExtent),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _scrollNext() {
+    final position = widget.scrollController.position;
+
+    widget.scrollController.animateTo(
+      (widget.scrollController.offset + 50).clamp(0.0, position.maxScrollExtent),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _startAutoScroll(bool up) {
     stopAutoScroll();
-    _scrollTimer = Timer.periodic(Duration(milliseconds: 30), (_) {
-      widget.scrollController.jumpTo(
-        (widget.scrollController.offset + (up ? -20 : 20)).clamp(
-          0.0,
-          widget.scrollController.position.maxScrollExtent,
-        ),
-      );
-    });
+    _scrollTimer = Timer.periodic(
+      const Duration(milliseconds: 30),
+      (_) {
+        if (!widget.scrollController.hasClients) {
+          stopAutoScroll();
+          return;
+        }
+
+        final position = widget.scrollController.position;
+        final delta = up ? 20.0 : -20.0;
+        final newOffset = (widget.scrollController.offset + delta).clamp(0.0, position.maxScrollExtent);
+
+        widget.scrollController.jumpTo(newOffset);
+      },
+    );
   }
 
   void stopAutoScroll() {
@@ -74,27 +117,48 @@ class _CustomScrollbarState extends State<CustomScrollbar> {
     _scrollTimer = null;
   }
 
-  void _scrollUp() {
-    widget.scrollController.animateTo(
-      (widget.scrollController.offset - 50).clamp(0.0, widget.scrollController.position.maxScrollExtent),
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+  Widget _buildPreviousArrow() {
+    return _buildArrow(
+      icon: _isVertical ? Icons.arrow_drop_up_rounded : Icons.arrow_left_rounded,
+      onTap: _scrollPrevious,
+      onTapDown: (_) => _startAutoScroll(false),
     );
   }
 
-  void _scrollDown() {
-    widget.scrollController.animateTo(
-      (widget.scrollController.offset + 50).clamp(0.0, widget.scrollController.position.maxScrollExtent),
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+  Widget _buildNextArrow() {
+    return _buildArrow(
+      icon: _isVertical ? Icons.arrow_drop_down_rounded : Icons.arrow_right_rounded,
+      onTap: _scrollNext,
+      onTapDown: (_) => _startAutoScroll(true),
+    );
+  }
+
+  Widget _buildArrow({required IconData icon, required VoidCallback onTap,required void Function(TapDownDetails) onTapDown}) {
+    return AnimatedOpacity(
+      opacity: _isHovered ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 200),
+      child: GestureDetector(
+        onTap: onTap,
+        onTapDown: onTapDown,
+        onTapUp: (_) => stopAutoScroll(),
+        onTapCancel: stopAutoScroll,
+        onLongPressStart: (_) => onTap(),
+        onLongPressEnd: (_) => stopAutoScroll(),
+        child: Icon(icon, color: ChatifyColors.darkGrey, size: 28),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final double arrowZone = _isHovered && _canScroll ? 12 : 0;
+
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => _updateCanScroll());
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _updateCanScroll();
+        });
+
         return false;
       },
       child: Listener(
@@ -103,10 +167,14 @@ class _CustomScrollbarState extends State<CustomScrollbar> {
         },
         onPointerUp: (_) {
           _isDragging = false;
+
           if (!_isHovered && !widget.isInsidePersonalizedOption) {
-            Future.delayed(Duration(milliseconds: 300), () {
-              if (!_isHovered && !_isDragging) {
-                setState(() => _isHovered = false);
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (!_isHovered && !_isDragging && mounted) {
+                setState(() {
+                  _isHovered = false;
+                });
+
                 widget.onHoverChange(false);
               }
             });
@@ -118,69 +186,50 @@ class _CustomScrollbarState extends State<CustomScrollbar> {
               setState(() {
                 _isHovered = true;
               });
+
               widget.onHoverChange(true);
             }
           },
           onExit: (_) {
             if (!widget.isInsidePersonalizedOption) {
               if (_isDragging) return;
+
               setState(() {
                 _isHovered = false;
               });
+
               widget.onHoverChange(false);
             }
           },
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              if (_canScroll && _isHovered)
-              Positioned(
-                top: -5,
-                right: -7,
-                child: AnimatedOpacity(
-                  opacity: _isHovered ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 200),
-                  child: GestureDetector(
-                    onTap: _scrollUp,
-                    onTapDown: (_) => startAutoScroll(true),
-                    onTapUp: (_) => stopAutoScroll(),
-                    onTapCancel: stopAutoScroll,
-                    onLongPressStart: (_) => startAutoScroll(true),
-                    onLongPressEnd: (_) => stopAutoScroll(),
-                    child: Icon(Icons.arrow_drop_up_rounded, color: ChatifyColors.darkGrey, size: 28),
-                  ),
-                ),
-              ),
               Padding(
-                padding: EdgeInsets.only(top: 16, bottom: widget.bottomPadding ? 16 : 0, right: 2),
+                padding: _isVertical
+                  ? EdgeInsets.only(top: arrowZone, bottom: (widget.bottomPadding ? 14 : 0), right: 2)
+                  : EdgeInsets.only(left: 0, right: 0, bottom: widget.bottomPadding ? 2 : 0),
                 child: ScrollbarTheme(
                   data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
                   child: Scrollbar(
                     controller: widget.scrollController,
                     thickness: _isHovered ? 6 : 4,
                     thumbVisibility: false,
-                    radius: Radius.circular(12),
+                    radius: const Radius.circular(12),
+                    scrollbarOrientation: _isVertical ? ScrollbarOrientation.right : ScrollbarOrientation.bottom,
                     child: widget.child,
                   ),
                 ),
               ),
               if (_canScroll && _isHovered)
-              Positioned(
-                bottom: -5,
-                right: -7,
-                child: AnimatedOpacity(
-                  opacity: _isHovered ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 200),
-                  child: GestureDetector(
-                    onTap: _scrollDown,
-                    onTapDown: (_) => startAutoScroll(false),
-                    onTapUp: (_) => stopAutoScroll(),
-                    onTapCancel: stopAutoScroll,
-                    onLongPressStart: (_) => startAutoScroll(false),
-                    onLongPressEnd: (_) => stopAutoScroll(),
-                    child: Icon(Icons.arrow_drop_down_rounded, color: ChatifyColors.darkGrey, size: 28),
-                  ),
-                ),
-              ),
+                if (_isVertical)
+                  Positioned(top: -8, right: -7, child: _buildPreviousArrow())
+                else
+                  Positioned(left: -8, bottom: -7, child: _buildPreviousArrow()),
+              if (_canScroll && _isHovered)
+                if (_isVertical)
+                  Positioned(bottom: -8, right: -7, child: _buildNextArrow())
+                else
+                  Positioned(right: -8, bottom: -7, child: _buildNextArrow()),
             ],
           ),
         ),

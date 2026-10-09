@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
 import '../../../api/chat_api.dart';
+import '../../../core/enums/message_bubble_type.dart';
 import '../../../core/enums/message_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../provider/wallpaper_provider.dart';
@@ -42,6 +43,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
   bool showEmoji = false;
   String? _communityImageUrl;
   MessageModel? replyMessage;
+  UserModel? replyUser;
   List<MessageModel> list = [];
 
   String get formattedDate {
@@ -106,6 +108,8 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
   Widget build(BuildContext context) {
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     final currentCommunity = community;
+    final user = APIs.me;
+    final isMe = widget.user.id == user.id;
 
     if (currentCommunity == null) {
       return const Scaffold(body: Center(child: Text('Сообщество не найдено')));
@@ -131,7 +135,10 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
           children: [
             Consumer<WallpaperProvider>(
               builder: (context, wallpaperProvider, child) {
-                final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+                final backgroundImage = wallpaperProvider.getBackgroundImage(
+                  widget.user.id,
+                  defaultImage: context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight,
+                );
 
                 return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
               },
@@ -183,13 +190,23 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
                   focusNode: inputFocusNode,
                   onToggleEmojiKeyboard: toggleEmojiKeyboard,
                   isReplyVisible: replyMessage != null,
+                  type: isMe ? MessageBubbleType.sender : MessageBubbleType.recipient,
+                  isPressed: false,
                   chatTarget: widget.user,
                   user: widget.user,
-                  onSendMessage: (text) async {
+                  replyMessage: replyMessage,
+                  replyUser: replyUser,
+                  onClearReply: () {
+                    setState(() {
+                      replyMessage = null;
+                      replyUser = null;
+                    });
+                  },
+                  onSendMessage: (text, mentions) async {
                     if (list.isEmpty) {
-                      await APIs.sendFirstMessage(widget.user, text, MessageType.text);
+                      await APIs.sendFirstMessage(widget.user, text, MessageType.text, mentions: mentions);
                     } else {
-                      await ChatApi.sendMessage(widget.user, text, MessageType.text);
+                      await ChatApi.sendMessage(widget.user, text, MessageType.text, mentions: mentions);
                     }
                   },
                 ),

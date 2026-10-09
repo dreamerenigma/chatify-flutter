@@ -3,16 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../api/apis.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../models/message_model.dart';
 import '../widgets/bars/image_app_bar.dart';
 
 class FullScreenImageScreen extends StatefulWidget {
+  final MessageModel message;
   final List<String> imageUrls;
   final int initialIndex;
 
-  const FullScreenImageScreen({super.key, required this.imageUrls, this.initialIndex = 0});
+  const FullScreenImageScreen({
+    super.key,
+    required this.message,
+    required this.imageUrls,
+    this.initialIndex = 0,
+  });
 
   @override
   FullScreenImageScreenState createState() => FullScreenImageScreenState();
@@ -119,7 +127,7 @@ class FullScreenImageScreenState extends State<FullScreenImageScreen> with Singl
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ChatifyColors.black,
-      appBar: _isAppBarVisible ? const FullScreenAppBar() : null,
+      appBar: _isAppBarVisible ? FullScreenAppBar(user: APIs.me, message: widget.message) : null,
       body: Listener(
         onPointerDown: (_) {
           _pointerCount++;
@@ -177,79 +185,87 @@ class FullScreenImageScreenState extends State<FullScreenImageScreen> with Singl
           onDoubleTap: () {
             _handleDoubleTap(_doubleTapDetails);
           },
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Transform.translate(
-                offset: Offset(0, _currentYOffset),
-                child: InteractiveViewer(
-                  panEnabled: true,
-                  scaleEnabled: true,
-                  minScale: 1.0,
-                  maxScale: 4.0,
-                  transformationController: _transformationController,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: CachedNetworkImage(
-                      imageUrl: widget.imageUrls[_activeIndex],
-                      fit: BoxFit.contain,
-                      placeholder: (context, url) => Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
-                      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+          child: SafeArea(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Transform.translate(
+                  offset: Offset(0, _currentYOffset),
+                  child: InteractiveViewer(
+                    panEnabled: true,
+                    scaleEnabled: true,
+                    minScale: 1.0,
+                    maxScale: 4.0,
+                    transformationController: _transformationController,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: CachedNetworkImage(
+                        imageUrl: widget.imageUrls[_activeIndex],
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
+                        errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 60,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(color: ChatifyColors.black.withAlpha(220)),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 42,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(color: ChatifyColors.blackGrey, borderRadius: BorderRadius.circular(22)),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextSelectionTheme(
-                                  data: TextSelectionThemeData(
-                                    cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                    selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-                                    selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                  ),
-                                  child: TextField(
-                                    style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                                    decoration: const InputDecoration(
-                                      hintText: 'Ответить',
-                                      hintStyle: TextStyle(color: ChatifyColors.darkGrey),
-                                      border: InputBorder.none,
-                                      isDense: true,
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 60,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(color: ChatifyColors.darkBackground),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(color: ChatifyColors.blackGrey, borderRadius: BorderRadius.circular(35)),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextSelectionTheme(
+                                    data: TextSelectionThemeData(
+                                      cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                      selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                                      selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                                    ),
+                                    child: TextField(
+                                      style: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        hintText: 'Ответить',
+                                        hintStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        focusedErrorBorder: InputBorder.none,
+                                        contentPadding: EdgeInsets.only(left: 12, right: 6)
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              SvgPicture.asset(ChatifyVectors.heartEmoji, width: 22, height: 22),
-                              const SizedBox(width: 12),
-                              SvgPicture.asset(ChatifyVectors.laughingEmoji, width: 22, height: 22),
-                              const SizedBox(width: 12),
-                              SvgPicture.asset(ChatifyVectors.emojiAdd, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-                            ],
+                                const SizedBox(width: 8),
+                                SvgPicture.asset(ChatifyVectors.heartEmoji, width: 25, height: 25),
+                                const SizedBox(width: 12),
+                                SvgPicture.asset(ChatifyVectors.laughingEmoji, width: 28, height: 28),
+                                const SizedBox(width: 12),
+                                SvgPicture.asset(ChatifyVectors.emojiAdd, width: 27, height: 27, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.borderSecondary : ChatifyColors.black, BlendMode.srcIn)),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

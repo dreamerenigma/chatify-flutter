@@ -41,7 +41,10 @@ import 'home_select_user_screen.dart';
 class HomeScreen extends StatefulWidget {
   final UserModel user;
 
-  const HomeScreen({super.key, required this.user});
+  const HomeScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<HomeScreen> createState() => HomeScreenState();
@@ -82,24 +85,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool get isEmpty => users.isEmpty && groups.isEmpty && communities.isEmpty;
 
   int get unreadChatsCount {
-    debugPrint(
-      '[UNREAD TOTAL] myUsers.length = ${myUsers.length}',
-    );
-
-    for (final chat in myUsers) {
-      debugPrint(
-        '[UNREAD TOTAL] userId=${chat.userId}, '
-            'unreadCount=${chat.unreadCount}',
-      );
-    }
-
-    final count = myUsers
-        .where((chat) => chat.unreadCount > 0)
-        .length;
-
-    debugPrint(
-      '[UNREAD TOTAL] unreadChatsCount = $count',
-    );
+    final count = myUsers.where((chat) => chat.unreadCount > 0).length;
 
     return count;
   }
@@ -280,15 +266,16 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void _listenToMyUsers() {
     _myUsersSubscription = APIs.getMyUsersId().listen((snapshot) {
       final userIds = snapshot.docs.map((doc) => doc.id).toList();
+
       userLastMessageTimes.clear();
 
       final newPinnedChats = <String>{};
       final newMutedChats = <String>{};
       final newMyUsers = <MyUserModel>[];
+      final favoriteUsers = <String, bool>{};
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
-
         final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
 
         userLastMessageTimes[doc.id] = lastMessageTime;
@@ -300,6 +287,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         if (data['muted'] == true) {
           newMutedChats.add(doc.id);
         }
+
+        favoriteUsers[doc.id] = data['is_favorite'] == true;
 
         final myUser = MyUserModel.fromFirestore(doc);
 
@@ -320,7 +309,15 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
 
       APIs.getAllUsers(userIds).listen((usersSnapshot) {
-        final loadedUsers = usersSnapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+        final loadedUsers = usersSnapshot.docs.map((doc) {
+          final userData = {
+            ...doc.data(),
+            'id': doc.id,
+            'is_favorite': favoriteUsers[doc.id] ?? false,
+          };
+
+          return APIs.createChatUserFromData(userData);
+        }).toList();
 
         if (!mounted) return;
 
@@ -352,11 +349,6 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void clearSelection() {
-    log('clearSelection BEFORE: '
-        'selectedGroupIds=$selectedGroupIds, '
-        'selectionType=$selectionType');
-
-
     setState(() {
       selectedChats.clear();
       selectedNewsletterIds.clear();
@@ -628,7 +620,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ? FloatingActionButton.extended(
                 heroTag: 'home',
                 onPressed: () {
-                  Navigator.push(context, createPageRoute(const HomeSelectUserScreen(),));
+                  Navigator.push(context, createPageRoute(HomeSelectUserScreen(user: widget.user)));
                 },
                 elevation: 2,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -647,7 +639,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             : FloatingActionButton(
                 heroTag: 'home',
                 onPressed: () {
-                  Navigator.push(context, createPageRoute(const HomeSelectUserScreen()));
+                  Navigator.push(context, createPageRoute(HomeSelectUserScreen(user: widget.user)));
                 },
                 elevation: 2,
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),

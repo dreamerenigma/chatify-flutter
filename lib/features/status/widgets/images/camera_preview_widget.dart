@@ -18,6 +18,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../calls/screens/select_contact_screen.dart';
+import '../../../chat/models/message_model.dart';
 import '../../../chat/widgets/buttons/camera_icon_button.dart';
 import '../../../personalization/screens/qr_code/gallery_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -54,6 +55,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
   Timer? _videoTimer;
   Timer? _videoMessageTimer;
   VideoPlayerController? _videoMessageController;
+  MessageModel? replyMessage;
 
   CameraLensDirection _currentLensDirection = CameraLensDirection.front;
 
@@ -412,30 +414,20 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
   }
 
   Future<void> _sendVideoMessage() async {
-    log('VIDEO SEND: button pressed');
-
     final localPath = _videoMessagePath;
 
-    log('VIDEO SEND: localPath = $localPath');
-
     if (localPath == null || localPath.isEmpty) {
-      log('VIDEO SEND: ERROR - localPath is null or empty');
       return;
     }
 
     final file = File(localPath);
     final exists = await file.exists();
 
-    log('VIDEO SEND: file exists = $exists');
-
     if (!exists) {
-      log('VIDEO SEND: ERROR - file does not exist');
       return;
     }
 
     final fileSize = await file.length();
-
-    log('VIDEO SEND: file size = $fileSize bytes');
 
     VideoPlayerController? controller;
 
@@ -447,12 +439,7 @@ class CameraPreviewWidgetState extends State<CameraPreviewWidget> with TickerPro
       final duration = controller.value.duration;
       final videoDuration = duration.inSeconds;
 
-      log('VIDEO SEND: duration = $duration');
-      log('VIDEO SEND: videoDuration = $videoDuration seconds');
-
-      log('VIDEO SEND: calling APIs.sendVideoMessage()');
-
-      await widget.chatTarget.sendVideo(File(localPath), fileName: 'video_message.mp4', fileSize: fileSize.toString(), videoDuration: videoDuration);
+      await widget.chatTarget.sendVideo(File(localPath), fileName: 'video_message.mp4', fileSize: fileSize.toString(), videoDuration: videoDuration, replyToMessageId: replyMessage?.id);
 
       if (!mounted) return;
 

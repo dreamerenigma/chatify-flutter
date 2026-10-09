@@ -45,13 +45,13 @@ class _LogoutScreenState extends State<LogoutScreen> {
 
       if (!mounted) return;
 
-      Dialogs.hideProgressBar(context);
+      Dialogs.hideProgressBar();
 
       Navigator.pushReplacement(context, createPageRoute(const LoginScreen()));
     } catch (e) {
       if (!mounted) return;
 
-      Dialogs.hideProgressBar(context);
+      Dialogs.hideProgressBar();
 
       CustomIconSnackBar.showAnimatedSnackBar(
         context,

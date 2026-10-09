@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:logger/logger.dart';
 import '../core/enums/message_type.dart';
 import '../core/services/media/media_service.dart';
+import '../features/chat/models/mention_data_model.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/group/models/group_model.dart';
@@ -112,7 +113,15 @@ class GroupApi {
   }
 
   /// -- Send group message.
-  static Future<void> sendGroupMessage(GroupModel group, String msg, MessageType type, {String? fileName, String? fileSize, String? imageUrl}) async {
+  static Future<void> sendGroupMessage(
+    GroupModel group,
+    String msg,
+    MessageType type, {
+    String? fileName,
+    String? fileSize,
+    String? imageUrl,
+    List<MentionDataModel>? mentions,
+  }) async {
     if (group.id.isEmpty) {
       log('Error: groupId is empty!');
       return;
@@ -134,6 +143,7 @@ class GroupApi {
       documentName: fileName,
       fileSize: fileSize,
       deletedBy: [],
+      mentions: [],
       reactions: {},
       deletedAt: null,
     );

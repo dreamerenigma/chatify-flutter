@@ -111,6 +111,7 @@ class ChatifyColors {
   static const Color greenMessageLight = Color(0xFFDAFFB0);
   static const Color greenMessageGreenLight = Color(0xFFDAFFB0);
   static const Color greenMessageBorder = Color(0xFFD1FF98);
+  static const Color greenBubbleMessageDark = Color(0xFF134333);
   static const Color greenMessageBorderDark = Color(0xFF005643);
   static const Color greenMessageDivider = Color(0xFF175F53);
   static const Color greenMessageDark = Color(0xFF005C4B);
@@ -119,6 +120,8 @@ class ChatifyColors {
   static const Color greenMessageButton = Color(0xFF277366);
   static const Color blueMessageLight = Color(0xFFDDF5FF);
   static const Color blueMessageBorder = Color(0xFFCFF2FF);
+  static const Color redMessageLight = Color(0xFFFFCFCF);
+  static const Color redMessageBorder = Color(0xFFFFCFCF);
 
   // Scheme colors
   static Color getColorByScheme(String scheme) {

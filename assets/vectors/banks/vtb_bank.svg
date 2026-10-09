@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 50 50"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="bank_vtb.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.13931523"
+     inkscape:cx="-724.97459"
+     inkscape:cy="441.44492"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <rect
+     style="fill:#ffffff;fill-rule:evenodd;stroke-width:2.34191;stroke-linecap:round;stroke-miterlimit:146.2;paint-order:stroke fill markers"
+     id="rect2"
+     width="49.995045"
+     height="49.995045"
+     x="0.0030582855"
+     y="0.0032985175" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="m 14.220784,13.001549 -2.157001,5.908257 h 29.89046 l 2.156941,-5.908257 z m -3.236141,8.861104 -2.1569422,5.906879 H 38.718042 l 2.156942,-5.906879 z M 7.7552749,30.723758 5.5983332,36.630636 H 35.488734 l 2.155563,-5.906878 z"
+     fill="#00aaff"
+     id="path1"
+     style="stroke-width:1.96909" />
+</svg>

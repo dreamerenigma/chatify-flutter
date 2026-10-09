@@ -10,15 +10,19 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../chat/models/user_model.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 
 class WallpaperScreen extends StatefulWidget {
   final String? imagePath;
-
+  final UserModel user;
+  final String wallpaperKey;
 
   const WallpaperScreen({
     super.key,
     required this.imagePath,
+    required this.user,
+    required this.wallpaperKey,
   });
 
   @override
@@ -65,7 +69,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () async {
-                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(const SelectWallpaperScreen()));
+                    final selectedImagePath = await Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen(user: widget.user, wallpaperKey: widget.wallpaperKey)));
 
                     if (selectedImagePath != null) {
                       setState(() {
@@ -183,7 +187,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                 const SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen()));
+                    Navigator.pushReplacement(context, createPageRoute(SelectWallpaperScreen(user: widget.user, wallpaperKey: widget.wallpaperKey)));
                   },
                   child: Center(
                     child: Text(S.of(context).change,

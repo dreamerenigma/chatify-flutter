@@ -7,13 +7,22 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'package:chatify/routes/custom_page_route.dart';
+import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/items/wallpaper_item.dart';
 import '../qr_code/gallery_screen.dart';
 
 class SelectWallpaperScreen extends StatefulWidget {
-  const SelectWallpaperScreen({super.key});
+  final UserModel user;
+  final String wallpaperKey;
+
+  const SelectWallpaperScreen({
+    super.key,
+    required this.user,
+    required this.wallpaperKey,
+  });
 
   @override
   State<SelectWallpaperScreen> createState() => _SelectWallpaperScreenState();
@@ -26,6 +35,8 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
         imagePath: ChatifyImages.wallpaperLightV1,
         title: S.of(context).bright,
         destinationScreen: WallpaperCategoryScreen(
+          user: widget.user,
+          wallpaperKey: '',
           title: S.of(context).brightWallpaper,
           imagePaths: [
             ChatifyImages.wallpaperLightV1,
@@ -48,6 +59,8 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
         imagePath: ChatifyImages.wallpaperDarkV1,
         title: S.of(context).darkWallpaper,
         destinationScreen: WallpaperCategoryScreen(
+          user: widget.user,
+          wallpaperKey: widget.wallpaperKey,
           title: S.of(context).darkWallpaper,
           imagePaths: [
             ChatifyImages.wallpaperDarkV1,
@@ -71,6 +84,8 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
         imagePath: ChatifyImages.wallpaperSolidV1,
         title: S.of(context).solidColors,
         destinationScreen: WallpaperCategoryScreen(
+          user: widget.user,
+          wallpaperKey: widget.wallpaperKey,
           title: S.of(context).solidColors,
           imagePaths: [
             ChatifyImages.wallpaperSolidV1,
@@ -120,20 +135,37 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
         ),
         actions: [
           PopupMenuButton<int>(
+            tooltip: S.of(context).more,
             position: PopupMenuPosition.under,
-            color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-            icon: const Icon(Icons.more_vert_rounded),
-            onSelected: (value) {
-              if (value == 1) {}
-            },
+            offset: const Offset(-8, 0),
+            menuPadding: EdgeInsets.symmetric(vertical: 4),
+            constraints: const BoxConstraints(minWidth: 0, maxWidth: 215),
+            icon: const Icon(Icons.more_vert),
+            color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.lightGrey;
+                }
+                return ChatifyColors.transparent;
+              }),
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              overlayColor: WidgetStateProperty.all(ChatifyColors.softNight.withAlpha((0.1 * 255).toInt())),
+            ),
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 1,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(S.of(context).resetWallpaperSettings, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), maxLines: 1, overflow: TextOverflow.ellipsis),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: AppPopupMenuItem(
+                  text: S.of(context).resetWallpaperSettings,
+                  onTap: () {
+                    Navigator.pop(context);
+
+                  },
+                ),
               ),
             ],
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ],
       ),
@@ -186,7 +218,7 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
   Widget _buildDefault(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: '', isDefaultWallpaper: true)));
+        Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: '', isDefaultWallpaper: true, wallpaperKey: widget.wallpaperKey)));
       },
       child: Padding(
         padding: const EdgeInsets.all(20),

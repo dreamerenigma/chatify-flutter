@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 800 800"
+   fill="none"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="sovkom_bank.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.1767767"
+     inkscape:cx="282.84271"
+     inkscape:cy="-789.13116"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3" />
+  <path
+     fill="#213A8B"
+     d="M 0,0 H 800.00155 V 800.00155 H 0 Z"
+     id="path1"
+     style="fill:#ffffff;stroke-width:28.5715" />
+  <path
+     fill="#da5155"
+     d="M 77.206211,394.82656 A 320.25516,320.25516 0 0 0 397.74112,715.44143 h 13.14914 V 594.02182 h -13.10915 a 198.23607,198.23607 0 0 1 -198.316,-198.31603 198.23607,198.23607 0 0 1 198.316,-198.27601 h 13.10915 V 75.970239 H 397.78111 C 220.44774,74.251656 77.166242,218.37247 77.166242,394.82656"
+     id="path2"
+     style="stroke-width:39.9669" />
+  <path
+     fill="#fff"
+     d="M 465.41418,75.922064 V 244.88275 H 400.42614 A 150.68917,150.68917 0 0 0 250.1032,395.2057 150.68917,150.68917 0 0 0 400.42614,545.52862 h 64.94734 V 715.42525 C 613.90588,685.18978 725.97661,553.54529 725.97661,396.10092 726.8719,237.80203 614.80112,106.15757 465.37348,75.922064"
+     id="path3"
+     style="fill:#213a8b;fill-opacity:1;stroke-width:40.6938" />
+</svg>

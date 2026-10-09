@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 37.5 37.5"
+   fill="none"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="pallete.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.32"
+     inkscape:cx="359.375"
+     inkscape:cy="379.6875"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3" />
+  <path
+     d="m 2.4701091,18.78069 c 0,8.371901 6.2910941,15.270723 14.3920819,16.203375 1.195381,0.137628 2.353997,-0.372052 3.20482,-1.22499 1.063121,-1.065887 1.063121,-2.793887 0,-3.859774 -0.850823,-0.852938 -1.544496,-2.125593 -0.902718,-3.146092 2.564832,-4.079394 15.842059,5.289091 15.842059,-7.972519 0,-9.0080815 -7.283563,-16.3105809 -16.268121,-16.3105809 -8.9846399,0 -16.2681219,7.3024994 -16.2681219,16.3105809 z"
+     stroke="#1C274C"
+     stroke-width="2.44022"
+     id="path1"
+     style="stroke:#000000;stroke-opacity:1" />
+  <circle
+     cx="27.685698"
+     cy="17.924824"
+     r="1.2201091"
+     stroke="#1C274C"
+     stroke-width="2.44022"
+     id="circle1"
+     style="stroke:#000000;stroke-opacity:1" />
+  <circle
+     cx="9.7907639"
+     cy="17.924824"
+     r="1.2201091"
+     stroke="#1C274C"
+     stroke-width="2.44022"
+     id="circle2"
+     style="stroke:#000000;stroke-opacity:1" />
+  <path
+     d="m 16.029588,10.603779 c 0,0.673842 -0.546332,1.22011 -1.220174,1.22011 -0.673842,0 -1.220109,-0.546268 -1.220109,-1.22011 0,-0.6738577 0.546267,-1.2201087 1.220109,-1.2201087 0.673842,0 1.220174,0.546251 1.220174,1.2201087 z"
+     stroke="#1C274C"
+     stroke-width="2.44022"
+     id="path2"
+     style="stroke:#000000;stroke-opacity:1" />
+  <path
+     d="m 24.02537,10.60417 c 0,0.673842 -0.546283,1.220109 -1.220109,1.220109 -0.673826,0 -1.220109,-0.546267 -1.220109,-1.220109 0,-0.673842 0.546283,-1.2201093 1.220109,-1.2201093 0.673826,0 1.220109,0.5462673 1.220109,1.2201093 z"
+     stroke="#1C274C"
+     stroke-width="2.44022"
+     id="path3"
+     style="stroke:#000000;stroke-opacity:1" />
+</svg>

@@ -281,7 +281,7 @@ class CallsScreenState extends State<CallsScreen> {
                           Navigator.push(context, createPageRoute(const CallPhoneNumber()));
                         },
                         onFavorites: () {
-                          Navigator.push(context, createPageRoute(FavoriteScreen()));
+                          Navigator.push(context, createPageRoute(FavoriteScreen(user: widget.user)));
                         },
                       ),
                     ),
@@ -302,7 +302,7 @@ class CallsScreenState extends State<CallsScreen> {
                     Navigator.push(context, createPageRoute(const CallPhoneNumber()));
                   },
                   onFavorites: () {
-                    Navigator.push(context, createPageRoute(FavoriteScreen()));
+                    Navigator.push(context, createPageRoute(FavoriteScreen(user: widget.user)));
                   },
                 ),
               ),

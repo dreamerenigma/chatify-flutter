@@ -57,7 +57,7 @@ void showChatSettingsDialog(BuildContext context, BaseChatEntity entity, Offset 
         {'icon': Icons.link, 'text': S.of(context).links, 'iconSize': 21, 'iconWidth': 16},
         {'icon': FluentIcons.calendar_16_regular, 'text': S.of(context).events, 'iconSize': 18, 'iconWidth': 18},
         {'icon': Icons.lock_outline_rounded, 'text': S.of(context).encryption, 'iconSize': 19, 'iconWidth': 17},
-        {'icon': ChatifyVectors.newGroup, 'text': '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', 'iconSize': 24, 'iconWidth': 14, 'isSvg': true},
+        {'icon': ChatifyVectors.groupsOutline, 'text': '${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', 'iconSize': 18, 'iconWidth': 14, 'isSvg': true},
       ];
     }
   }
@@ -203,7 +203,7 @@ Widget _buildOptionsByIndex(int index, dynamic entity, UserModel currentUser) {
       case 1:
         return ParticipantsOptionWidget(user: currentUser, community: entity);
       case 2:
-        return MediaOptionWidget();
+        return MediaOptionWidget(user: currentUser);
       case 3:
         return FilesOptionWidget();
       case 4:
@@ -225,7 +225,7 @@ Widget _buildOptionsByIndex(int index, dynamic entity, UserModel currentUser) {
         }
         return SizedBox();
       case 1:
-        return MediaOptionWidget();
+        return MediaOptionWidget(user: currentUser);
       case 2:
         return FilesOptionWidget();
       case 3:

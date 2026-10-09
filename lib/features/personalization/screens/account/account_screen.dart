@@ -88,7 +88,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         value: 1,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: AppPopupMenuItem(
-                          icon: SvgPicture.asset(ChatifyVectors.documentOutline, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+                          icon: SvgPicture.asset(ChatifyVectors.documentText, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                           text: 'Запрос информации аккаунта',
                           onTap: () {
                             Navigator.pop(context);

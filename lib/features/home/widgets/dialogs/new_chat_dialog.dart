@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/home/widgets/dialogs/widget/tiles/user_profile_tile.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
@@ -7,6 +6,7 @@ import 'package:chatify/utils/popups/custom_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -35,7 +35,20 @@ Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel
   final overlay = Overlay.of(context);
   final FocusNode inputFocusNode = FocusNode();
   late OverlayEntry overlayEntry;
+  bool isFetchingChatUsers = true;
   List<UserModel> communicateOftenUsers = [];
+
+  Future<void> fetchChatUsers() async {
+    final userIds = (await APIs.getMyUsersId().first).docs.map((e) => e.id).toList();
+
+    if (userIds.isNotEmpty) {
+      final chatUserDocs = (await APIs.getAllUsers(userIds).first).docs;
+
+      communicateOftenUsers = chatUserDocs.map((e) => UserModel.fromJson({...e.data(), 'id': e.id})).toList();
+    }
+
+    isFetchingChatUsers = false;
+  }
 
   void insertOverlay() {
     overlayEntry = OverlayEntry(
@@ -163,9 +176,12 @@ Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel
                                       return _buildCreateGroupContent(context, isCreatingGroupNotifier, groupController);
                                     }
 
+                                    final hasCurrentUser = communicateOftenUsers.any((contact) => contact.id == user.id);
+                                    final hasOftenContacts = communicateOftenUsers.isNotEmpty;
+
                                     return SizedBox(
                                       key: const ValueKey('contactList'),
-                                      height: 200,
+                                      height: communicateOftenUsers.isNotEmpty ? 400 : 230,
                                       child: ScrollConfiguration(
                                         behavior: NoGlowScrollBehavior(),
                                         child: ScrollbarTheme(
@@ -181,32 +197,37 @@ Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel
                                                   mainAxisSize: MainAxisSize.min,
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    _buildNewGroup(context, isCreatingGroupNotifier),
-                                                    _buildNewContact(context, () {
-                                                      animationController.reverse().then((_) {
-                                                        overlayEntry.remove();
-                                                        animationController.dispose();
-                                                        completer.complete();
-                                                      });
-                                                    }, user),
-                                                    UserProfileTile(
-                                                      userController: userController,
-                                                      user: user,
-                                                      onTap: () {
-
+                                                    _buildCreateOption(
+                                                      context,
+                                                      isCreatingGroupNotifier,
+                                                      () {
+                                                        animationController.reverse().then((_) {
+                                                          overlayEntry.remove();
+                                                          animationController.dispose();
+                                                          completer.complete();
+                                                        });
                                                       },
+                                                      user,
                                                     ),
+                                                    UserProfileTile(userController: userController, user: user, onTap: () {}),
+                                                    if (hasOftenContacts && !hasCurrentUser) ...[
+                                                      Padding(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                                        child: Text(S.of(context).doYouCommunicateOften, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                                        child: UserProfileTile(userController: userController, user: user, onTap: () {}),
+                                                      ),
+                                                    ],
                                                     if (hasOftenContacts) ...[
                                                       Padding(
                                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                                        child: Text(S.of(context).doYouCommunicateOften, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                                                        child: Text(S.of(context).allContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                                                       ),
-                                                      _buildCommunicateOften(context, userController, user),
+                                                      ...communicateOftenUsers.map((contact) => UserProfileTile(userController: userController, user: contact, onTap: () {}),
+                                                      ),
                                                     ],
-                                                    Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                                      child: Text(S.of(context).allContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
-                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -236,8 +257,9 @@ Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel
     animationController.forward();
   }
 
-  ChatApi.getCommunicateOftenUsers(userController.currentUser).then((users) {
+  ChatApi.getCommunicateOftenUsers(userController.currentUser).then((users) async {
     communicateOftenUsers = users;
+    await fetchChatUsers();
     insertOverlay();
   });
 
@@ -246,7 +268,6 @@ Future <void> showNewChatDialog(BuildContext context, Offset position, UserModel
 
 Widget _buildCreateGroupContent(BuildContext context, ValueNotifier<bool> isCreatingGroupNotifier, TextEditingController groupController) {
   final FocusNode inputFocusNode = FocusNode();
-  final GlobalKey newSelectCountryKey = GlobalKey();
   final ValueNotifier<bool> isBackPressedNotifier = ValueNotifier(false);
 
   return Padding(
@@ -283,7 +304,7 @@ Widget _buildCreateGroupContent(BuildContext context, ValueNotifier<bool> isCrea
               ),
             ),
             SizedBox(width: 12),
-            Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500, fontFamily: 'Roboto')),
+            Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w500)),
           ],
         ),
         SizedBox(height: 16),
@@ -311,13 +332,11 @@ Widget _buildCreateGroupContent(BuildContext context, ValueNotifier<bool> isCrea
   );
 }
 
-Widget _buildNewGroup(BuildContext context, ValueNotifier<bool> isCreatingGroupNotifier) {
+Widget _buildActionItem({required BuildContext context, required String icon, required String title, required VoidCallback onTap, double iconSize = 20}) {
   return Material(
     color: ChatifyColors.transparent,
     child: InkWell(
-      onTap: () {
-        isCreatingGroupNotifier.value = true;
-      },
+      onTap: onTap,
       mouseCursor: SystemMouseCursors.basic,
       splashFactory: NoSplash.splashFactory,
       splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
@@ -330,16 +349,11 @@ Widget _buildNewGroup(BuildContext context, ValueNotifier<bool> isCreatingGroupN
             Container(
               width: 40,
               height: 40,
-              decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled, width: 1),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: SvgPicture.asset(ChatifyVectors.newGroup, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
-              ),
+              decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+              child: Center(child: SvgPicture.asset(icon, width: iconSize, height: iconSize, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn))),
             ),
-            SizedBox(width: 14),
-            Text(S.of(context).newGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
+            const SizedBox(width: 14),
+            Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
           ],
         ),
       ),
@@ -347,62 +361,60 @@ Widget _buildNewGroup(BuildContext context, ValueNotifier<bool> isCreatingGroupN
   );
 }
 
-Widget _buildNewContact(BuildContext context, VoidCallback onClose, UserModel user) {
+Widget _buildCreateOption(BuildContext context, ValueNotifier<bool> isCreatingGroupNotifier, VoidCallback onClose, UserModel user) {
   final TextEditingController phoneController = TextEditingController(text: '+7');
   final ValueNotifier<String> selectedFlagNotifier = ValueNotifier(ChatifyVectors.rus);
   final ValueNotifier<Country?> selectedCountryNotifier = ValueNotifier(null);
   final ValueNotifier<String> selectedCountryCodeNotifier = ValueNotifier('+7');
 
-  return Material(
-    color: ChatifyColors.transparent,
-    child: InkWell(
-      onTap: () {
-        onClose();
-        showChangeNewContactDialog(
-          context,
-          title: S.of(context).newContact,
-          entity: user,
-          showDeleteIcon: false,
-          contentBuilder: (context, setDialogState) => _buildAddPhoneNumber(
-            selectedCountryNotifier,
-            context: context,
-            controller: phoneController,
-            flagAssetPath: selectedFlagNotifier.value,
-            iconAssetPath: ChatifyVectors.arrowDown,
-            onCountrySelected: (flag, code) {
-              setDialogState(() {
-                selectedFlagNotifier.value = flag;
-                selectedCountryCodeNotifier.value = code;
-                phoneController.text = code;
-              });
-            },
-          ),
-        );
-      },
-      borderRadius: BorderRadius.circular(12),
-      mouseCursor: SystemMouseCursors.basic,
-      splashFactory: NoSplash.splashFactory,
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.white, border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled, width: 1),
-                shape: BoxShape.circle,
-              ),
-              child: Center(child: SvgPicture.asset(ChatifyVectors.contact, width: 20, height: 20, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn))),
-            ),
-            SizedBox(width: 14),
-            Text(S.of(context).newContact, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
-          ],
-        ),
+  return Column(
+    children: [
+      _buildActionItem(
+        context: context,
+        icon: ChatifyVectors.addGroup,
+        iconSize: 22,
+        title: S.of(context).newGroup,
+        onTap: () {
+          isCreatingGroupNotifier.value = true;
+        },
       ),
-    ),
+      _buildActionItem(
+        context: context,
+        icon: ChatifyVectors.addUser,
+        title: S.of(context).newContact,
+        onTap: () {
+          onClose();
+          showChangeNewContactDialog(
+            context,
+            title: S.of(context).newContact,
+            entity: user,
+            showDeleteIcon: false,
+            contentBuilder: (context, setDialogState) =>
+                _buildAddPhoneNumber(
+                  selectedCountryNotifier,
+                  context: context,
+                  controller: phoneController,
+                  flagAssetPath: selectedFlagNotifier.value,
+                  iconAssetPath: ChatifyVectors.arrowDown,
+                  onCountrySelected: (flag, code) {
+                    setDialogState(() {
+                      selectedFlagNotifier.value = flag;
+                      selectedCountryCodeNotifier.value = code;
+                      phoneController.text = code;
+                    });
+                  },
+                ),
+          );
+        },
+      ),
+      _buildActionItem(
+        context: context,
+        icon: ChatifyVectors.communities,
+        iconSize: 22,
+        title: S.of(context).newCommunity,
+        onTap: () {},
+      ),
+    ],
   );
 }
 
@@ -465,56 +477,6 @@ Widget _buildAddPhoneNumber(
           ],
         ),
       ],
-    ),
-  );
-}
-
-Widget _buildCommunicateOften(BuildContext context, UserController userController, UserModel user) {
-  return Material(
-    color: ChatifyColors.transparent,
-    child: InkWell(
-      onTap: () {},
-      mouseCursor: SystemMouseCursors.basic,
-      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: ChatifyColors.grey.withAlpha((0.2 * 255).toInt()),
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled, width: 1),
-                shape: BoxShape.circle,
-              ),
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: userController.currentUser.image,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)))),
-                  errorWidget: (context, url, error) => Center(
-                    child: SvgPicture.asset(ChatifyVectors.newUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.buttonDisabled, BlendMode.srcIn)),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 14),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(user.phoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w500)),
-                SizedBox(
-                  width: 220,
-                  child: Text(userController.currentUser.about, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300), overflow: TextOverflow.ellipsis, maxLines: 1),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     ),
   );
 }

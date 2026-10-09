@@ -8,16 +8,21 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../calls/screens/select_contact_screen.dart';
 import '../../../chat/models/user_model.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
-import '../../models/blocked_user.dart';
+import '../../models/blocked_user_model.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/lists/blocked_list.dart';
 
 class BlockedUsersScreen extends StatefulWidget {
-  final List<BlockedUser> blockedUser;
+  final List<BlockedUserModel> blockedUser;
   final UserModel user;
 
-  const BlockedUsersScreen({super.key, required this.blockedUser, required this.user});
+  const BlockedUsersScreen({
+    super.key,
+    required this.blockedUser,
+    required this.user,
+  });
 
   @override
   State<BlockedUsersScreen> createState() => BlockedUsersScreenState();
@@ -34,22 +39,16 @@ class BlockedUsersScreenState extends State<BlockedUsersScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
-            title: Text(S.of(context).blocked, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+            title: Text('Заблокированные аккаунты', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             actions: [
               IconButton(
-                icon: const Icon(Icons.person_add_alt),
+                icon: const Icon(Icons.person_add_alt, size: 25),
                 onPressed: () {
                   Navigator.push(context, createPageRoute(SelectContactScreen(user: widget.user)));
                 },
@@ -85,27 +84,27 @@ class BlockedUsersScreenState extends State<BlockedUsersScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(S.of(context).noBlockedContacts, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                  Text('Нет заблокированных аккаунтов', style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                   const SizedBox(height: 14),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text.rich(
                       TextSpan(
                         children: [
-                          TextSpan(text: S.of(context).clickOnIcon, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          TextSpan(text: S.of(context).clickOnIcon, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                           const WidgetSpan(child: Icon(Icons.person_add_alt, size: 18), alignment: PlaceholderAlignment.middle),
-                          TextSpan(text: S.of(context).selectContactYouBlock, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          TextSpan(text: S.of(context).selectContactYouBlock, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         ],
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 10, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: Text(
-                      S.of(context).blockedContactsLongerCallMessage,
+                      'Заблокированные пользователи больше не смогут вам звонить или отправлять сообщения.',
                       style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
                     ),
                   ),
@@ -126,13 +125,13 @@ class BlockedUsersScreenState extends State<BlockedUsersScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        child: Text(S.of(context).contacts, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold, color: ChatifyColors.darkGrey)),
+                        child: Text(S.of(context).contacts, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
                       ),
                       BlockedUserList(blockedUser: widget.blockedUser, user: widget.user),
                       Divider(thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                        child: Text(S.of(context).blockedContactsLongerCallMessage, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        child: Text(S.of(context).blockedContactsLongerCallMessage, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                       ),
                     ],
                   ),

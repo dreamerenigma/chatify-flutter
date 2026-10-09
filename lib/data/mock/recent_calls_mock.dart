@@ -1,5 +1,6 @@
 import '../../features/calls/models/recent_call_model.dart';
 import '../../features/chat/models/user_model.dart';
+import '../../features/personalization/models/social_link_model.dart';
 
 final List<RecentCallModel> mockRecentCalls = [
   RecentCallModel(
@@ -12,8 +13,15 @@ final List<RecentCallModel> mockRecentCalls = [
       name: 'Александр',
       surname: 'Иванов',
       username: 'alexander',
+      links: [
+        SocialLinkModel(type: 'vk', username: 'alexander', url: 'https://vk.com/alexander'),
+        SocialLinkModel(type: 'ok', username: 'alexander',url: 'https://ok.com/alexander'),
+        SocialLinkModel(type: 'facebook', username: 'alexander', url: 'https://facebook.com/alexander'),
+        SocialLinkModel(type: 'instagram', username: 'alexander', url: 'https://instagram.com/alexander'),
+      ],
       createdAt: DateTime.now(),
       isOnline: true,
+      isFavorite: false,
       lastActive: DateTime.now(),
       pushToken: '',
       email: 'alex@example.com',
@@ -36,8 +44,15 @@ final List<RecentCallModel> mockRecentCalls = [
       name: 'Мария',
       surname: 'Петрова',
       username: 'maria',
+      links: [
+        SocialLinkModel(type: 'vk', username: 'maria', url: 'https://vk.com/maria'),
+        SocialLinkModel(type: 'ok', username: 'maria',url: 'https://ok.com/maria'),
+        SocialLinkModel(type: 'facebook', username: 'maria', url: 'https://facebook.com/maria'),
+        SocialLinkModel(type: 'instagram', username: 'maria', url: 'https://instagram.com/maria'),
+      ],
       createdAt: DateTime.now(),
       isOnline: false,
+      isFavorite: false,
       lastActive: DateTime.now(),
       pushToken: '',
       email: 'maria@example.com',
@@ -60,8 +75,15 @@ final List<RecentCallModel> mockRecentCalls = [
       name: 'Дмитрий',
       surname: 'Смирнов',
       username: 'dmitry',
+      links: [
+        SocialLinkModel(type: 'vk', username: 'dmitry', url: 'https://vk.com/dmitry'),
+        SocialLinkModel(type: 'ok', username: 'dmitry',url: 'https://ok.com/dmitry'),
+        SocialLinkModel(type: 'facebook', username: 'dmitry', url: 'https://facebook.com/dmitry'),
+        SocialLinkModel(type: 'instagram', username: 'dmitry', url: 'https://instagram.com/dmitry'),
+      ],
       createdAt: DateTime.now(),
       isOnline: false,
+      isFavorite: false,
       lastActive: DateTime.now(),
       pushToken: '',
       email: 'dmitry@example.com',
@@ -85,8 +107,15 @@ final List<RecentCallModel> mockRecentCalls = [
       name: 'Анна',
       surname: 'Кузнецова',
       username: 'anna',
+      links: [
+        SocialLinkModel(type: 'vk', username: 'anna', url: 'https://vk.com/anna'),
+        SocialLinkModel(type: 'ok', username: 'anna',url: 'https://ok.com/anna'),
+        SocialLinkModel(type: 'facebook', username: 'anna', url: 'https://facebook.com/anna'),
+        SocialLinkModel(type: 'instagram', username: 'anna', url: 'https://instagram.com/anna'),
+      ],
       createdAt: DateTime.now(),
       isOnline: true,
+      isFavorite: false,
       lastActive: DateTime.now(),
       pushToken: '',
       email: 'anna@example.com',

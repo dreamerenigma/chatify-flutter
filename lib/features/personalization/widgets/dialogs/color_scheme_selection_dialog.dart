@@ -18,7 +18,7 @@ Future<void> showColorSchemeSelectionDialog(BuildContext context) async {
           contentPadding: EdgeInsets.zero,
           titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           actionsPadding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-          title: Text(S.of(context).selectColorScheme),
+          title: Text(S.of(context).selectColorScheme, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
           content: SizedBox(
             width: 300,
             child: RadioGroup<String>(
@@ -37,7 +37,7 @@ Future<void> showColorSchemeSelectionDialog(BuildContext context) async {
                     icon: Icons.color_lens,
                     title: S.of(context).system,
                     value: 'default',
-                    color: ChatifyColors.blue,
+                    color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
                     groupValue: tempColorScheme,
                     onChanged: (value) => setState(() => tempColorScheme = value as String),
                   ),

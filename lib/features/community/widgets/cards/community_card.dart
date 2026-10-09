@@ -16,6 +16,7 @@ class CommunityCard extends StatefulWidget {
   final VoidCallback? onTap;
   final bool isValidDate;
   final String fileToSend;
+  final Color? cardColor;
 
   const CommunityCard({
     super.key,
@@ -23,6 +24,7 @@ class CommunityCard extends StatefulWidget {
     required this.community,
     required this.isValidDate,
     required this.fileToSend,
+    this.cardColor,
   });
 
   @override
@@ -61,7 +63,8 @@ class _CommunityCardState extends State<CommunityCard> {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
-      color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white,
+      color: widget.cardColor ?? (context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white),
+      shadowColor: ChatifyColors.transparent,
       child: Material(
         color: ChatifyColors.transparent,
         child: InkWell(
@@ -135,7 +138,8 @@ class _CommunityCardState extends State<CommunityCard> {
                       ),
                       Text(
                         widget.community.description.isNotEmpty ? widget.community.description : S.of(context).noDescription,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis),
+                        maxLines: 1,
                       ),
                     ],
                   ),

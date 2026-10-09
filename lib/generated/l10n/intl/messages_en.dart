@@ -2407,7 +2407,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Too many messages",
     ),
     "topUpYourFavorites": MessageLookupByLibrary.simpleMessage(
-      "Top up your Favorites",
+      "Top up your favorites",
     ),
     "totalCountContacts": MessageLookupByLibrary.simpleMessage(" contacts"),
     "transferChatHistoryAndroidDevices": MessageLookupByLibrary.simpleMessage(

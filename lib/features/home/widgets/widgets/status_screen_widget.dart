@@ -1,13 +1,18 @@
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:heroicons/heroicons.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 
 class StatusScreenWidget extends StatelessWidget {
   final double sidePanelWidth;
 
-  const StatusScreenWidget({super.key, required this.sidePanelWidth});
+  const StatusScreenWidget({
+    super.key,
+    required this.sidePanelWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +32,19 @@ class StatusScreenWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      SvgPicture.asset(ChatifyVectors.statusFilled, width: 65, height: 65, colorFilter: ColorFilter.mode(ChatifyColors.steelGrey, BlendMode.srcIn)),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Поделитесь статусами',
+                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 30, fontWeight: FontWeight.w400),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: Text(
-                          S.of(context).clickContactNameStatus,
-                          style: TextStyle(fontWeight: FontWeight.w300, height: 1.3, fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey),
+                          'Делитесь фото, видео и текстами, которые исчезают через 24 часа.',
+                          style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.3),
                           textAlign: TextAlign.center,
                           softWrap: true,
                         ),
@@ -51,11 +65,11 @@ class StatusScreenWidget extends StatelessWidget {
                           children: [
                             WidgetSpan(
                               alignment: PlaceholderAlignment.middle,
-                              child: Padding(padding: const EdgeInsets.only(right: 6), child: HeroIcon(HeroIcons.lockClosed, color: ChatifyColors.darkGrey, size: 14)),
+                              child: Padding(padding: const EdgeInsets.only(right: 4), child: Icon(Icons.lock_outline_rounded, size: 18, color: ChatifyColors.darkGrey)),
                             ),
                             TextSpan(
-                              text: S.of(context).statusUpdatesProtectedEncryption,
-                              style: TextStyle(fontSize: 13, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w300),
+                              text: '${S.of(context).statusUpdatesEncryption} ${S.of(context).endToEndEncryption}',
+                              style: TextStyle(fontSize: 13, color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),

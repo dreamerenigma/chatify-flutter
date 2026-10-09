@@ -555,13 +555,13 @@ class _BottomInputState extends State<BottomInput> {
             child: Material(
               color: ChatifyColors.transparent,
               child: InkWell(
-                onTap: () {
-                  togglePauseRecording();
-                },
                 mouseCursor: SystemMouseCursors.basic,
                 splashColor: ChatifyColors.transparent,
                 highlightColor: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
                 hoverColor: ChatifyColors.black.withAlpha((0.2 * 255).toInt()),
+                onTap: () {
+                  togglePauseRecording();
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(11),
                   child: Icon(FluentIcons.send_16_regular, size: 18, color: ChatifyColors.white),

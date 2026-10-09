@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../chat/models/user_model.dart';
@@ -8,7 +9,10 @@ import '../../../chat/models/user_model.dart';
 class BlockedUserCard extends StatelessWidget {
   final UserModel user;
 
-  const BlockedUserCard({super.key, required this.user});
+  const BlockedUserCard({
+    super.key,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,10 @@ class BlockedUserCard extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(user.phoneNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500, color: ChatifyColors.black)),
+              child: Text(
+                user.phoneNumber,
+                style: TextStyle(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+              ),
             ),
           ],
         ),

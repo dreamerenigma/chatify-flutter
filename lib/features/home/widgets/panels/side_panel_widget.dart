@@ -17,6 +17,8 @@ import '../../../newsletter/models/newsletter_model.dart';
 import '../widgets/archive_widget.dart';
 import '../widgets/calls_widget.dart';
 import '../widgets/chats_widget.dart';
+import '../widgets/communities_screen_widget.dart';
+import '../widgets/communities_widget.dart';
 import '../widgets/favorite_widget.dart';
 import '../widgets/status_widget.dart';
 import '../widgets/calls_screen_widget.dart';
@@ -123,107 +125,104 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                         color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(12)),
                         border: Border(
-                          top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
-                          bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
-                          left: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey),
+                          top: BorderSide(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey),
+                          left: BorderSide(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey),
                           right: BorderSide.none,
                         ),
                       ),
                       child: Column(
                         children: [
-                          if (widget.selectedIndex == 0)
-                            ChatsWidget(
-                              user: widget.user,
-                              groups: widget.groups,
-                              newsletters: widget.newsletters,
-                              communities: widget.communities,
-                              users: widget.users,
-                              supports: widget.supports,
-                              infosApp:  widget.infosApp,
-                              isSearching: widget.isSearching,
-                              searchList: widget.searchList,
-                              selectedUser: selectedUser,
-                              pinnedChats: widget.pinnedChats,
-                              mutedChats: widget.mutedChats,
-                              onGroupSelected: (group) {
-                                setState(() {
-                                  selectedGroup = group;
-                                  selectedNewsletter = null;
-                                  selectedCommunity = null;
-                                  selectedUser = null;
-                                  selectedSupport = null;
-                                  selectedInfoApp = null;
-                                });
-                              },
-                              onNewsletterSelected: (newsletter) {
-                                setState(() {
-                                  selectedNewsletter = newsletter;
-                                  selectedGroup = null;
-                                  selectedCommunity = null;
-                                  selectedUser = null;
-                                  selectedSupport = null;
-                                  selectedInfoApp = null;
-                                });
-                              },
-                              onCommunitySelected: (community) {
-                                setState(() {
-                                  selectedCommunity = community;
-                                  selectedUser = null;
-                                  selectedGroup = null;
-                                  selectedNewsletter = null;
-                                  selectedSupport = null;
-                                  selectedInfoApp = null;
-                                });
-                              },
-                              onUserSelected: (chatUser) {
-                                setState(() {
-                                  selectedUser = chatUser;
-                                  selectedGroup = null;
-                                  selectedNewsletter = null;
-                                  selectedCommunity = null;
-                                  selectedSupport = null;
-                                  selectedInfoApp = null;
-                                });
-                              },
-                              onSupportSelected: (support) {
-                                setState(() {
-                                  selectedSupport = support;
-                                  selectedGroup = null;
-                                  selectedNewsletter = null;
-                                  selectedUser = null;
-                                  selectedCommunity = null;
-                                  selectedInfoApp = null;
-                                });
-                              },
-                              onInfoAppSelected: (infoApp) {
-                                setState(() {
-                                  selectedInfoApp = infoApp;
-                                  selectedGroup = null;
-                                  selectedNewsletter = null;
-                                  selectedCommunity = null;
-                                  selectedUser = null;
-                                  selectedSupport = null;
-                                });
-                              },
-                              selectedUserIds: widget.selectedUserIds,
-                            )
-                          else if (widget.selectedIndex == 1)
-                            CallsWidget(
-                              groupName: '',
-                              groupImage: '',
-                              showCurrentCall: showCurrentCall,
-                              onStartCall: () {
-                                setState(() => showCurrentCall = true);
-                              },
-                            )
-                          else if (widget.selectedIndex == 2)
-                            StatusWidget()
-                          else if (widget.selectedIndex == 3)
-                            FavoriteWidget()
-                          else if (widget.selectedIndex == 4)
-                            ArchiveWidget(isSearching: widget.isSearching, searchList: widget.searchList, users: widget.users, archivedUsers: [], user: widget.user)
-                          else
-                            SizedBox.shrink(),
+                          Expanded(
+                            child: switch (widget.selectedIndex) {
+                              0 => ChatsWidget(
+                                user: widget.user,
+                                groups: widget.groups,
+                                newsletters: widget.newsletters,
+                                communities: widget.communities,
+                                users: widget.users,
+                                supports: widget.supports,
+                                infosApp:  widget.infosApp,
+                                isSearching: widget.isSearching,
+                                searchList: widget.searchList,
+                                selectedUser: selectedUser,
+                                pinnedChats: widget.pinnedChats,
+                                mutedChats: widget.mutedChats,
+                                onGroupSelected: (group) {
+                                  setState(() {
+                                    selectedGroup = group;
+                                    selectedNewsletter = null;
+                                    selectedCommunity = null;
+                                    selectedUser = null;
+                                    selectedSupport = null;
+                                    selectedInfoApp = null;
+                                  });
+                                },
+                                onNewsletterSelected: (newsletter) {
+                                  setState(() {
+                                    selectedNewsletter = newsletter;
+                                    selectedGroup = null;
+                                    selectedCommunity = null;
+                                    selectedUser = null;
+                                    selectedSupport = null;
+                                    selectedInfoApp = null;
+                                  });
+                                },
+                                onCommunitySelected: (community) {
+                                  setState(() {
+                                    selectedCommunity = community;
+                                    selectedUser = null;
+                                    selectedGroup = null;
+                                    selectedNewsletter = null;
+                                    selectedSupport = null;
+                                    selectedInfoApp = null;
+                                  });
+                                },
+                                onUserSelected: (chatUser) {
+                                  setState(() {
+                                    selectedUser = chatUser;
+                                    selectedGroup = null;
+                                    selectedNewsletter = null;
+                                    selectedCommunity = null;
+                                    selectedSupport = null;
+                                    selectedInfoApp = null;
+                                  });
+                                },
+                                onSupportSelected: (support) {
+                                  setState(() {
+                                    selectedSupport = support;
+                                    selectedGroup = null;
+                                    selectedNewsletter = null;
+                                    selectedUser = null;
+                                    selectedCommunity = null;
+                                    selectedInfoApp = null;
+                                  });
+                                },
+                                onInfoAppSelected: (infoApp) {
+                                  setState(() {
+                                    selectedInfoApp = infoApp;
+                                    selectedGroup = null;
+                                    selectedNewsletter = null;
+                                    selectedCommunity = null;
+                                    selectedUser = null;
+                                    selectedSupport = null;
+                                  });
+                                },
+                                selectedUserIds: widget.selectedUserIds,
+                                ),
+                              1 => CallsWidget(
+                                groupName: '',
+                                groupImage: '',
+                                showCurrentCall: showCurrentCall,
+                                onStartCall: () {
+                                  setState(() => showCurrentCall = true);
+                                }),
+                              2 => StatusWidget(user: widget.user),
+                              3 => CommunitiesWidget(user: widget.user),
+                              4 => FavoriteWidget(),
+                              5 => ArchiveWidget(isSearching: widget.isSearching, searchList: widget.searchList, users: widget.users, archivedUsers: [], user: widget.user),
+                              _ => const SizedBox.shrink(),
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -233,7 +232,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                       width: constraints.maxWidth - newSidePanelWidth,
                       decoration: BoxDecoration(
                         color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
-                        border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey, width: 1)),
+                        border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1)),
                       ),
                       child: _buildCenteredContent(),
                     ),
@@ -242,7 +241,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
-                          border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.grey, width: 1)),
+                          border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, width: 1)),
                         ),
                         child: _buildCenteredContent(),
                       ),
@@ -289,7 +288,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
                         height: double.infinity,
                         color: isClicked ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : isHovered
                           ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt())
-                          : (context.isDarkMode ? ChatifyColors.cardColor : ChatifyColors.grey),
+                          : (context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey),
                       ),
                     ),
                   ),
@@ -309,7 +308,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
     switch (widget.selectedIndex) {
       case 0:
         if (selectedGroup != null) {
-          content = GroupChatWidget(sidePanelWidth: newSidePanelWidth, group: selectedGroup!);
+          content = GroupChatWidget(sidePanelWidth: newSidePanelWidth, group: selectedGroup!, user: widget.user, users: {});
         } else if (selectedNewsletter != null) {
           content = NewsletterWidget(sidePanelWidth: newSidePanelWidth, newsletter: selectedNewsletter!, newsletters: widget.newsletters.map((n) => n.creatorName).toSet().toList(), user: widget.user);
         } else if (selectedCommunity != null) {
@@ -317,7 +316,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
         } else if (selectedUser != null) {
           content = ChatWidget(sidePanelWidth: isSmallScreen ? screenWidth : newSidePanelWidth, user: selectedUser!);
         } else if (selectedSupport != null) {
-          content = SupportChatWidget(sidePanelWidth: isSmallScreen ? screenWidth : newSidePanelWidth, support: selectedSupport!);
+          content = SupportChatWidget(sidePanelWidth: isSmallScreen ? screenWidth : newSidePanelWidth, support: selectedSupport!, user: widget.user);
         } else {
           content = MainScreenWidget(sidePanelWidth: newSidePanelWidth);
         }
@@ -338,9 +337,12 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
         content = StatusScreenWidget(sidePanelWidth: newSidePanelWidth);
         break;
       case 3:
-        content = MainScreenWidget(sidePanelWidth: newSidePanelWidth);
+        content = CommunitiesScreenWidget(sidePanelWidth: newSidePanelWidth);
         break;
       case 4:
+        content = MainScreenWidget(sidePanelWidth: newSidePanelWidth);
+        break;
+      case 5:
         content = MainScreenWidget(sidePanelWidth: newSidePanelWidth);
         break;
       default:

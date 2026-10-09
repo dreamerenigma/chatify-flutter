@@ -4,12 +4,14 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
+import '../../../core/enums/message_bubble_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../chat/models/message_model.dart';
+import '../../chat/models/user_model.dart';
 import '../../chat/widgets/input/chat_input.dart';
 import '../widgets/bars/app_bars/newsletter_chat_app_bar.dart';
 import '../../home/widgets/dialogs/chats_calls_privacy_sheet_dialog.dart';
@@ -36,6 +38,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
   final FocusNode inputFocusNode = FocusNode();
   bool showEmoji = false;
   MessageModel? replyMessage;
+  UserModel? replyUser;
 
   String get formattedDate {
     if (widget.createdAt.isEmpty) {
@@ -93,7 +96,7 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
         children: [
           Consumer<WallpaperProvider>(
             builder: (context, wallpaperProvider, child) {
-              final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+              final backgroundImage = wallpaperProvider.getBackgroundImage(widget.newsletter.id, defaultImage: context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
 
               return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
             },
@@ -179,10 +182,20 @@ class _NewsletterChatScreenState extends State<NewsletterChatScreen> {
                 focusNode: inputFocusNode,
                 onToggleEmojiKeyboard: toggleEmojiKeyboard,
                 isReplyVisible: replyMessage != null,
+                type: MessageBubbleType.recipient,
+                isPressed: false,
                 user: APIs.me,
                 chatTarget: widget.newsletter,
-                onSendMessage: (text) async {
-                  await widget.newsletter.sendText(text);
+                replyMessage: replyMessage,
+                replyUser: replyUser,
+                onClearReply: () {
+                  setState(() {
+                    replyMessage = null;
+                    replyUser = null;
+                  });
+                },
+                onSendMessage: (text, mentions) async {
+                  await widget.newsletter.sendText(text, mentions: mentions);
                 },
               ),
             ),

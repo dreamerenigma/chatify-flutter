@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:provider/provider.dart';
+import '../../../api/apis.dart';
 import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
@@ -21,7 +22,7 @@ class InfoAppChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SupportAppBar(infoApp: infoApp),
+      appBar: SupportAppBar(infoApp: infoApp, user: APIs.me),
       body: _buildBodySection(context),
     );
   }
@@ -33,7 +34,7 @@ class InfoAppChatScreen extends StatelessWidget {
         children: [
           Consumer<WallpaperProvider>(
             builder: (context, wallpaperProvider, child) {
-              final backgroundImage = wallpaperProvider.backgroundImage.isNotEmpty ? wallpaperProvider.backgroundImage : (context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+              final backgroundImage = wallpaperProvider.getBackgroundImage(infoApp.id, defaultImage: context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
 
               return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
             },

@@ -206,6 +206,7 @@ class FullScreenImageAppBarState extends State<FullScreenImageAppBar> {
                     final RenderBox renderBox = context.findRenderObject() as RenderBox;
                     final position = renderBox.localToGlobal(Offset.zero);
                     final iconWidth = renderBox.size.width;
+
                     showImageMoreDialog(context, position.translate(-iconWidth - 10, 0));
                   },
                   mouseCursor: SystemMouseCursors.basic,
