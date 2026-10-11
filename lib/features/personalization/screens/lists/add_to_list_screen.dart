@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
@@ -63,15 +63,37 @@ class AddToListScreenState extends State<AddToListScreen> {
   }
 
   Future<void> _fetchContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      final result = await FlutterContacts.getContacts(withProperties: true);
+    try {
+      final permissionStatus = await FlutterContacts.permissions.request(PermissionType.read);
+
+      if (permissionStatus != PermissionStatus.granted) {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+        return;
+      }
+
+      final result = await FlutterContacts.getAll(
+        properties: {
+          ContactProperty.name,
+          ContactProperty.phone,
+        },
+      );
+
+      if (!mounted) return;
 
       setState(() {
         contacts = result;
         filteredContacts = List.from(result);
         isFetchingContacts = false;
       });
-    } else {
+    } catch (e) {
+      log('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });
@@ -95,9 +117,10 @@ class AddToListScreenState extends State<AddToListScreen> {
 
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
+
     setState(() {
       filteredContacts = contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
 
         return contactName.contains(query);
       }).toList();
@@ -277,7 +300,6 @@ class AddToListScreenState extends State<AddToListScreen> {
     );
   }
 
-  // New searching method
   Widget _buildSearchBar() {
     return Padding(
       padding: EdgeInsets.only(left: 12, right: 12, top: MediaQuery.of(context).padding.top + 5, bottom: 4),

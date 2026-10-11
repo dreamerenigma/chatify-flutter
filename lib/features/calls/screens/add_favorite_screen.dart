@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../generated/l10n/l10n.dart';
@@ -75,9 +74,10 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
 
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
+
     setState(() {
       _filteredContacts = _contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
 
         return contactName.contains(query);
       }).toList();
@@ -134,14 +134,39 @@ class AddFavoriteScreenState extends State<AddFavoriteScreen> {
   }
 
   Future<void> _fetchContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      final contacts = await FlutterContacts.getContacts(withProperties: true);
+    try {
+      final permissionStatus = await FlutterContacts.permissions.request(
+        PermissionType.read,
+      );
+
+      if (permissionStatus != PermissionStatus.granted) {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+        return;
+      }
+
+      final result = await FlutterContacts.getAll(
+        properties: {
+          ContactProperty.name,
+          ContactProperty.phone,
+        },
+      );
+
+      if (!mounted) return;
+
       setState(() {
-        _contacts = contacts.toList();
-        _filteredContacts = List.from(_contacts);
+        _contacts = result;
+        _filteredContacts = List.from(result);
         isFetchingContacts = false;
       });
-    } else {
+    } catch (e) {
+      debugPrint('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });

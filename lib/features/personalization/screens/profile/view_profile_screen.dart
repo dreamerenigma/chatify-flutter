@@ -239,8 +239,6 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
         isProfilePhotoLoaded = url != null && url.isNotEmpty;
       });
 
-      log('PROFILE IMAGE PATH: $imagePath');
-      log('PROFILE IMAGE URL: $url');
     } catch (e, stackTrace) {
       log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
 
@@ -307,40 +305,21 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
 
   Future<void> _fetchGroups() async {
     try {
-      log('========== FETCH COMMON GROUPS ==========');
-      log('CURRENT USER: ${APIs.me.id}');
-      log('TARGET USER: ${widget.user.id}');
-
       final fetchedGroups = await GroupApi.getGroups();
-
       final commonGroups = fetchedGroups.where((group) {
         return group.members.contains(APIs.me.id) && group.members.contains(widget.user.id);
       }).toList();
 
-      log('COMMON GROUPS: ${commonGroups.length}');
-
       final memberIds = commonGroups.expand((group) => group.members).toSet().toList();
 
-      log('MEMBER IDS: $memberIds');
-
       if (memberIds.isNotEmpty) {
-        final snapshot = await firestore.FirebaseFirestore.instance.collection('Users').where(
-          firestore.FieldPath.documentId,
-          whereIn: memberIds,
-        )
-            .get();
-
+        final snapshot = await firestore.FirebaseFirestore.instance.collection('Users').where(firestore.FieldPath.documentId, whereIn: memberIds).get();
         final loadedUsers = <String, UserModel>{};
 
         for (final doc in snapshot.docs) {
           final user = UserModel.fromDocument(doc);
 
           loadedUsers[user.id] = user;
-
-          log(
-            'LOADED GROUP USER: '
-                '${user.id} -> ${user.name} ${user.surname}',
-          );
         }
 
         groupUsers = loadedUsers;

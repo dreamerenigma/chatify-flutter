@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
@@ -59,14 +58,37 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
   }
 
   Future<void> _fetchNewsletter() async {
-    if (await Permission.contacts.request().isGranted) {
-      var contacts = await FlutterContacts.getContacts(withProperties: true);
-      setState(() {
-        contacts = contacts.toList();
-        filteredContacts = List.from(contacts);
-        isFetchingContacts = false;
-      });
-    } else {
+    try {
+      final permissionStatus =
+      await FlutterContacts.permissions.request(PermissionType.read);
+
+      if (permissionStatus == PermissionStatus.granted) {
+        final contactsFromDevice = await FlutterContacts.getAll(
+          properties: {
+            ContactProperty.name,
+            ContactProperty.phone,
+          },
+        );
+
+        if (!mounted) return;
+
+        setState(() {
+          contacts = contactsFromDevice;
+          filteredContacts = List.from(contactsFromDevice);
+          isFetchingContacts = false;
+        });
+      } else {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+      }
+    } catch (e) {
+      log('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });
@@ -101,9 +123,10 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
 
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
+
     setState(() {
       filteredContacts = contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
 
         return contactName.contains(query);
       }).toList();

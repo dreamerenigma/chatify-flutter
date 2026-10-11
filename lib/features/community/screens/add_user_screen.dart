@@ -1,9 +1,9 @@
+import 'dart:developer';
 import 'package:chatify/utils/constants/app_vectors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../../api/apis.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/popups/dialogs.dart';
@@ -38,6 +38,23 @@ class AddUserScreenState extends State<AddUserScreen> {
   Set<UserModel> selectedUsers = {};
   Set<Contact> selectedContacts = {};
 
+  String _getContactInitials(Contact contact) {
+    final name = contact.displayName ?? '';
+    final nameParts = name.trim().split(RegExp(r'\s+'));
+
+    String initials = '';
+
+    if (name.trim().isEmpty) return '';
+
+    initials += nameParts[0][0];
+
+    if (nameParts.length > 1) {
+      initials += nameParts[1][0];
+    }
+
+    return initials.toUpperCase();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,14 +66,39 @@ class AddUserScreenState extends State<AddUserScreen> {
   }
 
   Future<void> _fetchContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      final contacts = await FlutterContacts.getContacts(withProperties: true);
+    try {
+      final permissionStatus = await FlutterContacts.permissions.request(
+        PermissionType.read,
+      );
+
+      if (permissionStatus != PermissionStatus.granted) {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+        return;
+      }
+
+      final result = await FlutterContacts.getAll(
+        properties: {
+          ContactProperty.name,
+          ContactProperty.phone,
+        },
+      );
+
+      if (!mounted) return;
+
       setState(() {
-        _contacts = contacts.toList();
-        _filteredContacts = List.from(_contacts);
+        _contacts = result;
+        _filteredContacts = List.from(result);
         isFetchingContacts = false;
       });
-    } else {
+    } catch (e) {
+      log('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });
@@ -81,9 +123,10 @@ class AddUserScreenState extends State<AddUserScreen> {
 
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
+
     setState(() {
       _filteredContacts = _contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
 
         return contactName.contains(query);
       }).toList();
@@ -130,18 +173,6 @@ class AddUserScreenState extends State<AddUserScreen> {
         selectedContacts.add(contact);
       }
     });
-  }
-
-  String _getContactInitials(Contact contact) {
-    final nameParts = contact.displayName.split(' ');
-    String initials = '';
-    if (nameParts.isNotEmpty) {
-      initials += nameParts[0].isNotEmpty ? nameParts[0][0] : '';
-      if (nameParts.length > 1) {
-        initials += nameParts[1].isNotEmpty ? nameParts[1][0] : '';
-      }
-    }
-    return initials.toUpperCase();
   }
 
   @override
@@ -278,7 +309,7 @@ class AddUserScreenState extends State<AddUserScreen> {
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
           foregroundColor: ChatifyColors.white,
-          child: const Icon(Icons.check),
+          child: const Icon(Icons.check_rounded, size: 25),
         ),
       )
       : null,
@@ -302,7 +333,7 @@ class AddUserScreenState extends State<AddUserScreen> {
                 const SizedBox(height: 4),
                 Text(
                   user.name.length > 7 ? '${user.name.substring(0, 7)}...' : user.name,
-                  style: const TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                 ),
@@ -316,8 +347,8 @@ class AddUserScreenState extends State<AddUserScreen> {
                   _toggleUserSelection(user);
                 },
                 child: Container(
-                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
-                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
+                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close_rounded, size: 16, color: ChatifyColors.black)),
                 ),
               ),
             ),
@@ -338,12 +369,12 @@ class AddUserScreenState extends State<AddUserScreen> {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  child: Text(_getContactInitials(contact), style: TextStyle(fontSize: ChatifySizes.fontSizeBg)),
+                  child: Text(_getContactInitials(contact), style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  contact.displayName.length > 7 ? '${contact.displayName.substring(0, 7)}...' : contact.displayName,
-                  style: const TextStyle(fontSize: 12),
+                  (contact.displayName ?? '').length > 7 ? '${(contact.displayName ?? '').substring(0, 7)}...' : (contact.displayName ?? ''),
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                 ),
@@ -357,8 +388,8 @@ class AddUserScreenState extends State<AddUserScreen> {
                   _toggleContactSelection(contact);
                 },
                 child: Container(
-                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
-                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close, size: 16, color: ChatifyColors.black)),
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
+                  child: const CircleAvatar(backgroundColor: ChatifyColors.grey, radius: 12, child: Icon(Icons.close_rounded, size: 16, color: ChatifyColors.black)),
                 ),
               ),
             ),

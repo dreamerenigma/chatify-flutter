@@ -1,9 +1,10 @@
+import 'dart:developer';
+
 import 'package:chatify/features/community/widgets/cards/invite_user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -33,14 +34,38 @@ class InviteFriendScreenState extends State<InviteFriendScreen> {
   }
 
   Future<void> getContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      List<Contact> contactsFromDevice = await FlutterContacts.getContacts(withProperties: true);
-      setState(() {
-        contacts = contactsFromDevice;
-        filteredContacts = contactsFromDevice;
-        isLoading = false;
-      });
-    } else {
+    try {
+      final permissionStatus = await FlutterContacts.permissions.request(PermissionType.read);
+
+      if (permissionStatus == PermissionStatus.granted) {
+        final List<Contact> contactsFromDevice =
+
+        await FlutterContacts.getAll(
+          properties: {
+            ContactProperty.name,
+            ContactProperty.phone,
+          },
+        );
+
+        if (!mounted) return;
+
+        setState(() {
+          contacts = contactsFromDevice;
+          filteredContacts = List.from(contactsFromDevice);
+          isLoading = false;
+        });
+      } else {
+        if (!mounted) return;
+
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      log('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isLoading = false;
       });
@@ -49,8 +74,10 @@ class InviteFriendScreenState extends State<InviteFriendScreen> {
 
   void onSearchChanged(String query) {
     setState(() {
-      filteredContacts = contacts.where((contact) =>
-      contact.displayName.toLowerCase().contains(query.toLowerCase())).toList();
+      filteredContacts = contacts.where((contact) {
+        final contactName = (contact.displayName ?? '').toLowerCase();
+        return contactName.contains(query.toLowerCase());
+      }).toList();
     });
   }
 

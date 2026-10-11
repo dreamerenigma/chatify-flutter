@@ -1,8 +1,8 @@
+import 'dart:developer';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
@@ -57,14 +57,37 @@ class NewGroupScreenState extends State<NewGroupScreen> {
   }
 
   Future<void> _fetchContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      final contacts = await FlutterContacts.getContacts(withProperties: true);
+    try {
+      final permissionStatus = await FlutterContacts.permissions.request(PermissionType.read);
+
+      if (permissionStatus != PermissionStatus.granted) {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+        return;
+      }
+
+      final result = await FlutterContacts.getAll(
+        properties: {
+          ContactProperty.name,
+          ContactProperty.phone,
+        },
+      );
+
+      if (!mounted) return;
+
       setState(() {
-        _contacts = contacts.toList();
-        _filteredContacts = List.from(_contacts);
+        _contacts = result;
+        _filteredContacts = List.from(result);
         isFetchingContacts = false;
       });
-    } else {
+    } catch (e) {
+      log('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });
@@ -89,9 +112,10 @@ class NewGroupScreenState extends State<NewGroupScreen> {
 
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
+
     setState(() {
       _filteredContacts = _contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
 
         return contactName.contains(query);
       }).toList();

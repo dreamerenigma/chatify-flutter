@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -25,8 +24,6 @@ class BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('[BOTTOM NAV] unreadChatsCount = $unreadChatsCount');
-
     return Container(
       decoration: BoxDecoration(
         boxShadow: [BoxShadow(color: context.isDarkMode ? ChatifyColors.white.withAlpha((0.2 * 255).toInt()) : ChatifyColors.black.withAlpha((0.2 * 255).toInt()), blurRadius: 4, spreadRadius: 2, offset: Offset(0, 4),)],

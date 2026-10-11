@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
-
+import 'package:flutter_contacts/models/contact/contact.dart';
 import '../../../personalization/widgets/cards/invite_user_card.dart';
 
 class ContactsList extends StatelessWidget {
   final List<Contact> contacts;
 
-  const ContactsList({super.key, required this.contacts});
+  const ContactsList({
+    super.key,
+    required this.contacts,
+  });
 
   List<Contact> _filterAndSortContacts(List<Contact> contacts) {
     bool isRussian(String name) {
-      final cyrillicRegex = RegExp(r'[А-Яа-я]');
+      final cyrillicRegex = RegExp(r'[А-Яа-яЁё]');
 
       return cyrillicRegex.hasMatch(name);
     }
 
-    List<Contact> filteredContacts = contacts.where((contact) {
-      return contact.phones.isNotEmpty && contact.phones.first.number.isNotEmpty;
+    final filteredContacts = contacts.where((contact) {
+      return contact.phones.any((phone) => phone.number.trim().isNotEmpty);
     }).toList();
 
     filteredContacts.sort((a, b) {
-      final aName = a.displayName;
-      final bName = b.displayName;
+      final aName = a.displayName ?? '';
+      final bName = b.displayName ?? '';
 
       final aIsRussian = isRussian(aName);
       final bIsRussian = isRussian(bName);
@@ -44,6 +46,7 @@ class ContactsList extends StatelessWidget {
       itemCount: sortedContacts.length,
       itemBuilder: (context, index) {
         final contact = sortedContacts[index];
+
         return InviteUserCard(contact: contact, onContactSelected: (selectedContact) {}, onInvite: () {});
       },
     );

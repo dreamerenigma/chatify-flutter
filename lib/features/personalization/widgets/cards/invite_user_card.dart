@@ -53,7 +53,7 @@ class InviteUserCardState extends State<InviteUserCard> {
             },
             child: ListTile(
               leading: SvgPicture.asset(ChatifyVectors.profile, width: 45, height: 45),
-              title: Text(contact.displayName),
+              title: Text(contact.displayName ?? ''),
               subtitle: contact.phones.isNotEmpty ? Text(contact.phones.first.number) : Text(S.of(context).noPhone),
             ),
           ),

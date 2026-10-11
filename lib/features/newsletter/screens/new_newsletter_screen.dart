@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
@@ -56,14 +55,37 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
   }
 
   Future<void> _fetchNewsletter() async {
-    if (await Permission.contacts.request().isGranted) {
-      final contacts = await FlutterContacts.getContacts(withProperties: true);
-      setState(() {
-        _contacts = contacts.toList();
-        _filteredContacts = List.from(_contacts);
-        isFetchingContacts = false;
-      });
-    } else {
+    try {
+      final permissionStatus =
+      await FlutterContacts.permissions.request(PermissionType.read);
+
+      if (permissionStatus == PermissionStatus.granted) {
+        final contacts = await FlutterContacts.getAll(
+          properties: {
+            ContactProperty.name,
+            ContactProperty.phone,
+          },
+        );
+
+        if (!mounted) return;
+
+        setState(() {
+          _contacts = contacts;
+          _filteredContacts = List.from(_contacts);
+          isFetchingContacts = false;
+        });
+      } else {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });
@@ -98,9 +120,11 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
 
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
+
     setState(() {
       _filteredContacts = _contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -172,7 +196,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
               children: [
                 Text(S.of(context).newsletter, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(S.of(context).selected, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.normal)),
+                Text(S.of(context).selected, style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400)),
               ],
             ),
       ),
@@ -220,7 +244,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
                                         _toggleUserSelection(user);
                                       },
                                       child: Container(
-                                        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                                        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
                                         child: const CircleAvatar(
                                           backgroundColor: ChatifyColors.grey,
                                           radius: 12,
@@ -255,7 +279,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text: S.of(context).onlyContactsPhoneNumber,
-                        style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey),
+                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                       ),
                     ),
                   ),
@@ -312,7 +336,7 @@ class NewNewsletterScreenState extends State<NewNewsletterScreen> {
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
           foregroundColor: ChatifyColors.white,
-          child: const Icon(Icons.check),
+          child: const Icon(Icons.check_rounded, size: 25),
         ),
       )
     );

@@ -60,10 +60,11 @@ class SelectChatScreenState extends State<SelectChatScreen> {
 
   void onSearchChanged(String query) {
     setState(() {
-      filteredContacts = contacts
-          .where((contact) =>
-      contact.displayName.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredContacts = contacts.where((contact) {
+        final contactName = (contact.displayName ?? '').toLowerCase();
+
+        return contactName.contains(query.toLowerCase());
+      }).toList();
     });
   }
 

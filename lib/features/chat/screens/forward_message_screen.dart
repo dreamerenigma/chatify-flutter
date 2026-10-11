@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/group/screens/new_group_screen.dart';
@@ -30,6 +31,7 @@ class ForwardMessageScreen extends StatefulWidget {
 class ForwardMessageScreenState extends State<ForwardMessageScreen> {
   final TextEditingController searchController = TextEditingController();
   final userController = Get.find<UserController>();
+  late File file;
   List<UserModel> list = [];
   List<Contact> contacts = [];
   List<Contact> filteredContacts = [];
@@ -42,30 +44,51 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
   bool isFetchingChatUsers = true;
   FocusNode searchFocusNode = FocusNode();
   Key textFieldKey = UniqueKey();
-  late File file;
   UserModel? selectedUser;
 
   @override
   void initState() {
     super.initState();
     searchList = List.from(list);
-    fetchContacts();
+    _fetchContacts();
     fetchChatUsers();
     searchController.addListener(() {
-      filterContacts();
+      _filterContacts();
     });
   }
 
-  Future<void> fetchContacts() async {
-    if (await FlutterContacts.requestPermission()) {
-      List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+  Future<void> _fetchContacts() async {
+    try {
+      final permissionStatus = await FlutterContacts.permissions.request(PermissionType.read);
+
+      if (permissionStatus != PermissionStatus.granted) {
+        if (!mounted) return;
+
+        setState(() {
+          isFetchingContacts = false;
+        });
+        return;
+      }
+
+      final result = await FlutterContacts.getAll(
+        properties: {
+          ContactProperty.name,
+          ContactProperty.phone,
+        },
+      );
+
+      if (!mounted) return;
 
       setState(() {
-        contacts = contacts;
-        filteredContacts = List.from(contacts);
+        contacts = result;
+        filteredContacts = List.from(result);
         isFetchingContacts = false;
       });
-    } else {
+    } catch (e) {
+      log('Error fetching contacts: $e');
+
+      if (!mounted) return;
+
       setState(() {
         isFetchingContacts = false;
       });
@@ -87,11 +110,13 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
     }
   }
 
-  void filterContacts() {
+  void _filterContacts() {
     final query = searchController.text.toLowerCase();
+
     setState(() {
       filteredContacts = contacts.where((contact) {
-        final contactName = contact.displayName.toLowerCase();
+        final contactName = (contact.displayName ?? '').toLowerCase();
+
         return contactName.contains(query);
       }).toList();
     });
@@ -100,11 +125,8 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
   void onSearchChanged() {
     final query = searchController.text.toLowerCase();
     setState(() {
-      searchList = list
-          .where((user) =>
-      user.name.toLowerCase().contains(query) ||
-          user.email.toLowerCase().contains(query))
-          .toList();
+      searchList = list.where((user) =>
+      user.name.toLowerCase().contains(query) || user.email.toLowerCase().contains(query)).toList();
     });
   }
 
@@ -157,6 +179,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
           child: AppBar(
             backgroundColor: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white,
             titleSpacing: 0,
+            elevation: 0,
             title: isSearching
               ? TextSelectionTheme(
                   data: TextSelectionThemeData(
@@ -184,7 +207,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                   ),
                 )
               : Text(S.of(context).forward,
-            style: TextStyle(fontSize: ChatifySizes.fontSizeMg)),
+            style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
@@ -247,7 +270,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                                   const SizedBox(height: 4),
                                   Text(
                                     user.name.length > 7 ? '${user.name.substring(0, 7)}...' : user.name,
-                                    style: const TextStyle(fontSize: 12),
+                                    style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                   ),
@@ -261,7 +284,7 @@ class ForwardMessageScreenState extends State<ForwardMessageScreen> {
                                     _toggleUserSelection(user);
                                   },
                                   child: Container(
-                                    decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2.0)),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
                                     child: const CircleAvatar(
                                       backgroundColor: ChatifyColors.grey,
                                       radius: 12,

@@ -90,7 +90,7 @@ class InviteUserCardState extends State<InviteUserCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         HighlightedText(
-                          text: widget.contact.displayName,
+                          text: widget.contact.displayName ?? '',
                           query: widget.searchQuery,
                           style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis),
                         ),
