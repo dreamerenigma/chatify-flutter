@@ -42,6 +42,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
         child: Container(
           decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white),
           child: AppBar(
+            titleSpacing: 0,
             elevation: 0,
             automaticallyImplyLeading: false,
             leading: IconButton(
@@ -61,7 +62,7 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
                     offset: const Offset(-8, 0),
                     menuPadding: const EdgeInsets.symmetric(vertical: 4),
                     constraints: const BoxConstraints(minWidth: 0, maxWidth: 230),
-                    icon: const Icon(Icons.more_vert),
+                    icon: const Icon(Icons.more_vert_rounded, size: 25),
                     color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     style: ButtonStyle(
@@ -131,16 +132,16 @@ class _CommunityInfoScreenState extends State<CommunityInfoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: CommunityNetworkImage(imagePath: widget.community.image, width: 60, height: 60, isWindows: isWindows, borderRadius: BorderRadius.circular(20), angle: 0),
+                      borderRadius: BorderRadius.circular(14),
+                      child: CommunityNetworkImage(imagePath: widget.community.image, width: 60, height: 60, isWindows: isWindows, borderRadius: BorderRadius.circular(14), angle: 0),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(widget.community.name, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
-                          const SizedBox(height: 8),
+                          Text(widget.community.name, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
+                          const SizedBox(height: 2),
                           Text('Сообщество · 2 группы', style: TextStyle(color: ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                         ],
                       ),

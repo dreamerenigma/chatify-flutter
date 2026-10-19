@@ -162,7 +162,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return ScrollConfiguration(
       behavior: NoGlowScrollBehavior(),
       child: CustomScrollView(
-
         slivers: [
           SliverGrid(
             delegate: SliverChildBuilderDelegate((context, index) => _buildImageItem(galleryImages[index]), childCount: galleryImages.length),

@@ -19,9 +19,9 @@ import '../../../utils/widgets/buttons/custom_scale_button.dart';
 import '../../../utils/widgets/cards/info_card.dart';
 import '../../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
 import '../../models/group_model.dart';
-import '../../screens/description_group_screen.dart';
+import '../../screens/group_permissions_screen.dart';
 import '../../screens/link_to_group_screen.dart';
-import '../images/placholder_group_image.dart';
+import '../images/placeholder_group_image.dart';
 
 class GroupChatMessageList extends StatefulWidget {
   final GroupModel group;
@@ -91,7 +91,7 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
                     ),
                     child: Text(
                       DateUtil.formatDateTime(widget.group.createdAt),
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeLm, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                     ),
                   ),
                 ),
@@ -202,7 +202,7 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(S.of(context).youCreatedGroup, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, height: 1.5)),
+          Text(S.of(context).youCreatedGroup, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.5)),
           const SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -219,7 +219,7 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -233,7 +233,7 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
                       text: S.of(context).edit,
                       style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w600, height: 1.4),
                       recognizer: TapGestureRecognizer()..onTap = () {
-                        Navigator.push(context, createPageRoute(const DescriptionGroupScreen()));
+                        Navigator.push(context, createPageRoute(const GroupPermissionsScreen()));
                       },
                     ),
                   ],
@@ -266,7 +266,7 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
           const SizedBox(height: 8),
           CustomScaleButton(
             onPressed: () {
-              Navigator.push(context, createPageRoute(const LinkToGroupScreen()));
+              Navigator.push(context, createPageRoute(LinkToGroupScreen(group: widget.group)));
             },
             icon: Icon(
               Icons.link,
@@ -301,7 +301,7 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
         future: userNamesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2));
+            return SizedBox(height: 20, width: 20, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 2));
           }
 
           if (!snapshot.hasData) {
@@ -310,9 +310,9 @@ class _GroupChatMessageListState extends State<GroupChatMessageList> {
 
           final userNames = snapshot.data!;
           final memberNames = widget.group.members
-              .where((memberId) => memberId != widget.group.ownerId)
-              .map((memberId) => userNames[memberId] ?? S.of(context).unknownUser)
-              .where((name) => name.trim().isNotEmpty).toList();
+            .where((memberId) => memberId != widget.group.ownerId)
+            .map((memberId) => userNames[memberId] ?? S.of(context).unknownUser)
+            .where((name) => name.trim().isNotEmpty).toList();
 
           if (memberNames.isEmpty) {
             return const SizedBox.shrink();

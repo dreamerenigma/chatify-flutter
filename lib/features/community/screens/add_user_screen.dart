@@ -10,8 +10,11 @@ import '../../../../../utils/popups/dialogs.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../calls/screens/new_contact_screen.dart';
+import '../../calls/widgets/dialog/save_contact_dialog.dart';
 import '../../chat/models/user_model.dart';
 import '../../group/screens/add_new_group_screen.dart';
+import '../../home/widgets/items/app_action_menu_item.dart';
 import '../../personalization/widgets/cards/invite_user_card.dart';
 import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
@@ -25,16 +28,16 @@ class AddUserScreen extends StatefulWidget {
 }
 
 class AddUserScreenState extends State<AddUserScreen> {
-  List<Contact> _contacts = [];
-  List<Contact> _filteredContacts = [];
-  List<UserModel> _chatUsers = [];
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  Key textFieldKey = UniqueKey();
   bool isFetchingContacts = true;
   bool isFetchingChatUsers = true;
   bool isSearching = false;
   bool isNumericMode = false;
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
-  Key textFieldKey = UniqueKey();
+  List<Contact> _contacts = [];
+  List<Contact> _filteredContacts = [];
+  List<UserModel> _chatUsers = [];
   Set<UserModel> selectedUsers = {};
   Set<Contact> selectedContacts = {};
 
@@ -67,9 +70,7 @@ class AddUserScreenState extends State<AddUserScreen> {
 
   Future<void> _fetchContacts() async {
     try {
-      final permissionStatus = await FlutterContacts.permissions.request(
-        PermissionType.read,
-      );
+      final permissionStatus = await FlutterContacts.permissions.request(PermissionType.read);
 
       if (permissionStatus != PermissionStatus.granted) {
         if (!mounted) return;
@@ -110,6 +111,7 @@ class AddUserScreenState extends State<AddUserScreen> {
 
     if (userIds.isNotEmpty) {
       final chatUserDocs = (await APIs.getAllUsers(userIds).first).docs;
+
       setState(() {
         _chatUsers = chatUserDocs.map((e) => UserModel.fromJson(e.data())).toList();
         isFetchingChatUsers = false;
@@ -193,107 +195,125 @@ class AddUserScreenState extends State<AddUserScreen> {
           },
         ),
         title: isSearching
-            ? TextSelectionTheme(
-          data: TextSelectionThemeData(
-            cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-            selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-          ),
-          child: TextField(
-            key: textFieldKey,
-            focusNode: _searchFocusNode,
-            cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-            controller: _searchController,
-            keyboardType:
-            isNumericMode ? TextInputType.number : TextInputType.text,
-            style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
-            decoration: InputDecoration(
-              hintText: S.of(context).searchContacts,
-              hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-            ),
-          ),
-        )
-            : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
-          ],
-        ),
-        actions: isSearching
-            ? [
-          IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode),
-        ]
-        : [
-          IconButton(
-            icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
-            onPressed: _toggleSearch,
-          ),
-        ],
-      ),
-      body: isLoading ? Center(
-        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))),
-      )
-      : ScrollConfiguration(
-          behavior: NoGlowScrollBehavior(),
-            child: ListView(
-              children: [
-            if (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: [
-                    ...selectedUsers.map((user) {
-                      return _buildSelectedUserTile(user);
-                    }),
-                    ...selectedContacts.map((contact) {
-                      return _buildSelectedContactTile(contact);
-                    }),
-                  ],
+          ? TextSelectionTheme(
+              data: TextSelectionThemeData(
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              ),
+              child: TextField(
+                key: textFieldKey,
+                focusNode: _searchFocusNode,
+                cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                controller: _searchController,
+                keyboardType:
+                isNumericMode ? TextInputType.number : TextInputType.text,
+                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, letterSpacing: 0.5),
+                decoration: InputDecoration(
+                  hintText: S.of(context).searchContacts,
+                  hintStyle: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
               ),
-            if (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty)
-              const Divider(),
-            if (_chatUsers.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(S.of(context).contactsOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
-              ),
-            ..._chatUsers.map((chatUser) => UseAppUserCard(
-              user: chatUser,
-              onUserSelected: (UserModel selectedUser) {
-                _toggleUserSelection(selectedUser);
-              },
-            )),
-            if (_filteredContacts.isNotEmpty)
-              Padding(
-                padding:
-                const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                child: Text(S.of(context).inviteOnApp, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.bold)),
-              ),
-            ..._filteredContacts.map((contact) => InviteUserCard(
-              contact: contact,
-              onInvite: () {},
-              onContactSelected: (Contact selectedContact) {
-                _toggleContactSelection(selectedContact);
-              },
-            )),
-            ListTile(contentPadding: const EdgeInsets.only(left: 30, right: 30, top: 8, bottom: 8),
-              leading: const CircleAvatar(
-                radius: 23,
-                backgroundColor: ChatifyColors.darkSlate,
-                child: Icon(Icons.share_outlined, color: ChatifyColors.white),
-              ),
-              title: Text(S.of(context).inviteViaLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-              onTap: () {},
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).addParticipants, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+              ],
             ),
-          ],
-        ),
+        actions: isSearching
+          ? [
+              IconButton(icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad), onPressed: _toggleInputMode),
+            ]
+          : [
+              IconButton(
+                icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                onPressed: _toggleSearch,
+              ),
+            ],
       ),
+      body: isLoading
+        ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))
+        : ScrollConfiguration(
+            behavior: NoGlowScrollBehavior(),
+              child: ListView(
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      AppActionMenuItem(
+                        icon: _buildIconContainer(Icons.person_add_alt_1_rounded, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        title: S.of(context).newContact,
+                        onTap: () {
+                          final saveContactController = SaveContactController.instance;
+                          final selectedOption = saveContactController.getOption();
+
+                          Navigator.push(context, createPageRoute(NewContactScreen(user: APIs.me, selectedOption: selectedOption)));
+                        },
+                      ),
+                      AppActionMenuItem(
+                        icon: _buildIconContainer(Icons.group_add, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        title: 'Пригласить по ссылке или QR-коду',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                  if (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Wrap(
+                        spacing: 16,
+                        runSpacing: 16,
+                        children: [
+                          ...selectedUsers.map((user) {
+                            return _buildSelectedUserTile(user);
+                          }),
+                          ...selectedContacts.map((contact) {
+                            return _buildSelectedContactTile(contact);
+                          }),
+                        ],
+                      ),
+                    ),
+                  if (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty)
+                    const Divider(),
+                  if (_chatUsers.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 6),
+                      child: Text(S.of(context).contactsOnApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                    ),
+                  ..._chatUsers.map((chatUser) => UseAppUserCard(
+                    user: chatUser,
+                    onUserSelected: (UserModel selectedUser) {
+                      _toggleUserSelection(selectedUser);
+                    },
+                  )),
+                  if (_filteredContacts.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 6),
+                      child: Text(S.of(context).inviteOnApp, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                    ),
+                  ..._filteredContacts.map((contact) => InviteUserCard(
+                    contact: contact,
+                    onInvite: () {},
+                    onContactSelected: (Contact selectedContact) {
+                      _toggleContactSelection(selectedContact);
+                    },
+                  )),
+                  ListTile(contentPadding: const EdgeInsets.only(left: 30, right: 30, top: 8, bottom: 8),
+                    leading: const CircleAvatar(
+                      radius: 23,
+                      backgroundColor: ChatifyColors.darkSlate,
+                      child: Icon(Icons.share_outlined, color: ChatifyColors.white),
+                    ),
+                    title: Text(S.of(context).inviteViaLink, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                    onTap: () {},
+                  ),
+            ],
+          ),
+        ),
       floatingActionButton: (selectedUsers.isNotEmpty || selectedContacts.isNotEmpty) ? Padding(
         padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
@@ -396,6 +416,15 @@ class AddUserScreenState extends State<AddUserScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildIconContainer(IconData icon, {double iconSize = 24, required Color color}) {
+    return Container(
+      width: 45,
+      height: 45,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      child: Icon(icon, size: iconSize, color: ChatifyColors.black),
     );
   }
 }

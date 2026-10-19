@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../api/apis.dart';
 import '../../../../core/enums/message_bubble_type.dart';
 import '../../../../core/enums/message_type.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -13,6 +14,7 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/platforms/platform_utils.dart';
+import '../../../personalization/screens/profile/view_profile_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../survey/widgets/cards/survey_message_card.dart';
 import '../../models/message_bubble_model.dart';
@@ -39,6 +41,9 @@ class SenderMessage extends StatefulWidget {
   final bool hasReaction;
   final String conversationId;
   final bool hasReply;
+  final bool isUploadFailed;
+  final bool isUploading;
+  final String? localImagePath;
 
   const SenderMessage({
     super.key,
@@ -47,7 +52,10 @@ class SenderMessage extends StatefulWidget {
     required this.messages,
     required this.hasReaction,
     required this.conversationId,
+    this.localImagePath,
     this.hasReply = false,
+    this.isUploading = false,
+    this.isUploadFailed = false,
   });
 
   @override
@@ -126,8 +134,7 @@ class SenderMessageState extends State<SenderMessage> {
   }
 
   void _handleSecondaryTap() {
-    final renderObject =
-    _containerKey.currentContext?.findRenderObject();
+    final renderObject = _containerKey.currentContext?.findRenderObject();
 
     if (renderObject is! RenderBox) return;
 
@@ -178,6 +185,14 @@ class SenderMessageState extends State<SenderMessage> {
     await intent.launch();
   }
 
+  Future<void> _handleMentionTap(String userId) async {
+    final user = await APIs.getUserById(userId);
+
+    if (user == null || !mounted) return;
+
+    Navigator.push(context, createPageRoute(ViewProfileScreen(user: user)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -213,7 +228,7 @@ class SenderMessageState extends State<SenderMessage> {
                   onPressed: () {
                     Navigator.push(context, createPageRoute(ForwardMessageScreen()));
                   },
-                  icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+                  icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 25, height: 25, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                 ),
               ),
             ),
@@ -296,7 +311,7 @@ class SenderMessageState extends State<SenderMessage> {
               },
               type: MessageBubbleType.sender,
               hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
-              child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: () {}),
+              child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: _handleSecondaryTap, onMentionTap: _handleMentionTap),
             ),
             if (!widget.hasReply)
               _buildMessageTail(),
@@ -525,6 +540,9 @@ class SenderMessageState extends State<SenderMessage> {
                   MediaWidget(
                     message: widget.message,
                     isSender: true,
+                    localImagePath: widget.localImagePath,
+                    isUploading: widget.isUploading,
+                    isUploadFailed: widget.isUploadFailed,
                     isDownloading: isDownloading,
                     onDownload: () async {
                       setState(() {

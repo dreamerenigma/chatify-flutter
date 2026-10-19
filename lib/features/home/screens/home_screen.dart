@@ -85,9 +85,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool get isEmpty => users.isEmpty && groups.isEmpty && communities.isEmpty;
 
   int get unreadChatsCount {
-    final count = myUsers.where((chat) => chat.unreadCount > 0).length;
+    final total = myUsers.fold<int>(0, (total, chat) => total + chat.unreadCount);
 
-    return count;
+    return total;
   }
 
   @override
@@ -276,6 +276,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
+
         final lastMessageTime = int.tryParse(data['lastMessageTime']?.toString() ?? '') ?? 0;
 
         userLastMessageTimes[doc.id] = lastMessageTime;
@@ -290,21 +291,22 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         favoriteUsers[doc.id] = data['is_favorite'] == true;
 
-        final myUser = MyUserModel.fromFirestore(doc);
-
-        newMyUsers.add(myUser);
+        newMyUsers.add(MyUserModel.fromFirestore(doc));
       }
 
+      if (!mounted) return;
+
+      setState(() {
+        myUsers = newMyUsers;
+        pinnedChats..clear()..addAll(newPinnedChats);
+        mutedChats..clear()..addAll(newMutedChats);
+      });
+
       if (userIds.isEmpty) {
-        if (mounted) {
-          setState(() {
-            users = [];
-            myUsers = [];
-            pinnedChats..clear()..addAll(newPinnedChats);
-            mutedChats..clear()..addAll(newMutedChats);
-            _rebuildHomeItems();
-          });
-        }
+        setState(() {
+          users = [];
+          _rebuildHomeItems();
+        });
         return;
       }
 
@@ -323,9 +325,6 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         setState(() {
           users = loadedUsers;
-          myUsers = newMyUsers;
-          pinnedChats..clear()..addAll(newPinnedChats);
-          mutedChats..clear()..addAll(newMutedChats);
           _rebuildHomeItems();
         });
       });
@@ -672,8 +671,12 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           selectedGroupIds: selectedGroupIds,
           pinnedChats: pinnedChats,
           mutedChats: mutedChats,
+          myUsers: myUsers,
+          userLastMessageTimes: userLastMessageTimes,
         ),
-        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows ? BottomNav(selectedIndex: selectedIndex, onItemTapped: onItemTapped, unreadChatsCount: unreadChatsCount) : null,
+        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows
+          ? BottomNavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped, unreadChatsCount: unreadChatsCount)
+          : null,
       ),
     );
   }

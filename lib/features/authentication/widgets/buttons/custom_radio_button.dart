@@ -11,11 +11,12 @@ class CustomRadioButton extends StatefulWidget {
   final String? subtitle;
   final String imagePath;
   final String value;
-  final String groupValue;
+  final String? groupValue;
   final ValueChanged<String?> onChanged;
   final EdgeInsetsGeometry padding;
   final double? fontSize;
   final bool showVerticalMargin;
+  final double radioTextSpacing;
 
   const CustomRadioButton({
     super.key,
@@ -28,6 +29,7 @@ class CustomRadioButton extends StatefulWidget {
     this.fontSize,
     this.subtitle,
     this.showVerticalMargin = true,
+    this.radioTextSpacing = 14,
   });
 
   @override
@@ -83,17 +85,17 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      SizedBox(width: widget.radioTextSpacing),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.title, style: TextStyle(color: ChatifyColors.white, fontSize: textSize, fontWeight: FontWeight.w400)),
+                            Text(widget.title, style: TextStyle(color: ChatifyColors.white, fontSize: textSize, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis), maxLines: 1),
                             if (widget.subtitle != null && widget.subtitle!.isNotEmpty) ...[
                               const SizedBox(height: 2),
                               Text(
                                 widget.subtitle!,
-                                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm,fontWeight: FontWeight.w400),
+                                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                               ),

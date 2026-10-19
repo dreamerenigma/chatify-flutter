@@ -160,15 +160,13 @@ class SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final settingsMap = getSettingsOptions(languageController);
 
-    log('USERNAME: "${widget.user.username}"');
-    log('STATUS: "${widget.user.status}"');
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
+          elevation: 0,
           title: isSearching
             ? TextSelectionTheme(
                 data: TextSelectionThemeData(

@@ -87,7 +87,13 @@ class GroupApi {
   /// -- Method to fetch group from Firestore.
   static Future<List<GroupModel>> getGroups() async {
     try {
-      final querySnapshot = await firestore.collection('Groups').get();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (uid == null) {
+        return [];
+      }
+
+      final querySnapshot = await firestore.collection('Groups').where('members', arrayContains: uid).get();
 
       return querySnapshot.docs.map((doc) => GroupModel.fromJson(doc.data())).toList();
     } catch (e) {
@@ -162,13 +168,10 @@ class GroupApi {
   /// -- Getting group message of a specific conversation from Firestore Database.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getGroupMessages(GroupModel group,) {
     if (group.id.isEmpty) {
-      log('Error: group.id is empty!');
       return Stream.empty();
     }
 
     final path = 'Groups/${group.id}/messages';
-
-    log('Firestore collection path: $path');
 
     return firestore.collection(path).orderBy('sent', descending: true).snapshots();
   }

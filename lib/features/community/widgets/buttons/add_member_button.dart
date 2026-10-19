@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
@@ -23,7 +24,7 @@ class _AddMemberButtonState extends State<AddMemberButton> {
       curve: Curves.easeOut,
       child: SizedBox(
         width: double.infinity,
-        height: 42,
+        height: 40,
         child: Material(
           color: ChatifyColors.transparent,
           borderRadius: BorderRadius.circular(30),
@@ -56,7 +57,7 @@ class _AddMemberButtonState extends State<AddMemberButton> {
                 children: [
                   Icon(Icons.person_add_alt_outlined, size: 20, color: color),
                   const SizedBox(width: 8),
-                  Text('Добавить участников', style: TextStyle(color: color, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                  Text(S.of(context).addParticipants, style: TextStyle(color: color, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),

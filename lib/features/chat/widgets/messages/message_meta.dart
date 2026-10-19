@@ -14,6 +14,7 @@ class MessageMeta extends StatelessWidget {
   final bool showCheck;
   final bool isSender;
   final bool fitContent;
+  final bool isUploading;
 
   const MessageMeta({
     super.key,
@@ -22,6 +23,7 @@ class MessageMeta extends StatelessWidget {
     this.showCheck = true,
     this.isSender = false,
     this.fitContent = false,
+    this.isUploading = false,
   });
 
   @override
@@ -58,7 +60,7 @@ class MessageMeta extends StatelessWidget {
             Text(
               formattedTime,
               style: TextStyle(
-                color: context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey,
+                color: context.isDarkMode ? ChatifyColors.iconGrey : ChatifyColors.darkGrey,
                 fontSize: isWebOrWindows ? 10 : ChatifySizes.fontSizeLm,
                 fontWeight: FontWeight.w400,
                 height: 1.2,
@@ -66,8 +68,10 @@ class MessageMeta extends StatelessWidget {
             ),
             if (showCheck) ...[
               const SizedBox(width: 4),
-              SvgPicture.asset(ChatifyVectors.doubleCheck, width: isWebOrWindows ? 13 : 18, height: isWebOrWindows ? 13 : 18, colorFilter: ColorFilter.mode(checkColor, BlendMode.srcIn)),
-              const SizedBox(width: 2),
+              if (isUploading)
+                SvgPicture.asset(ChatifyVectors.timeRound, width: isWebOrWindows ? 13 : 18, height: isWebOrWindows ? 13 : 18, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.buttonDisabled : ChatifyColors.darkGrey, BlendMode.srcIn))
+              else
+                SvgPicture.asset(ChatifyVectors.doubleCheck, width: isWebOrWindows ? 13 : 18, height: isWebOrWindows ? 13 : 18, colorFilter: ColorFilter.mode(checkColor, BlendMode.srcIn)),
             ],
           ],
         ),

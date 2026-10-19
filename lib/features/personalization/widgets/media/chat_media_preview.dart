@@ -9,18 +9,20 @@ import 'image_media_preview.dart';
 class ChatMediaPreview extends StatelessWidget {
   final ChatMediaItem media;
   final double borderRadius;
+  final ValueChanged<String>? onImageError;
 
   const ChatMediaPreview({
     super.key,
     required this.media,
     this.borderRadius = 8,
+    this.onImageError,
   });
 
   @override
   Widget build(BuildContext context) {
     switch (media.type) {
       case ChatMediaType.image:
-        return ImageMediaPreview(media: media, borderRadius: borderRadius);
+        return ImageMediaPreview(media: media, borderRadius: borderRadius, onImageError: onImageError);
       case ChatMediaType.video:
         return VideoMediaPreview(media: media, borderRadius: borderRadius);
       case ChatMediaType.audio:

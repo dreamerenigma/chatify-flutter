@@ -99,7 +99,7 @@ Future<void> showChatInfoDialog({required BuildContext context, required Offset 
                                 animationController.dispose();
                               });
                             }),
-                            _buildChatOption(context: context, iconPath: ChatifyVectors.pallete, text: 'Тема чата', iconSize: 20, icon: null, onTap: () {
+                            _buildChatOption(context: context, iconPath: ChatifyVectors.pallet, text: 'Тема чата', iconSize: 20, icon: null, onTap: () {
                               animationController.reverse().then((_) {
                                 overlayEntry.remove();
                                 completer.complete();

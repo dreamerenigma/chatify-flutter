@@ -62,14 +62,14 @@ class InfoBannerCard extends StatelessWidget {
 
   Widget _buildIcon(Color primaryColor) {
     if (iconAsset != null) {
-      return SvgPicture.asset(iconAsset!, width: 30, height: 30, colorFilter: ColorFilter.mode(primaryColor, BlendMode.srcIn));
+      return SvgPicture.asset(iconAsset!, width: 28, height: 28, colorFilter: ColorFilter.mode(primaryColor, BlendMode.srcIn));
     }
 
     if (icon != null) {
-      return Icon(icon, size: 30, color: primaryColor);
+      return Icon(icon, size: 28, color: primaryColor);
     }
 
-    return const SizedBox(width: 30, height: 30);
+    return const SizedBox(width: 28, height: 28);
   }
 
   Widget _buildMessage(BuildContext context, Color primaryColor) {

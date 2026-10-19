@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
@@ -26,10 +27,10 @@ import '../../models/message_model.dart';
 import '../../models/user_model.dart';
 import '../../screens/contact_seeding_screen.dart';
 import '../../screens/create_event_screen.dart';
+import '../../screens/send_geolocation_screen.dart';
 import '../buttons/media_folder_button.dart';
 import '../image/gallery_image.dart';
 import '../input/buttons/send_button.dart';
-import 'add_geolocation_dialog.dart';
 
 void showEditBottomSheetDialog(
   BuildContext context, {
@@ -88,7 +89,8 @@ class EditMediaBottomSheet extends StatefulWidget {
   final VoidCallback closeAlbumsOverlay;
   final ValueChanged<OverlayEntry?> onAlbumsOverlayChanged;
 
-  const EditMediaBottomSheet({super.key,
+  const EditMediaBottomSheet({
+    super.key,
     required this.chatTarget,
     required this.user,
     required this.isUploading,
@@ -114,6 +116,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
   List<AssetPathEntity> _albums = [];
   AssetPathEntity? _currentAlbum;
   bool _isLoading = true;
+  bool _isSendingMedia = false;
   bool _isLoadingMore = false;
   bool _hasMore = true;
   bool _showActionPanel = true;
@@ -173,45 +176,29 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
   }
 
   Future<void> _sendSelectedMedia() async {
-    if (_selectedAssets.isEmpty) {
+    if (_selectedAssets.isEmpty || _isSendingMedia) {
       return;
     }
 
+    final assets = List<AssetEntity>.from(_selectedAssets);
     final caption = _captionController.text.trim();
+    final user = widget.user;
 
-    log('SEND MEDIA');
-    log('SELECTED: ${_selectedAssets.length}');
-    log('CAPTION: $caption');
+    setState(() {
+      _isSendingMedia = true;
+    });
 
-    try {
-      for (final asset in _selectedAssets) {
-        final file = await asset.file;
+    await Future.delayed(const Duration(seconds: 2));
 
-        if (file == null) {
-          log('SEND MEDIA: file is null');
-          continue;
-        }
+    if (!mounted) return;
 
-        log('SEND MEDIA: file = ${file.path}');
-        log('SEND MEDIA: type = ${asset.type}');
-        log('SEND MEDIA: duration = ${asset.duration}');
+    setState(() {
+      _isSendingMedia = false;
+    });
 
-        if (asset.type == AssetType.image) {
-          await ChatApi.sendChatImage(widget.user, file);
-        } else if (asset.type == AssetType.video) {
-          await ChatApi.sendChatVideo(widget.user, file, fileName: asset.title, fileSize: '${await file.length()}', videoDuration: asset.duration);
-        }
-      }
+    Navigator.of(context).pop();
 
-      if (!mounted) return;
-
-      _selectedAssets.clear();
-
-      Navigator.pop(context);
-    } catch (e, st) {
-      log('SEND MEDIA ERROR: $e');
-      log('SEND MEDIA STACK: $st');
-    }
+    unawaited(_uploadSelectedMedia(assets: assets, user: user, caption: caption));
   }
 
   Future<void> sendGif(File file) async {
@@ -347,6 +334,34 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
     await _loadPage();
   }
 
+  Future<void> _uploadSelectedMedia({required List<AssetEntity> assets, required UserModel user, required String caption}) async {
+    var captionAssigned = false;
+
+    for (final asset in assets) {
+      try {
+        final file = await asset.file;
+
+        if (file == null) {
+          log('UPLOAD MEDIA: файл недоступен');
+          continue;
+        }
+
+        if (asset.type == AssetType.image) {
+          final imageCaption = !captionAssigned && caption.isNotEmpty ? caption : null;
+
+          captionAssigned = true;
+
+          await ChatApi.sendChatImage(user, file, caption: imageCaption);
+        } else if (asset.type == AssetType.video) {
+          await ChatApi.sendChatVideo(user, file, fileName: asset.title, fileSize: '${await file.length()}', videoDuration: asset.duration);
+        }
+      } catch (e, st) {
+        log('UPLOAD MEDIA ERROR: $e');
+        log('UPLOAD MEDIA STACK: $st');
+      }
+    }
+  }
+
   Future<void> _openImageEditor(AssetEntity asset) async {
     final file = await asset.file;
 
@@ -378,70 +393,79 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
       controller: _sheetController,
       initialChildSize: 0.65,
       minChildSize: 0.45,
-      maxChildSize: 0.95,
+      maxChildSize: 0.9,
       expand: false,
       snap: true,
-      snapSizes: const [0.65, 0.95],
+      snapSizes: const [0.65, 0.9],
       builder: (context, sheetScrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.softGrey,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          child: Stack(
-            children: [
-              Column(
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return Container(
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.softGrey,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              child: Stack(
                 children: [
-                  const SizedBox(height: 12),
-                  Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
-                  const SizedBox(height: 20),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 350),
-                    reverseDuration: const Duration(milliseconds: 250),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(opacity: animation, child: SizeTransition(sizeFactor: animation, alignment: Alignment.topCenter, child: child));
-                    },
-                    child: _showActionPanel ? _buildActionPanel(context) : const SizedBox.shrink(),
+                  Column(
+                    children: [
+                      const SizedBox(height: 12),
+                      Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2))),
+                      const SizedBox(height: 20),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 350),
+                        reverseDuration: const Duration(milliseconds: 250),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(opacity: animation, child: SizeTransition(sizeFactor: animation, alignment: Alignment.topCenter, child: child));
+                        },
+                        child: _showActionPanel ? _buildActionPanel(context) : const SizedBox.shrink(),
+                      ),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(opacity: animation, child: SizeTransition(sizeFactor: animation, alignment: Alignment.topCenter, child: child));
+                        },
+                        child: !_showActionPanel ? _buildHeader(context) : const SizedBox.shrink(),
+                      ),
+                      Expanded(child: _buildGallery(context, sheetScrollController)),
+                    ],
                   ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(opacity: animation, child: SizeTransition(sizeFactor: animation, alignment: Alignment.topCenter, child: child));
-                    },
-                    child: !_showActionPanel ? _buildHeader(context) : const SizedBox.shrink(),
+                  Positioned(
+                    top: 12,
+                    left: 0,
+                    right: 0,
+                    child: Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2)))),
                   ),
-                  Expanded(child: _buildGallery(context, sheetScrollController)),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: AnimatedPadding(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutCubic,
+                      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        child: _selectedAssets.isEmpty
+                          ? Align(
+                              key: const ValueKey('folder_button'),
+                              alignment: Alignment.centerRight,
+                              child: Padding(padding: const EdgeInsets.only(right: 20, bottom: 20), child: MediaFolderButton(onTap: _openSystemGallery)),
+                            )
+                          : _buildBottomPanelSend(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              Positioned(
-                top: 12,
-                left: 0,
-                right: 0,
-                child: Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: ChatifyColors.steelGrey, borderRadius: BorderRadius.circular(2)))),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
-                  child: _selectedAssets.isEmpty
-                    ? Align(
-                        key: const ValueKey('folder_button'),
-                        alignment: Alignment.centerRight,
-                        child: Padding(padding: const EdgeInsets.only(right: 20, bottom: 20), child: MediaFolderButton(onTap: _openSystemGallery)),
-                      )
-                    : _buildBottomPanelSend(),
-                ),
-              ),
-            ],
-          ),
+            );
+          }
         );
       },
     );
@@ -474,8 +498,8 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
                       ? SvgPicture.asset(
                           ChatifyVectors.hdCheck,
                           key: const ValueKey('hd'),
-                          width: 24,
-                          height: 24,
+                          width: 25,
+                          height: 25,
                           colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                         )
                       : const Icon(Icons.hd_outlined, key: ValueKey('hd_outlined'), size: 24, color: ChatifyColors.grey,
@@ -510,7 +534,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
                     widget.closeAlbumsOverlay();
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.close_rounded, size: 26, color: ChatifyColors.grey),
+                  icon: Icon(Icons.close_rounded, size: 25, color: ChatifyColors.grey),
                   splashRadius: 20,
                   tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 ),
@@ -590,7 +614,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
         children: [
           _buildIconButton(
             context,
-            icon: Icon(Icons.image, color: ChatifyColors.blue, size: 24),
+            icon: Icon(Icons.image, color: ChatifyColors.blue, size: 25),
             label: S.of(context).gallery,
             onTap: () async {
               final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['gif', 'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif']);
@@ -612,7 +636,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
           ),
           _buildIconButton(
             context,
-            icon: Icon(Icons.videocam, color: ChatifyColors.pink, size: 24),
+            icon: Icon(Icons.videocam, color: ChatifyColors.pink, size: 25),
             label: S.of(context).camera,
             onTap: () {
               Navigator.pop(context);
@@ -621,7 +645,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
           ),
           _buildIconButton(
             context,
-            icon: SvgPicture.asset(ChatifyVectors.documents, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.purple, BlendMode.srcIn)),
+            icon: SvgPicture.asset(ChatifyVectors.documents, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.purple, BlendMode.srcIn)),
             label: 'Документ',
             onTap: () async {
               final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'doc', 'docx', 'odt', 'rtf', 'txt', 'xls', 'xlsx', 'ods', 'csv', 'ppt', 'pptx', 'odp', 'zip', 'rar', '7z', 'tar', 'gz', 'apk']);
@@ -644,16 +668,16 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
           ),
           _buildIconButton(
             context,
-            icon: Icon(Icons.location_on, color: ChatifyColors.blueGreen, size: 24),
+            icon: Icon(Icons.location_on, color: ChatifyColors.blueGreen, size: 25),
             label: 'Геопозиция',
             onTap: () {
               Navigator.pop(context);
-              showAddGeolocationDialog(context);
+              Navigator.of(context).push(createPageRoute(SendGeolocationScreen(user: widget.user)));
             },
           ),
           _buildIconButton(
             context,
-            icon: Icon(Icons.headphones, color: ChatifyColors.orange, size: 24),
+            icon: Icon(Icons.headphones, color: ChatifyColors.orange, size: 25),
             label: S.of(context).audio,
             onTap: () async {
               final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'aac', 'm4a', 'wav', 'ogg', 'opus', 'flac', 'wma', 'aiff', 'alac']);
@@ -674,16 +698,16 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
           ),
           _buildIconButton(
             context,
-            icon: Icon(Icons.person, color: ChatifyColors.lightBlue, size: 24),
+            icon: Icon(Icons.person, color: ChatifyColors.lightBlue, size: 25),
             label: S.of(context).contact,
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, createPageRoute(const ContactsSendingScreen(selectedUsers: [])));
+              Navigator.push(context, createPageRoute(ContactsSendingScreen(selectedUsers: [], user: widget.user)));
             },
           ),
           _buildIconButton(
             context,
-            icon: SvgPicture.asset(ChatifyVectors.list, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.green, BlendMode.srcIn)),
+            icon: SvgPicture.asset(ChatifyVectors.list, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.green, BlendMode.srcIn)),
             label: S.of(context).survey,
             onTap: () {
               Navigator.pop(context);
@@ -692,7 +716,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
           ),
           _buildIconButton(
             context,
-            icon: SvgPicture.asset(ChatifyVectors.calendarEvent, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.violet, BlendMode.srcIn)),
+            icon: SvgPicture.asset(ChatifyVectors.calendarEvent, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.violet, BlendMode.srcIn)),
             label: S.of(context).events,
             onTap: () {
               Navigator.pop(context);
@@ -741,7 +765,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
     final previewAsset = _selectedAssets.first;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 12),
       decoration: BoxDecoration(
         color: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.softGrey,
         border: Border(top: BorderSide(color: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha(40) : ChatifyColors.grey)),
@@ -756,10 +780,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
             Expanded(
               child: Container(
                 constraints: const BoxConstraints(minHeight: 48, maxHeight: 120),
-                decoration: BoxDecoration(
-                  color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white,
-                  borderRadius: BorderRadius.circular(22),
-                ),
+                decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white, borderRadius: BorderRadius.circular(22)),
                 child: TextSelectionTheme(
                   data: TextSelectionThemeData(
                     cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
@@ -786,7 +807,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
               ),
             ),
             const SizedBox(width: 8),
-            SendButton(isTyping: false, isMediaMode: true, selectedCount: _selectedAssets.length, sendMessage: _sendSelectedMedia),
+            SendButton(isTyping: false, isMediaMode: true, selectedCount: _selectedAssets.length, sendMessage: _sendSelectedMedia, isLoading: _isSendingMedia),
           ],
         ),
       ),
@@ -811,7 +832,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
               decoration: BoxDecoration(
                 color: ChatifyColors.black.withAlpha(90),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: context.isDarkMode ? ChatifyColors.black.withAlpha((0.8 * 255).toInt()) : ChatifyColors.grey, width: 1),
+                border: Border.all(color: context.isDarkMode ? ChatifyColors.softNight.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey, width: 1),
               ),
               child: const Center(child: Icon(Icons.edit_outlined, size: 20, color: ChatifyColors.white)),
             ),

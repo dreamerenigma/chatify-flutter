@@ -28,10 +28,10 @@ void showEditListsBottomSheet(BuildContext context) {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(icon: const Icon(Icons.close, size: 26), onPressed: () => Navigator.pop(context)),
+                IconButton(icon: const Icon(Icons.close_rounded, size: 25), onPressed: () => Navigator.pop(context)),
                 Text(S.of(context).editLists, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                 IconButton(
-                  icon: const Icon(Icons.check, size: 26),
+                  icon: const Icon(Icons.check_rounded, size: 25),
                   onPressed: () => {
                     Navigator.pop(context),
                   }

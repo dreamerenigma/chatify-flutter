@@ -5,6 +5,7 @@ import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../../api/apis.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
@@ -45,14 +46,48 @@ class _EditNewContactScreenContentState extends State<EditNewContactScreenConten
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  bool _usernameExists = false;
+  bool _isCheckingUsername = false;
+  String _lastCheckedUsername = '';
   Country? _selectedCountry;
+
+  String _removeCountryCode(String? phoneNumber, String? countryCode) {
+    if (phoneNumber == null || phoneNumber.trim().isEmpty) {
+      return '';
+    }
+
+    final phone = phoneNumber.trim();
+    final normalizedPhone = phone.replaceAll(RegExp(r'\D'), '');
+    final normalizedCode = (countryCode ?? '').replaceAll(RegExp(r'\D'), '');
+
+    if (normalizedCode.isEmpty || !normalizedPhone.startsWith(normalizedCode)) {
+      return phone;
+    }
+
+    var digitsToRemove = normalizedCode.length;
+    var index = 0;
+
+    while (index < phone.length && digitsToRemove > 0) {
+      if (RegExp(r'\d').hasMatch(phone[index])) {
+        digitsToRemove--;
+      }
+      index++;
+    }
+
+    return phone.substring(index).trim();
+  }
 
   @override
   void initState() {
     super.initState();
     _selectedCountry = widget.initialCountry;
     _fillUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _checkUsername(_usernameController.text);
+    });
   }
 
   @override
@@ -61,24 +96,91 @@ class _EditNewContactScreenContentState extends State<EditNewContactScreenConten
     _surnameController.dispose();
     _usernameController.dispose();
     _phoneController.dispose();
+    _countryController.dispose();
     super.dispose();
   }
 
   void _fillUserData() {
     final user = widget.user;
-
-    if (user == null) {
-      return;
-    }
+    if (user == null) return;
 
     _nameController.text = user.name;
     _surnameController.text = user.surname;
     _usernameController.text = user.username;
-    _phoneController.text = user.phoneNumber;
+    _fillPhoneFields(user.phoneNumber);
   }
 
   void _saveSelectedCountry(Country country) {
     _storage.write('selectedCountry', country.toJson());
+  }
+
+  void _fillPhoneFields(String? phoneNumber) {
+    if (phoneNumber == null || phoneNumber.trim().isEmpty) {
+      _countryController.clear();
+      _phoneController.clear();
+      return;
+    }
+
+    final phone = phoneNumber.trim();
+
+    final countryCode = _selectedCountry?.code.trim() ?? '';
+    final normalizedPhone = phone.replaceAll(RegExp(r'\D'), '');
+    final normalizedCode = countryCode.replaceAll(RegExp(r'\D'), '');
+
+    if (normalizedCode.isNotEmpty && normalizedPhone.startsWith(normalizedCode)) {
+      _countryController.text = '${_selectedCountry?.alphaCode ?? ''} $countryCode'.trim();
+      _phoneController.text = _removeCountryCode(phone, countryCode);
+      return;
+    }
+
+    if (normalizedPhone.startsWith('7') && normalizedPhone.length == 11) {
+      _countryController.text = 'RU +7';
+      _phoneController.text = _removeCountryCode(phone, '+7');
+      return;
+    }
+
+    _phoneController.text = phone;
+  }
+
+  Future<void> _checkUsername(String value) async {
+    final username = value.trim().toLowerCase();
+
+    if (!mounted) return;
+
+    _lastCheckedUsername = username;
+
+    if (username.isEmpty) {
+      setState(() {
+        _usernameExists = false;
+        _isCheckingUsername = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isCheckingUsername = true;
+      _usernameExists = false;
+    });
+
+    try {
+      final exists = await APIs.usernameExists(username);
+
+      if (!mounted || _lastCheckedUsername != username) return;
+
+      setState(() {
+        _usernameExists = exists;
+        _isCheckingUsername = false;
+      });
+    } catch (e) {
+      debugPrint('Ошибка проверки username: $e');
+
+      if (!mounted || _lastCheckedUsername != username) return;
+
+      setState(() {
+        _usernameExists = false;
+        _isCheckingUsername = false;
+      });
+    }
   }
 
   @override
@@ -165,27 +267,68 @@ class _EditNewContactScreenContentState extends State<EditNewContactScreenConten
                 ),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: TextSelectionTheme(
-                    data: TextSelectionThemeData(
-                      cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                      selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
-                      selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                    ),
-                    child: TextField(
-                      controller: _usernameController,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: ChatifyColors.darkGrey)),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: ChatifyColors.darkGrey, width: 1)),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2)),
-                        labelText: S.of(context).username,
-                        labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
-                        floatingLabelStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextSelectionTheme(
+                        data: TextSelectionThemeData(
+                          cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          selectionColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.3 * 255).toInt()),
+                          selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                        ),
+                        child: TextField(
+                          controller: _usernameController,
+                          onChanged: _checkUsername,
+                          style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: ChatifyColors.darkGrey)),
+                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: ChatifyColors.darkGrey, width: 1)),
+                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorsController.getColor(colorsController.selectedColorScheme.value), width: 2)),
+                            labelText: S.of(context).username,
+                            labelStyle: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                            floatingLabelStyle: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                            suffixIconConstraints: const BoxConstraints(minWidth: 23, minHeight: 23),
+                            suffixIcon: _isCheckingUsername
+                              ? Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 2),
+                                  ),
+                                )
+                              : _usernameController.text.trim().isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Container(
+                                      width: 22,
+                                      height: 22,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: SvgPicture.asset(ChatifyVectors.check, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          textCapitalization: TextCapitalization.sentences,
+                        ),
                       ),
-                      textCapitalization: TextCapitalization.sentences,
-                    ),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        child: _usernameExists
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 12, right: 20, top: 6),
+                              child: Text('Это имя пользователя уже есть в Chatify.', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm)),
+                            )
+                          : const SizedBox.shrink(),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -209,6 +352,7 @@ class _EditNewContactScreenContentState extends State<EditNewContactScreenConten
                       selectionHandleColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                     ),
                     child: TextField(
+                      controller: _countryController,
                       readOnly: true,
                       style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                       decoration: InputDecoration(
@@ -230,9 +374,12 @@ class _EditNewContactScreenContentState extends State<EditNewContactScreenConten
                         if (selectedCountry != null && selectedCountry is Country) {
                           setState(() {
                             _selectedCountry = selectedCountry;
+                            _countryController.text = '${selectedCountry.alphaCode} ${selectedCountry.code}';
+                            _phoneController.text = _removeCountryCode(widget.user?.phoneNumber, selectedCountry.code,
+                            );
                           });
-                          _saveSelectedCountry(selectedCountry);
 
+                          _saveSelectedCountry(selectedCountry);
                           widget.onCountryChanged?.call(selectedCountry);
                         }
                       },

@@ -85,6 +85,7 @@ class _GifContentWidgetState extends State<GifContentWidget> {
       final frame = frames[i];
       final filePath = '${tempDir.path}/frame_$i.png';
       final file = File(filePath);
+
       await file.writeAsBytes(img.encodePng(frame));
       files.add(file);
     }

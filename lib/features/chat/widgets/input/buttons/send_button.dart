@@ -9,6 +9,7 @@ class SendButton extends StatelessWidget {
   final VoidCallback sendMessage;
   final bool isMediaMode;
   final int selectedCount;
+  final bool isLoading;
 
   const SendButton({
     super.key,
@@ -16,6 +17,7 @@ class SendButton extends StatelessWidget {
     required this.sendMessage,
     this.isMediaMode = false,
     this.selectedCount = 0,
+    this.isLoading = false,
   });
 
   @override
@@ -23,19 +25,25 @@ class SendButton extends StatelessWidget {
     final showSendIcon = isMediaMode || isTyping;
 
     return GestureDetector(
-      onTap: showSendIcon ? sendMessage : null,
+      onTap: isLoading || !showSendIcon ? null : sendMessage,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           CircleAvatar(
             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
             radius: 24,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Icon(showSendIcon ? Icons.send : Icons.mic, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, size: 24),
-            ),
+            child: isLoading
+              ? SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2.5, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white),
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Icon(showSendIcon ? Icons.send : Icons.mic, color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, size: 24),
+                ),
           ),
-          if (selectedCount > 0)
+          if (!isLoading && selectedCount > 0)
             Positioned(
               top: -4,
               right: -6,

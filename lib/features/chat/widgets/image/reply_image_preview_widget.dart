@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/enums/message_type.dart';
+import 'package:flutter_svg/svg.dart';import '../../../../core/enums/message_type.dart';
 import '../../../../core/services/media/yandex/yandex_disk_api.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class ReplyImagePreviewWidget extends StatefulWidget {
@@ -24,6 +25,7 @@ class _ReplyImagePreviewWidgetState extends State<ReplyImagePreviewWidget> {
   bool _isLoading = true;
 
   bool get _isGif => widget.type == MessageType.gif;
+  bool get _isSticker => widget.type == MessageType.sticker;
 
   @override
   void initState() {
@@ -53,7 +55,7 @@ class _ReplyImagePreviewWidgetState extends State<ReplyImagePreviewWidget> {
   Widget _buildImage() {
     if (_isLoading) {
       return Container(
-        color: ChatifyColors.youngNight,
+        color: ChatifyColors.transparent,
         alignment: Alignment.center,
         child: SizedBox(
           width: 18,
@@ -72,9 +74,11 @@ class _ReplyImagePreviewWidgetState extends State<ReplyImagePreviewWidget> {
 
   Widget _buildPlaceholder() {
     return Container(
-      color: ChatifyColors.youngNight,
+      color: ChatifyColors.transparent,
       alignment: Alignment.center,
-      child: Icon(_isGif ? Icons.gif_box_outlined : Icons.image_outlined, size: 24, color: ChatifyColors.textSecondary),
+      child: _isSticker
+        ? SvgPicture.asset(ChatifyVectors.stickerFilled, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.textSecondary, BlendMode.srcIn))
+        : Icon(_isGif ? Icons.gif_box_outlined : Icons.image_outlined, size: 24, color: ChatifyColors.textSecondary),
     );
   }
 }

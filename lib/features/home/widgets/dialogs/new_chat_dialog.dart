@@ -389,21 +389,20 @@ Widget _buildCreateOption(BuildContext context, ValueNotifier<bool> isCreatingGr
             title: S.of(context).newContact,
             entity: user,
             showDeleteIcon: false,
-            contentBuilder: (context, setDialogState) =>
-                _buildAddPhoneNumber(
-                  selectedCountryNotifier,
-                  context: context,
-                  controller: phoneController,
-                  flagAssetPath: selectedFlagNotifier.value,
-                  iconAssetPath: ChatifyVectors.arrowDown,
-                  onCountrySelected: (flag, code) {
-                    setDialogState(() {
-                      selectedFlagNotifier.value = flag;
-                      selectedCountryCodeNotifier.value = code;
-                      phoneController.text = code;
-                    });
-                  },
-                ),
+            contentBuilder: (context, setDialogState) => _buildAddPhoneNumber(
+              selectedCountryNotifier,
+              context: context,
+              controller: phoneController,
+              flagAssetPath: selectedFlagNotifier.value,
+              iconAssetPath: ChatifyVectors.arrowDown,
+              onCountrySelected: (flag, code) {
+                setDialogState(() {
+                  selectedFlagNotifier.value = flag;
+                  selectedCountryCodeNotifier.value = code;
+                  phoneController.text = code;
+                });
+              },
+            ),
           );
         },
       ),

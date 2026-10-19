@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/schedule_call_screen.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../api/apis.dart';
-import '../../../data/mock/recent_calls_mock.dart';
+import '../../../api/chat_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -41,15 +42,25 @@ class CallsScreen extends StatefulWidget {
 
 class CallsScreenState extends State<CallsScreen> {
   final List<UserModel> searchList = [];
-  final List<RecentCallModel> recentCalls = mockRecentCalls;
+  final List<RecentCallModel> recentCalls = [];
   final Set<RecentCallModel> selectedCalls = {};
   List<UserModel> list = [];
   bool isSearching = false;
   bool isPressed = false;
+  bool isLoadingCalls = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
   int selectedIndex = 3;
 
   bool get selectionMode => selectedCalls.isNotEmpty;
   List<RecentCallModel> get favoriteCalls => recentCalls.where((call) => call.isFavorite).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    loadRecentCalls();
+    _loadProfileImage();
+  }
 
   void onItemTapped(int index) {
     setState(() {
@@ -92,6 +103,64 @@ class CallsScreenState extends State<CallsScreen> {
     if (mounted) {
       setState(() {
         isPressed = value;
+      });
+    }
+  }
+
+  Future<void> loadRecentCalls() async {
+    setState(() {
+      isLoadingCalls = true;
+    });
+
+    try {
+      final calls = await ChatApi.getRecentCalls();
+
+      if (!mounted) return;
+
+      setState(() {
+        recentCalls..clear()..addAll(calls);
+      });
+    } catch (e) {
+      debugPrint('Ошибка загрузки звонков: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingCalls = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
+
+    if (imagePath.isEmpty) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
+
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
       });
     }
   }
@@ -306,20 +375,23 @@ class CallsScreenState extends State<CallsScreen> {
                   },
                 ),
               ),
-            RecentCallsList(
-              calls: recentCalls,
-              selectionMode: selectionMode,
-              selectedCalls: selectedCalls,
-              onCallTap: (call) {
-                if (selectionMode) {
-                  toggleCallSelection(call);
-                  return;
-                }
+            if (isLoadingCalls && recentCalls.isEmpty)
+              Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 3))
+            else
+              RecentCallsList(
+                  calls: recentCalls,
+                  selectionMode: selectionMode,
+                  selectedCalls: selectedCalls,
+                  onCallTap: (call) {
+                    if (selectionMode) {
+                      toggleCallSelection(call);
+                      return;
+                    }
 
-                Navigator.push(context, createPageRoute(DetailsCallScreen(user: call.user)));
-              },
-              onCallLongPress: toggleCallSelection,
-            ),
+                    Navigator.push(context, createPageRoute(DetailsCallScreen(user: call.user)));
+                  },
+                  onCallLongPress: toggleCallSelection,
+                ),
           ],
         ),
       ),
@@ -360,7 +432,7 @@ class CallsScreenState extends State<CallsScreen> {
                 ClipOval(
                   child: user.image.isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl: user.image,
+                        imageUrl: _profileImageUrl ?? '',
                         width: 54,
                         height: 54,
                         fit: BoxFit.cover,

@@ -14,6 +14,7 @@ class CommunityModel implements BaseChatEntity {
   late String creatorName;
   late String creatorId;
   late List<String> members;
+  late int groupsCount;
 
   CommunityModel({
     required this.id,
@@ -24,6 +25,7 @@ class CommunityModel implements BaseChatEntity {
     required this.creatorName,
     required this.creatorId,
     required this.members,
+    this.groupsCount = 2,
   });
 
   bool get isCreated => name.isNotEmpty;
@@ -38,6 +40,7 @@ class CommunityModel implements BaseChatEntity {
       'creatorName': creatorName,
       'creatorId': creatorId,
       'members': members,
+      'groupsCount': groupsCount,
     };
   }
 
@@ -50,6 +53,7 @@ class CommunityModel implements BaseChatEntity {
     creatorName = json['creatorName'] ?? '';
     creatorId = json['creatorId'] ?? '';
     members = List<String>.from(json['members'] ?? []);
+    groupsCount = json['groupsCount'] ?? 2;
   }
 
   Map<String, dynamic> toJson() {
@@ -62,6 +66,7 @@ class CommunityModel implements BaseChatEntity {
       'creatorName': creatorName,
       'creatorId': creatorId,
       'members': members,
+      'groupsCount': groupsCount,
     };
   }
 

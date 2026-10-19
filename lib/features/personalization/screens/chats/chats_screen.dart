@@ -1,6 +1,6 @@
 import 'package:chatify/features/personalization/controllers/fonts_controller.dart';
 import 'package:chatify/features/personalization/screens/chats/transferring_chats_screen.dart';
-import 'package:chatify/features/personalization/screens/chats/wallpaper_screen.dart';
+import 'package:chatify/features/personalization/screens/chats/theme_chat_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +9,11 @@ import 'package:get/get.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../common/widgets/switches/custom_switch.dart';
+import '../../../../core/enums/chat_target_type.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
+import '../../../chat/models/chat_theme_target.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../controllers/seasons_controller.dart';
@@ -39,6 +41,7 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
   bool isVisibilityMedia = false;
   bool isTranscriptVoiceMsg = false;
   bool isArchiveChats = false;
+  String? imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +191,9 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                       highlightColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                       hoverColor: context.isDarkMode ? ChatifyColors.darkGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
                       onTap: () async {
-                        final selectedWallpaper = await Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: '', user: widget.user, wallpaperKey: wallpaperKey)));
+                        final selectedWallpaper = await Navigator.push(context, createPageRoute(
+                          ThemeChatScreen(imagePath: imagePath, target: ChatThemeTarget(id: widget.user.id, type: ChatTargetType.group), wallpaperKey: wallpaperKey)),
+                        );
 
                         if (selectedWallpaper != null) {
                           setState(() {});
@@ -366,21 +371,6 @@ class ChatSettingsScreenState extends State<ChatsScreen> {
                                       ),
                                       Text(S.of(context).readNewVoiceMessages, style: TextStyle(color: ChatifyColors.darkGrey, fontWeight: FontWeight.w400)),
                                     ],
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  child: CustomSwitch(
-                                    value: isTranscriptVoiceMsg,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        isTranscriptVoiceMsg = value;
-                                      });
-                                    },
-                                    switchWidth: 55,
-                                    switchHeight: 33,
-                                    thumbSize: 25,
-                                    thumbPadding: 3,
                                   ),
                                 ),
                               ],

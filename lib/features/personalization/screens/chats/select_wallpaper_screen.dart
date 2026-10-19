@@ -1,4 +1,3 @@
-import 'package:chatify/features/personalization/screens/chats/view_wallpaper_screen.dart';
 import 'package:chatify/features/personalization/screens/chats/wallpaper_category_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +9,6 @@ import 'package:chatify/routes/custom_page_route.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
-import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/items/wallpaper_item.dart';
 import '../qr_code/gallery_screen.dart';
 
@@ -161,7 +159,6 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
                   text: S.of(context).resetWallpaperSettings,
                   onTap: () {
                     Navigator.pop(context);
-
                   },
                 ),
               ),
@@ -174,7 +171,6 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
         child: Column(
           children: [
             Expanded(flex: 2, child: _buildPicture(wallpaperItems)),
-            _buildDefault(context),
             const Spacer(),
           ],
         ),
@@ -211,27 +207,6 @@ class _SelectWallpaperScreenState extends State<SelectWallpaperScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildDefault(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(context, createPageRoute(ViewWallpaperScreen(imagePath: '', isDefaultWallpaper: true, wallpaperKey: widget.wallpaperKey)));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.wallpaper, size: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-              const SizedBox(width: 16),
-              Text(S.of(context).defaultWallpaper, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -8,12 +8,12 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import 'light_dialog.dart';
 
-void showClosingChatBottomSheetDialog(BuildContext context, {VoidCallback? onConfirmed}) {
-  showModalBottomSheet(
+Future<bool?> showClosingChatBottomSheetDialog(BuildContext context, {required VoidCallback onConfirmed}) {
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
-    enableDrag: false,
-    isDismissible: false,
+    enableDrag: true,
+    isDismissible: true,
     showDragHandle: false,
     barrierColor: ChatifyColors.transparent,
     backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
@@ -22,7 +22,7 @@ void showClosingChatBottomSheetDialog(BuildContext context, {VoidCallback? onCon
       return ClosingChatBottomSheetDialog(
         onConfirm: () {
           Navigator.of(context).pop();
-          onConfirmed?.call();
+          onConfirmed.call();
         },
       );
     },

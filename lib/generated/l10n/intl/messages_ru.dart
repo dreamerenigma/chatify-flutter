@@ -778,10 +778,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteFromMe": MessageLookupByLibrary.simpleMessage("Удалить у меня"),
     "deleteImage": MessageLookupByLibrary.simpleMessage("Удалить изображение"),
     "deleteMediaFilesReceivedChats": MessageLookupByLibrary.simpleMessage(
-      "Также удалить медиафайлы, полученные в чатах, из галереи устройства",
+      "Также выйти из всех групп",
     ),
     "deleteMediaFilesReceivedChatsDevice": MessageLookupByLibrary.simpleMessage(
-      "Также удалить медиафайлы, полученные в чатах, из галереи устройства",
+      "Также удалите медиафайлы, всех чатов из галереи устройства",
     ),
     "deleteMessage": MessageLookupByLibrary.simpleMessage("Удалить сообщение"),
     "deleteMessageFrom": MessageLookupByLibrary.simpleMessage(
@@ -1475,7 +1475,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Списки"),
     "loading": MessageLookupByLibrary.simpleMessage("Загрузка..."),
-    "location": MessageLookupByLibrary.simpleMessage("Местоположение..."),
+    "location": MessageLookupByLibrary.simpleMessage("Местоположение"),
     "locationSharing": MessageLookupByLibrary.simpleMessage(
       "Обмен местоположением",
     ),
@@ -1489,7 +1489,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutAccount": MessageLookupByLibrary.simpleMessage("Выход из аккаунта"),
     "long": MessageLookupByLibrary.simpleMessage("Длинный"),
     "longPressMessageChannelFavorites": MessageLookupByLibrary.simpleMessage(
-      "Нажмите на сообщение или публикацию канала и удерживайте их, чтобы добавить в Избранные. Так вы легко найдете нужный вам контент позже.",
+      "Нажмите и удерживайте сообщение, чтобы добавить его в Избранные. Таким образом вы сможете легко найти его позже.",
     ),
     "lookAtPicture": MessageLookupByLibrary.simpleMessage(
       "Посмотри на это изображение!",
@@ -2240,7 +2240,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Отправить текущее местоположение",
     ),
     "sendEnterKey": MessageLookupByLibrary.simpleMessage(
-      "Отправить с помощью клавиши Enter",
+      "Отправка клавишей ВВОД",
     ),
     "sendFeedback": MessageLookupByLibrary.simpleMessage("Отправить отзыв"),
     "sendFeedbackMessage": MessageLookupByLibrary.simpleMessage("Отправить"),
@@ -2426,7 +2426,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Управление контактами и группами",
     ),
     "subtitleMediaVisibility": MessageLookupByLibrary.simpleMessage(
-      "Показывать загруженные недавно медиафайлы в галереи устройства",
+      "Показывать недавно скачанные медиафайлы в галерее устройства",
     ),
     "subtitleNotifications": MessageLookupByLibrary.simpleMessage(
       "Звуки сообщений, групп и звонков",
@@ -2438,7 +2438,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Сообщить о технических проблемах",
     ),
     "subtitleSendEnterKey": MessageLookupByLibrary.simpleMessage(
-      "Нажатие клавиши Enter отправляет сообщение",
+      "Клавишей ВВОД отправляет сообщение",
     ),
     "subtitleSpecialFeatures": MessageLookupByLibrary.simpleMessage("Анимация"),
     "success": MessageLookupByLibrary.simpleMessage("Успешно"),
@@ -2450,7 +2450,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "surname": MessageLookupByLibrary.simpleMessage("Фамилия"),
     "survey": MessageLookupByLibrary.simpleMessage("Опрос"),
     "swipeLeftViewMoreWallpapers": MessageLookupByLibrary.simpleMessage(
-      "Проведите влево, чтобы просмотреть больше обоев",
+      "Проведите влево или вправо, чтобы просмотреть другие обои",
     ),
     "swipeUpToAccept": MessageLookupByLibrary.simpleMessage(
       "Проведите вверх,\nчтобы принять",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_vectors.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class CenteredStarIcon extends StatelessWidget {
@@ -17,7 +18,10 @@ class CenteredStarIcon extends StatelessWidget {
               width: 70,
               height: 70,
               decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-              child: const HugeIcon(icon: HugeIcons.strokeRoundedStar, color: ChatifyColors.black, size: 38),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SvgPicture.asset(ChatifyVectors.star, width: 30, height: 30, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+              ),
             ),
             Container(
               width: 58,

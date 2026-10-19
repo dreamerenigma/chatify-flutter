@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../chat/models/user_model.dart';
 import 'package:flutter/material.dart';
-
 import '../models/social_link_model.dart';
 
 class UserController extends GetxController {
@@ -37,8 +36,6 @@ class UserController extends GetxController {
   void onInit() {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
-      log('[USER CONTROLLER] auth user: ${firebaseUser?.uid}');
-
       if (firebaseUser != null) {
         _loadUserData();
       } else {

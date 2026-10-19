@@ -30,8 +30,7 @@ import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../personalization/widgets/dialogs/exit_group_dialog.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../personalization/widgets/dialogs/report_group_dialog.dart';
-import '../widgets/images/placholder_group_image.dart';
-import 'description_group_screen.dart';
+import '../widgets/images/placeholder_group_image.dart';
 import 'group_image_viewer_screen.dart';
 import 'link_group_screen.dart';
 
@@ -206,7 +205,12 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
             child: Stack(
               alignment: Alignment.centerLeft,
               children: [
-                Padding(padding: const EdgeInsets.only(left: 4), child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_rounded, size: 25, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), onPressed: () => Navigator.pop(context),
+                  ),
+                ),
                 Positioned(
                   left: 55,
                   right: 120,
@@ -244,7 +248,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                     offset: const Offset(-8, 0),
                     menuPadding: EdgeInsets.symmetric(vertical: 4),
                     constraints: const BoxConstraints(minWidth: 0, maxWidth: 290),
-                    icon: const Icon(Icons.more_vert),
+                    icon: const Icon(Icons.more_vert_rounded, size: 25),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.resolveWith((states) {
@@ -263,7 +267,7 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
                         value: 1,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: AppPopupMenuItem(
-                          text: 'Добавить участников',
+                          text: S.of(context).addParticipants,
                           onTap: () {
                             Navigator.pop(context);
                           },
@@ -912,42 +916,30 @@ class AboutGroupScreenState extends State<AboutGroupScreen> {
   }
 
   Widget _buildAddInfo() {
-    return Material(
-      color: ChatifyColors.transparent,
-      child: InkWell(
-        splashFactory: NoSplash.splashFactory,
-        splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-        hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-        onTap: () {
-          Navigator.push(context, createPageRoute(const DescriptionGroupScreen()));
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: DeviceUtils.getScreenHeight(context) * 0.015),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: S.of(context).groupCreatedByYou,
-                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                      ),
-                      TextSpan(
-                        text: '${DateFormat('dd.MM.yyyy').format(widget.group.createdAt)}, ${DateFormat('HH:mm').format(widget.group.createdAt)}',
-                        style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
-                      ),
-                    ],
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: DeviceUtils.getScreenHeight(context) * 0.015),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: S.of(context).groupCreatedByYou,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
                   ),
-                ),
-              ],
+                  TextSpan(
+                    text: '${DateFormat('dd.MM.yyyy').format(widget.group.createdAt)}, ${DateFormat('HH:mm').format(widget.group.createdAt)}',
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

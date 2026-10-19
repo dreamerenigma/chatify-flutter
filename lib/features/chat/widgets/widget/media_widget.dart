@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,6 +34,9 @@ class MediaWidget extends StatefulWidget {
   final MessageModel message;
   final bool isSender;
   final bool isDownloading;
+  final bool isUploading;
+  final bool isUploadFailed;
+  final String? localImagePath;
   final Function onDownload;
   final List<String> imageUrls;
   final ValueChanged<Duration>? onVideoPositionChanged;
@@ -47,6 +51,9 @@ class MediaWidget extends StatefulWidget {
     required this.imageUrls,
     this.onVideoPositionChanged,
     this.onVideoStarted,
+    this.localImagePath,
+    this.isUploading = false,
+    this.isUploadFailed = false,
   });
 
   @override
@@ -104,11 +111,9 @@ class MediaWidgetState extends State<MediaWidget> {
     });
 
     try {
-      log('Starting document download...');
       final response = await http.get(Uri.parse(widget.message.msg));
 
       if (response.statusCode == 200) {
-        log('Download successful');
 
         if (kIsWeb) {
           final blob = html.Blob([response.bodyBytes]);
@@ -116,23 +121,18 @@ class MediaWidgetState extends State<MediaWidget> {
 
           html.AnchorElement(href: url)..download = widget.message.documentName ?? 'document'..click();
           html.Url.revokeObjectUrl(url);
-
-          log('Web download triggered');
         } else {
           final directory = await getExternalStorageDirectory();
           final filePath = '${directory!.path}/${widget.message.documentName ?? 'document'}';
           final file = File(filePath);
 
           await file.writeAsBytes(response.bodyBytes);
-          log('File saved to $filePath');
           Dialogs.showSnackbar(context, S.of(context).documentSuccessfullySaved);
         }
       } else {
-        log('Failed to download document, status code: ${response.statusCode}');
         Dialogs.showSnackbar(context, S.of(context).failedDownloadDocument);
       }
     } catch (e) {
-      log('Error downloading document: $e');
       Dialogs.showSnackbar(context, 'Error: $e');
     } finally {
       setState(() {
@@ -149,9 +149,6 @@ class MediaWidgetState extends State<MediaWidget> {
         final trimmedPath = path.trim();
         final url = await APIs.getMediaUrl(trimmedPath);
 
-        log('MEDIA WIDGET: path = $trimmedPath');
-        log('MEDIA WIDGET: resolved URL = $url');
-
         if (url != null && url.isNotEmpty) {
           result[trimmedPath] = url;
         }
@@ -161,9 +158,6 @@ class MediaWidgetState extends State<MediaWidget> {
 
       if (gifPath.isNotEmpty) {
         final gifUrl = await APIs.getMediaUrl(gifPath);
-
-        log('GIF WIDGET: path = $gifPath');
-        log('GIF WIDGET: resolved URL = $gifUrl');
 
         if (gifUrl != null && gifUrl.isNotEmpty) {
           result[gifPath] = gifUrl;
@@ -245,13 +239,19 @@ class MediaWidgetState extends State<MediaWidget> {
     }
   }
 
+
   Widget _buildImageWidget(BuildContext context) {
     const borderRadius = BorderRadius.all(Radius.circular(14));
+
     final currentPath = widget.message.msg.trim();
     final currentUrl = _resolvedImageUrls[currentPath];
     final resolvedImageUrls = widget.imageUrls.map((path) => _resolvedImageUrls[path.trim()]).whereType<String>().where((url) => url.isNotEmpty).toList();
     final index = widget.imageUrls.map((path) => path.trim()).toList().indexOf(currentPath);
     final currentIndex = index >= 0 ? index : 0;
+    final localPath = widget.localImagePath;
+    final hasLocalFile = localPath != null && localPath.isNotEmpty && File(localPath).existsSync();
+    final showLocalPreview = widget.isUploading && hasLocalFile;
+    final showLoadingOverlay = widget.isUploading || (!showLocalPreview && (currentUrl == null || currentUrl.isEmpty));
 
     return ClipRRect(
       borderRadius: borderRadius,
@@ -265,35 +265,57 @@ class MediaWidgetState extends State<MediaWidget> {
               builder: (context) => FullScreenImageWidget(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1)),
             );
           } else {
-            Navigator.push(context, createPageRoute(FullScreenImageScreen(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1), message: widget.message)));
+            Navigator.push(
+              context,
+              createPageRoute(FullScreenImageScreen(imageUrls: resolvedImageUrls, initialIndex: currentIndex.clamp(0, resolvedImageUrls.length - 1), message: widget.message)),
+            );
           }
         },
-        child: Container(
+        child: SizedBox(
           width: 250,
           height: 230,
-          decoration: BoxDecoration(borderRadius: borderRadius),
-          child: _isImageLoading || currentUrl == null
-            ? Container(
-                width: 250,
-                height: 230,
-                decoration: const BoxDecoration(color: ChatifyColors.transparent), child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt(),), BlendMode.darken), child: const SizedBox.expand()),
-              )
-            : CachedNetworkImage(
-                imageUrl: currentUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  width: 250,
-                  height: 230,
-                  decoration: const BoxDecoration(color: ChatifyColors.transparent),
-                  child: ColorFiltered(colorFilter: ColorFilter.mode(ChatifyColors.black.withAlpha((0.5 * 255).toInt(),), BlendMode.darken), child: const SizedBox.expand()),
-                ),
-                imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 230, height: 230),
-                errorWidget: (context, url, error) {
-                  log('MEDIA WIDGET: image loading error: $error');
+          child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.center,
+            children: [
+              if (showLocalPreview)
+                ImageFiltered(
+                  imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: Image.file(
+                    File(localPath),
+                    width: 250,
+                    height: 230,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const ColoredBox(color: Color(0xFF252525));
+                    },
+                  ),
+                )
+              else if (currentUrl != null && currentUrl.isNotEmpty)
+                ImageFiltered(
+                  imageFilter: ImageFilter.blur(sigmaX: _isImageLoading ? 8 : 0, sigmaY: _isImageLoading ? 8 : 0),
+                  child: CachedNetworkImage(
+                    imageUrl: currentUrl,
+                    fit: BoxFit.cover,
+                    width: 250,
+                    height: 230,
+                    placeholder: (context, url) => const SizedBox(width: 250, height: 230,),
+                    imageBuilder: (context, imageProvider) => Image(image: imageProvider, fit: BoxFit.cover, width: 250, height: 230),
+                    errorWidget: (context, url, error) {
+                      log('MEDIA WIDGET: image loading error: $error');
+                      return const Icon(Icons.image, size: 70);
+                    },
+                  ),
+                )
 
-                  return const Icon(Icons.image, size: 70);
-                },
-              ),
+              else
+                const ColoredBox(color: Color(0xFF252525)),
+              if (showLoadingOverlay)
+                _buildImageLoadingOverlay(),
+              if (widget.isUploadFailed)
+                Container(color: ChatifyColors.black, alignment: Alignment.center, child: const Icon(Icons.error_outline, color: ChatifyColors.white, size: 32)),
+            ],
+          ),
         ),
       ),
     );
@@ -335,6 +357,33 @@ class MediaWidgetState extends State<MediaWidget> {
 
               return const Center(child: HeroIcon(HeroIcons.gif, size: 70));
             },
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildImageLoadingOverlay() {
+    return Container(
+      width: 250,
+      height: 230,
+      decoration: BoxDecoration(color: ChatifyColors.black.withValues(alpha: 5), borderRadius: const BorderRadius.all(Radius.circular(14))),
+      child: Center(
+        child: Container(
+          width: 54,
+          height: 54,
+          decoration: BoxDecoration(color: ChatifyColors.black.withAlpha(100), shape: BoxShape.circle),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 42,
+                height: 42,
+                child: CircularProgressIndicator(strokeWidth: 2.5, valueColor: AlwaysStoppedAnimation<Color>(ChatifyColors.white), backgroundColor: ChatifyColors.white.withAlpha(70)),
+              ),
+              const Icon(Icons.close_rounded, size: 21, color: ChatifyColors.white),
+            ],
           ),
         ),
       ),

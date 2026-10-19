@@ -1426,7 +1426,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "lists": MessageLookupByLibrary.simpleMessage("Lists"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
-    "location": MessageLookupByLibrary.simpleMessage("Location..."),
+    "location": MessageLookupByLibrary.simpleMessage("Location"),
     "locationSharing": MessageLookupByLibrary.simpleMessage("Location sharing"),
     "logInAppFaceFingerprintRecognition": MessageLookupByLibrary.simpleMessage(
       "Log in to Chatify with face or fingerprint recognition, or with the screen lock feature.",
@@ -2345,7 +2345,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "surname": MessageLookupByLibrary.simpleMessage("Surname"),
     "survey": MessageLookupByLibrary.simpleMessage("Survey"),
     "swipeLeftViewMoreWallpapers": MessageLookupByLibrary.simpleMessage(
-      "Swipe left to view more wallpapers",
+      "Swipe left or right to view other wallpapers.",
     ),
     "swipeUpToAccept": MessageLookupByLibrary.simpleMessage(
       "Swipe up to accept",

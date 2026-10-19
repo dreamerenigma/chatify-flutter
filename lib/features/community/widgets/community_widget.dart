@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../api/apis.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_keys.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/platforms/platform_utils.dart';
@@ -53,11 +55,12 @@ class CommunityWidgets extends StatefulWidget {
 class _CommunityWidgetsState extends State<CommunityWidgets> {
   bool _showEventManagement = true;
 
-  static String getCommunityCreationDate({required BuildContext context, required DateTime creationDate}) {
+  String getCommunityCreationDate({required BuildContext context, required DateTime creationDate}) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final date = DateTime(creationDate.year, creationDate.month, creationDate.day);
     final difference = today.difference(date).inDays;
+    final locale = Localizations.localeOf(context).toString();
 
     if (difference == 0) {
       return 'Сегодня';
@@ -67,11 +70,11 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
       return 'Вчера';
     }
 
-    if (creationDate.year == now.year) {
-      return DateFormat('d MMM', Localizations.localeOf(context).toString()).format(creationDate);
+    if (creationDate.year == now.year && creationDate.month == now.month) {
+      return DateFormat('d MMM', locale).format(creationDate);
     }
 
-    return DateFormat('dd.MM.yyyy', Localizations.localeOf(context).toString()).format(creationDate);
+    return DateFormat('dd.MM.yyyy', locale).format(creationDate);
   }
 
   String get _generalSubtitle {
@@ -80,6 +83,42 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
     }
 
     return widget.community.creatorId == APIs.auth.currentUser?.uid ? 'Добро пожаловать в группу "Общая"' : 'Вы';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEventManagementState();
+  }
+
+  Future<void> _loadEventManagementState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final closedAtMillis = prefs.getInt(AppKeys.eventManagementClosedAtKey);
+
+    if (!mounted) return;
+
+    if (closedAtMillis == null) {
+      setState(() => _showEventManagement = true);
+      return;
+    }
+
+    final closedAt = DateTime.fromMillisecondsSinceEpoch(closedAtMillis);
+    final now = DateTime.now();
+    final reopenAt = DateTime(closedAt.year, closedAt.month + 1, closedAt.day, closedAt.hour, closedAt.minute, closedAt.second);
+
+    setState(() {
+      _showEventManagement = !now.isBefore(reopenAt);
+    });
+  }
+
+  Future<void> _closeEventManagement() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setInt(AppKeys.eventManagementClosedAtKey, DateTime.now().millisecondsSinceEpoch);
+
+    if (!mounted) return;
+
+    setState(() => _showEventManagement = false);
   }
 
   @override
@@ -104,11 +143,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
                   'Создавайте мероприятия и управляйте ими внутри вашего сообщества. ',
                   actionText: 'Подробнее',
                   onActionTap: () {},
-                  onClose: () {
-                    setState(() {
-                      _showEventManagement = false;
-                    });
-                  },
+                  onClose: _closeEventManagement,
                 )
               : const SizedBox.shrink(),
           ),
@@ -156,7 +191,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
               highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               onTap: () {
-                Navigator.push(context, createPageRoute(const GeneralChatScreen()));
+                Navigator.push(context, createPageRoute(GeneralChatScreen(community: widget.community, user: widget.user, isValidDate: widget.isValidDate)));
               },
               child: Container(
                 width: double.infinity,
@@ -196,33 +231,36 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
     return Flexible(
       child: SizedBox(
         height: 45,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(S.of(context).announcements, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500)),
-                  if (!widget.hideAdsPreview)
-                    Text(
-                      S.of(context).welcomeToCommunity,
-                      style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      textWidthBasis: TextWidthBasis.parent,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: Text(S.of(context).announcements, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
+                if (!widget.hideAdsDate)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Text(
+                      getCommunityCreationDate(context: context, creationDate: widget.community.createdAt),
+                      style: TextStyle(
+                        color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey,
+                        fontSize: ChatifySizes.fontSizeLm,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-            if (!widget.hideAdsDate)
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
+            if (!widget.hideAdsPreview)
+              Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
-                  getCommunityCreationDate(context: context, creationDate: widget.community.createdAt),
-                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+                  S.of(context).welcomeToCommunity,
+                  style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                 ),
               ),
           ],
@@ -251,7 +289,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
             ),
           ),
           if (widget.showGeneralCloseIcon)
-            const Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Icon(Icons.close_rounded, size: 24))
+            const Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Icon(Icons.close_rounded, size: 25))
           else
             SizedBox(
               width: 100,

@@ -103,7 +103,11 @@ class _RecentCallCardState extends State<RecentCallCard> {
                           '${widget.call.user.name} ${widget.call.user.surname}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: widget.call.isMissed ? ChatifyColors.danger : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 17, fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                            color: widget.call.isMissed ? ChatifyColors.danger : widget.call.isIncoming ? ChatifyColors.danger : context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
@@ -111,7 +115,7 @@ class _RecentCallCardState extends State<RecentCallCard> {
                             Icon(
                               widget.call.isIncoming ? Icons.call_received_rounded : Icons.call_made_rounded,
                               size: 16,
-                              color: widget.call.isMissed ? ChatifyColors.danger : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey,
+                              color: widget.call.isMissed ? ChatifyColors.danger : widget.call.isIncoming ? ChatifyColors.danger : ChatifyColors.greenSlate,
                             ),
                             const SizedBox(width: 5),
                             Expanded(

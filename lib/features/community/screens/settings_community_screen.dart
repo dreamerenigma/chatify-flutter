@@ -49,11 +49,11 @@ class SettingsCommunityScreenState extends State<SettingsCommunityScreen> {
           ),
         ),
       ),
-      body: _permissionsCommunity(context),
+      body: _buildPermissionsCommunity(context),
     );
   }
 
-  Widget _permissionsCommunity(BuildContext context) {
+  Widget _buildPermissionsCommunity(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

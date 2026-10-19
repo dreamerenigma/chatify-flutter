@@ -11,6 +11,7 @@ class ProfileSettingsItem extends StatefulWidget {
   final VoidCallback? onTap;
   final Color? titleColor;
   final Color? iconColor;
+  final double? titleFontSize;
   final EdgeInsetsGeometry? padding;
   final Widget? subtitleWidget;
   final bool isLink;
@@ -31,6 +32,7 @@ class ProfileSettingsItem extends StatefulWidget {
     this.isLink = false,
     this.expandable = false,
     this.collapsedLines = 7,
+    this.titleFontSize = 17,
   });
 
   @override
@@ -65,7 +67,7 @@ class _ProfileSettingsItemState extends State<ProfileSettingsItem> {
                       widget.title,
                       style: TextStyle(
                         color: widget.titleColor ?? (widget.isLink ? colorsController.getColor(colorsController.selectedColorScheme.value) : defaultTitleColor),
-                        fontSize: 17,
+                        fontSize: widget.titleFontSize,
                         fontWeight: FontWeight.w400,
                         height: 1.3,
                         decoration: TextDecoration.none,

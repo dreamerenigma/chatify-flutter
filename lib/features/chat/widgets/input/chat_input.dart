@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
@@ -11,21 +12,30 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/constants/app_sounds.dart';
 import '../../../../../utils/popups/dialogs.dart';
+import '../../../../api/chat_api.dart';
+import '../../../../config/config.dart' as app_config;
 import '../../../../core/enums/message_bubble_type.dart';
+import '../../../../core/enums/message_type.dart';
 import '../../../../core/services/links/link_preview_service.dart';
 import '../../../../domain/entities/chat_target.dart';
+import '../../../../routes/custom_page_route.dart';
+import '../../../../utils/constants/app_links.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../controllers/mention_text_editing_controller.dart';
 import '../../models/link_preview_model.dart';
 import '../../models/mention_data_model.dart';
 import '../../models/user_model.dart';
+import '../../screens/stickers_screen.dart';
+import '../bars/emoji_mode_bottom_bar.dart';
 import '../dialogs/voice_record_bottom_sheet_dialog.dart';
+import '../image/gif_gallery.dart';
 import 'buttons/camera_button.dart';
 import 'buttons/chat_input_attachments_button.dart';
 
@@ -62,11 +72,13 @@ class ChatInput extends StatefulWidget {
 }
 
 class ChatInputState extends State<ChatInput> {
+  final PageController emojiPageController = PageController();
   final textController = MentionTextEditingController();
   final LinkPreviewService _linkPreviewService = LinkPreviewService();
   final AudioPlayer audioPlayer = AudioPlayer();
   final Map<String, String> mentionAvatarUrls = {};
   final List<MentionDataModel> mentions = [];
+  final Map<String, String> stickerPackPreviews = {};
   late final ValueChanged<bool> setUploading;
   bool showEmoji = false;
   bool isUploading = false;
@@ -76,7 +88,12 @@ class ChatInputState extends State<ChatInput> {
   bool isLoadingLinkPreview = false;
   bool showMentionUsers = false;
   bool isLoadingProfileImage = false;
+  bool isLoadingStickers = false;
+  int selectedEmojiMode = 0;
+  int selectedStickerPack = 0;
+  String? stickerError;
   double _dragOffset = 0;
+  double _emojiDragOffset = 0;
   String? _previewUrl;
   String mentionQuery = '';
   Timer? typingTimer;
@@ -85,11 +102,26 @@ class ChatInputState extends State<ChatInput> {
   List<MessageModel> list = [];
   List<UserModel> mentionUsers = [];
   List<UserModel> filteredMentionUsers = [];
+  List<Map<String, dynamic>> stickers = [];
   LinkPreviewModel? _linkPreview;
 
   bool get hasText => textController.text.trim().isNotEmpty;
 
   ChatTarget get chatTarget => widget.chatTarget;
+
+  final List<Map<String, String>> stickerPacks = [
+    // GIPHY
+    {'name': 'Популярные', 'query': ''},
+    {'name': 'Реакции', 'query': 'reactions stickers'},
+    {'name': 'Смешные', 'query': 'funny stickers'},
+    {'name': 'Любовь', 'query': 'love stickers'},
+    {'name': 'Животные', 'query': 'cute animals stickers'},
+    // Яндекс Диск
+    {'name': 'Akane', 'packId': 'akane_stikers_stickersgg_pack', 'source': 'yandex'},
+    {'name': 'Ekocane', 'packId': 'ekocane_stickersgg_pack', 'source': 'yandex'},
+    {'name': 'Kawaii', 'packId': 'kawaii_stickersgg_pack', 'source': 'yandex'},
+    {'name': 'Wumpus', 'packId': 'wumpus_stickersgg_pack', 'source': 'yandex'},
+  ];
 
   String? _extractUrl(String text) {
     final regex = RegExp(r'https?://\S+', caseSensitive: false);
@@ -116,6 +148,26 @@ class ChatInputState extends State<ChatInput> {
     }
 
     return host;
+  }
+
+  String? _getStickerPackPreview(int index) {
+    if (index < 0 || index >= stickerPacks.length) {
+      return null;
+    }
+
+    final pack = stickerPacks[index];
+
+    if (pack['source'] == 'yandex') {
+      final packId = pack['packId'];
+      if (packId == null) return null;
+
+      return stickerPackPreviews[packId];
+
+    }
+    final name = pack['name'];
+    if (name == null) return null;
+
+    return stickerPackPreviews[name];
   }
 
   bool _isValidPreviewUrl(String url) {
@@ -159,6 +211,9 @@ class ChatInputState extends State<ChatInput> {
     textController.addListener(_onTextChanged);
     widget.focusNode.addListener(_onFocusChanged);
     _loadMentionUsers();
+    _loadStickers();
+    _loadStickerPackPreviews();
+    _loadYandexStickerPackPreviews();
   }
 
   @override
@@ -168,6 +223,7 @@ class ChatInputState extends State<ChatInput> {
     widget.focusNode.removeListener(_onFocusChanged);
     typingTimer?.cancel();
     textController.dispose();
+    emojiPageController.dispose();
     audioPlayer.dispose();
     linkPreviewDebounce?.cancel();
     super.dispose();
@@ -370,11 +426,12 @@ class ChatInputState extends State<ChatInput> {
 
     setState(() {
       mentions.add(mention);
-
       (textController).mentions = List.from(mentions);
-
       showMentionUsers = false;
       mentionQuery = '';
+
+      log('SELECTED MENTIONS: ${mentions.map((m) => m.toJson()).toList()}');
+      log('CONTROLLER MENTIONS: ${textController.mentions.map((m) => m.toJson()).toList()}');
     });
   }
 
@@ -392,6 +449,47 @@ class ChatInputState extends State<ChatInput> {
     });
 
     (textController).mentions = List.from(mentions);
+  }
+
+  void _closeEmojiPanel() {
+    setState(() {
+      showEmoji = false;
+      _emojiDragOffset = 0;
+    });
+  }
+
+  void _openStickerSearch() {
+
+  }
+
+  void _openFavoriteStickers() {
+    Get.rawSnackbar(
+      messageText: const Text('Нажмите и удерживайте стикер, чтобы добавить его в Избранное', style: TextStyle(color: ChatifyColors.white, fontSize: 14)),
+      margin: const EdgeInsets.only(bottom: 48),
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 0,
+      backgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.darkGrey,
+      duration: const Duration(seconds: 2),
+      animationDuration: const Duration(milliseconds: 200),
+    );
+  }
+
+  void _createSticker() {
+
+  }
+
+  void _selectStickerPack(int index) {
+    final pack = stickerPacks[index];
+
+    setState(() {
+      selectedStickerPack = index;
+    });
+
+    if (pack['source'] == 'yandex') {
+      _loadYandexStickers(pack['packId']!);
+    } else {
+      _loadStickers(query: pack['query']!);
+    }
   }
 
   Future<void> handleImagePicked(File image) async {
@@ -451,11 +549,19 @@ class ChatInputState extends State<ChatInput> {
 
     final text = textController.text.trim();
     final replyId = widget.replyMessage?.id;
+    final messageMentions = List<MentionDataModel>.from(mentions);
 
-    log('REPLY MESSAGE ID: ${widget.replyMessage?.id}');
-    log('REPLY MESSAGE TEXT: ${widget.replyMessage?.msg}');
+    for (final mention in messageMentions) {
+      log('Mention: userId=${mention.userId}, ''text=${mention.text}, ''start=${mention.start}, ''end=${mention.end}');
+    }
 
     textController.clear();
+
+    setState(() {
+      mentions.clear();
+      textController.mentions = [];
+    });
+
     playSendSound();
 
     if (mounted) {
@@ -463,7 +569,7 @@ class ChatInputState extends State<ChatInput> {
     }
 
     try {
-      await widget.chatTarget.sendText(text, replyToMessageId: replyId);
+      await widget.chatTarget.sendText(text, replyToMessageId: replyId, mentions: messageMentions);
 
       widget.onClearReply();
     } catch (error, stackTrace) {
@@ -501,12 +607,7 @@ class ChatInputState extends State<ChatInput> {
 
   Future<void> _loadMentionUsers() async {
     try {
-      log('========== LOAD MENTION USERS START ==========');
-
       final userIds = await APIs.getMyUserIds();
-
-      log('MENTION USER IDS: $userIds');
-
       final users = <UserModel>[];
 
       for (final userId in userIds) {
@@ -514,27 +615,12 @@ class ChatInputState extends State<ChatInput> {
 
         if (user != null) {
           users.add(user);
-
-          log('USER ADDED: ''${user.name} | ''${user.id} | ''image="${user.image}"');
         }
       }
 
-      log('MENTION USERS: ${users.length}');
-
       for (final user in users) {
-        log('CALLING AVATAR LOADER: ''${user.name} | ${user.id}');
-
         await _loadMentionAvatar(user);
-
-        log(
-          'AVATAR LOADER FINISHED: '
-              '${user.name} | ${user.id}',
-        );
       }
-
-      log(
-        'MENTION AVATARS FINAL: ${mentionAvatarUrls.length}',
-      );
 
       if (!mounted) return;
 
@@ -543,32 +629,24 @@ class ChatInputState extends State<ChatInput> {
         filteredMentionUsers = users;
       });
 
-      log('========== LOAD MENTION USERS END ==========');
     } catch (e, stackTrace) {
       log('LOAD MENTION USERS ERROR: $e\n''$stackTrace');
     }
   }
 
   Future<void> _loadMentionAvatar(UserModel user) async {
-    log('AVATAR LOAD START\n''userId: ${user.id}\n''name: ${user.name}\n''image: "${user.image}"');
-
     if (user.image.trim().isEmpty) {
-      log('AVATAR LOAD SKIP\n''userId: ${user.id}\n''reason: image is empty');
       return;
     }
 
     if (mentionAvatarUrls.containsKey(user.id)) {
-      log('AVATAR LOAD CACHE\n''userId: ${user.id}');
       return;
     }
 
     try {
       final url = await APIs.getMediaUrl(user.image);
 
-      log('AVATAR MEDIA URL\n''userId: ${user.id}\n''path: ${user.image}\n''url: $url');
-
       if (url == null || url.isEmpty) {
-        log('AVATAR URL EMPTY\n''userId: ${user.id}');
         return;
       }
 
@@ -578,11 +656,242 @@ class ChatInputState extends State<ChatInput> {
         mentionAvatarUrls[user.id] = url;
       });
 
-      log('AVATAR SAVED\n''userId: ${user.id}\n''mapLength: ${mentionAvatarUrls.length}');
     } catch (e, stackTrace) {
       log('AVATAR MEDIA ERROR\n''userId: ${user.id}\n''name: ${user.name}\n''image: ${user.image}\n''error: $e\n''$stackTrace');
     }
   }
+
+  Future<void> _loadStickers({String query = ''}) async {
+    setState(() {
+      isLoadingStickers = true;
+      stickerError = null;
+    });
+
+    try {
+      final isTrending = query.isEmpty;
+
+      final uri = Uri.https(
+        'api.giphy.com',
+        isTrending ? '/v1/stickers/trending' : '/v1/stickers/search',
+        {
+          'api_key': app_config.Config.giphyKey,
+          'limit': '30',
+          'rating': 'g',
+          if (!isTrending) 'q': query,
+        },
+      );
+
+      final response = await http.get(uri);
+
+      if (response.statusCode != 200) {
+        throw Exception('Не удалось загрузить стикеры');
+      }
+
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = (json['data'] as List<dynamic>? ?? []);
+
+      if (!mounted) return;
+
+      setState(() {
+        stickers = data.whereType<Map<String, dynamic>>().where((item) {
+          final images = item['images'] as Map<String, dynamic>?;
+          final image = images?['fixed_height'] as Map<String, dynamic>?;
+
+          return image?['url'] != null;
+        }).toList();
+        isLoadingStickers = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        stickerError = 'Не удалось загрузить стикеры';
+        isLoadingStickers = false;
+      });
+    }
+  }
+
+  Future<void> _loadYandexStickers(String packId) async {
+    setState(() {
+      isLoadingStickers = true;
+      stickerError = null;
+      stickers = [];
+    });
+
+    try {
+      final response = await http.get(Uri.parse('${AppLinks.baseUrl}/api/stickers/packs/$packId'));
+
+      if (response.statusCode != 200) {
+        throw Exception('Ошибка загрузки стикеров: HTTP ${response.statusCode}');
+      }
+
+      final decoded = jsonDecode(response.body);
+
+      if (decoded is! Map<String, dynamic>) {
+        throw const FormatException('Ответ сервера не является JSON-объектом');
+      }
+
+      final data = decoded['data'];
+
+      if (data is! Map<String, dynamic>) {
+        throw const FormatException('Поле data отсутствует или имеет неверный формат');
+      }
+
+      final items = data['stickers'];
+
+      if (items is! List) {
+        throw const FormatException('Поле data.stickers не является списком');
+      }
+
+      final loadedStickers = <Map<String, dynamic>>[];
+
+      for (var i = 0; i < items.length; i++) {
+        final item = items[i];
+
+        if (item is! Map) {
+          continue;
+        }
+
+        final sticker = Map<String, dynamic>.from(item);
+        final url = sticker['url'];
+
+        if (url is! String || url.trim().isEmpty) {
+          continue;
+        }
+
+        loadedStickers.add(sticker);
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        stickers = loadedStickers;
+        isLoadingStickers = false;
+      });
+
+    } catch (e, stackTrace) {
+      log('[Stickers] ❌ ERROR: $e');
+      log('[Stickers] Stack trace: $stackTrace');
+
+      if (!mounted) return;
+
+      setState(() {
+        stickerError = 'Не удалось загрузить стикеры: $e';
+        isLoadingStickers = false;
+      });
+    }
+  }
+
+  Future<void> _loadYandexStickerPackPreviews() async {
+    try {
+      final response = await http.get(Uri.parse('${AppLinks.baseUrl}/api/stickers/packs'));
+
+      if (response.statusCode != 200) {
+        return;
+      }
+
+      final decoded = jsonDecode(response.body);
+      if (decoded is! Map<String, dynamic>) return;
+
+      final data = decoded['data'];
+      if (data is! List) return;
+
+      final previews = <String, String>{};
+
+      for (final item in data) {
+        if (item is! Map) continue;
+
+        final packId = item['id'];
+        final previewUrl = item['previewUrl'];
+
+        if (packId is String && previewUrl is String && previewUrl.isNotEmpty) {
+          previews[packId] = previewUrl;
+        }
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        stickerPackPreviews.addAll(previews);
+      });
+
+    } catch (e) {
+      log('[Stickers] Preview loading error: $e');
+    }
+  }
+
+  Future<void> _loadStickerPackPreviews() async {
+    for (final pack in stickerPacks) {
+      final name = pack['name'] ?? '';
+      final query = pack['query'] ?? '';
+
+      try {
+        final isTrending = query.isEmpty;
+        final uri = Uri.https(
+          'api.giphy.com',
+          isTrending ? '/v1/stickers/trending' : '/v1/stickers/search',
+          {
+            'api_key': app_config.Config.giphyKey,
+            'limit': '1',
+            'rating': 'g',
+            if (!isTrending) 'q': query,
+          },
+        );
+
+        final response = await http.get(uri);
+
+        if (response.statusCode != 200) continue;
+
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as List<dynamic>? ?? [];
+
+        if (data.isEmpty) continue;
+
+        final sticker = data.first as Map<String, dynamic>;
+        final images = sticker['images'] as Map<String, dynamic>?;
+        final still = images?['fixed_height_still'] as Map<String, dynamic>?;
+
+        final url = still?['url'] as String?;
+
+        if (url != null && mounted) {
+          setState(() {
+            stickerPackPreviews[name] = url;
+          });
+        }
+      } catch (e) {
+        log('Ошибка превью пака "$name": $e');
+      }
+    }
+  }
+
+  Future<void> _sendSticker(Map<String, dynamic> sticker) async {
+    final url = (sticker['url'] as String?)?.trim();
+
+    if (url == null || url.isEmpty) {
+      log('Не удалось отправить стикер: URL отсутствует');
+      return;
+    }
+
+    final filename = sticker['filename'] as String? ?? '';
+    final rawFormat = sticker['format'] as String? ?? '';
+
+    final uri = Uri.tryParse(url);
+    final extension = filename.contains('.')
+      ? filename.split('.').last.toLowerCase() : (uri?.pathSegments.isNotEmpty == true && uri!.pathSegments.last.contains('.'))
+      ? uri.pathSegments.last.split('.').last.toLowerCase() : '';
+
+    final format = rawFormat.isNotEmpty ? rawFormat.toLowerCase() : extension;
+
+    if (!{'png', 'gif', 'webp'}.contains(format)) {
+      log('Неподдерживаемый формат: $format; ''filename: $filename; url: $url');
+      return;
+    }
+
+    log('Отправка стикера: format=$format, ''filename=$filename, url=$url');
+
+    await ChatApi.sendChatSticker(widget.user, url);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -735,23 +1044,94 @@ class ChatInputState extends State<ChatInput> {
             ],
           ),
         ),
-        if (showEmoji)
-          EmojiPicker(
-            textEditingController: textController,
-            config: Config(
-              height: MediaQuery.of(context).size.height * 0.35,
-              checkPlatformCompatibility: true,
-              emojiViewConfig: EmojiViewConfig(
-                columns: 8,
-                emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
-                backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
-              ),
-              categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
-              bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
-              skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
-              customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
-            ),
-          ),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 280),
+          reverseDuration: const Duration(milliseconds: 220),
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeInCubic,
+          transitionBuilder: (child, animation) {
+            return SlideTransition(position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(animation), child: child);
+          },
+          child: showEmoji
+            ? GestureDetector(
+                key: const ValueKey('emoji_panel'),
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragUpdate: (details) {
+                  if (details.delta.dy > 0) {
+                    setState(() {
+                      _emojiDragOffset += details.delta.dy;
+                    });
+                  }
+                },
+                onVerticalDragEnd: (details) {
+                  if (_emojiDragOffset > 80 || details.velocity.pixelsPerSecond.dy > 700) {
+                    _closeEmojiPanel();
+                  } else {
+                    setState(() {
+                      _emojiDragOffset = 0;
+                    });
+                  }
+                },
+                child: Transform.translate(
+                  offset: Offset(0, _emojiDragOffset),
+                  child: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.44,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+                    ),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 36,
+                          height: 4,
+                          decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey, borderRadius: BorderRadius.circular(4)),
+                        ),
+                        const SizedBox(height: 18),
+                        EmojiModeBottomBar(
+                          selectedIndex: selectedEmojiMode,
+                          onModeSelected: (index) {
+                            setState(() => selectedEmojiMode = index);
+                            emojiPageController.animateToPage(index, duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
+                          },
+                          onBackspace: () {
+                            if (selectedEmojiMode == 0) {
+
+                            } else if (selectedEmojiMode == 2) {}
+                          },
+                          onSearch: () {
+                            if (selectedEmojiMode == 0) {
+
+                            } else if (selectedEmojiMode == 2) {}
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Expanded(
+                          child: ScrollConfiguration(
+                            behavior: NoGlowScrollBehavior(),
+                            child: PageView(
+                              controller: emojiPageController,
+                              onPageChanged: (index) {
+                                setState(() => selectedEmojiMode = index);
+                              },
+                              children: [
+                                _buildEmojiPicker(),
+                                _buildGifContent(),
+                                _buildStickerContent(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+          : const SizedBox.shrink(key: ValueKey('empty_panel')),
+        )
       ],
     );
   }
@@ -898,7 +1278,7 @@ class ChatInputState extends State<ChatInput> {
   Widget _buildMentionUsersPanel(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(left: 12, right: 75),
+      margin: const EdgeInsets.only(left: 12, right: 74),
       decoration: BoxDecoration(
         color: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
@@ -976,10 +1356,13 @@ class ChatInputState extends State<ChatInput> {
                       '${user.name} ${user.surname}'.trim(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w500, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                      style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                     ),
                     if (user.username.isNotEmpty)
-                      Text('@${user.username}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.textSecondary)),
+                      Text(
+                        '@${user.username}',
+                        maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                      ),
                   ],
                 ),
               ),
@@ -996,6 +1379,317 @@ class ChatInputState extends State<ChatInput> {
       backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
       foregroundColor: ChatifyColors.white,
       child: SvgPicture.asset(ChatifyVectors.profile, width: 40, height: 40),
+    );
+  }
+
+  Widget _buildEmojiPicker() {
+    return SizedBox.expand(
+      child: EmojiPicker(
+        textEditingController: textController,
+        config: Config(
+          locale: Locale('ru'),
+          checkPlatformCompatibility: true,
+          viewOrderConfig: const ViewOrderConfig(top: EmojiPickerItem.emojiView, middle: EmojiPickerItem.categoryBar, bottom: EmojiPickerItem.searchBar),
+          emojiViewConfig: EmojiViewConfig(
+            columns: 8,
+            emojiSizeMax: 32 * (defaultTargetPlatform == TargetPlatform.iOS ? 1.30 : 1.0),
+            backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+          ),
+          categoryViewConfig: CategoryViewConfig(
+            backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+            iconColor: ChatifyColors.darkGrey,
+            iconColorSelected: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black,
+            indicatorColor: ChatifyColors.transparent,
+            dividerColor: ChatifyColors.transparent,
+          ),
+          bottomActionBarConfig: BottomActionBarConfig(
+            showBackspaceButton: false,
+            showSearchViewButton: false,
+            backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white,
+            buttonColor: ChatifyColors.transparent,
+          ),
+          skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
+          customBackspaceIcon: const Icon(Icons.backspace_outlined, size: 23, color: ChatifyColors.white),
+          customSearchIcon: const Icon(Icons.search_rounded, size: 23),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGifContent() {
+    return GifGallery(
+      onGifTap: (gifUrl) async {
+        try {
+          await ChatApi.sendMessage(widget.user, gifUrl, MessageType.gif);
+        } catch (e, stackTrace) {
+          log('Ошибка отправки GIF: $e', stackTrace: stackTrace);
+        }
+      },
+    );
+  }
+
+  Widget _buildStickerContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 12),
+          child: Material(
+            color: ChatifyColors.transparent,
+            child: InkWell(
+              splashFactory: NoSplash.splashFactory,
+              borderRadius: BorderRadius.circular(12),
+              splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              onTap: _createSticker,
+              child: Container(
+                width: 65,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: ChatifyColors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: context.isDarkMode ? ChatifyColors.lightSoftNight : ChatifyColors.iconGrey, width: 1),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), shape: BoxShape.circle),
+                      alignment: Alignment.center,
+                      child: Icon(Icons.edit_outlined, size: 19, color: ChatifyColors.black),
+                    ),
+                    const SizedBox(height: 4),
+                    Text('Создать стикер', style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w600, height: 1), textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(child: _buildStickerGrid(context.isDarkMode)),
+        _buildStickerBottomBar(context.isDarkMode),
+      ],
+    );
+  }
+
+  Widget _buildStickerGrid(bool isDark) {
+    if (isLoadingStickers) {
+      return Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value,)), strokeWidth: 3),
+      );
+    }
+
+    if (stickerError != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(stickerError!, style: TextStyle(color: isDark ? ChatifyColors.white : ChatifyColors.black)),
+            TextButton(onPressed: _loadStickers, child: const Text('Повторить')),
+          ],
+        ),
+      );
+    }
+
+    if (stickers.isEmpty) {
+      return Center(child: Text('Стикеров пока нет', style: TextStyle(color: isDark ? ChatifyColors.white : ChatifyColors.black)),);
+    }
+
+    return ScrollConfiguration(
+      behavior: NoGlowScrollBehavior(),
+      child: GridView.builder(
+        padding: const EdgeInsets.all(8),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8),
+        itemCount: stickers.length,
+        itemBuilder: (context, index) {
+          final sticker = stickers[index];
+          String? url;
+
+          if (sticker['images'] is Map) {
+            final images = sticker['images'] as Map<String, dynamic>;
+            final fixedHeight = images['fixed_height'];
+
+            if (fixedHeight is Map) {
+              url = fixedHeight['url'] as String?;
+            }
+
+            if (url == null || url.isEmpty) {
+              final original = images['original'];
+              if (original is Map) {
+                url = original['url'] as String?;
+              }
+            }
+          } else {
+            url = sticker['url'] as String?;
+          }
+
+          final hasUrl = url != null && url.isNotEmpty;
+
+          return InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: !hasUrl ? null : () => _sendSticker({...sticker, 'url': url}),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: SizedBox(
+                width: 64,
+                height: 64,
+                child: !hasUrl ? const Icon(Icons.broken_image_outlined) : Image.network(
+                  url,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) =>
+                  const Icon(Icons.broken_image_outlined),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStickerBottomBar(bool isDark) {
+    return SizedBox(
+      height: 48,
+      child: Row(
+        children: [
+          _buildStickerBarIcon(
+            icon: Icons.access_time_outlined,
+            isDark: isDark,
+            onTap: _openStickerSearch,
+          ),
+          _buildStickerBarIcon(
+            icon: Icons.star_border,
+            isDark: isDark,
+            iconColor: ChatifyColors.darkGrey,
+            onTap: _openFavoriteStickers,
+          ),
+          Expanded(
+            child: ScrollConfiguration(
+              behavior: NoGlowScrollBehavior(),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.zero,
+                itemCount: stickerPacks.length,
+                itemBuilder: (context, index) {
+                  return Material(
+                    color: ChatifyColors.transparent,
+                    child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      borderRadius: BorderRadius.circular(18),
+                      splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                      highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                      hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                      onTap: () => _selectStickerPack(index),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        alignment: Alignment.center,
+                        child: _buildStickerPackPreview(
+                          previewUrl: _getStickerPackPreview(index),
+                          isDark: isDark,
+                          onAdd: () {
+                            _openFavoriteStickers();
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          _buildStickerBarIcon(
+            icon: ChatifyVectors.stickerAdd,
+            isDark: isDark,
+            iconColor: ChatifyColors.darkGrey,
+            onTap: () {
+              Navigator.push(context, createPageRoute(const StickersScreen()));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStickerBarIcon({required dynamic icon, required bool isDark, required VoidCallback onTap, Color? iconColor}) {
+    final color = iconColor ?? (isDark ? ChatifyColors.white : ChatifyColors.darkGrey);
+
+    Widget iconWidget;
+
+    if (icon is String) {
+      iconWidget = SvgPicture.asset(icon, width: 25, height: 25, colorFilter: ColorFilter.mode(color, BlendMode.srcIn));
+    } else if (icon is IconData) {
+      iconWidget = Icon(icon, size: 25, color: color);
+    } else {
+      iconWidget = const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      width: 36,
+      height: 36,
+      child: Material(
+        color: ChatifyColors.transparent,
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(onTap: onTap, child: Center(child: iconWidget)),
+      ),
+    );
+  }
+
+  Widget _buildStickerPackPreview({required String? previewUrl, required bool isDark, required VoidCallback onAdd}) {
+    final accentColor = colorsController.getColor(colorsController.selectedColorScheme.value);
+
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: previewUrl != null
+                ? Image.network(
+                    previewUrl,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, _, _) => Icon(
+                      Icons.emoji_emotions_outlined,
+                      size: 30,
+                      color: isDark ? ChatifyColors.white : ChatifyColors.darkGrey,
+                    ),
+                  )
+                : Icon(
+                    Icons.emoji_emotions_outlined,
+                    size: 30,
+                    color: isDark ? ChatifyColors.white : ChatifyColors.darkGrey,
+                  ),
+            ),
+          ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Material(
+              color: accentColor,
+              shape: CircleBorder(side: BorderSide(color: ChatifyColors.black, width: 1.4)),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: onAdd,
+                child: SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: Icon(Icons.add_rounded, size: 13, color: ChatifyColors.black),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

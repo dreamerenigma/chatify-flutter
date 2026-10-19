@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -14,10 +13,11 @@ class FavoriteMessageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Text(S.of(context).favorites, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+        elevation: 0,
+        title: Text('Избранные сообщения', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         backgroundColor: ChatifyColors.blackGrey,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded, size: 25),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -27,13 +27,13 @@ class FavoriteMessageScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(width: 100, height: 100, color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white, child: const CenteredStarIcon()),
-            const SizedBox(height: 36),
+            SizedBox(width: 100, height: 100, child: const CenteredStarIcon()),
+            const SizedBox(height: 25),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: DeviceUtils.getScreenWidth(context) * .2),
               child: Text(
                 S.of(context).longPressMessageChannelFavorites,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.darkGrey),
+                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.5),
                 textAlign: TextAlign.center,
               ),
             ),

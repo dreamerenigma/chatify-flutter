@@ -82,8 +82,7 @@ class YandexDiskService implements MediaService {
 
           uploaded += chunk.length;
 
-          final percent =
-          ((uploaded / fileLength) * 100).floor();
+          final percent = ((uploaded / fileLength) * 100).floor();
 
           if (percent != lastPercent && (percent % 5 == 0 || percent == 100)) {
             lastPercent = percent;

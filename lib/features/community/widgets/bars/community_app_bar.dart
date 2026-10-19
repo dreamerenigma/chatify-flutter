@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../api/apis.dart';
 import '../../../../api/community_api.dart';
@@ -46,9 +47,20 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
   late Animation<double> _searchScaleAnimation;
   List<CommunityModel> communities = [];
   bool _isLoading = true;
-  bool _isEventsInfoVisible = true;
+  bool _isEventsInfoVisible = false;
+  bool _isEventsInfoStateLoaded = false;
   String? _communityImageUrl;
   double imageSize = 38;
+
+  String get eventsInfoKey => 'community_events_info_closed_${widget.community.id}';
+
+  DateTime _addOneMonth(DateTime date) {
+    final nextMonth = DateTime(date.year, date.month + 1, 1);
+    final lastDay = DateUtils.getDaysInMonth(nextMonth.year, nextMonth.month);
+    final day = date.day > lastDay ? lastDay : date.day;
+
+    return DateTime(nextMonth.year, nextMonth.month, day, date.hour, date.minute, date.second, date.millisecond, date.microsecond);
+  }
 
   @override
   void initState() {
@@ -57,6 +69,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
     _searchScaleAnimation = Tween<double>(begin: 1.0, end: 0.8).animate(CurvedAnimation(parent: _searchController, curve: Curves.easeInOut));
     _loadCommunities();
     _loadCommunityImage();
+    _loadEventsInfoState();
   }
 
   @override
@@ -68,6 +81,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
   void _loadCommunities() async {
     try {
       final data = await CommunityApi.getCommunity();
+
       setState(() {
         communities = data;
         _isLoading = false;
@@ -95,6 +109,41 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
     }
   }
 
+  Future<void> _loadEventsInfoState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final closedAtMillis = prefs.getInt(eventsInfoKey);
+
+    bool shouldShow = widget.isEventsInfoVisible;
+
+    if (closedAtMillis != null) {
+      final closedAt = DateTime.fromMillisecondsSinceEpoch(closedAtMillis);
+      final reopenAt = _addOneMonth(closedAt);
+
+      shouldShow = !DateTime.now().isBefore(reopenAt);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _isEventsInfoVisible = shouldShow;
+      _isEventsInfoStateLoaded = true;
+    });
+  }
+
+  Future<void> _closeEventsInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setInt(eventsInfoKey, DateTime.now().millisecondsSinceEpoch);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isEventsInfoVisible = false;
+    });
+
+    widget.onCloseEventsInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -105,22 +154,22 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
   }
 
   Widget _buildAppBar(BuildContext context, CommunityModel community) {
+    final showEventsInfo = _isEventsInfoStateLoaded && _isEventsInfoVisible;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildCommunityAppBar(context, community),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          child: _isEventsInfoVisible ? _buildCommunityEventsInfo(context) : const SizedBox.shrink(),
-        ),
+
+        if (showEventsInfo)
+          _buildCommunityEventsInfo(context),
       ],
     );
   }
 
   Widget _buildCommunityAppBar(BuildContext context, CommunityModel community) {
-    return Container(
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.buttonDisabled))),
+    return DecoratedBox(
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.buttonDisabled, width: 1))),
       child: AppBar(
         backgroundColor: context.isDarkMode ? ChatifyColors.deepNight : ChatifyColors.lightGrey,
         surfaceTintColor: ChatifyColors.transparent,
@@ -139,7 +188,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
             offset: const Offset(-8, 0),
             menuPadding: EdgeInsets.symmetric(vertical: 4),
             constraints: const BoxConstraints(minWidth: 0, maxWidth: 235),
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert_rounded, size: 25),
             color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             style: ButtonStyle(
@@ -157,7 +206,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
                 value: 0,
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: AppPopupMenuItem(
-                  text: 'Добавить участников',
+                  text: S.of(context).addParticipants,
                   onTap: () {
                     Navigator.pop(context);
                   },
@@ -401,14 +450,10 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
               splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
               hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-              onTap: () {
-                setState(() {
-                  _isEventsInfoVisible = false;
-                });
-              },
+              onTap: _closeEventsInfo,
               child: Padding(
                 padding: const EdgeInsets.only(left: 4, top: 6, bottom: 6),
-                child: Icon(Icons.close, size: 22, color: ChatifyColors.darkGrey),
+                child: Icon(Icons.close_rounded, size: 22, color: ChatifyColors.darkGrey),
               ),
             ),
           ),

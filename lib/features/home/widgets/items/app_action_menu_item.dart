@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../../../utils/constants/app_sizes.dart';
 
 class AppActionMenuItem extends StatelessWidget {
   final Widget icon;
@@ -41,11 +40,11 @@ class AppActionMenuItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
+                        Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400)),
                         Text(subtitle!, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: 15, fontWeight: FontWeight.w400)),
                       ],
                     )
-                  : Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400),
+                  : Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis), maxLines: 1,
                 ),
               ),
               if (trailing != null) ...[

@@ -5789,9 +5789,9 @@ class S {
     return Intl.message('Gallery', name: 'gallery', desc: '', args: []);
   }
 
-  /// `Location...`
+  /// `Location`
   String get location {
-    return Intl.message('Location...', name: 'location', desc: '', args: []);
+    return Intl.message('Location', name: 'location', desc: '', args: []);
   }
 
   /// `Survey`
@@ -8269,10 +8269,10 @@ class S {
     );
   }
 
-  /// `Swipe left to view more wallpapers`
+  /// `Swipe left or right to view other wallpapers.`
   String get swipeLeftViewMoreWallpapers {
     return Intl.message(
-      'Swipe left to view more wallpapers',
+      'Swipe left or right to view other wallpapers.',
       name: 'swipeLeftViewMoreWallpapers',
       desc: '',
       args: [],

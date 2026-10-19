@@ -113,9 +113,11 @@ class _CommunityNetworkImageState extends State<CommunityNetworkImage> {
   }
 
   Widget _errorWidget(BuildContext context) {
-    return CircleAvatar(
-      backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-      foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey, borderRadius: widget.borderRadius ?? BorderRadius.zero),
+      alignment: Alignment.center,
       child: Icon(Icons.groups, size: 28, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey),
     );
   }

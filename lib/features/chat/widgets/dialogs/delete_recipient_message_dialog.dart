@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../api/chat_api.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -19,7 +20,7 @@ void showDeleteRecipientMessageDialog(BuildContext context, List<int> messageInd
         title: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
         contentPadding: const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
         actionsPadding: EdgeInsets.zero,
-        backgroundColor: Theme.of(dialogContext).brightness == Brightness.dark ? ChatifyColors.blackGrey : ChatifyColors.white,
+        backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10, bottom: 10),

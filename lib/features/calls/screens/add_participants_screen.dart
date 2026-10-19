@@ -148,7 +148,7 @@ class AddParticipantsScreenState extends State<AddParticipantsScreen> {
               centerTitle: false,
               actions: [
                 IconButton(
-                  icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                  icon: Icon(isSearching ? CupertinoIcons.clear_circled : Icons.search),
                   onPressed: toggleSearch,
                 ),
               ],

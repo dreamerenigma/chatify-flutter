@@ -483,7 +483,7 @@ class _CommunityDataScreenState extends State<CommunityDataScreen> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                        'Добавить участников',
+                        S.of(context).addParticipants,
                         style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                       ),
                     ),

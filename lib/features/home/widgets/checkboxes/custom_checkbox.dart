@@ -25,7 +25,10 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final selected = widget.selectedOptions[widget.index!];
+      final index = widget.index;
+      final selected = index != null && index >= 0 && index < widget.selectedOptions.length
+        ? widget.selectedOptions[index]
+        : widget.selectedOptions.any((value) => value);
       final color = colorsController.getColor(colorsController.selectedColorScheme.value);
 
       return MouseRegion(
@@ -52,7 +55,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
               border: Border.all(color: selected ? color : ChatifyColors.darkerGrey, width: 1),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: selected ? Icon(Icons.check, color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey, size: 16) : null,
+            child: selected ? Icon(Icons.check_rounded, size: 16, color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.lightGrey) : null,
           ),
         ),
       );

@@ -24,12 +24,12 @@ void showEditListsFavoriteBottomSheet(BuildContext context) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.close, size: 24),
+                  icon: const Icon(Icons.close_rounded, size: 25),
                   onPressed: () => Navigator.pop(context),
                 ),
-                Text(S.of(context).editingFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.normal)),
+                Text(S.of(context).editingFavorites, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                 IconButton(
-                  icon: const Icon(Icons.check, size: 24),
+                  icon: const Icon(Icons.check_rounded, size: 25),
                   onPressed: () => {
                     Navigator.pop(context),
                   }
@@ -42,34 +42,37 @@ void showEditListsFavoriteBottomSheet(BuildContext context) {
               child: Text(
                 S.of(context).usePencilChangeListsChats,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal),
+                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.w400),
               ),
             ),
             const SizedBox(height: 30),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(S.of(context).includedInList, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.normal)),
+              child: Text(S.of(context).includedInList, style: TextStyle(color: ChatifyColors.buttonSecondary, fontWeight: FontWeight.w400)),
             ),
             const SizedBox(height: 4),
-            InkWell(
-              onTap: () {
-                Navigator.push(context, createPageRoute(AddToListScreen(user: APIs.me)));
-              },
-              hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-              highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.darkerGrey,
-                      child: Icon(Icons.add_rounded, size: 26, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(S.of(context).addPeopleOrGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                    const Divider(height: 0, thickness: 1),
-                  ],
+            Material(
+              color: ChatifyColors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(context, createPageRoute(AddToListScreen(user: APIs.me)));
+                },
+                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.grey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: context.isDarkMode ? ChatifyColors.popupColorDark : ChatifyColors.darkerGrey,
+                        child: Icon(Icons.add_rounded, size: 25, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(S.of(context).addPeopleOrGroups, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                      const Divider(height: 0, thickness: 1),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -79,7 +82,7 @@ void showEditListsFavoriteBottomSheet(BuildContext context) {
               child: Text(
                 S.of(context).editFavoritesChangeOrderFavorites,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.normal),
+                style: TextStyle(color: ChatifyColors.buttonSecondary, fontSize: 13, fontWeight: FontWeight.w400),
               ),
             ),
           ],

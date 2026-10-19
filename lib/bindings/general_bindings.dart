@@ -11,6 +11,7 @@ import '../core/services/voice/voice_recorder_service.dart';
 import '../features/calls/controllers/call_controller.dart';
 import '../features/chat/controllers/zoom_controller.dart';
 import '../features/community/controllers/country_controller.dart';
+import '../features/group/controllers/current_group_controller.dart';
 import '../features/home/controllers/chat_lists_controller.dart';
 import '../features/home/controllers/overlay_color_controller.dart';
 import '../features/personalization/controllers/colors_controller.dart';
@@ -40,6 +41,7 @@ class GeneralBindings extends Bindings {
     Get.put<ExpandController>(ExpandController());
     Get.put<CountryController>(CountryController());
     Get.put<ChatListsController>(ChatListsController());
+    Get.put<CurrentGroupController>(CurrentGroupController(), permanent: true);
 
     Get.put<EmailSendRepository>(EmailSendRepository());
 

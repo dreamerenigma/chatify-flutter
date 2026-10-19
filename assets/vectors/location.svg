@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 150 150"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="location.svg"
+   xml:space="preserve"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1" /><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="0.19702148"
+     inkscape:cx="489.7943"
+     inkscape:cy="215.71252"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g2" /><g
+     id="style=fill"
+     transform="matrix(4.2254022,0,0,4.2254022,24.047874,24.219954)"><g
+       id="location"><path
+         id="Subtract"
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         d="m 8.89129,21.0787 0.05481,0.0528 0.00429,0.0042 c 1.00423,0.9623 1.97791,1.6219 3.07921,1.6092 1.0963,-0.0126 2.066,-0.6894 3.0696,-1.6666 1.3755,-1.3328 3.1553,-3.1306 4.4411,-5.2634 1.2907,-2.1408 2.1236,-4.6857 1.4969,-7.47895 C 18.9197,-1.10413 5.09133,-1.11519 2.96276,8.32592 2.35382,11.04 3.12314,13.5227 4.34999,15.6268 c 1.22223,2.0963 2.93241,3.8761 4.30395,5.2203 0.07992,0.0783 0.15879,0.1552 0.23641,0.2307 z M 12,6.25012 c -1.7949,0 -3.25,1.45508 -3.25,3.25 0,1.79488 1.4551,3.24998 3.25,3.24998 1.7949,0 3.25,-1.4551 3.25,-3.24998 0,-1.79492 -1.4551,-3.25 -3.25,-3.25 z"
+         fill="#000000" /></g></g><g
+     style="fill:none;stroke:#000000;stroke-opacity:1"
+     id="g2"
+     transform="matrix(5.9471537,0,0,5.9471537,3.0146732,-3.6270279)"><path
+       d="m 19.69977,7 c 1.0979,1.3696 1.7546,3.1081 1.7546,5 0,1.8919 -0.6567,3.6304 -1.7546,5"
+       stroke="#323232"
+       stroke-width="2"
+       stroke-linecap="round"
+       id="path1-0"
+       style="stroke:#000000;stroke-opacity:1" /><path
+       d="m 4.373407,7 c -1.09791,1.3696 -1.75463,3.1081 -1.75463,5 0,1.8919 0.65672,3.6304 1.75463,5"
+       stroke="#323232"
+       stroke-width="2"
+       stroke-linecap="round"
+       id="path2"
+       style="stroke:#000000;stroke-opacity:1" /></g></svg>

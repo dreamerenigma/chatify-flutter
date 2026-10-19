@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Скачано с сайта svg4.ru / Downloaded from svg4.ru -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 150 150"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="moon.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.25"
+     inkscape:cx="-28"
+     inkscape:cy="-222"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     d="m 59.974544,16.69129 c -9.399099,2.672351 -18.267784,7.70863 -25.667852,15.108779 -23.165748,23.166126 -23.165748,60.725694 0,83.892071 23.165806,23.16636 60.725185,23.16636 83.890688,0 7.44779,-7.44786 12.5012,-16.383297 15.15971,-25.849982 M 60.891229,16.438966 C 55.606299,36.229358 60.726668,58.2204 76.252102,73.746359 91.777999,89.272432 113.76908,94.392972 133.55884,89.107986"
+     stroke="#000000"
+     stroke-width="11.6628"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path1" />
+</svg>

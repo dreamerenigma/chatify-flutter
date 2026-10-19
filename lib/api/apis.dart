@@ -304,6 +304,17 @@ class APIs {
     }
   }
 
+  /// -- .
+  static Future<bool> usernameExists(String username) async {
+    final normalizedUsername = username.trim().toLowerCase();
+
+    if (normalizedUsername.isEmpty) return false;
+
+    final snapshot = await FirebaseFirestore.instance.collection('Users').where('username', isEqualTo: normalizedUsername).limit(1).get();
+
+    return snapshot.docs.isNotEmpty;
+  }
+
   /// -- Creating a new ChatUser object.
   static UserModel createChatUserFromData(Map<String, dynamic> userData) {
     final now = DateTime.now();

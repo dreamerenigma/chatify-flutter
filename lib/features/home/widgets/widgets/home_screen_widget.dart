@@ -18,11 +18,13 @@ import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_color_assets.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_keys.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../bot/models/info_app_model.dart';
 import '../../../bot/models/support_model.dart';
 import '../../../calls/screens/add_favorite_screen.dart';
 import '../../../calls/screens/calls_screen.dart';
+import '../../../chat/models/my_user_model.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../community/models/community_model.dart';
 import '../../../community/screens/communities_screen.dart';
@@ -76,6 +78,8 @@ class HomeScreenWidget extends StatefulWidget {
   final Function(UserModel) onUserSelected;
   final ValueChanged<NewsletterModel> onNewsletterSelected;
   final ValueChanged<CommunityModel> onCommunitySelected;
+  final List<MyUserModel> myUsers;
+  final Map<String, int> userLastMessageTimes;
 
   const HomeScreenWidget({
     super.key,
@@ -104,6 +108,8 @@ class HomeScreenWidget extends StatefulWidget {
     required this.onUserSelected,
     required this.onNewsletterSelected,
     required this.onCommunitySelected,
+    required this.myUsers,
+    required this.userLastMessageTimes,
   });
 
   @override
@@ -127,8 +133,6 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
   bool showPasskeyCard = true;
   bool showSurveysBanner = true;
 
-  static const String _accessKeyHiddenUntilKey = 'access_key_hidden_until';
-
   String capitalize(String text) {
     if (text.isEmpty) return text;
 
@@ -150,6 +154,20 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
       case ChatListType.archived:
         return 'Архив';
     }
+  }
+
+  List<UserModel> get unreadChats {
+    final unreadUserIds = widget.myUsers.where((chat) => chat.unreadCount > 0).map((chat) => chat.userId).toSet();
+    final result = widget.users.where((user) => unreadUserIds.contains(user.id)).toList();
+
+    result.sort((a, b) {
+      final aTime = widget.userLastMessageTimes[a.id] ?? 0;
+      final bTime = widget.userLastMessageTimes[b.id] ?? 0;
+
+      return bTime.compareTo(aTime);
+    });
+
+    return result;
   }
 
   @override
@@ -177,7 +195,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
   }
 
   void _loadAccessKeyVisibility() {
-    final hiddenUntil = storage.read<int>(_accessKeyHiddenUntilKey);
+    final hiddenUntil = storage.read<int>(AppKeys.accessKeyHiddenUntilKey);
 
     if (hiddenUntil == null) {
       return;
@@ -361,7 +379,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                                         groups: widget.groups,
                                                         newsletters: widget.newsletters,
                                                         communities: widget.communities,
-                                                        users: widget.users,
+                                                        users: _tabController.index == 1 ? unreadChats : widget.users,
                                                         supports: widget.supports,
                                                         infosApp: widget.infosApp,
                                                         isSearching: widget.isSearching,
@@ -574,6 +592,39 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
   }
 
   Widget _buildUnreadContent() {
+    final chats = unreadChats;
+
+    if (chats.isNotEmpty) {
+      return MainHomeContentList(
+        groups: const [],
+        newsletters: const [],
+        communities: const [],
+        users: chats,
+        supports: const [],
+        infosApp: const [],
+        isSearching: false,
+        isTabsVisible: showTabBar,
+        isAccessKeyVisible: showPasskeyCard,
+        searchList: const [],
+        onUserSelected: widget.onUserSelected,
+        pinnedChats: widget.pinnedChats,
+        mutedChats: widget.mutedChats,
+        isSelectionMode: widget.selectionType != SelectionType.none,
+        onNewsletterSelected: widget.onNewsletterSelected,
+        selectionType: widget.selectionType,
+        selectedUserIds: widget.selectedChats,
+        selectedNewsletterIds: widget.selectedNewsletterIds,
+        selectedCommunityIds: widget.selectedCommunityIds,
+        selectedGroupIds: widget.selectedGroupIds,
+        onCommunitySelected: widget.onCommunitySelected,
+        onGroupSelected: widget.onGroupSelected,
+      );
+    }
+
+    return _buildEmptyUnreadContent();
+  }
+
+  Widget _buildEmptyUnreadContent() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -586,17 +637,22 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
               decoration: BoxDecoration(shape: BoxShape.circle, color: colorsController.getSelectedColor(colorsController.selectedColorScheme.value)),
               child: SvgPicture.asset(ChatifyVectors.circleCheck, width: 62, height: 62),
             ),
-            SizedBox(height: 25),
-            Text(S.of(context).noUnreadChats, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
-            SizedBox(height: 20),
-            Text('На этом пока всё.', style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-            SizedBox(height: 20),
+            const SizedBox(height: 25),
+            Text(
+              S.of(context).noUnreadChats,
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'На этом пока всё.',
+              style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.grey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+            ),
+            const SizedBox(height: 20),
             PressableText(
               text: S.of(context).viewAllChats,
               style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w400),
-              onTap: () {
-                _tabController.animateTo(0);
-              },
+              onTap: () => _tabController.animateTo(0),
             ),
           ],
         ),
@@ -901,7 +957,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
               onTap: () {
                 final hiddenUntil = DateTime.now().add(const Duration(days: 3)).millisecondsSinceEpoch;
 
-                storage.write(_accessKeyHiddenUntilKey, hiddenUntil);
+                storage.write(AppKeys.accessKeyHiddenUntilKey, hiddenUntil);
 
                 setState(() {
                   showPasskeyCard = false;
@@ -911,7 +967,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                 width: 32,
                 height: 32,
                 alignment: Alignment.center,
-                child: Icon(Icons.close_rounded, size: 24, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey),
+                child: Icon(Icons.close_rounded, size: 25, color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey),
               ),
             ),
           ),

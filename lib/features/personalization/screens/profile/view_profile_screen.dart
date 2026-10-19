@@ -49,6 +49,7 @@ import '../../widgets/items/chat_media_item.dart';
 import '../../widgets/items/profile_settings_item.dart';
 import '../../widgets/lists/group_list.dart';
 import '../../widgets/media/chat_media_preview.dart';
+import '../media/media_links_documents_screen.dart';
 import '../notifications/user_notifications_screen.dart';
 import '../privacy/privacy_protection_screen.dart';
 import 'change_contact_screen.dart';
@@ -69,6 +70,7 @@ class ViewProfileScreen extends StatefulWidget {
 class ViewProfileScreenState extends State<ViewProfileScreen> {
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
   final ScrollController _scrollController = ScrollController();
+  final Set<String> _failedImageIds = {};
   late final Stream<List<ChatMediaItem>> _mediaStream;
   late List<String> mediaThumbnails;
   late List<GroupModel> groups;
@@ -78,6 +80,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   bool isFavorite = false;
   bool isUserBlocked = false;
   String? _profileImageUrl;
+  String _storageSize = '0 B';
   int mediaVisibility = 1;
   int disappearingMessagesDuration = 3;
   List<UserModel> get disappearingMessagesUsers => [APIs.me, widget.user];
@@ -85,6 +88,44 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   Map<String, UserModel> groupUsers = {};
 
   bool get isCurrentUser => APIs.auth.currentUser?.uid == widget.user.id;
+
+  int _sizeInBytes(String? value) {
+    if (value == null || value.trim().isEmpty) return 0;
+
+    final match = RegExp(
+      r'^([\d.]+)\s*(B|KB|MB|GB)?$',
+      caseSensitive: false,
+    ).firstMatch(value.trim().replaceAll(',', '.'));
+
+    if (match == null) return 0;
+
+    final number = double.tryParse(match.group(1)!);
+    if (number == null) return 0;
+
+    final unit = (match.group(2) ?? 'B').toUpperCase();
+
+    final multiplier = switch (unit) {
+      'KB' => 1024.0,
+      'MB' => 1024.0 * 1024,
+      'GB' => 1024.0 * 1024 * 1024,
+      _ => 1.0,
+    };
+
+    return (number * multiplier).round();
+  }
+
+  String _formatStorageSize(int bytes) {
+    if (bytes >= 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+    }
+    if (bytes >= 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+    if (bytes >= 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
+    return '$bytes B';
+  }
 
   String? getMediaVisibilitySubtitle(int? value) {
     switch (value) {
@@ -116,32 +157,44 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
   Stream<List<ChatMediaItem>> _createMediaStream() {
     final conversationId = ChatApi.getConversationId(widget.user.id);
 
+    log('[MEDIA STREAM] Creating stream: $conversationId');
+
     return APIs.firestore.collection('Chats').doc(conversationId).collection('messages').orderBy('sent', descending: true).snapshots().map((snapshot) {
+      log('[MEDIA STREAM] Snapshot received: ${snapshot.docs.length}');
+
       final result = <ChatMediaItem>[];
 
       for (final doc in snapshot.docs) {
-        final message = MessageModel.fromJson(doc.data(), id: doc.id);
-        final media = _createMediaItem(message);
+        try {
+          final message = MessageModel.fromJson(doc.data(), id: doc.id);
+          final item = _createMediaItem(message);
 
-        if (media != null) {
-          result.add(media);
+          if (item != null) {
+            result.add(item);
+          }
+        } catch (e, st) {
+          log('[MEDIA STREAM] Parse error: ${doc.id}', error: e, stackTrace: st);
         }
       }
 
+      log('[MEDIA STREAM] Emitting ${result.length} items');
+
       return result;
+    }).handleError((Object error, StackTrace stackTrace) {
+      log('[MEDIA STREAM] Stream error', error: error, stackTrace: stackTrace);
     });
   }
 
   ChatMediaItem? _createMediaItem(MessageModel message) {
     switch (message.type) {
       case MessageType.image:
-        return ChatMediaItem(messageId: message.id, type: ChatMediaType.image, path: message.msg, sent: message.sent);
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.image, path: message.msg, sent: message.sent, fileSize: message.fileSize);
       case MessageType.video:
-        return ChatMediaItem(messageId: message.id, type: ChatMediaType.video, path: message.msg, sent: message.sent, duration: message.videoDuration);
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.video, path: message.msg, sent: message.sent, duration: message.videoDuration, fileSize: message.fileSize);
       case MessageType.audio:
-        return ChatMediaItem(messageId: message.id, type: ChatMediaType.audio, path: message.msg, sent: message.sent, duration: message.audioDuration);
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.audio, path: message.msg, sent: message.sent, duration: message.audioDuration, fileSize: message.fileSize);
       case MessageType.document:
-        return ChatMediaItem(messageId: message.id, type: ChatMediaType.document, path: message.msg, fileName: message.documentName, fileSize: message.fileSize, sent: message.sent);
+        return ChatMediaItem(messageId: message.id, type: ChatMediaType.document, path: message.msg, fileName: message.documentName, sent: message.sent, fileSize: message.fileSize);
       default:
         return null;
     }
@@ -177,7 +230,12 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     Navigator.push(context, createPageRoute(PhotoProfileScreen(image: _profileImageUrl, user: profileUser)));
   }
 
-  void _toggleClosingChat() {
+  void _onImageError(String messageId) {
+    if (!mounted || _failedImageIds.contains(messageId)) return;
+    setState(() { _failedImageIds.add(messageId); });
+  }
+
+  Future<void> _toggleClosingChat() async {
     if (isCloseChatEnabled) {
       setState(() {
         isCloseChatEnabled = false;
@@ -185,16 +243,19 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       return;
     }
 
-    showClosingChatBottomSheetDialog(
-      context,
-      onConfirmed: () {
-        if (!mounted) return;
+    setState(() {
+      isCloseChatEnabled = true;
+    });
 
-        setState(() {
-          isCloseChatEnabled = true;
-        });
-      },
-    );
+    final confirmed = await showClosingChatBottomSheetDialog(context, onConfirmed: () {});
+
+    if (!mounted) return;
+
+    if (confirmed != true) {
+      setState(() {
+        isCloseChatEnabled = false;
+      });
+    }
   }
 
   Future<void> _checkBlockedStatus() async {
@@ -405,7 +466,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
             child: Stack(
               alignment: Alignment.centerLeft,
               children: [
-                Padding(padding: const EdgeInsets.only(left: 4), child: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))),
+                Padding(padding: const EdgeInsets.only(left: 4), child: IconButton(icon: const Icon(Icons.arrow_back_rounded, size: 25), onPressed: () => Navigator.pop(context))),
                 Positioned(
                   left: 58,
                   child: Opacity(
@@ -444,7 +505,7 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                     offset: const Offset(-8, 0),
                     menuPadding: EdgeInsets.symmetric(vertical: 4),
                     constraints: const BoxConstraints(minWidth: 0, maxWidth: 255),
-                    icon: const Icon(Icons.more_vert),
+                    icon: const Icon(Icons.more_vert_rounded, size: 25),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.resolveWith((states) {
@@ -693,19 +754,34 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
       child: StreamBuilder<List<ChatMediaItem>>(
         stream: _mediaStream,
         builder: (context, snapshot) {
-          final media = snapshot.data ?? [];
+          final allMedia = snapshot.data ?? [];
+
+          for (final item in allMedia) {
+            if (item.type == ChatMediaType.video) {
+              log('[PROFILE MEDIA] ''messageId=${item.messageId}, ''duration=${item.duration}, ''path=${item.path}');
+            }
+          }
+
+          final media = allMedia.where((item) {
+            return item.type != ChatMediaType.image || !_failedImageIds.contains(item.messageId);
+          }).toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-                  const Spacer(),
-                  Text('${media.length}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
-                ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, createPageRoute(MediaLinksDocumentsScreen(userId: widget.user.id)));
+                },
+                child: Row(
+                  children: [
+                    Text(S.of(context).mediaLinksAndDocuments, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                    const Spacer(),
+                    Text('${media.length}', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward_ios_rounded, color: ChatifyColors.darkGrey, size: 16),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               if (media.isNotEmpty)
@@ -714,10 +790,9 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                   child: GridView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: min(media.length, 5),
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisExtent: 100, mainAxisSpacing: 8),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisExtent: 100, mainAxisSpacing: 8),
                     itemBuilder: (context, index) {
-                      return ChatMediaPreview(key: ValueKey(media[index].messageId), media: media[index]);
+                      return ChatMediaPreview(key: ValueKey(media[index].messageId), media: media[index], onImageError: _onImageError);
                     },
                   ),
                 ),
@@ -732,13 +807,22 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ProfileSettingsItem(
-          icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
-          title: 'Управление хранилищем',
-          subtitle: '77 KB',
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          onTap: () {
-            Navigator.push(context, createPageRoute(UserStorageManagementScreen(user: widget.user, mediaStream: _mediaStream)));
+        StreamBuilder<List<ChatMediaItem>>(
+          stream: _mediaStream,
+          builder: (context, snapshot) {
+            final media = snapshot.data ?? <ChatMediaItem>[];
+            final totalBytes = media.fold<int>(0, (total, item) => total + _sizeInBytes(item.fileSize));
+            final storageSize = _formatStorageSize(totalBytes);
+
+            return ProfileSettingsItem(
+              icon: SvgPicture.asset(ChatifyVectors.storage, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+              title: 'Управление хранилищем',
+              subtitle: snapshot.hasError ? _storageSize : snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData ? _storageSize : storageSize,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              onTap: () {
+                Navigator.push(context, createPageRoute(UserStorageManagementScreen(user: widget.user, mediaStream: _mediaStream)));
+              },
+            );
           },
         ),
         if (!isCurrentUser) ...[
@@ -923,7 +1007,15 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                       if (!context.mounted) return;
 
                       if (isBlocked) {
-                        showCustomDialog(context, widget.user);
+                        showCustomDialog(
+                          context,
+                          title: 'Разблокировать пользователя?',
+                          subtitle: 'Разблокируйте пользователя ${widget.user.name} ${widget.user.surname}, ''чтобы добавить его в группу.',
+                          confirmText: 'Разблокировать',
+                          onConfirm: () => APIs.unBlockUser(widget.user),
+                          successMessage: 'Контакт ${widget.user.name} ${widget.user.surname} разблокирован',
+                          onSuccess: _unblockUser,
+                        );
                         return;
                       }
 
@@ -965,7 +1057,15 @@ class ViewProfileScreenState extends State<ViewProfileScreen> {
                       if (!context.mounted) return;
 
                       if (isBlocked) {
-                        showCustomDialog(context, widget.user);
+                        showCustomDialog(
+                          context,
+                          title: 'Разблокировать пользователя?',
+                          subtitle: 'Разблокируйте пользователя ${widget.user.name} ${widget.user.surname}, ''чтобы добавить его в группу.',
+                          confirmText: 'Разблокировать',
+                          onConfirm: () => APIs.unBlockUser(widget.user),
+                          successMessage: 'Контакт ${widget.user.name} ${widget.user.surname} разблокирован',
+                          onSuccess: _unblockUser,
+                        );
                         return;
                       }
 

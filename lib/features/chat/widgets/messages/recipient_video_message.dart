@@ -229,7 +229,7 @@ class _RecipientVideoMessageState extends State<RecipientVideoMessage> {
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   onPressed: () {},
-                  icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 20, height: 20, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
+                  icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 25, height: 25, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
                 ),
               ),
             const SizedBox(width: 16),

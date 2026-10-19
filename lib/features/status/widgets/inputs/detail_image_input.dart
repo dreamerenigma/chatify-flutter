@@ -110,7 +110,11 @@ class DetailImageInputState extends State<DetailImageInput> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(bottom: DeviceUtils.getScreenHeight(context) * .01, left: DeviceUtils.getScreenWidth(context) * .015, right: DeviceUtils.getScreenWidth(context) * .015),
+              padding: EdgeInsets.only(
+                left: DeviceUtils.getScreenWidth(context) * .015,
+                right: DeviceUtils.getScreenWidth(context) * .015,
+                bottom: DeviceUtils.getScreenHeight(context) * .01,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -122,10 +126,10 @@ class DetailImageInputState extends State<DetailImageInput> {
                           IconButton(
                             onPressed: toggleEmojiKeyboard,
                             icon: showEmoji
-                              ? const Icon(Icons.keyboard, color: ChatifyColors.white, size: 26)
+                              ? const Icon(Icons.keyboard, size: 25, color: ChatifyColors.white)
                               : focusNode.hasFocus
-                                ? const Icon(Icons.emoji_emotions_outlined, color: ChatifyColors.white, size: 26)
-                                : SvgPicture.asset(ChatifyVectors.imagePlus, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn,),
+                                ? const Icon(Icons.emoji_emotions_outlined, size: 25, color: ChatifyColors.white)
+                                : SvgPicture.asset(ChatifyVectors.imagePlus, width: 25, height: 25, colorFilter: const ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn,),
                             ),
                           ),
                           Expanded(
@@ -143,13 +147,13 @@ class DetailImageInputState extends State<DetailImageInput> {
                                 cursorColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                                 decoration: InputDecoration(
                                   hintText: S.of(context).addSignature,
-                                  hintStyle: TextStyle(color: ChatifyColors.white),
+                                  hintStyle: TextStyle(color: ChatifyColors.white, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
                                 ),
                                 textCapitalization: TextCapitalization.sentences,
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                                style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                                 onTap: () {
                                   if (showEmoji) {
                                     setState(() {
@@ -181,7 +185,7 @@ class DetailImageInputState extends State<DetailImageInput> {
                   categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
                   bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
                   skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
-                  customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
+                  customBackspaceIcon: Icon(Icons.backspace_outlined, size: 25, color: ChatifyColors.white),
                 ),
               ),
           ],

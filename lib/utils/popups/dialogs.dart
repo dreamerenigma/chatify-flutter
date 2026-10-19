@@ -74,44 +74,65 @@ class Dialogs {
       builder: (BuildContext dialogContext) {
         final color = colorsController.getColor(colorsController.selectedColorScheme.value);
 
-        return AlertDialog(
-          backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          content: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
-            child: message == null
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(width: 30, height: 30, child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(color))),
-                    const SizedBox(width: 16),
-                    Flexible(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
-                  ],
-                )
-              : verticalLayout
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Center(child: SizedBox(width: 42, height: 42, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(color)))),
-                        const SizedBox(height: 20),
-                        Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
-                        const SizedBox(height: 16),
-                        Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), textAlign: TextAlign.center),
-                      ],
-                    ),
-                  )
-                : Row(
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.22), offset: const Offset(-4, 5), blurRadius: 12, spreadRadius: 1)],
+          ),
+          child: AlertDialog(
+            elevation: 0,
+            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            content: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
+              child: message == null
+                ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(width: 42, height: 42, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(color))),
+                      SizedBox(width: 38, height: 38, child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(color))),
                       const SizedBox(width: 16),
-                      Expanded(child: Text(message, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey), overflow: TextOverflow.ellipsis)),
+                      Flexible(child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
                     ],
+                  )
+                : verticalLayout
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400), textAlign: TextAlign.left),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(width: 38, height: 38, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(color))),
+                              const SizedBox(width: 22),
+                              Flexible(child: Text(message, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.left)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  : Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(width: 8),
+                          SizedBox(width: 38, height: 38, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(color), strokeWidth: 3)),
+                          const SizedBox(width: 30),
+                          Expanded(
+                            child: Text(
+                              message,
+                              style: TextStyle(color: ChatifyColors.borderPrimary, fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400), overflow: TextOverflow.ellipsis, textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
                   ),
+            ),
           ),
         );
       },

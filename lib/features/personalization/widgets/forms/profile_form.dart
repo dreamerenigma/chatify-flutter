@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/features/personalization/screens/account/edit_phone_screen.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,12 +22,12 @@ import '../../../chat/models/user_model.dart';
 import '../../../home/widgets/cards/info_banner_card.dart';
 import '../../controllers/user_controller.dart';
 import '../../models/social_link_model.dart';
+import '../../screens/enter_name_screen.dart';
 import '../../screens/profile/add_links_screen.dart';
 import '../../screens/profile/profile_intelligence_screen.dart';
 import '../../screens/profile/photo_profile_screen.dart';
 import '../../screens/profile/reserve_username_screen.dart';
 import '../../screens/profile/username_screen.dart';
-import '../dialogs/enter_name_bottom_dialog.dart';
 import '../dialogs/light_dialog.dart';
 import '../dialogs/profile_bottom_dialog.dart';
 
@@ -192,6 +191,7 @@ class ProfileFormState extends State<ProfileForm> {
                 SizedBox(width: DeviceUtils.getScreenWidth(context), height: DeviceUtils.getScreenHeight(context) * .03),
                 Stack(
                   alignment: Alignment.center,
+                  clipBehavior: Clip.none,
                   children: [
                     Ink(
                       decoration: BoxDecoration(color: ChatifyColors.darkGrey, shape: BoxShape.circle),
@@ -268,7 +268,7 @@ class ProfileFormState extends State<ProfileForm> {
                                         shape: const CircleBorder(),
                                         color: colorsController.getColor(colorsController.selectedColorScheme.value),
                                         padding: const EdgeInsets.all(10),
-                                        child: const Icon(Icons.camera_alt_outlined, color: ChatifyColors.black, size: 20),
+                                        child: const Icon(Icons.camera_alt_outlined, size: 20, color: ChatifyColors.black),
                                       ),
                                     ),
                                   ),
@@ -286,27 +286,40 @@ class ProfileFormState extends State<ProfileForm> {
                     subtitle: 'Помогите людям связаться с вами ВКонтакте и в Одноклассники. ',
                     actionText: 'Добавить ссылку',
                     iconAsset: ChatifyVectors.lamp,
-                    onActionTap: () async {},
+                    onActionTap: () async {
+                      Navigator.push(context, createPageRoute(AddLinksScreen(user: widget.user)));
+                    },
                     onClose: _dismissLinksBanner,
                   ),
                 ],
                 SizedBox(height: 18),
-                _buildProfileInfo(Icons.person_outline_rounded, S.of(context).name, APIs.me.name, ChatifyColors.darkGrey, () {
-                  showEnterNameBottomDialog(
-                    context,
-                    APIs.me.name, (newName) async {
-                      APIs.me.name = newName;
+                _buildProfileInfo(
+                  Icons.person_outline_rounded,
+                  S.of(context).name,
+                  widget.user.name,
+                  ChatifyColors.darkGrey,
+                  () {
+                    Navigator.push(
+                      context,
+                      createPageRoute(
+                        EnterNameScreen(
+                          initialName: widget.user.name,
+                          onSave: (newName) async {
+                            widget.user.name = newName;
 
-                      await APIs.updateUserInfo();
+                            await APIs.updateUserInfo();
 
-                      if (mounted) {
-                        setState(() {});
-                      }
-                    },
-                  );
-                }),
-                _buildProfileInfo(Icons.info_outline, S.of(context).info, APIs.me.about, ChatifyColors.darkGrey, () {
-                  Navigator.push(context, createPageRoute(ProfileIntelligenceScreen()));
+                            if (mounted) {
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                _buildProfileInfo(Icons.info_outline, S.of(context).info, widget.user.about, ChatifyColors.darkGrey, () {
+                  Navigator.push(context, createPageRoute(ProfileIntelligenceScreen(user: widget.user)));
                 }),
                 _buildProfileInfo(
                   Icons.alternate_email_outlined,
@@ -324,10 +337,7 @@ class ProfileFormState extends State<ProfileForm> {
                     }
                   },
                 ),
-                _buildProfileInfo(FluentIcons.status_16_filled, S.of(context).status, APIs.me.status, ChatifyColors.darkGrey, () {
-                  Navigator.push(context, createPageRoute(ProfileIntelligenceScreen()));
-                }),
-                _buildProfileInfo(Icons.phone_android, S.of(context).phone, APIs.me.phoneNumber, ChatifyColors.darkGrey, () {
+                _buildProfileInfo(Icons.phone_android, S.of(context).phone, widget.user.phoneNumber, ChatifyColors.darkGrey, () {
                   Navigator.push(context, createPageRoute(EditPhoneScreen(user: widget.user)));
                 }),
                 _buildProfileInfo(Icons.mail_outline_rounded, S.of(context).email, widget.user.email, ChatifyColors.darkGrey, () {
@@ -368,15 +378,12 @@ class ProfileFormState extends State<ProfileForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.link_rounded, size: 28, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
-          const SizedBox(width: 16),
+          const SizedBox(width: 25),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  S.of(context).links,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-                ),
+                Text(S.of(context).links, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 17, fontWeight: FontWeight.w400)),
                 const SizedBox(height: 6),
                 for (int i = 0; i < links.length; i++) ...[
                   _buildSocialLinkItem(context, links[i]),
@@ -430,22 +437,28 @@ class ProfileFormState extends State<ProfileForm> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(
             children: [
-              Icon(icon, size: 26, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+              SizedBox(
+                width: 30,
+                height: 30,
+                child: Icon(icon, size: 25, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+              ),
               const SizedBox(width: 25),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width - 100,
-                    child: Text(
-                      hasSubtitle ? subtitle : placeholder,
-                      style: TextStyle(color: hasSubtitle ? (valueColor ?? color) : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm),
-                      softWrap: true, overflow: TextOverflow.visible,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis), maxLines: 1),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 100,
+                      child: Text(
+                        hasSubtitle ? subtitle : placeholder,
+                        style: TextStyle(color: hasSubtitle ? (valueColor ?? color) : colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm),
+                        softWrap: true, overflow: TextOverflow.visible,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

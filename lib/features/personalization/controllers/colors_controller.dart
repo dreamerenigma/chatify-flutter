@@ -25,7 +25,7 @@ class ColorsController extends GetxController {
       case 'red':
         return ChatifyColors.red;
       case 'green':
-        return ChatifyColors.green;
+        return ChatifyColors.greenSlate;
       case 'orange':
         return ChatifyColors.orange;
       default:

@@ -39,7 +39,8 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
   final FocusNode inputFocusNode = FocusNode();
   final community = APIs.community;
   late final TapGestureRecognizer _moreRecognizer;
-  bool _isEventsInfoVisible = true;
+  bool _isEventsInfoVisible = false;
+  bool _isEventsInfoStateLoaded = false;
   bool showEmoji = false;
   String? _communityImageUrl;
   MessageModel? replyMessage;
@@ -117,7 +118,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight + (_isEventsInfoVisible ? 66 : 0)),
+        preferredSize: Size.fromHeight(kToolbarHeight + (_isEventsInfoVisible ? 65 : 0)),
         child: CommunityAppBar(
           community: currentCommunity,
           user: widget.user,

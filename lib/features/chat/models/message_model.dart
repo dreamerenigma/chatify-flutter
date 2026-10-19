@@ -31,6 +31,9 @@ class MessageModel {
   late final SurveyModel? survey;
   late final EventModel? event;
   late final LocationModel? location;
+  late final String? caption;
+  late final String? uploadStatus;
+  late final String? localPath;
 
   MessageModel({
     required this.id,
@@ -55,6 +58,9 @@ class MessageModel {
     this.survey,
     this.event,
     this.location,
+    this.caption,
+    this.uploadStatus,
+    this.localPath,
   });
 
   bool get isMe => fromId == APIs.user.uid;
@@ -62,6 +68,9 @@ class MessageModel {
   MessageModel.fromJson(Map<String, dynamic> json, {required this.id}) {
     toId = json['toId'].toString();
     msg = json['msg'].toString();
+    caption = json['caption']?.toString();
+    uploadStatus = json['uploadStatus']?.toString();
+    localPath = null;
     read = json['read'].toString();
     fromId = json['fromId'].toString();
 
@@ -87,6 +96,9 @@ class MessageModel {
       case 'location':
         type = MessageType.location;
         break;
+      case 'contact':
+        type = MessageType.contact;
+        break;
       case 'audio':
         type = MessageType.audio;
         break;
@@ -95,6 +107,9 @@ class MessageModel {
         break;
       case 'document':
         type = MessageType.document;
+        break;
+      case 'sticker':
+        type = MessageType.sticker;
         break;
       case 'call':
         type = MessageType.call;
@@ -226,6 +241,9 @@ class MessageModel {
     final data = <String, dynamic>{};
     data['toId'] = toId;
     data['msg'] = msg;
+    if (caption != null && caption!.trim().isNotEmpty) {
+      data['caption'] = caption;
+    }
     data['read'] = read;
     data['type'] = type.name;
     data['fromId'] = fromId;
@@ -271,6 +289,10 @@ class MessageModel {
     }
     if (location != null) {
       data['location'] = location!.toJson();
+    }
+
+    if (uploadStatus != null) {
+      data['uploadStatus'] = uploadStatus;
     }
 
     return data;

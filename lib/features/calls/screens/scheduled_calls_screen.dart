@@ -26,6 +26,7 @@ class ScheduledCallsScreen extends StatelessWidget {
           child: AppBar(
             title: Text('Запланировать звонок', style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, size: 25),

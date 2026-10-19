@@ -46,7 +46,7 @@ class _ParticipantsOptionWidgetState extends State<ParticipantsOptionWidget> {
           ),
         ),
         SizedBox(height: 20),
-        _buildParticipantsOptions('Добавить участников', SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), () {}),
+        _buildParticipantsOptions(S.of(context).addParticipants, SvgPicture.asset(ChatifyVectors.addCallUser, width: 28, height: 28, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)), () {}),
         SizedBox(height: 8),
         _buildParticipantsOptions('Пригласить в группу по ссылке', SvgPicture.asset(ChatifyVectors.linkOutline, width: 22, height: 22), () {}),
         SizedBox(height: 8),

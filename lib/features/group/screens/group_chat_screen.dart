@@ -36,10 +36,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   final FocusNode inputFocusNode = FocusNode();
   late Future<Map<String, String>> userNamesFuture;
   bool showEmoji = false;
-  MessageModel? replyMessage;
   List<MessageModel> list = [];
   List<MessageModel> messages = [];
   UserModel? replyUser;
+  MessageModel? replyMessage;
 
   String get formattedDate {
     final currentGroup = widget.group;
@@ -80,7 +80,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         children: [
           Consumer<WallpaperProvider>(
             builder: (context, wallpaperProvider, child) {
-              final backgroundImage = wallpaperProvider.getBackgroundImage(widget.user.id, defaultImage: context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight);
+              final backgroundImage = wallpaperProvider.getBackgroundImage(
+                'group_${widget.group.id}_wallpaper',
+                defaultImage: context.isDarkMode ? ChatifyImages.wallpaperDarkV3 : ChatifyImages.chatBackgroundLight,
+              );
 
               return Container(decoration: BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage), fit: BoxFit.cover)));
             },

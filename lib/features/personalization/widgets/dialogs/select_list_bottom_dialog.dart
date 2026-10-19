@@ -25,7 +25,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
           alignment: Alignment.center,
           child: Text(
             S.of(context).selectList,
-            style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.normal, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.blackGrey),
+            style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.blackGrey, fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400),
           ),
         ),
         const SizedBox(height: 20),
@@ -37,7 +37,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
           ),
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(S.of(context).newList, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+            child: Text(S.of(context).newList, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
           ),
           splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey,
           onTap: () {},
@@ -49,7 +49,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
           ),
           title: Padding(
             padding: const EdgeInsets.only(left: 10),
-            child: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeLg)),
+            child: Text(S.of(context).favorite, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400)),
           ),
           trailing: Icon(
             isSelected ? Icons.check_circle : Icons.circle_outlined,
@@ -80,7 +80,7 @@ class SelectListBottomSheetState extends State<SelectListBottomSheet> {
                 side: BorderSide.none,
                 elevation: 2,
               ),
-              child: Text(S.of(context).ready, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal, color: ChatifyColors.black)),
+              child: Text(S.of(context).ready, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             ),
           ),
         ),

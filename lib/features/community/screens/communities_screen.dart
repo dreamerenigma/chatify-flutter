@@ -57,15 +57,15 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
 
     switch (index) {
       case 0:
-        Navigator.push(context, createPageRoute(HomeScreen(user: APIs.me)));
+        Navigator.push(context, createPageRoute(HomeScreen(user: widget.user)));
         break;
       case 1:
-        Navigator.push(context, createPageRoute(StatusScreen(user: APIs.me)));
+        Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
         break;
       case 2:
         break;
       case 3:
-        Navigator.push(context, createPageRoute(CallsScreen(user: APIs.me)));
+        Navigator.push(context, createPageRoute(CallsScreen(user: widget.user)));
         break;
       default:
         break;
@@ -99,7 +99,9 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator(color: colorsController.getColor(colorsController.selectedColorScheme.value)));
+      return Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 1.5),
+      );
     }
 
     return Scaffold(
@@ -119,7 +121,7 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
               offset: const Offset(-8, 0),
               menuPadding: EdgeInsets.symmetric(vertical: 4),
               constraints: const BoxConstraints(minWidth: 0, maxWidth: 125),
-              icon: const Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_vert_rounded, size: 25),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith((states) {
@@ -141,7 +143,7 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
                     text: S.of(context).settings,
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(context, createPageRoute(SettingsScreen(user: APIs.me)));
+                      Navigator.push(context, createPageRoute(SettingsScreen(user: widget.user)));
                     },
                   ),
                 ),
@@ -159,18 +161,21 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 Image.asset(ChatifyImages.community, width: 150, height: 150),
                 const SizedBox(height: 20),
-                Text(S.of(context).connectedCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                Text(S.of(context).connectedCommunity, style: TextStyle(fontSize: ChatifySizes.fontSizeLg, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                 const SizedBox(height: 10),
-                Text(S.of(context).communityThematic, style: TextStyle(fontSize: ChatifySizes.fontSizeMd), textAlign: TextAlign.center),
+                Text(S.of(context).communityThematic, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400), textAlign: TextAlign.center),
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {},
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(S.of(context).communityExamples, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+                      Text(
+                        S.of(context).communityExamples,
+                        style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                      ),
                       const SizedBox(width: 5),
-                      Icon(Icons.arrow_forward_ios_rounded, color: colorsController.getColor(colorsController.selectedColorScheme.value), size: 13),
+                      Icon(Icons.arrow_forward_ios_rounded, size: 13, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                     ],
                   ),
                 ),
@@ -189,7 +194,7 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
                         side: BorderSide.none,
                         padding: EdgeInsets.zero,
                       ),
-                      child: Center(child: Text(S.of(context).createCommunity, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd,fontWeight: FontWeight.w400))),
+                      child: Center(child: Text(S.of(context).createCommunity, style: TextStyle(color: ChatifyColors.black, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400))),
                     ),
                   ),
                 ),
@@ -211,7 +216,7 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
                     Flexible(child: CommunityList(communities: list, onCommunitySelected: (community) {})),
                     CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 6, bottom: 0),
                     const SizedBox(height: 6),
-                    CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: APIs.community!, user: APIs.me),
+                    CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: APIs.community!, user: widget.user),
                   ],
                 ),
               ),

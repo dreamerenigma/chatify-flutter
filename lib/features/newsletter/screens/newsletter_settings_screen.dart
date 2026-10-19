@@ -14,7 +14,7 @@ import '../../../utils/constants/app_vectors.dart';
 import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../chat/models/user_model.dart';
 import '../../community/screens/add_user_screen.dart';
-import '../../group/widgets/images/placholder_group_image.dart';
+import '../../group/widgets/images/placeholder_group_image.dart';
 import '../../home/widgets/dialogs/chats_calls_privacy_sheet_dialog.dart';
 import '../../personalization/widgets/dialogs/add_list_bottom_sheet_dialog.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';

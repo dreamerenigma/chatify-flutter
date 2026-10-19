@@ -3,22 +3,38 @@ import 'dart:io';
 import 'package:chatify/api/apis.dart';
 import 'package:chatify/features/calls/screens/audio/outgoing_audio_call_screen.dart';
 import 'package:chatify/features/calls/screens/video/outgoing_video_call_screen.dart';
-import 'package:chatify/features/personalization/screens/chats/wallpaper_screen.dart';
+import 'package:chatify/features/personalization/screens/chats/theme_chat_screen.dart';
+import 'package:chatify/features/personalization/screens/media/media_links_documents_screen.dart';
 import 'package:chatify/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../api/chat_api.dart';
+import '../../../../core/enums/chat_target_type.dart';
+import '../../../../core/services/chats/chat_export_service.dart';
+import '../../../../utils/constants/app_keys.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../calls/models/call_result.dart';
 import '../../../calls/widgets/widget/outgoing_audio_call_widget.dart';
 import '../../../calls/widgets/widget/outgoing_video_call_widget.dart';
+import '../../../group/screens/new_group_screen.dart';
 import '../../../home/widgets/dialogs/no_sound_dialog.dart';
+import '../../../personalization/screens/profile/disappearing_messages_chat_screen.dart';
 import '../../../personalization/screens/profile/view_profile_screen.dart';
+import '../../../personalization/widgets/dialogs/add_list_bottom_sheet_dialog.dart';
+import '../../../personalization/widgets/dialogs/block_user_dialog.dart';
+import '../../../personalization/widgets/dialogs/chat_export_dialog.dart';
+import '../../../personalization/widgets/dialogs/clear_chat_bottom_sheet_dialog.dart';
+import '../../models/chat_theme_target.dart';
 import '../../models/mini_call_data_model.dart';
 import '../../models/user_model.dart';
+import '../dialogs/edit_new_contact_bottom_sheet_dialog.dart';
 import '../dialogs/payment_bottom_sheet_dialog.dart';
+import '../dialogs/user_complain_dialog.dart';
 import '../widget/user_info_widget.dart';
 import 'actions/app_bar_actions.dart';
 import 'mini_call_bar.dart';
@@ -33,6 +49,7 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onReturnToCall;
   final VoidCallback? onEndCall;
   final VoidCallback? onToggleMicrophone;
+  final ValueChanged<int>? onPopupItemSelected;
 
   const ChatAppBar({
     super.key,
@@ -45,6 +62,7 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onReturnToCall,
     this.onEndCall,
     this.onToggleMicrophone,
+    this.onPopupItemSelected,
   });
 
   @override
@@ -57,11 +75,15 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateMixin {
   final Set<String> selectedChats = <String>{};
   late AnimationController _searchController;
-  int selectedDuration = 1440;
   bool showRealStatus = false;
   bool showSearchOverlay = false;
   bool showStatusText = false;
+  bool isUserBlocked = false;
+  int selectedDuration = 1440;
+  int disappearingMessagesDuration = 3;
   String? imagePath;
+  List<UserModel> selectedUsers = [];
+  List<UserModel> get disappearingMessagesUsers => [APIs.me, widget.user];
 
   @override
   void initState() {
@@ -108,25 +130,106 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   }
 
   Future<void> _muteChats() async {
-    final initialDuration = await APIs.getChatMutedDuration(selectedChats.first);
+    final userId = widget.user.id;
 
-    if (!context.mounted) return;
+    log('[MUTE] chat userId: $userId');
 
-    showNoSoundDialog(
-      context,
-      initialDuration,
-      (duration) async {
-        try {
-          for (final userId in selectedChats) {
+    if (userId.isEmpty) {
+      log('[MUTE] userId is empty');
+      return;
+    }
+
+    try {
+      final initialDuration =
+      await APIs.getChatMutedDuration(userId);
+
+      if (!mounted) return;
+
+      showNoSoundDialog(
+        context,
+        initialDuration,
+        (duration) async {
+          try {
             await APIs.setChatMuted(userId: userId, muted: true, duration: duration);
-          }
 
-          clearSelection();
-        } catch (e) {
-          log('Error muting chats: $e');
+            log('[MUTE] success: $userId');
+          } catch (e, stackTrace) {
+            log('[MUTE] error: $e', stackTrace: stackTrace);
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      log('[MUTE] initialization error: $e', stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> _exportChat({required bool exportMedia}) async {
+    try {
+      final conversationId = ChatApi.getConversationId(widget.user.id);
+      final file = await ChatExportService.exportChat(conversationId: conversationId, username: widget.user.name, exportMedia: exportMedia);
+
+      if (!mounted) return;
+
+      final contactName = '${widget.user.name} ${widget.user.surname}'.trim();
+
+      final archiveName = 'Чат Chatify с контактом $contactName';
+
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)],
+        subject: archiveName,
+        text: 'История чатов прикреплена к данному письму ''в виде файла "$archiveName.zip".'),
+      );
+    } catch (e, stackTrace) {
+      log('[ChatExport] Ошибка: $e');
+      log('$stackTrace');
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Не удалось экспортировать чат: $e')));
+    }
+  }
+
+  Future<void> _addChatShortcut() async {
+    try {
+      final imageUrl = widget.user.image;
+
+      Uint8List? imageBytes;
+
+      if (imageUrl.toString().isNotEmpty) {
+        final uri = Uri.tryParse(imageUrl.toString());
+
+        if (uri != null && (uri.scheme == 'https' || uri.scheme == 'http')) {
+          final response = await http.get(uri).timeout(const Duration(seconds: 15));
+
+          if (response.statusCode == 200) {
+            imageBytes = response.bodyBytes;
+          }
         }
-      },
-    );
+      }
+
+      final result = await AppKeys.shortcutChannel.invokeMethod<bool>(
+        'pinChatShortcut',
+        {
+          'userId': widget.user.id,
+          'username': '${widget.user.name} ${widget.user.surname}'.trim(),
+          'imageBytes': imageBytes,
+        },
+      );
+
+      if (!mounted) return;
+
+      if (result == true) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Запрос на добавление ярлыка отправлен')));
+      }
+    } on PlatformException catch (e) {
+      log('Ошибка создания ярлыка: ${e.message}');
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Не удалось создать ярлык чата')));
+    } catch (e) {
+      log('Ошибка создания ярлыка: $e');
+    }
   }
 
   @override
@@ -134,7 +237,8 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
     return Stack(
       children: [
         Platform.isWindows ? _buildWindowsAppBar(context) : _buildMobileAppBar(context),
-        if (showSearchOverlay) _buildSearchOverlay(),
+        if (showSearchOverlay)
+          _buildSearchOverlay(),
       ],
     );
   }
@@ -171,7 +275,9 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                     borderRadius: BorderRadius.circular(35),
                     mouseCursor: SystemMouseCursors.basic,
                     splashFactory: NoSplash.splashFactory,
-                    hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
+                    splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                    hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                     onTap: () {
                       Navigator.pop(context);
                     },
@@ -246,8 +352,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
                   child: AppBarActions(
                     user: widget.user,
                     onVideoCall: () async {
-                      final result =
-                      await Navigator.push<CallResult>(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
+                      final result = await Navigator.push<CallResult>(context, createPageRoute(OutgoingVideoCallScreen(user: widget.user)));
 
                       if (result == null || !mounted) return;
 
@@ -286,40 +391,75 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
 
     switch (value) {
       case 1:
+        widget.onPopupItemSelected?.call(value);
         break;
       case 2:
+        widget.onPopupItemSelected?.call(value);
         break;
       case 3:
-        showPaymentBottomSheetDialog(context, widget.user);
+        widget.onPopupItemSelected?.call(value);
         break;
       case 4:
-        Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
+        Get.to(() => NewGroupScreen(selectedUsers: [widget.user]));
         break;
       case 5:
+        showPaymentBottomSheetDialog(context, widget.user);
         break;
       case 6:
-        await _muteChats();
+        Navigator.push(context, createPageRoute(ViewProfileScreen(user: widget.user)));
         break;
       case 7:
+        showEditNewContactBottomSheetDialog(context, widget.user);
         break;
       case 8:
-        if (imagePath != null && imagePath!.isNotEmpty) {
-          Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath!, user: widget.user, wallpaperKey: wallpaperKey)));
-        }
+        break;
+      case 9:
+        Navigator.push(context, createPageRoute(MediaLinksDocumentsScreen(userId: widget.user.id)));
         break;
       case 10:
+        await _muteChats();
         break;
       case 11:
+        Navigator.push(context, createPageRoute(DisappearingMessagesChatScreen(users: disappearingMessagesUsers, selectedDuration: disappearingMessagesDuration)));
         break;
       case 12:
+        Navigator.of(context).push(
+          createPageRoute(ThemeChatScreen(imagePath: imagePath, target: ChatThemeTarget(id: widget.user.id, type: ChatTargetType.user), wallpaperKey: wallpaperKey),
+        ));
         break;
       case 13:
         break;
       case 14:
+        showUserComplainDialog(context, widget.user);
         break;
       case 15:
+        showBlockUserDialog(
+          context,
+          widget.user,
+          onBlocked: () {
+            if (!mounted) return;
+
+            setState(() {
+              isUserBlocked = true;
+            });
+          },
+        );
         break;
       case 16:
+        showClearChatBottomSheetDialog(context);
+        break;
+      case 17:
+        final exportMedia = await showChatExportDialog(context);
+
+        if (exportMedia == null || !mounted) break;
+
+        await _exportChat(exportMedia: exportMedia);
+        break;
+      case 18:
+        await _addChatShortcut();
+        break;
+      case 19:
+        showAddListBottomSheetDialog(context);
         break;
     }
   }

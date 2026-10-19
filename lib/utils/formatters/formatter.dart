@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:intl/intl.dart';
 
 class Formatter {
@@ -17,9 +16,17 @@ class Formatter {
 
   static String formatFileSize(double size) {
     if (size <= 0) return '0 B';
+
     const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    int i = (log(size) / log(1024)).floor();
-    double adjustedSize = size / pow(1024, i);
+
+    int i = 0;
+    double adjustedSize = size;
+
+    while (adjustedSize >= 1024 && i < suffixes.length - 1) {
+      adjustedSize /= 1024;
+      i++;
+    }
+
     String formattedSize = adjustedSize.toStringAsFixed(1);
 
     if (formattedSize.endsWith('.0')) {
@@ -56,10 +63,8 @@ class Formatter {
     }
 
     final duration = Duration(seconds: seconds);
-
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(1, '0');
-    final remainingSeconds =
-    duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final remainingSeconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
 
     return '$minutes:$remainingSeconds';
   }

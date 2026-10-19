@@ -163,10 +163,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: ChatifyColors.darkSlate,
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
+                  decoration: BoxDecoration(color: ChatifyColors.darkSlate, borderRadius: BorderRadius.circular(20)),
                   child: Row(
                     children: [
                       SvgPicture.asset(ChatifyVectors.status, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn) , width: 16),
@@ -186,45 +183,26 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                 child: IconButton(
                   icon: Padding(padding: const EdgeInsets.only(left: 3), child: const Icon(Icons.send, color: ChatifyColors.black, size: 23)),
                   onPressed: () async {
-                    log('STATUS: кнопка нажата');
-
                     try {
-                      log('STATUS: начинаем загрузку изображения');
 
                       final imageUrl = await APIs.uploadStatusImage(widget.imageFile);
 
-                      log('STATUS: uploadStatusImage завершён: $imageUrl');
-
                       if (imageUrl == null) {
-                        log('STATUS: imageUrl == null');
                         throw Exception('Не удалось загрузить изображение статуса');
                       }
 
-                      log('STATUS: добавляем статус в Firestore');
-
                       await APIs.addStatus(mediaPath: imageUrl, type: 'image');
 
-                      log('STATUS: статус успешно добавлен');
-
                       if (!mounted) {
-                        log('STATUS: widget уже unmounted');
                         return;
                       }
 
-                      log('STATUS: переходим на StatusScreen');
-
-                      Navigator.push(
-                        context,
-                        createPageRoute(
-                          StatusScreen(user: widget.user),
-                        ),
-                      );
+                      Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
                     } catch (e, stackTrace) {
                       log('STATUS ERROR: $e');
                       log('STATUS STACK: $stackTrace');
                     }
                   },
-
                 ),
               ),
             ),

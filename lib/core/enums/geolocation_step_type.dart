@@ -1,0 +1,1 @@
+enum GeolocationStep { location, next }

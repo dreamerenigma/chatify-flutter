@@ -71,9 +71,11 @@ class ChatifyVectors {
   static const String autumnLeaf1 = "assets/vectors/autumn_leaf_1.svg";
   static const String autumnLeaf2 = "assets/vectors/autumn_leaf_2.svg";
   static const String geolocation = "assets/vectors/geolocation.svg";
+  static const String location = "assets/vectors/location.svg";
   static const String message = "assets/vectors/message.svg";
   static const String messageFilled = "assets/vectors/message_filled.svg";
   static const String messageOutline = "assets/vectors/message_outline.svg";
+  static const String messageWarningOutline = "assets/vectors/message_warning_outline.svg";
   static const String messageLock = "assets/vectors/message_lock.svg";
   static const String messagePrivacy = "assets/vectors/message_privacy.svg";
   static const String lock = "assets/vectors/lock.svg";
@@ -222,6 +224,8 @@ class ChatifyVectors {
   static const String pauseFilled = "assets/vectors/pause_filled.svg";
   static const String pauseOutline = "assets/vectors/pause_outline.svg";
   static const String sticker = "assets/vectors/sticker.svg";
+  static const String stickerFilled = "assets/vectors/sticker_filled.svg";
+  static const String stickerAdd = "assets/vectors/sticker_add.svg";
   static const String textFormat = "assets/vectors/text_format.svg";
   static const String arrowBendDoubleUpRight = "assets/vectors/arrow_bend_double_up_right.svg";
   static const String star = "assets/vectors/star.svg";
@@ -234,6 +238,7 @@ class ChatifyVectors {
   static const String checkboxOutline = "assets/vectors/checkbox_outline.svg";
   static const String leaf = "assets/vectors/leaf.svg";
   static const String timeOutline = "assets/vectors/time_outline.svg";
+  static const String timeRound = "assets/vectors/time_round.svg";
   static const String remove = "assets/vectors/remove.svg";
   static const String minus = "assets/vectors/minus.svg";
   static const String check = "assets/vectors/check.svg";
@@ -243,6 +248,7 @@ class ChatifyVectors {
   static const String backspaceOutline = "assets/vectors/backspace_outline.svg";
   static const String linkOutline = "assets/vectors/link_outline.svg";
   static const String settingsOutline = "assets/vectors/settings_outline.svg";
+  static const String settingsCircleOutline = "assets/vectors/settings_circle_outline.svg";
   static const String folder = "assets/vectors/folder.svg";
   static const String person = "assets/vectors/person.svg";
   static const String personTime = "assets/vectors/person_time.svg";
@@ -312,10 +318,16 @@ class ChatifyVectors {
   static const String relatedDevices = "assets/vectors/related_devices.svg";
   static const String communities = "assets/vectors/communities.svg";
   static const String communitiesOutline = "assets/vectors/communities_outline.svg";
-  static const String pallete = "assets/vectors/pallete.svg";
+  static const String pallet = "assets/vectors/pallet.svg";
   static const String wallet = "assets/vectors/wallet.svg";
   static const String phoneNumpadOutline = "assets/vectors/phone_numpad_outline.svg";
   static const String closingChat = "assets/vectors/closing_chat.svg";
+  static const String brightness = "assets/vectors/brightness.svg";
+  static const String brightnessLow = "assets/vectors/brightness_low.svg";
+  static const String brightnessMedium = "assets/vectors/brightness_medium.svg";
+  static const String brightnessHigh = "assets/vectors/brightness_high.svg";
+  static const String moon = "assets/vectors/moon.svg";
+  static const String refreshTime = "assets/vectors/refresh_time.svg";
 
   /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';

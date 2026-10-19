@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:chatify/utils/popups/custom_tooltip.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -13,8 +14,7 @@ import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../../utils/devices/device_utility.dart';
 import '../../../../../utils/platforms/platform_utils.dart';
 import '../../../../calls/widgets/popups/items/app_popup_menu_item.dart';
-import '../../../../group/widgets/dialogs/video_call_popup_menu.dart';
-import '../../../../personalization/controllers/user_controller.dart';
+import '../../../../group/widgets/buttons/call_options_popup_button.dart';
 import '../../../../utils/dialogs/no_internet_connection_dialog.dart';
 import '../../../models/user_model.dart';
 import '../../dialogs/chat_info_dialog.dart';
@@ -51,6 +51,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
   late Animation<double> _searchScaleAnimation;
 
   bool get isMobile => Platform.isIOS || Platform.isAndroid;
+  bool get isCurrentUser => widget.user.id == FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
@@ -67,9 +68,6 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = Get.find<UserController>().user.value.id;
-    final isCurrentUser = widget.user.id == currentUserId;
-
     return Row(
       children: [
         if (Platform.isWindows && !isCurrentUser) ...[
@@ -108,7 +106,9 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
             ),
           ),
         ],
-        if (isMobile) ...[
+        if (widget.isGroup) ...[
+          SizedBox(height: 44, child: Center(child: _buildVideoCallButton(context))),
+        ] else if (!isCurrentUser) ...[
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -241,6 +241,8 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
   }
 
   void _showPopupMenu(BuildContext context) {
+    final isCurrentUser = widget.user.id == FirebaseAuth.instance.currentUser?.uid;
+
     showMenu<int>(
       context: context,
       position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width - 235, kToolbarHeight + 25, 8, 0),
@@ -254,22 +256,25 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
           PopupMenuDivider(height: 8, indent: 0, endIndent: 0, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled),
           _popupItem(context, 2, S.of(context).groupData),
           _popupItem(context, 3, S.of(context).mediaGroups),
-        ] else ...[
-          _popupItem(context, 1, S.of(context).newGroup),
+        ] else if (!isCurrentUser) ...[
+          _popupItem(context, 4, S.of(context).newGroup),
           PopupMenuDivider(height: 8, indent: 0, endIndent: 0, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled),
-          _popupItem(context, 2, 'Перевести деньги'),
+          _popupItem(context, 5, 'Перевести деньги'),
+          _popupItem(context, 6, 'Просмотр контакта'),
         ],
+        if (!widget.isGroup && isCurrentUser)
+          _popupItem(context, 7, 'Добавить контакт'),
+        _popupItem(context, 8, S.of(context).search),
         if (!widget.isGroup)
-          _popupItem(context, 4, 'Просмотр контакта'),
-        _popupItem(context, 5, S.of(context).search),
-        if (!widget.isGroup)
-          _popupItem(context, 6, 'Медиа, ссылки и докум.'),
-        _popupItem(context, 7, S.of(context).noSound),
-        _popupItem(context, 8, S.of(context).disappearingMessages),
-        _popupItem(context, 9, 'Тема чата'),
-        PopupMenuDivider(height: 8, indent: 0, endIndent: 0, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled),
+          _popupItem(context, 9, 'Медиа, ссылки и докум.'),
+        if (widget.isGroup || !isCurrentUser)
+          _popupItem(context, 10, S.of(context).noSound),
+        _popupItem(context, 11, S.of(context).disappearingMessages),
+        _popupItem(context, 12, 'Тема чата'),
+        if (widget.isGroup || !isCurrentUser)
+          PopupMenuDivider(height: 8, indent: 0, endIndent: 0, color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.buttonDisabled),
         PopupMenuItem<int>(
-          value: 10,
+          value: 13,
           padding: EdgeInsets.zero,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -278,11 +283,11 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
               child: InkWell(
                 splashFactory: NoSplash.splashFactory,
                 borderRadius: BorderRadius.circular(ChatifySizes.inputFieldRadius),
-                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
-                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.4 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.4 * 255).toInt()),
+                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
                 onTap: () {
-                  Navigator.pop(context, 10);
+                  Navigator.pop(context, 13);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 12, right: 6, top: 10, bottom: 10),
@@ -301,7 +306,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
     ).then((value) {
       if (value == null) return;
 
-      if (value == 11) {
+      if (value == 13) {
         _showMorePopupMenu(context);
         return;
       }
@@ -320,63 +325,51 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
       color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.white,
       items: [
         PopupMenuItem<int>(
-          value: 12,
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: AppPopupMenuItem(
-            text: 'Пожаловаться',
-            onTap: () {
-              Navigator.pop(context, 10);
-            },
-          ),
-        ),
-        PopupMenuItem<int>(
-          value: 13,
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: AppPopupMenuItem(
-            text: 'Заблокировать',
-            onTap: () {
-              Navigator.pop(context, 11);
-            },
-          ),
-        ),
-        PopupMenuItem<int>(
           value: 14,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
-            text: 'Очистить чат',
-            onTap: () {
-              Navigator.pop(context, 12);
-            },
+            text: 'Пожаловаться',
+            onTap: () => Navigator.pop(context, 14),
           ),
         ),
         PopupMenuItem<int>(
           value: 15,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
-            text: 'Экспорт чата',
-            onTap: () {
-              Navigator.pop(context, 13);
-            },
+            text: 'Заблокировать',
+            onTap: () => Navigator.pop(context, 15),
           ),
         ),
         PopupMenuItem<int>(
           value: 16,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
-            text: 'Добавить иконку на экран',
-            onTap: () {
-              Navigator.pop(context, 14);
-            },
+            text: 'Очистить чат',
+            onTap: () => Navigator.pop(context, 16),
           ),
         ),
         PopupMenuItem<int>(
           value: 17,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: AppPopupMenuItem(
+            text: 'Экспорт чата',
+            onTap: () => Navigator.pop(context, 17),
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 18,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
+            text: 'Добавить иконку на экран',
+            onTap: () => Navigator.pop(context, 18),
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 19,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: AppPopupMenuItem(
             text: 'Добавить в список',
-            onTap: () {
-              Navigator.pop(context, 15);
-            },
+            onTap: () => Navigator.pop(context, 19),
           ),
         ),
       ],
@@ -392,7 +385,7 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
       return _buildIcon(
         context,
         message: S.of(context).videoCall,
-        icon: HeroIcon(HeroIcons.videoCamera, size: 22),
+        icon: SvgPicture.asset(ChatifyVectors.videoCameraOutline, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
         onTap: () async {
           if (await DeviceUtils.hasInternetConnection()) {
             widget.onVideoCall?.call();
@@ -404,45 +397,30 @@ class _AppBarActionsState extends State<AppBarActions> with SingleTickerProvider
       );
     }
 
-    return _buildVideoCallWithMenu(context);
-  }
-
-  Widget _buildVideoCallWithMenu(BuildContext context) {
-    return CustomTooltip(
-      message: S.of(context).videoCall,
-      verticalOffset: -70,
-      horizontalOffset: -50,
-      position: TooltipPositionType.bottom,
-      child: InkWell(
-        splashFactory: NoSplash.splashFactory,
-        splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-        highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
-        hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
-        onTap: () async {
-          if (await DeviceUtils.hasInternetConnection()) {
-            widget.onVideoCall?.call();
-          } else {
-            showNoInternetConnectionDialog(context);
-          }
-        },
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              HeroIcon(HeroIcons.videoCamera, size: 22, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-              const SizedBox(width: 3),
-              InkWell(
-                onTap: () => showVideoCallPopupMenu(context),
-                borderRadius: BorderRadius.circular(20),
-                child: Icon(Icons.keyboard_arrow_down, size: 17, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CallOptionsPopupButton(
+      onSelected: (value) async {
+        switch (value) {
+          case 1:
+            if (await DeviceUtils.hasInternetConnection()) {
+              widget.onAudioCall?.call();
+            } else {
+              showNoInternetConnectionDialog(context);
+            }
+            break;
+          case 2:
+            if (await DeviceUtils.hasInternetConnection()) {
+              widget.onVideoCall?.call();
+            } else {
+              showNoInternetConnectionDialog(context);
+            }
+            break;
+          case 3:
+          case 4:
+          case 5:
+            widget.onPopupItemSelected?.call(value);
+            break;
+        }
+      },
     );
   }
 }

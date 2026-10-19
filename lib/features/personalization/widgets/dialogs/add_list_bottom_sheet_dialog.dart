@@ -77,7 +77,7 @@ void showAddListBottomSheetDialog(BuildContext context) {
                         Icon(Icons.favorite_border, size: 26, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.softGrey),
                         const SizedBox(width: 16),
                         const Expanded(child: Text('Избранное', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400))),
-                        Icon(isUserAddList ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded, size: 26, color: isUserAddList ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.lightSoftNight),
+                        Icon(isUserAddList ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded, size: 28, color: isUserAddList ? colorsController.getColor(colorsController.selectedColorScheme.value) : ChatifyColors.lightSoftNight),
                       ],
                     ),
                   ),

@@ -40,10 +40,16 @@ class EditPhoneScreenState extends State<EditPhoneScreen> {
             boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
-            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             titleSpacing: 0,
             elevation: 0,
             title: Text(S.of(context).changeNumber, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
+            backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
         ),
       ),

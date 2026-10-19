@@ -40,7 +40,11 @@ class _VideoMediaPreviewState extends State<VideoMediaPreview> {
   }
 
   String _formatDuration(int? seconds) {
-    final duration = Duration(seconds: seconds ?? 0);
+    if (seconds == null || seconds <= 0) {
+      return '--:--';
+    }
+
+    final duration = Duration(seconds: seconds);
     final minutes = duration.inMinutes;
     final secondsPart = duration.inSeconds.remainder(60);
 
@@ -83,6 +87,13 @@ class _VideoMediaPreviewState extends State<VideoMediaPreview> {
 
   @override
   Widget build(BuildContext context) {
+    log(
+      '[VideoMediaPreview] '
+          'messageId=${widget.media.messageId}, '
+          'duration=${widget.media.duration}, '
+          'path=${widget.media.path}',
+    );
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.borderRadius),
       child: Stack(
@@ -99,11 +110,8 @@ class _VideoMediaPreviewState extends State<VideoMediaPreview> {
             bottom: 3,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.55), borderRadius: BorderRadius.circular(4)),
-              child: Text(
-                _formatDuration(widget.media.duration),
-                style: TextStyle(color: ChatifyColors.white, fontSize: 11, fontWeight: FontWeight.w400),
-              ),
+              decoration: BoxDecoration(color: ChatifyColors.black.withValues(alpha: 0.55), borderRadius: BorderRadius.circular(4)),
+              child: Text(_formatDuration(widget.media.duration), style: TextStyle(color: ChatifyColors.white, fontSize: 11, fontWeight: FontWeight.w400)),
             ),
           ),
         ],

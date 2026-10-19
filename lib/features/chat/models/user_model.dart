@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../api/chat_api.dart';
@@ -159,6 +160,9 @@ class UserModel implements ChatTarget, BaseChatEntity {
 
   @override
   Future<void> sendText(String text, {String? replyToMessageId, List<MentionDataModel>? mentions}) async {
+    log('USER MODEL RECEIVED MENTIONS: ${mentions?.length}');
+    log('USER MODEL MENTIONS: ${mentions?.map((m) => m.toJson()).toList()}');
+
     await ChatApi.sendMessage(this, text, MessageType.text, replyToMessageId: replyToMessageId, mentions: mentions ?? []);
   }
 

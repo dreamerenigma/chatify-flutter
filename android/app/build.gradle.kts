@@ -44,7 +44,9 @@ android {
         versionCode = flutterVersionCode
         versionName = flutterVersionName
         val ymapApiKey = localProperties.getProperty("YMAP_API_KEY")
+        val ymapStaticApiKey = localProperties.getProperty("YMAP_STATIC_API_KEY") ?: ""
         resValue("string", "ymap_api_key", ymapApiKey ?: "")
+        resValue("string", "ymap_static_api_key", ymapStaticApiKey)
     }
 
     buildTypes {
@@ -64,7 +66,9 @@ android {
         outputs.all {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
-            output.outputFileName = "Chatify-${versionName}.apk"
+            val apkVersionCode = versionCode % 1000
+
+            output.outputFileName = "Chatify Messenger ${versionName}.${apkVersionCode}.apk"
         }
     }
 }

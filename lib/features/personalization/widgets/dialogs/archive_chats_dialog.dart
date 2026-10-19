@@ -12,7 +12,8 @@ void showArchiveChatsDialog(BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text(S.of(context).youSureArchiveAllChats,
+            title: Text(
+              S.of(context).youSureArchiveAllChats,
               style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, color: ChatifyColors.darkGrey),
             ),
             contentPadding: EdgeInsets.zero,
@@ -29,7 +30,7 @@ void showArchiveChatsDialog(BuildContext context) {
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: Text(S.of(context).cancel),
+                child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
               TextButton(
                 onPressed: () {
@@ -40,7 +41,7 @@ void showArchiveChatsDialog(BuildContext context) {
                   backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: Text(S.of(context).ok),
+                child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
               ),
             ],
           );

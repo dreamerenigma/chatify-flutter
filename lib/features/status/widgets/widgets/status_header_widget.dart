@@ -144,7 +144,7 @@ class _StatusHeaderWidgetState extends State<StatusHeaderWidget> {
                   children: [
                     Text(widget.userStatus != null ? 'Статус' : S.of(context).addStatus, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400)),
                     Text(
-                      widget.userStatus != null ? DateUtil.formatStatusTime(widget.userStatus!.createdAt) : widget.user.status.isNotEmpty ? widget.user.status : S.of(context).addNewStatus,
+                      widget.userStatus != null ? DateUtil.formatStatusTime(widget.userStatus!.createdAt) : S.of(context).addNewStatus,
                       style: TextStyle(fontSize: 15, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.darkerGrey, height: 1.5),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,

@@ -53,7 +53,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    Text(S.of(context).addDetails, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                    Text(S.of(context).addDetails, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                     const SizedBox(height: 20),
                     Row(
                       children: [
@@ -84,7 +84,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                                   style: TextStyle(fontSize: 12, color: maxCharacters - textController.text.length >= 0 ? ChatifyColors.grey : ChatifyColors.red),
                                 ),
                               ),
-                              style: TextStyle(fontSize: ChatifySizes.fontSizeMd),
+                              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
                               textCapitalization: TextCapitalization.sentences,
                             ),
                           ),
@@ -92,7 +92,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                         const SizedBox(width: 8),
                         IconButton(
                           onPressed: toggleEmojiKeyboard,
-                          icon: Icon(showEmoji ? Icons.keyboard : Icons.emoji_emotions_outlined, color: ChatifyColors.darkGrey, size: 26),
+                          icon: Icon(showEmoji ? Icons.keyboard : Icons.emoji_emotions_outlined, size: 25, color: ChatifyColors.darkGrey),
                         ),
                         if (showEmoji)
                           EmojiPicker(
@@ -126,7 +126,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         ),
                         const SizedBox(width: 8),
                         TextButton(
@@ -141,7 +141,7 @@ void showAddIntelligenceBottomSheet(BuildContext context, String initialText, vo
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).save, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         ),
                       ],
                     ),

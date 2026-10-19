@@ -42,6 +42,7 @@ import '../widgets/image/reply_image_preview_widget.dart';
 import '../widgets/input/chat_input.dart';
 import '../widgets/panels/blocked_chat_panel.dart';
 import '../widgets/toolbar/emoji_toolbar.dart';
+import '../widgets/widget/reply_sticker_preview_widget.dart';
 import '../widgets/widget/reply_video_message_preview_widget.dart';
 import '../widgets/widget/reply_video_preview_widget.dart';
 
@@ -63,6 +64,9 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   final TextEditingController textController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
+  final Map<String, String> _localImagePaths = {};
+  final Set<String> _uploadingMessageIds = {};
+  final Set<String> _failedMessageIds = {};
   late AudioPlayer audioPlayer = AudioPlayer();
   late final AnimationController animationController;
   late final Animation<double> opacityAnimation;
@@ -244,13 +248,17 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   }
 
   Future<void> _checkBlockedStatus() async {
-    final blocked = await APIs.isUserBlocked(widget.user.id);
+    try {
+      final blocked = await APIs.isUserBlocked(widget.user.id);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      isUserBlocked = blocked;
-    });
+      setState(() {
+        isUserBlocked = blocked;
+      });
+    } on FirebaseException catch (e) {
+      log('[Chat] Проверка блокировки не удалась: ${e.code}');
+    }
   }
 
   Future<void> _unblockUser() async {
@@ -593,6 +601,9 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                                               key: ValueKey(message.id),
                                               message: message,
                                               user: widget.user,
+                                              localImagePath: _localImagePaths[message.id],
+                                              isUploading: _uploadingMessageIds.contains(message.id),
+                                              isUploadFailed: _failedMessageIds.contains(message.id),
                                               isSelected: selectedMessages.contains(index),
                                               onLongPress: () {
                                                 _startSelection();
@@ -782,6 +793,12 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                             top: 0,
                             child: ReplyImagePreviewWidget(imagePath: message.msg, type: message.type),
                           ),
+                        if (message.type == MessageType.sticker)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: ReplyStickerPreviewWidget(imageUrl: message.msg),
+                          ),
                         if (message.type == MessageType.videoMessage || message.type == MessageType.video || message.type == MessageType.image)
                           Positioned(
                             top: 4,
@@ -845,6 +862,15 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               pageCount != null ? '$fileName ($pageCount страниц)' : fileName,
               style: TextStyle(color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
             ),
+          ],
+        );
+      case MessageType.sticker:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(ChatifyVectors.stickerFilled, width: 16, height: 16, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, BlendMode.srcIn)),
+            const SizedBox(width: 5),
+            Text('Стикер', style: TextStyle(color: context.isDarkMode ? ChatifyColors.textSecondary : ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           ],
         );
       case MessageType.voice:

@@ -118,8 +118,8 @@ class _MessageBubbleState extends State<MessageBubble> {
               ? BorderRadius.only(
                   topRight: hasReply ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
                   topLeft: Radius.zero,
-                  bottomLeft: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 :15),
-                  bottomRight: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 :15),
+                  bottomLeft: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
+                  bottomRight: widget.actions?.isNotEmpty == true ? Radius.zero : Radius.circular(isWindows ? 10 : 15),
                 )
               : BorderRadius.only(
                   topLeft: hasReply ? Radius.zero : Radius.circular(isWindows ? 10 : 15),

@@ -15,9 +15,9 @@ class DescriptionGroupScreen extends StatefulWidget {
 }
 
 class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
-  bool showEmojiPicker = false;
   final FocusNode textFocusNode = FocusNode();
   final TextEditingController textController = TextEditingController();
+  bool showEmojiPicker = false;
 
   @override
   void dispose() {
@@ -30,7 +30,9 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).groupDescription, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.normal)),
+        titleSpacing: 0,
+        elevation: 0,
+        title: Text(S.of(context).groupDescription, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         automaticallyImplyLeading: false,
       ),
       body: Stack(
@@ -63,7 +65,7 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
                     categoryViewConfig: CategoryViewConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white),
                     bottomActionBarConfig: BottomActionBarConfig(backgroundColor: context.isDarkMode ? ChatifyColors.nightGrey : ChatifyColors.white, buttonColor: ChatifyColors.transparent),
                     skinToneConfig: SkinToneConfig(dialogBackgroundColor: context.isDarkMode ? ChatifyColors.youngNight : ChatifyColors.white),
-                    customBackspaceIcon: Icon(Icons.backspace_outlined, size: 24, color: ChatifyColors.white),
+                    customBackspaceIcon: Icon(Icons.backspace_outlined, size: 25, color: ChatifyColors.white),
                   ),
                 ),
               ),
@@ -130,7 +132,10 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
   Widget _buildTextDescription() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(S.of(context).groupDescriptionVisible, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+      child: Text(
+        S.of(context).groupDescriptionVisible,
+        style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+      ),
     );
   }
 
@@ -155,7 +160,12 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
                   right: BorderSide.none,
                   bottom: BorderSide.none,
                 )),
-                child: Center(child: Text(S.of(context).cancel, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value)))),
+                child: Center(
+                  child: Text(
+                    S.of(context).cancel,
+                    style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  ),
+                ),
               ),
             ),
           ),
@@ -164,9 +174,10 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
           child: Material(
             color: ChatifyColors.transparent,
             child: InkWell(
-              splashColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-              highlightColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
-              hoverColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+              splashFactory: NoSplash.splashFactory,
+              splashColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              highlightColor: context.isDarkMode ? ChatifyColors.steelGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+              hoverColor: context.isDarkMode ? ChatifyColors.lightSoftNight.withAlpha((0.15 * 255).toInt()) : ChatifyColors.steelGrey,
               onTap: () {},
               child: Container(
                 height: 50,
@@ -176,7 +187,12 @@ class _DescriptionGroupScreenState extends State<DescriptionGroupScreen> {
                   right: BorderSide.none,
                   bottom: BorderSide.none,
                 )),
-                child: Center(child: Text(S.of(context).ok, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value)))),
+                child: Center(
+                  child: Text(
+                    S.of(context).ok,
+                    style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  ),
+                ),
               ),
             ),
           ),

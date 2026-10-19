@@ -34,13 +34,7 @@ void showUserComplainDialog(BuildContext parentContext, UserModel user) {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: const Icon(Icons.flag_outlined, size: 32, color: ChatifyColors.buttonLightGrey),
-                    ),
-                  ),
+                  Center(child: SizedBox(width: 56, height: 56, child: const Icon(Icons.flag_outlined, size: 32, color: ChatifyColors.buttonLightGrey))),
                   const SizedBox(height: 4),
                   Center(child: Text('Жалоба в Chatify', textAlign: TextAlign.center, style: TextStyle(color: ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeXl, fontWeight: FontWeight.w400))),
                   const SizedBox(height: 12),
@@ -49,9 +43,7 @@ void showUserComplainDialog(BuildContext parentContext, UserModel user) {
                       style: TextStyle(color: ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400, height: 1.4),
                       children: [
                         const TextSpan(text: 'Данное сообщение будет отправлено в Chatify. ''Этот человек не узнает, что вы заблокировали ''или подали на него жалобу. '),
-                        TextSpan(text: S.of(parentContext).readMore, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w600, decoration: TextDecoration.none),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
-                        ),
+                        TextSpan(text: S.of(parentContext).readMore, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontWeight: FontWeight.w600, decoration: TextDecoration.none), recognizer: TapGestureRecognizer()..onTap = () {}),
                       ],
                     ),
                   ),
@@ -79,7 +71,7 @@ void showUserComplainDialog(BuildContext parentContext, UserModel user) {
                   const SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.only(left: 32),
-                    child: Text('Этот контакт не сможет отправлять вам ''сообщения или звонить.', style: TextStyle(color: ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, height: 1.4)),
+                    child: Text('Этот контакт не сможет отправлять вам ''сообщения или звонить.', style: TextStyle(color: ChatifyColors.textSecondary, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.4)),
                   ),
                   const SizedBox(height: 34),
                   Row(
@@ -93,6 +85,7 @@ void showUserComplainDialog(BuildContext parentContext, UserModel user) {
                             Navigator.pop(parentContext);
                           },
                           style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
                             foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -130,6 +123,7 @@ void showUserComplainDialog(BuildContext parentContext, UserModel user) {
                             }
                           },
                           style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
                             foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

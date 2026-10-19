@@ -49,7 +49,13 @@ class NewsletterApi {
   /// -- Method to fetch newsletter from Firestore.
   static Future<List<NewsletterModel>> getNewsletter() async {
     try {
-      final querySnapshot = await firestore.collection('Newsletters').get();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (uid == null) {
+        return [];
+      }
+
+      final querySnapshot = await firestore.collection('Newsletters').where('members', arrayContains: uid).get();
 
       return querySnapshot.docs.map((doc) => NewsletterModel.fromDocument(doc)).toList();
     } catch (e) {

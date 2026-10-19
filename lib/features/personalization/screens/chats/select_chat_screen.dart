@@ -106,6 +106,7 @@ class SelectChatScreenState extends State<SelectChatScreen> {
             ),
             child: AppBar(
               titleSpacing: 0,
+              elevation: 0,
               title: isSearching
                 ? TextSelectionTheme(
                     data: TextSelectionThemeData(
@@ -138,7 +139,7 @@ class SelectChatScreenState extends State<SelectChatScreen> {
               centerTitle: false,
               actions: [
                 IconButton(
-                  icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                  icon: Icon(isSearching ? CupertinoIcons.clear_circled : Icons.search),
                   onPressed: toggleSearch,
                 ),
               ],

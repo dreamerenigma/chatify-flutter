@@ -48,7 +48,7 @@ class EmojiStickerScreenState extends State<EmojiStickerScreen> {
         title: Text(S.of(context).emojiPicker, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
         actions: [
           if (_selectedEmoji.isNotEmpty)
-            IconButton(icon: const Icon(Icons.check), onPressed: _confirmSelection),
+            IconButton(icon: const Icon(Icons.check_rounded, size: 25), onPressed: _confirmSelection),
         ],
       ),
       body: Column(

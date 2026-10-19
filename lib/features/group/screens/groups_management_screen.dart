@@ -22,6 +22,7 @@ class GroupsManagementScreen extends StatelessWidget {
           child: AppBar(
             title: Text(S.of(context).groups, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -31,7 +32,7 @@ class GroupsManagementScreen extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: const Icon(FluentIcons.delete_24_regular),
+                icon: const Icon(FluentIcons.delete_24_regular, size: 25),
                 onPressed: () {
                   showDeleteListDialog(context, title: S.of(context).groups);
                 },

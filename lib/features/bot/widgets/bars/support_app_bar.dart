@@ -2,16 +2,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
 import '../../../../api/chat_api.dart';
+import '../../../../core/enums/chat_target_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../chat/models/chat_theme_target.dart';
 import '../../../chat/models/user_model.dart';
-import '../../../personalization/screens/chats/wallpaper_screen.dart';
+import '../../../personalization/screens/chats/theme_chat_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../models/info_app_model.dart';
 import '../../models/support_model.dart';
@@ -137,7 +138,7 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                   text: 'Тема чата',
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, createPageRoute(WallpaperScreen(imagePath: imagePath, user: APIs.me, wallpaperKey: wallpaperKey)));
+                    Navigator.push(context, createPageRoute(ThemeChatScreen(imagePath: imagePath, target: ChatThemeTarget(id: widget.user.id, type: ChatTargetType.user), wallpaperKey: wallpaperKey)));
                   },
                 ),
               ),

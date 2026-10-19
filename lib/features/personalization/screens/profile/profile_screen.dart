@@ -36,6 +36,7 @@ class ProfileScreenState extends State<ProfileScreen> {
             child: AppBar(
               title: Text(S.of(context).profile, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
               titleSpacing: 0,
+              elevation: 0,
             ),
           ),
         ),

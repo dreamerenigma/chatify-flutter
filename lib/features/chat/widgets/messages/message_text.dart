@@ -12,16 +12,20 @@ class MessageText extends StatelessWidget {
   final MessageModel message;
   final bool isWebOrWindows;
   final VoidCallback onSecondaryTap;
+  final void Function(String userId)? onMentionTap;
 
   const MessageText({
     super.key,
     required this.message,
     required this.isWebOrWindows,
     required this.onSecondaryTap,
+    this.onMentionTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final spans = parseMessageText(message.msg, context, mentions: message.mentions, onMentionTap: onMentionTap,);
+
     return MouseRegion(
       cursor: Platform.isWindows ? SystemMouseCursors.text : MouseCursor.defer,
       child: Platform.isWindows
@@ -36,14 +40,14 @@ class MessageText extends StatelessWidget {
               data: Theme.of(context).copyWith(textSelectionTheme: const TextSelectionThemeData(selectionColor: ChatifyColors.info, selectionHandleColor: ChatifyColors.info)),
               child: SelectableText.rich(
                 TextSpan(
-                  children: parseMessageText(message.msg, context),
-                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400),
+                  children: spans,
+                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: isWebOrWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeGl, fontWeight: FontWeight.w400),
                 ),
-                contextMenuBuilder: (context, editableTextState,) => const SizedBox.shrink(),
+                contextMenuBuilder: (context, editableTextState) => const SizedBox.shrink(),
               ),
             ),
           )
-        : RichText(text: TextSpan(children: parseMessageText(message.msg, context))),
+        : RichText(text: TextSpan(children: spans)),
     );
   }
 }

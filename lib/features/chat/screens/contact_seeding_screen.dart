@@ -1,27 +1,30 @@
 import 'dart:developer';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/features/chat/screens/send_contact_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:get/get.dart';
 import '../../../../api/apis.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../../utils/popups/dialogs.dart';
-import '../../../api/newsletter_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
-import '../../../utils/devices/device_utility.dart';
 import '../../chat/models/user_model.dart';
 import '../../newsletter/models/newsletter_model.dart';
+import '../../personalization/widgets/cards/use_app_user_card.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../utils/widgets/dividers/custom_divider.dart';
+import '../../utils/widgets/images/user_avatar_image.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
-import '../widgets/cards/contacts_send_card.dart';
 
 class ContactsSendingScreen extends StatefulWidget {
+  final UserModel user;
   final List<UserModel> selectedUsers;
 
-  const ContactsSendingScreen({super.key, required this.selectedUsers});
+  const ContactsSendingScreen({
+    super.key,
+    required this.user,
+    required this.selectedUsers,
+  });
 
   @override
   ContactsSendingScreenState createState() => ContactsSendingScreenState();
@@ -38,6 +41,8 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
   bool isFetchingChatUsers = true;
   bool isSearching = false;
   bool isNumericMode = false;
+  bool _isLoadingProfileImage = false;
+  String? _profileImageUrl;
   List<Contact> contacts = [];
   List<Contact> filteredContacts = [];
   List<UserModel> chatUsers = [];
@@ -54,6 +59,53 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
     _fetchChatUsers();
     _searchController.addListener(() {
       _filterContacts();
+    });
+    _loadProfileImage();
+  }
+
+  void _filterContacts() {
+    final query = _searchController.text.toLowerCase();
+
+    setState(() {
+      filteredContacts = contacts.where((contact) {
+        final contactName = (contact.displayName ?? '').toLowerCase();
+
+        return contactName.contains(query);
+      }).toList();
+    });
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      if (isSearching) {
+        _searchController.clear();
+        _searchFocusNode.unfocus();
+        searchList = List.from(list);
+      } else {
+        _searchFocusNode.requestFocus();
+      }
+      isSearching = !isSearching;
+    });
+  }
+
+  void _toggleInputMode() {
+    setState(() {
+      isNumericMode = !isNumericMode;
+      textFieldKey = UniqueKey();
+    });
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _searchFocusNode.requestFocus();
+    });
+  }
+
+  void _toggleUserSelection(UserModel user) {
+    setState(() {
+      if (selectedUsers.contains(user)) {
+        selectedUsers.remove(user);
+      } else {
+        selectedUsers.add(user);
+      }
     });
   }
 
@@ -121,55 +173,46 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
     }
   }
 
-  void _filterContacts() {
-    final query = _searchController.text.toLowerCase();
+  Future<void> _loadProfileImage() async {
+    final imagePath = widget.user.image.trim();
 
-    setState(() {
-      filteredContacts = contacts.where((contact) {
-        final contactName = (contact.displayName ?? '').toLowerCase();
+    if (imagePath.isEmpty) {
+      return;
+    }
 
-        return contactName.contains(query);
-      }).toList();
-    });
-  }
+    if (mounted) {
+      setState(() {
+        _isLoadingProfileImage = true;
+      });
+    }
 
-  void _toggleSearch() {
-    setState(() {
-      if (isSearching) {
-        _searchController.clear();
-        _searchFocusNode.unfocus();
-        searchList = List.from(list);
-      } else {
-        _searchFocusNode.requestFocus();
-      }
-      isSearching = !isSearching;
-    });
-  }
+    try {
+      final url = await APIs.getMediaUrl(imagePath);
 
-  void _toggleInputMode() {
-    setState(() {
-      isNumericMode = !isNumericMode;
-      textFieldKey = UniqueKey();
-    });
+      if (!mounted) return;
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      _searchFocusNode.requestFocus();
-    });
-  }
+      setState(() {
+        _profileImageUrl = url;
+        _isLoadingProfileImage = false;
+      });
+    } catch (e, stackTrace) {
+      log('PROFILE IMAGE URL ERROR: $e', stackTrace: stackTrace);
 
-  void _toggleUserSelection(UserModel user) {
-    setState(() {
-      if (selectedUsers.contains(user)) {
-        selectedUsers.remove(user);
-      } else {
-        selectedUsers.add(user);
-      }
-    });
+      if (!mounted) return;
+
+      setState(() {
+        _profileImageUrl = null;
+        _isLoadingProfileImage = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = isFetchingContacts || isFetchingChatUsers;
+    final currentUserId = APIs.me.id;
+    final filteredChatUsers = chatUsers.where((user) => user.id != currentUserId).toList();
+    final filteredContactsList = filteredContacts.where((contact) => contact.id != currentUserId).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -211,180 +254,160 @@ class ContactsSendingScreenState extends State<ContactsSendingScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(S.of(context).contactsSending, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.normal)),
+                Text(S.of(context).contactsSending, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                 const SizedBox(height: 4),
-                Text('${S.of(context).selected} ${selectedUsers.length}', style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.normal)),
-              ],
+                Text(
+                  '${selectedUsers.length == 1 ? 'Выбран' : 'Выбрано'}: ${selectedUsers.length}',
+                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
+                ),              ],
             ),
         actions: isSearching
           ? [
               IconButton(
-                icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad),
+                icon: Icon(isNumericMode ? Icons.keyboard : Icons.dialpad, size: 25),
                 onPressed: _toggleInputMode,
               ),
             ]
           : [
               IconButton(
-                icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                icon: Icon(isSearching ? CupertinoIcons.clear_circled : Icons.search, size: 25),
                 onPressed: _toggleSearch,
               ),
             ],
       ),
       body: isLoading
         ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value))))
-        : ScrollbarTheme(data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
-        child: Scrollbar(
-          thickness: 4,
-          thumbVisibility: false,
-          child: ScrollConfiguration(
-            behavior: NoGlowScrollBehavior(),
-            child: ListView.builder(
-              itemCount: chatUsers.length + filteredContacts.length + 2 + (selectedUsers.isEmpty ? 0 : 2),
-              itemBuilder: (context, index) {
-                int contentIndex = index;
-                if (selectedUsers.isNotEmpty) {
-                  if (index == 0) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Wrap(
-                            spacing: 16,
-                            runSpacing: 16,
-                            children: selectedUsers.map((user) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.bottomRight,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                            BorderRadius.circular(DeviceUtils.getScreenHeight(context) * .03),
-                                            child: CachedNetworkImage(
-                                              width: DeviceUtils.getScreenHeight(context) * .055,
-                                              height: DeviceUtils.getScreenHeight(context) * .055,
-                                              imageUrl: user.image,
-                                              fit: BoxFit.cover,
-                                              errorWidget: (context, url, error) =>
-                                                CircleAvatar(
-                                                  backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                                                  backgroundImage: NetworkImage(user.image),
-                                                  foregroundColor: ChatifyColors.white,
-                                                  child: const Icon(CupertinoIcons.person),
-                                                ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            user.name.length > 7 ? '${user.name.substring(0, 7)}...' : user.name,
-                                            style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      ),
-                                      Positioned(
-                                        bottom: 17,
-                                        right: 0,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            _toggleUserSelection(user);
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
-                                            child: const CircleAvatar(
-                                              backgroundColor:
-                                              ChatifyColors.grey,
-                                              radius: 12,
-                                              child: Icon(Icons.close, size: 16, color: ChatifyColors.black),
+        : ScrollbarTheme(
+          data: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(ChatifyColors.darkerGrey)),
+          child: Scrollbar(
+            thickness: 4,
+            thumbVisibility: false,
+            child: ScrollConfiguration(
+              behavior: NoGlowScrollBehavior(),
+              child: ListView.builder(
+                itemCount: filteredChatUsers.length + filteredContactsList.length + 3 + (selectedUsers.isEmpty ? 0 : 1),
+                itemBuilder: (context, index) {
+                  int adjustedIndex = index;
+                  if (selectedUsers.isNotEmpty) {
+                    if (index == 0) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: Wrap(
+                              spacing: 16,
+                              runSpacing: 16,
+                              children: selectedUsers.map((user) {
+                                return Column(
+                                  key: ValueKey(user.id),
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        UserAvatarImage(user: user, radius: 27),
+                                        Positioned(
+                                          bottom: -3,
+                                          right: -7,
+                                          child: GestureDetector(
+                                            onTap: () => _toggleUserSelection(user),
+                                            child: Container(
+                                              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ChatifyColors.black, width: 2)),
+                                              child: const CircleAvatar(
+                                                backgroundColor:
+                                                ChatifyColors.darkGrey,
+                                                radius: 10,
+                                                child: Icon(Icons.close_rounded, size: 16, color: ChatifyColors.black),
+                                              ),
                                             ),
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    SizedBox(
+                                      width: 70,
+                                      child: Text(
+                                        user.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            }).toList(),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
                           ),
-                        ),
-                        const Divider(),
-                      ],
+                          CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 5, bottom: 0),
+                        ],
+                      );
+                    }
+
+                    adjustedIndex--;
+                  }
+                  if (adjustedIndex == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 6),
+                      child: Text('Вы', style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                    );
+                  }
+                  adjustedIndex--;
+                  if (adjustedIndex == 0) {
+                    return UseAppUserCard(
+                      user: APIs.me,
+                      showSelectionButton: true,
+                      onUserSelected: _toggleUserSelection,
+                      isSelected: selectedUsers.any((user) => user.id == APIs.me.id),
+                    );
+                  }
+                  adjustedIndex--;
+                  if (adjustedIndex == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 6),
+                      child: Text(
+                        S.of(context).contactsOnApp,
+                        style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                      ),
+                    );
+                  }
+                  adjustedIndex--;
+                  if (adjustedIndex < filteredChatUsers.length) {
+                    final chatUser = filteredChatUsers[adjustedIndex];
+
+                    return UseAppUserCard(
+                      user: chatUser,
+                      showSelectionButton: true,
+                      isSelected: selectedUsers.any((user) => user.id == chatUser.id),
+                      onUserSelected: _toggleUserSelection,
                     );
                   }
 
-                  contentIndex = index - 1;
-                }
-                if (contentIndex == 0) {
+                  adjustedIndex -= filteredChatUsers.length;
+
+                  final filteredIndex = adjustedIndex - 1;
+
+                  if (filteredIndex >= 0 && filteredIndex < filteredContactsList.length) {
+                    final contact = filteredContactsList[filteredIndex];
+
+                  }
+
                   return const SizedBox.shrink();
-                }
-
-                contentIndex--;
-
-                if (contentIndex < chatUsers.length) {
-                  final chatUser = chatUsers[contentIndex];
-
-                  return ContactsSendCard(
-                    user: chatUser,
-                    contact: filteredContacts[contentIndex],
-                    isSelected: selectedUsers.contains(chatUser),
-                    onUserSelected: _toggleUserSelection,
-                  );
-                }
-
-                if (contentIndex >= 0 && contentIndex < chatUsers.length && contentIndex < filteredContacts.length) {
-                  final chatUser = chatUsers[contentIndex];
-                  final contact = filteredContacts[contentIndex];
-
-                  return ContactsSendCard(
-                    user: chatUser,
-                    contact: contact,
-                    isSelected: selectedUsers.contains(chatUser),
-                    onUserSelected: _toggleUserSelection,
-                  );
-                }
-
-                return const SizedBox.shrink();
-              },
+                },
+              ),
             ),
           ),
         ),
-      ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 5),
         child: FloatingActionButton(
-          heroTag: 'newsletterList',
+          heroTag: 'sendContact',
           onPressed: () async {
-            final newsletterName = textController.text.trim();
-            final members = selectedUsers.map((user) => user.id).toList();
+            if (selectedUsers.isEmpty) return;
 
-            if (selectedUsers.length < 2) {
-              Dialogs.showSnackbar(context, S.of(context).atLeastTwoContactsSelected);
-
-              return;
-            }
-
-            final createdAt = DateTime.now().millisecondsSinceEpoch.toString();
-            final newsletter = NewsletterModel(
-              id: '',
-              newsletterImage: '',
-              newsletterName: newsletterName,
-              creatorName: APIs.user.displayName ?? S.of(context).unknownUser,
-              members: members,
-              createdAt: createdAt,
-            );
-
-            bool isSuccess = await NewsletterApi.createNewsletter(context, newsletter);
-
-            if (isSuccess) {
-              Navigator.pop(context, newsletter);
-            } else {
-              Get.snackbar(S.of(context).error, S.of(context).errorCreatingMailingList);
-            }
+            Navigator.push(context, MaterialPageRoute(builder: (context) => SendContactScreen(users: List<UserModel>.from(selectedUsers), user: widget.user)));
           },
           backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
           foregroundColor: ChatifyColors.white,

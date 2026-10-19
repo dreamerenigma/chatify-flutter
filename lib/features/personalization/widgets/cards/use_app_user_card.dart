@@ -124,7 +124,7 @@ class UseAppUserCardState extends State<UseAppUserCard> {
       margin: widget.margin ?? EdgeInsets.only(left: Platform.isWindows ? 16 : 8, right: Platform.isWindows ? 15 : 8, top: 8),
       elevation: widget.isSelected ? 4 : 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: widget.isSelected ? Colors.blue.withAlpha((0.1 * 255).toInt()) : null,
+      color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()) : null,
       child: Material(
         color: ChatifyColors.transparent,
         child: InkWell(
@@ -205,7 +205,7 @@ class UseAppUserCardState extends State<UseAppUserCard> {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Icon(
-                        widget.isSelected ? Icons.check_circle : Icons.circle_outlined,
+                        widget.isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
                         size: 26,
                         color: widget.isSelected ? colorsController.getColor(colorsController.selectedColorScheme.value) : context.isDarkMode ? ChatifyColors.darkerGrey : ChatifyColors.darkGrey,
                       ),

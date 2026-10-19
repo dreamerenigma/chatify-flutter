@@ -22,6 +22,7 @@ import '../messages/recipient_message.dart';
 import '../messages/recipient_video_message.dart';
 import '../messages/sender_message.dart';
 import '../messages/sender_video_message.dart';
+import '../messages/sticker_message.dart';
 import '../painters/triangle_painter.dart';
 import '../widget/reply_message_widget.dart';
 
@@ -29,6 +30,9 @@ class MessageCard extends StatefulWidget {
   final UserModel user;
   final MessageModel message;
   final bool isSelected;
+  final bool isUploading;
+  final bool isUploadFailed;
+  final String? localImagePath;
   final VoidCallback onLongPress;
   final VoidCallback onTap;
   final MessageModel? previousMessage;
@@ -44,6 +48,9 @@ class MessageCard extends StatefulWidget {
     required this.messages,
     this.previousMessage,
     this.isSelected = false,
+    this.isUploading = false,
+    this.isUploadFailed = false,
+    this.localImagePath,
     this.onReply,
   });
 
@@ -75,6 +82,10 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
       case MessageType.text:
         return screenWidth * (isWindows ? 0.5 : 0.8);
       case MessageType.document:
+        return screenWidth * 0.9;
+      case MessageType.contact:
+        return screenWidth * 0.9;
+      case MessageType.location:
         return screenWidth * 0.9;
       case MessageType.survey:
         return screenWidth * 0.9;
@@ -393,22 +404,35 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
               type: isMe ? MessageBubbleType.recipient : MessageBubbleType.sender,
               isPressed: widget.isSelected,
             ),
-          widget.message.type == MessageType.videoMessage ? _buildVideoMessageCard(isMe: isMe) : isMe
-            ? RecipientMessage(
+          if (widget.message.type == MessageType.videoMessage)
+            _buildVideoMessageCard(isMe: isMe)
+          else if (widget.message.type == MessageType.sticker)
+            _buildStickerMessageCard(isMe: isMe)
+          else if (isMe)
+              RecipientMessage(
                 message: widget.message,
                 messages: widget.messages,
                 hasReaction: hasReaction,
                 hasReply: repliedMessage != null,
-                conversationId: ChatApi.getConversationId(widget.user.id),
-                user: APIs.me,
+                conversationId:
+                ChatApi.getConversationId(widget.user.id),
+                user: widget.user,
+                localImagePath: widget.localImagePath,
+                isUploading: widget.isUploading,
+                isUploadFailed: widget.isUploadFailed,
               )
-            : SenderMessage(
+            else
+              SenderMessage(
                 message: widget.message,
                 messages: widget.messages,
                 hasReaction: hasReaction,
                 hasReply: repliedMessage != null,
                 user: widget.user,
-                conversationId: ChatApi.getConversationId(widget.user.id),
+                conversationId:
+                ChatApi.getConversationId(widget.user.id),
+                localImagePath: widget.localImagePath,
+                isUploading: widget.isUploading,
+                isUploadFailed: widget.isUploadFailed,
               ),
         ],
       ),
@@ -457,5 +481,11 @@ class _MessageCardState extends State<MessageCard> with SingleTickerProviderStat
       },
       swipeProgress: (_swipeOffset / _replyIconDistance).clamp(0.0, 1.0),
     );
+  }
+
+  Widget _buildStickerMessageCard({required bool isMe}) {
+    final imageUrl = widget.message.msg as String? ?? '';
+
+    return StickerMessage(message: widget.message, imageUrl: imageUrl);
   }
 }

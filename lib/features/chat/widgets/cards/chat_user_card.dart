@@ -208,7 +208,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                               ),
                             ),
                           ),
-                          if (!isWindows && widget.user.isOnline)
+                          if (!isWindows && !isLoadingProfileImage && widget.user.isOnline)
                             Positioned(
                               right: 2,
                               bottom: 0,
@@ -384,11 +384,29 @@ class ChatUserCardState extends State<ChatUserCard> {
   }
 
   Widget _buildMessagePreview(BuildContext context, MessageModel message) {
+    final showDoubleCheck = !{MessageType.videoMessage, MessageType.voice, MessageType.call}.contains(message.type);
+
     return Row(
       children: [
         Expanded(
           child: Row(
             children: [
+              if (showDoubleCheck) ...[
+                SvgPicture.asset(
+                  ChatifyVectors.doubleCheck,
+                  width: 18,
+                  height: 18,
+                  colorFilter: ColorFilter.mode(
+                    message.read.isNotEmpty
+                        ? ChatifyColors.blue
+                        : context.isDarkMode
+                        ? ChatifyColors.darkGrey
+                        : ChatifyColors.textSecondary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
               if (message.type == MessageType.gif) ...[
                 HeroIcon(HeroIcons.gif, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, size: 20),
                 const SizedBox(width: 5),
@@ -400,12 +418,23 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
-              ] else if (message.type == MessageType.image) ...[
-                Icon(Icons.image, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+              ] else if (message.type == MessageType.sticker) ...[
+                SvgPicture.asset(ChatifyVectors.stickerFilled, width: 22, height: 22, colorFilter: ColorFilter.mode( context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, BlendMode.srcIn)),
                 const SizedBox(width: 5),
                 Flexible(
                   child: Text(
-                    S.of(context).photo,
+                    'Стикер',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ] else if (message.type == MessageType.image) ...[
+                Icon(Icons.image, size: 17, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    message.caption?.trim().isNotEmpty == true ? message.caption!.trim() : S.of(context).photo,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
@@ -416,7 +445,7 @@ class ChatUserCardState extends State<ChatUserCard> {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    S.of(context).video,
+                    message.caption?.trim().isNotEmpty == true ? message.caption!.trim() : S.of(context).video,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
@@ -466,6 +495,17 @@ class ChatUserCardState extends State<ChatUserCard> {
                     style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
+              ] else if (message.type == MessageType.contact) ...[
+                Icon(Icons.person_rounded, size: 17, color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    widget.user.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
+                ),
               ] else if (message.type == MessageType.survey) ...[
                 Expanded(
                   child: Row(
@@ -506,27 +546,24 @@ class ChatUserCardState extends State<ChatUserCard> {
                     ),
                   ),
                 ),
-              ] else ...[
+              ] else if (message.type == MessageType.location) ...[
+                Icon(Icons.location_on_rounded, size: 17, color:context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary),
+                const SizedBox(width: 5),
                 Flexible(
-                  child: RichText(
+                  child: Text(
+                    S.of(context).location,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          alignment: PlaceholderAlignment.middle,
-                          child: SvgPicture.asset(ChatifyVectors.doubleCheck, width: 18, height: 18, colorFilter: ColorFilter.mode(
-                            message.read.isNotEmpty ? ChatifyColors.blue : context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary,
-                            BlendMode.srcIn,
-                          )),
-                        ),
-                        const WidgetSpan(child: SizedBox(width: 4)),
-                        TextSpan(
-                          text: message.msg,
-                          style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
-                        ),
-                      ],
-                    ),
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ] else ...[
+                Flexible(
+                  child: Text(
+                    message.msg,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 ),
               ],

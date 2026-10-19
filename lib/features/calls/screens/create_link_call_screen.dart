@@ -148,7 +148,7 @@ class CreateLinkCallScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 26, height: 26, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
+                      icon: SvgPicture.asset(ChatifyVectors.arrowBendDoubleUpRight, width: 25, height: 25, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
                       onPressed: () {},
                     ),
                     const SizedBox(width: 20),

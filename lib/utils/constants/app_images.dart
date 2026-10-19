@@ -47,6 +47,14 @@ class ChatifyImages {
   static const String wallpaperLightV11 = "assets/images/wallpapers/light_11.jpg";
   static const String wallpaperLightV12 = "assets/images/wallpapers/light_12.jpg";
   static const String wallpaperLightV13 = "assets/images/wallpapers/light_13.jpg";
+  static const String wallpaperLightV14 = "assets/images/wallpapers/light_14.jpg";
+  static const String wallpaperLightV15 = "assets/images/wallpapers/light_15.jpg";
+  static const String wallpaperLightV16 = "assets/images/wallpapers/light_16.jpg";
+  static const String wallpaperLightV17 = "assets/images/wallpapers/light_17.jpg";
+  static const String wallpaperLightV18 = "assets/images/wallpapers/light_18.jpg";
+  static const String wallpaperLightV19 = "assets/images/wallpapers/light_19.jpg";
+  static const String wallpaperLightV20 = "assets/images/wallpapers/light_20.jpg";
+  static const String wallpaperLightV21 = "assets/images/wallpapers/light_21.jpg";
 
   /// -- Wallpapers dark
   static const String wallpaperDarkV1 = "assets/images/wallpapers/dark_1.jpg";
@@ -63,6 +71,13 @@ class ChatifyImages {
   static const String wallpaperDarkV12 = "assets/images/wallpapers/dark_12.jpg";
   static const String wallpaperDarkV13 = "assets/images/wallpapers/dark_13.jpg";
   static const String wallpaperDarkV14 = "assets/images/wallpapers/dark_14.jpg";
+  static const String wallpaperDarkV15 = "assets/images/wallpapers/dark_15.jpg";
+  static const String wallpaperDarkV16 = "assets/images/wallpapers/dark_16.jpg";
+  static const String wallpaperDarkV17 = "assets/images/wallpapers/dark_17.jpg";
+  static const String wallpaperDarkV18 = "assets/images/wallpapers/dark_18.jpg";
+  static const String wallpaperDarkV19 = "assets/images/wallpapers/dark_19.jpg";
+  static const String wallpaperDarkV20 = "assets/images/wallpapers/dark_20.jpg";
+  static const String wallpaperDarkV21 = "assets/images/wallpapers/dark_21.jpg";
 
   /// -- Wallpapers solid colors
   static const String wallpaperSolidV1 = "assets/images/solid_colors/solid_color_1.png";

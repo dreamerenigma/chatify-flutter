@@ -22,8 +22,8 @@ class MentionDataModel {
 
   factory MentionDataModel.fromJson(Map<String, dynamic> json) {
     return MentionDataModel(
-      userId: json['userId']?.toString() ?? '',
-      text: json['text']?.toString() ?? '',
+      userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
+      text: (json['text'] ?? '').toString(),
       start: (json['start'] as num?)?.toInt() ?? 0,
       end: (json['end'] as num?)?.toInt() ?? 0,
     );

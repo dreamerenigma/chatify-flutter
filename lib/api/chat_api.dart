@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import '../core/enums/call_status_type.dart';
@@ -10,11 +12,14 @@ import '../core/enums/call_type.dart';
 import '../core/enums/message_type.dart';
 import '../core/services/media/media_service.dart';
 import '../core/services/media/yandex/yandex_disk_paths.dart';
+import '../features/calls/models/recent_call_model.dart';
 import '../features/chat/models/event_model.dart';
+import '../features/chat/models/location_model.dart';
 import '../features/chat/models/mention_data_model.dart';
 import '../features/chat/models/message_model.dart';
 import '../features/chat/models/user_model.dart';
 import '../features/survey/models/survey_model.dart';
+import 'package:geocoding/geocoding.dart';
 import 'apis.dart';
 
 class ChatApi {
@@ -51,10 +56,12 @@ class ChatApi {
     String? fileSize,
     String? imageUrl,
     String? replyToMessageId,
+    String? caption,
     int? videoDuration,
     int? audioDuration,
     int? documentPagesCount,
     List<MentionDataModel>? mentions,
+    LocationModel? location,
   }) async {
     try {
       final now = Timestamp.now();
@@ -74,11 +81,13 @@ class ChatApi {
         videoDuration: videoDuration,
         documentPagesCount: documentPagesCount,
         replyToMessageId: replyToMessageId,
+        caption: caption,
         deletedBy: [],
         reactions: {},
         deletedAt: null,
         id: messageId,
         mentions: mentions ?? [],
+        location: location,
       );
 
       final ref = firestore.collection('Chats').doc(conversationId).collection('messages').doc(messageId);
@@ -86,7 +95,16 @@ class ChatApi {
       await ref.set(message.toJson());
       await firestore.collection('Users').doc(user.uid).collection('my_users').doc(chatUser.id).set({'lastMessageTime': messageId}, SetOptions(merge: true));
       await firestore.collection('Users').doc(chatUser.id).collection('my_users').doc(user.uid).set({'lastMessageTime': messageId}, SetOptions(merge: true));
-      await APIs.sendPushNotification(chatUser, type == MessageType.text ? msg : 'image', imageUrl: imageUrl);
+
+      if (message.read.isEmpty && message.toId != message.fromId) {
+        await APIs.incrementUnreadCount(ownerId: chatUser.id, chatUserId: user.uid);
+      }
+
+      final notificationMessage = switch (type) {
+        MessageType.text => msg, MessageType.contact => 'Контакт', MessageType.image => 'Изображение', _ => 'Новое сообщение',
+      };
+
+      await APIs.sendPushNotification(chatUser, notificationMessage, imageUrl: imageUrl);
 
     } catch (e, stackTrace) {
       log('SEND MESSAGE ERROR: $e', stackTrace: stackTrace);
@@ -158,6 +176,108 @@ class ChatApi {
     await ref.set(message.toJson());
 
     return messageId;
+  }
+
+  /// -- Recent calls.
+  static Future<List<RecentCallModel>> getRecentCalls() async {
+    final currentUserId = auth.currentUser?.uid;
+
+    if (currentUserId == null) return [];
+
+    final callsRef = firestore.collection('Calls');
+
+    final callerSnapshot = await callsRef.where('callerId', isEqualTo: currentUserId).get();
+
+    final receiverSnapshot = await callsRef.where('receiverId', isEqualTo: currentUserId).get();
+
+    final Map<String, dynamic> documents = {};
+
+    for (final doc in callerSnapshot.docs) {
+      documents[doc.id] = doc.data();
+    }
+
+    for (final doc in receiverSnapshot.docs) {
+      documents[doc.id] = doc.data();
+    }
+
+    final callDocs = documents.entries.where((entry) {
+      final data = entry.value as Map<String, dynamic>;
+
+      return data['type'] == 'audio' || data['type'] == 'video';
+    }).toList();
+
+    int getCreatedAt(Map<String, dynamic> data) {
+      final value = data['createdAt'];
+
+      if (value is num) return value.toInt();
+      if (value is Timestamp) return value.millisecondsSinceEpoch;
+
+      return 0;
+    }
+
+    callDocs.sort((a, b) {
+      final dataA = a.value as Map<String, dynamic>;
+      final dataB = b.value as Map<String, dynamic>;
+
+      return getCreatedAt(dataB).compareTo(getCreatedAt(dataA));
+    });
+
+    final userCache = <String, UserModel>{};
+    final result = <RecentCallModel>[];
+
+    for (final entry in callDocs) {
+      final data = entry.value as Map<String, dynamic>;
+
+      final callerId = data['callerId'] as String?;
+      final receiverId = data['receiverId'] as String?;
+
+      if (callerId == null || receiverId == null) continue;
+
+      final isIncoming = receiverId == currentUserId;
+      final otherUserId = isIncoming ? callerId : receiverId;
+
+      try {
+        UserModel? otherUser = userCache[otherUserId];
+
+        if (otherUser == null) {
+          final userDoc = await firestore.collection('Users').doc(otherUserId).get();
+
+          if (!userDoc.exists || userDoc.data() == null) {
+            debugPrint('CALLS: профиль не найден: $otherUserId');
+            continue;
+          }
+
+          otherUser = UserModel.fromJson(userDoc.data()!);
+          userCache[otherUserId] = otherUser;
+        }
+
+        final createdAt = getCreatedAt(data);
+        if (createdAt == 0) {
+          debugPrint('CALLS: отсутствует createdAt: ${entry.key}');
+          continue;
+        }
+
+        final state =
+        (data['state'] as String? ?? '').toLowerCase();
+
+        result.add(
+          RecentCallModel(
+            user: otherUser,
+            time: DateTime.fromMillisecondsSinceEpoch(createdAt),
+            isIncoming: isIncoming,
+            isMissed: state == 'missed',
+            isVideo: data['type'] == 'video',
+          ),
+        );
+      } catch (e, stackTrace) {
+        debugPrint('CALLS: ошибка обработки ${entry.key}: $e');
+        debugPrintStack(stackTrace: stackTrace);
+      }
+    }
+
+    debugPrint('CALLS: подготовлено звонков = ${result.length}');
+
+    return result;
   }
 
   /// -- Send voice message.
@@ -311,9 +431,7 @@ class ChatApi {
   static Future<void> markMessagesAsRead(List<MessageModel> messages) async {
     final unreadMessages = messages.where((message) => message.toId == user.uid && message.fromId != user.uid && message.read.isEmpty).toList();
 
-    if (unreadMessages.isEmpty) {
-      return;
-    }
+    if (unreadMessages.isEmpty) return;
 
     final conversationId = getConversationId(unreadMessages.first.fromId);
 
@@ -327,6 +445,8 @@ class ChatApi {
     }
 
     await batch.commit();
+
+    await APIs.resetUnreadCount(userId: unreadMessages.first.fromId);
   }
 
   /// -- .
@@ -353,7 +473,7 @@ class ChatApi {
   }
 
   /// -- Send chat image.
-  static Future<void> sendChatImage(UserModel chatUser, File file, {String? replyToMessageId}) async {
+  static Future<void> sendChatImage(UserModel chatUser, File file, {String? caption, String? replyToMessageId}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final isGif = ext == 'gif';
     final chatId = getConversationId(chatUser.id);
@@ -368,7 +488,7 @@ class ChatApi {
         return;
       }
 
-      await sendMessage(chatUser, imagePath, isGif ? MessageType.gif : MessageType.image, replyToMessageId: replyToMessageId);
+      await sendMessage(chatUser, imagePath, isGif ? MessageType.gif : MessageType.image, caption: caption, replyToMessageId: replyToMessageId);
     } catch (e, st) {
       log('SEND IMAGE: error = $e');
       log('SEND IMAGE: stack = $st');
@@ -479,6 +599,129 @@ class ChatApi {
     } catch (e, st) {
       log('SEND DOCUMENT: error = $e');
       log('SEND DOCUMENT: stack = $st');
+    }
+  }
+
+  /// --- Send chat contact.
+  static Future<void> sendChatContact(UserModel chatUser, UserModel contact, {bool includePhone = true, bool includeUsername = true, String? replyToMessageId}) async {
+    if (!includePhone && !includeUsername) {
+      throw ArgumentError('Необходимо выбрать хотя бы одно поле контакта.');
+    }
+
+    final contactData = <String, dynamic>{
+      'userId': contact.id,
+      'name': contact.name,
+      if (includePhone) 'phoneNumber': contact.phoneNumber,
+      if (includeUsername) 'username': contact.username,
+    };
+
+    await sendMessage(chatUser, jsonEncode(contactData), MessageType.contact, replyToMessageId: replyToMessageId);
+  }
+
+  /// --- Send chat geolocation.
+  static Future<void> sendChatGeolocation(UserModel chatUser, {required double latitude, required double longitude}) async {
+    final addressData = await getAddressFromCoordinates(latitude, longitude);
+
+    final location = LocationModel(
+      latitude: latitude,
+      longitude: longitude,
+      address: addressData['address'] ?? 'Адрес не определён',
+      city: addressData['city'] ?? '',
+      district: addressData['district'] ?? '',
+    );
+
+    await sendMessage(chatUser, 'Геолокация', MessageType.location, location: location);
+  }
+
+  /// --- .
+  static Future<Map<String, String>> getAddressFromCoordinates(double latitude, double longitude) async {
+    try {
+      final Geocoding _geocoding = Geocoding();
+      final placemarks = await _geocoding.placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isEmpty) {
+        return {
+          'address': 'Адрес не определён',
+          'city': '',
+          'district': '',
+          'countryCode': '',
+        };
+      }
+
+      final place = placemarks.first;
+
+      String clean(String? value) => value?.trim() ?? '';
+
+      final street = clean(place.street);
+      final name = clean(place.name);
+      final locality = clean(place.locality);
+      final subAdministrativeArea = clean(place.subAdministrativeArea);
+      final administrativeArea = clean(place.administrativeArea);
+      final subLocality = clean(place.subLocality);
+      final subThoroughfare = clean(place.subThoroughfare);
+      final thoroughfare = clean(place.thoroughfare);
+      final countryCode = clean(place.isoCountryCode);
+
+      var streetAddress = street;
+
+      if (streetAddress.isEmpty) {
+        streetAddress = thoroughfare;
+      }
+
+      if (subThoroughfare.isNotEmpty && !streetAddress.contains(subThoroughfare)) {
+        streetAddress = streetAddress.isEmpty ? subThoroughfare : '$streetAddress, $subThoroughfare';
+      }
+
+      if (streetAddress.isEmpty) {
+        streetAddress = name;
+      }
+
+      final city = locality.isNotEmpty ? locality : subAdministrativeArea;
+      final region = administrativeArea;
+      final district = subLocality;
+      final subtitleParts = <String>[city, region, countryCode == 'RU' ? 'Приволжский федеральный округ' : '', countryCode].where((value) => value.isNotEmpty).toList();
+      final subtitle = <String>[];
+
+      for (final part in subtitleParts) {
+        if (!subtitle.contains(part)) {
+          subtitle.add(part);
+        }
+      }
+
+      return {
+        'address': streetAddress.isNotEmpty ? streetAddress : 'Адрес не определён',
+        'city': city,
+        'district': region.isNotEmpty ? region : district,
+        'countryCode': countryCode,
+        'subtitle': subtitle.join(', '),
+      };
+    } catch (e, stackTrace) {
+      log('Ошибка определения адреса: $e', stackTrace: stackTrace);
+
+      return {
+        'address': 'Адрес не определён',
+        'city': '',
+        'district': '',
+        'countryCode': '',
+        'subtitle': '',
+      };
+    }
+  }
+
+  /// --- Send chat sticker.
+  static Future<void> sendChatSticker(UserModel chatUser, String stickerPath, {String? replyToMessageId}) async {
+    if (stickerPath.trim().isEmpty) {
+      log('SEND STICKER: path is empty');
+      return;
+    }
+
+    try {
+      await sendMessage(chatUser, stickerPath, MessageType.sticker, replyToMessageId: replyToMessageId);
+
+      log('SEND STICKER: message sent');
+    } catch (e, st) {
+      log('SEND STICKER: error = $e');
+      log('SEND STICKER: stack = $st');
     }
   }
 
