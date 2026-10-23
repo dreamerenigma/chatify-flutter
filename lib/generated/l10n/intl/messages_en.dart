@@ -347,6 +347,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "blockingApp": MessageLookupByLibrary.simpleMessage(
       "Blocking the application",
     ),
+    "blue": MessageLookupByLibrary.simpleMessage("Blue"),
     "blueColor": MessageLookupByLibrary.simpleMessage("Blue"),
     "bright": MessageLookupByLibrary.simpleMessage("Bright"),
     "brightWallpaper": MessageLookupByLibrary.simpleMessage("Bright"),
@@ -1181,6 +1182,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google Authorization",
     ),
     "greekLanguage": MessageLookupByLibrary.simpleMessage("Greek"),
+    "green": MessageLookupByLibrary.simpleMessage("Green"),
     "greenColor": MessageLookupByLibrary.simpleMessage("Green"),
     "groupAdminsReceiveNotify": MessageLookupByLibrary.simpleMessage(
       "Only group admins will receive notifications that you have left the group",
@@ -1398,6 +1400,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "licenses": MessageLookupByLibrary.simpleMessage("Licenses"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),
+    "lightBlue": MessageLookupByLibrary.simpleMessage("Light blue"),
     "lightNotify": MessageLookupByLibrary.simpleMessage("Light"),
     "linkCopied": MessageLookupByLibrary.simpleMessage("Link copied"),
     "linkOtherDevicesToAccount": MessageLookupByLibrary.simpleMessage(
@@ -1436,6 +1439,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWith": MessageLookupByLibrary.simpleMessage("Login with "),
     "logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "logoutAccount": MessageLookupByLibrary.simpleMessage("Logout"),
+    "logoutQuestion": MessageLookupByLibrary.simpleMessage("Logout?"),
     "long": MessageLookupByLibrary.simpleMessage("Long"),
     "longPressMessageChannelFavorites": MessageLookupByLibrary.simpleMessage(
       "Tap and hold a message or channel post to add it to Favorites. This makes it easy to find content later.",
@@ -1596,7 +1600,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "nextChat": MessageLookupByLibrary.simpleMessage("Next Chat"),
     "nineHours": MessageLookupByLibrary.simpleMessage("8 hours"),
-    "no": MessageLookupByLibrary.simpleMessage("No"),
     "noBlockedContacts": MessageLookupByLibrary.simpleMessage(
       "No blocked contacts",
     ),
@@ -1627,6 +1630,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "No Internet Connection",
     ),
     "noLinks": MessageLookupByLibrary.simpleMessage("No links"),
+    "noLongerAvailableAndroidVersion": MessageLookupByLibrary.simpleMessage(
+      " are no longer available for your version of Android.",
+    ),
     "noMediaFiles": MessageLookupByLibrary.simpleMessage("No media files"),
     "noMembers": MessageLookupByLibrary.simpleMessage("No members"),
     "noNewStatus": MessageLookupByLibrary.simpleMessage("No new status"),
@@ -1649,6 +1655,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "No videos available",
     ),
     "nobody": MessageLookupByLibrary.simpleMessage("Nobody"),
+    "none": MessageLookupByLibrary.simpleMessage("No"),
     "notAffectApplyMessageTimerExistingChats": MessageLookupByLibrary.simpleMessage(
       "This will not affect existing chats. To apply this message timer to existing chats, ",
     ),
@@ -1905,6 +1912,7 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Provide additional protection for your account",
         ),
+    "purple": MessageLookupByLibrary.simpleMessage("Purple"),
     "qrCode": MessageLookupByLibrary.simpleMessage("QR code"),
     "qrCodeExpired": MessageLookupByLibrary.simpleMessage(
       "The QR code has expired",
@@ -1963,6 +1971,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recorderInitialized": MessageLookupByLibrary.simpleMessage(
       "Recorder initialized",
     ),
+    "red": MessageLookupByLibrary.simpleMessage("Red"),
     "redColor": MessageLookupByLibrary.simpleMessage("Red"),
     "registerNewAccount": MessageLookupByLibrary.simpleMessage(
       "Register a new account",
@@ -2585,7 +2594,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Welcome to our community!",
     ),
     "whatMyNumber": MessageLookupByLibrary.simpleMessage("What is my number?"),
-    "whiteNotify": MessageLookupByLibrary.simpleMessage("White"),
+    "white": MessageLookupByLibrary.simpleMessage("White"),
     "whoCanAddGroups": MessageLookupByLibrary.simpleMessage(
       "Who can add me to groups",
     ),
@@ -2614,6 +2623,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "write": MessageLookupByLibrary.simpleMessage("Write"),
     "writeMessage": MessageLookupByLibrary.simpleMessage("Write a message..."),
     "writeToUs": MessageLookupByLibrary.simpleMessage("Let us know"),
+    "yellow": MessageLookupByLibrary.simpleMessage("Yellow"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "you": MessageLookupByLibrary.simpleMessage("You"),
     "youAddedStickers": MessageLookupByLibrary.simpleMessage(

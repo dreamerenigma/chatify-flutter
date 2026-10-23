@@ -27,7 +27,6 @@ class BottomInput extends StatefulWidget {
   final Function(String) onEmojiSelected;
   final Function(String) onGifSelected;
 
-
   const BottomInput({
     super.key,
     required this.textController,

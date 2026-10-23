@@ -1,7 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/core/services/media/yandex/yandex_disk_api.dart';
-import 'package:http/http.dart' as http;
 import '../media_service.dart';
 
 class YandexDiskService implements MediaService {
@@ -62,60 +63,111 @@ class YandexDiskService implements MediaService {
 
   @override
   Future<bool> uploadLargeFile({required File file, required String uploadUrl, String contentType = 'application/octet-stream'}) async {
-    final client = http.Client();
+    final uploadId = DateTime.now().microsecondsSinceEpoch;
+    final stopwatch = Stopwatch()..start();
+
+    log('UPLOAD[$uploadId]: starting');
+
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 30);
 
     try {
-      final fileLength = await file.length();
-      final request = http.StreamedRequest('PUT', Uri.parse(uploadUrl));
+      if (!await file.exists()) {
+        log('UPLOAD: file does not exist: ${file.path}');
+        return false;
+      }
 
-      request.headers['Content-Type'] = contentType;
+      final fileLength = await file.length();
+
+      if (fileLength == 0) {
+        log('UPLOAD: file is empty');
+        return false;
+      }
+
+      final uri = Uri.parse(uploadUrl);
+
+      log('UPLOAD: starting');
+      log('UPLOAD: size = $fileLength bytes');
+      log('UPLOAD: host = ${uri.host}');
+
+      final request = await client.openUrl('PUT', uri).timeout(
+        const Duration(seconds: 30),
+      );
+
+      request.headers.set(HttpHeaders.contentTypeHeader, contentType);
       request.contentLength = fileLength;
 
-      final responseFuture = client.send(request);
+      var uploaded = 0;
+      var lastPercent = -5;
 
-      int uploaded = 0;
-      int lastPercent = -1;
+      final stopwatch = Stopwatch()..start();
+      var lastLoggedBytes = 0;
+      var lastLoggedSeconds = 0;
 
-      try {
-        await for (final chunk in file.openRead()) {
-          request.sink.add(chunk);
+      final trackedStream = file.openRead().map((chunk) {
+        uploaded += chunk.length;
 
-          uploaded += chunk.length;
+        final percent = (uploaded * 100 / fileLength).floor();
+        final elapsedSeconds = stopwatch.elapsed.inSeconds;
 
-          final percent = ((uploaded / fileLength) * 100).floor();
+        if (percent >= lastPercent + 5 || percent == 100) {
+          final elapsed = stopwatch.elapsedMilliseconds / 1000;
+          final speedMBps = elapsed > 0 ? uploaded / elapsed / (1024 * 1024) : 0.0;
 
-          if (percent != lastPercent && (percent % 5 == 0 || percent == 100)) {
-            lastPercent = percent;
+          lastPercent = percent;
+
+          log('UPLOAD: $percent% | ''${(uploaded / (1024 * 1024)).toStringAsFixed(1)} MB / ''${(fileLength / (1024 * 1024)).toStringAsFixed(1)} MB | ''elapsed=${elapsed.toStringAsFixed(1)} s | ''average=${speedMBps.toStringAsFixed(2)} MB/s');
+
+          final intervalBytes = uploaded - lastLoggedBytes;
+          final intervalSeconds = elapsedSeconds - lastLoggedSeconds;
+
+          if (intervalSeconds > 0) {
+            final intervalSpeed = intervalBytes / intervalSeconds / (1024 * 1024);
+
+            log('UPLOAD: recent speed = ''${intervalSpeed.toStringAsFixed(2)} MB/s');
           }
+
+          lastLoggedBytes = uploaded;
+          lastLoggedSeconds = elapsedSeconds;
         }
 
-        await request.sink.close();
+        return chunk;
+      });
+
+      log('UPLOAD: sending body');
+
+      try {
+        await request.addStream(trackedStream);
+        log('UPLOAD: body stream completed');
       } catch (e, st) {
-        log('YANDEX DIRECT: stream error = $e', stackTrace: st);
-
-        try {
-          await request.sink.close();
-        } catch (_) {}
-
+        log('UPLOAD: body stream failed: $e', stackTrace: st);
         rethrow;
       }
-      final response = await responseFuture;
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        client.close();
+      log('UPLOAD: closing request and waiting for response');
 
-        return true;
-      }
+      final response = await request.close().timeout(
+        const Duration(minutes: 5),
+        onTimeout: () {
+          throw TimeoutException('Timed out waiting for Yandex Disk response');
+        },
+      );
 
-      client.close();
+      log('UPLOAD: HTTP status = ${response.statusCode}');
 
-      return false;
+      final responseBody = await response.transform(utf8.decoder).join().timeout(const Duration(seconds: 30));
+
+      log('UPLOAD: response body = $responseBody');
+
+      final success = response.statusCode >= 200 && response.statusCode < 300;
+
+      log('UPLOAD: success = $success');
+
+      return success;
     } catch (e, st) {
-      log('YANDEX DIRECT: error = $e', stackTrace: st);
-
-      client.close();
-
+      log('UPLOAD: error = $e', stackTrace: st);
       return false;
+    } finally {
+      client.close(force: true);
     }
   }
 }

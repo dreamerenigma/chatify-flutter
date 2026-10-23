@@ -1,17 +1,23 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
+import '../../../../routes/custom_page_route.dart';
 import '../../../calls/widgets/popups/items/app_popup_menu_item.dart';
 import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
+import '../../widgets/dialogs/check_android_version_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/reset_notification_settings_dialog.dart';
 import '../../widgets/dialogs/vibration_dialog.dart';
 import '../../widgets/items/settings_item.dart';
 import '../../widgets/items/settings_switch_item.dart';
+import 'package:file_selector/file_selector.dart';
+
+import 'icon_on_icon_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -29,6 +35,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   bool isReactionsMessagesEnabled = false;
   bool isReactionsGroupEnabled = false;
   bool isReactionsEnabled = false;
+  bool isAndroid12OrHigher = true;
+  int notificationLightValue = 2;
+  String notificationSound = 'Bongo';
   String? vibrationOption;
 
   @override
@@ -41,17 +50,47 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     isReactionsMessagesEnabled = storage.read('isReactionsMessagesEnabled') ?? false;
     isReactionsGroupEnabled = storage.read('isReactionsGroupEnabled') ?? false;
     isReactionsEnabled = storage.read('isReactions') ?? false;
-    vibrationOption = storage.read('vibrationOption') ?? '';
+    vibrationOption = storage.read<String>('vibrationOption');
+    notificationLightValue = storage.read<int>('notificationLightValue') ?? 2;
+    _checkAndroidVersion();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    vibrationOption ??= S.of(context).system;
+    if (vibrationOption == null || vibrationOption!.isEmpty) {
+      vibrationOption = S.of(context).byDefault;
+    }
   }
 
   void _saveState(String key, bool value) {
     storage.write(key, value);
+  }
+
+  Future<void> selectNotificationSound() async {
+    const typeGroup = XTypeGroup(label: 'Audio', mimeTypes: ['audio/*']);
+
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+
+    if (file == null || !mounted) return;
+
+    setState(() {
+      notificationSound = file.name;
+    });
+
+    await storage.write('notificationSoundUri', file.path);
+  }
+
+  Future<void> _checkAndroidVersion() async {
+    if (!GetPlatform.isAndroid) return;
+
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+
+    if (!mounted) return;
+
+    setState(() {
+      isAndroid12OrHigher = androidInfo.version.sdkInt >= 31;
+    });
   }
 
   @override
@@ -67,9 +106,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           child: AppBar(
             title: Text(S.of(context).notifications, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -161,13 +201,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0),
-                  _buildSectionHeader(S.of(context).messages, padding: const EdgeInsets.only(left: 20, right: 10, top: 20)),
-                  const SizedBox(height: 8),
-                  SettingsItem(title: S.of(context).notificationSound, subtitle: S.of(context).defaultBongo, onTap: () {}),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 10),
+                  _buildSectionHeader(S.of(context).messages, padding: const EdgeInsets.only(left: 20, right: 10, top: 10)),
+                  const SizedBox(height: 4),
+                  SettingsItem(
+                    title: S.of(context).notificationSound,
+                    subtitle: notificationSound,
+                    onTap: selectNotificationSound,
+                  ),
                   SettingsItem(
                     title: S.of(context).vibration,
-                    subtitle: vibrationOption ?? S.of(context).system,
+                    subtitle: vibrationOption ?? S.of(context).byDefault,
                     onTap: () {
                       showVibrationDialog(context, (selectedText) {
                         setState(() {
@@ -177,8 +221,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       });
                     },
                   ),
-                  SettingsItem(title: S.of(context).popPopNotify, subtitle: S.of(context).notAvailable, onTap: () {}),
-                  SettingsItem(title: S.of(context).lightNotify, subtitle: S.of(context).whiteNotify, onTap: () => showLightDialog(context)),
+                  SettingsItem(
+                    title: S.of(context).popPopNotify,
+                    subtitle: S.of(context).notAvailable,
+                    titleColor: isAndroid12OrHigher ? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black) : ChatifyColors.lightSoftNight,
+                    subtitleColor: ChatifyColors.lightSoftNight,
+                    onTap: () {
+                      if (!isAndroid12OrHigher) {
+                        showCheckAndroidVersion(context, message: '${S.of(context).popPopNotify} ${S.of(context).noLongerAvailableAndroidVersion}');
+                        return;
+                      }
+                    },
+                  ),
+                  SettingsItem(
+                    title: S.of(context).lightNotify,
+                    subtitle: getLightName(context, notificationLightValue),
+                    onTap: () {
+                      showLightDialog(context, (value, title) {
+                        setState(() {
+                          notificationLightValue = value;
+                        });
+                      });
+                    },
+                  ),
                   SettingsSwitchItem(
                     label: S.of(context).priorityNotifications,
                     description: S.of(context).showPopUpNotify,
@@ -202,12 +267,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     },
                   ),
                   const SizedBox(height: 8),
-                  const Divider(height: 0, thickness: 1),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 10),
                   _buildSectionHeader('${S.of(context).groups[0].toUpperCase()}${S.of(context).groups.substring(1)}', padding: const EdgeInsets.only(left: 20, right: 10, top: 12)),
                   const SizedBox(height: 8),
                   SettingsItem(title: S.of(context).notificationSound, subtitle: S.of(context).defaultBongo),
                   SettingsItem(title: S.of(context).vibration, subtitle: S.of(context).system, onTap: () {}),
-                  SettingsItem(title: S.of(context).lightNotify, subtitle: S.of(context).whiteNotify),
+                  SettingsItem(title: S.of(context).lightNotify, subtitle: S.of(context).white),
                   SettingsSwitchItem(
                     label: S.of(context).priorityNotifications,
                     description: S.of(context).showPopUpNotificationsScreen,
@@ -231,14 +296,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     },
                   ),
                   const SizedBox(height: 8),
-                  const Divider(height: 0, thickness: 1),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 0),
                   _buildSectionHeader(S.of(context).calls, padding: const EdgeInsets.only(left: 20, right: 10, top: 20)),
                   const SizedBox(height: 8),
                   SettingsItem(title: S.of(context).melody, subtitle: S.of(context).defaultNotify),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   SettingsItem(title: S.of(context).vibration, subtitle: S.of(context).system),
                   const SizedBox(height: 8),
-                  const Divider(height: 0, thickness: 1),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 0, bottom: 0),
                   _buildSectionHeader(S.of(context).status, padding: const EdgeInsets.only(left: 20, right: 10, top: 20, bottom: 10)),
                   SettingsSwitchItem(
                     label: S.of(context).reactions,
@@ -249,6 +314,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         isReactionsEnabled = value;
                       });
                       _saveState('isReactions', value);
+                    },
+                  ),
+                  CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 10, bottom: 5),
+                  SettingsItem(
+                    title: 'Значок на иконке приложения',
+                    subtitle: 'Удаляется после просмотра всех сообщений и звонков',
+                    onTap: () {
+                      Navigator.push(context, createPageRoute(IconOnIconScreen()));
                     },
                   ),
                   const SizedBox(height: 12),
@@ -264,7 +337,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildSectionHeader(String title, {EdgeInsetsGeometry padding = EdgeInsets.zero}) {
     return Padding(
       padding: padding,
-      child: Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey)),
+      child: Text(title, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
     );
   }
 }

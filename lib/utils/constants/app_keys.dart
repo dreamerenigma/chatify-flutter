@@ -14,4 +14,5 @@ class AppKeys {
   static const String accessKeyHiddenUntilKey = 'access_key_hidden_until';
   static const String eventManagementClosedAtKey = 'event_management_closed_at';
   static const String geolocationDialogShownKey = 'geolocation_dialog_shown';
+  static const String introShownKey = 'create_channel_intro_shown';
 }

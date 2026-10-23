@@ -22,7 +22,7 @@ import '../features/personalization/controllers/themes_controller.dart';
 import '../features/personalization/controllers/user_controller.dart';
 import '../data/repositories/email/email_send_repository.dart';
 import '../features/calls/widgets/dialog/save_contact_dialog.dart';
-import '../features/status/controllers/expanded_controller.dart';
+import '../features/updates/controllers/expanded_controller.dart';
 
 class GeneralBindings extends Bindings {
   @override

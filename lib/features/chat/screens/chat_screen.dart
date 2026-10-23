@@ -67,10 +67,10 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
   final Map<String, String> _localImagePaths = {};
   final Set<String> _uploadingMessageIds = {};
   final Set<String> _failedMessageIds = {};
-  late AudioPlayer audioPlayer = AudioPlayer();
   late final AnimationController animationController;
   late final Animation<double> opacityAnimation;
   late final Stream<QuerySnapshot<Map<String, dynamic>>> messagesStream;
+  late AudioPlayer audioPlayer = AudioPlayer();
   bool isSelecting = false;
   bool isToolbarVisible = true;
   bool isIconVisible = false;
@@ -438,7 +438,14 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
       isSelecting = false;
     });
 
-    CustomIconSnackBar.showAnimatedSnackBar(context, 'Сообщение скопировано!', icon: const Icon(BootstrapIcons.check_circle), iconColor: ChatifyColors.success);
+    CustomIconSnackBar.showAnimatedSnackBar(
+      context,
+      'Сообщение скопировано!',
+      icon: const Icon(BootstrapIcons.check_circle),
+      iconColor: ChatifyColors.success,
+      position: SnackBarPositionType.bottom,
+      offset: 20,
+    );
   }
 
   void _returnToCall() {

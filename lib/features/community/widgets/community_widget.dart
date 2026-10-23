@@ -170,7 +170,7 @@ class _CommunityWidgetsState extends State<CommunityWidgets> {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(color: ChatifyColors.switcherPrimary, borderRadius: BorderRadius.circular(12)),
-                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.megaphone, width: 22, height: 22, colorFilter: ColorFilter.mode(ChatifyColors.buttonPrimaryLight, BlendMode.srcIn)))),
+                      child: Center(child: Padding(padding: const EdgeInsets.only(top: 2), child: SvgPicture.asset(ChatifyVectors.newsletter, width: 22, height: 22, colorFilter: ColorFilter.mode(ChatifyColors.buttonPrimaryLight, BlendMode.srcIn)))),
                     ),
                     const SizedBox(width: 16),
                     _buildAds(context),

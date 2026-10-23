@@ -35,7 +35,7 @@ import '../../../../home/widgets/dialogs/options/overlays/sounds_overlay_entry.d
 import '../../../../home/widgets/dialogs/overlays/no_sound_overlay.dart';
 import '../../../../home/widgets/dialogs/overlays/select_country_overlay.dart';
 import '../../../../home/widgets/inputs/search_text_input.dart';
-import '../../../../status/widgets/options/action_option.dart';
+import '../../../../updates/widgets/options/action_option.dart';
 import '../../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../light_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -23,7 +23,7 @@ import '../../chat/models/user_model.dart';
 import '../../group/models/group_model.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../personalization/widgets/items/profile_settings_item.dart';
-import '../../status/widgets/options/action_option.dart';
+import '../../updates/widgets/options/action_option.dart';
 import '../models/community_model.dart';
 
 class CommunityDataScreen extends StatefulWidget {

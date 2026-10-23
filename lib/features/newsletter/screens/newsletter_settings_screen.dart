@@ -397,7 +397,7 @@ class _NewsletterSettingsScreenState extends State<NewsletterSettingsScreen> {
                                       if (member.id == widget.newsletter.creatorName)
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value,).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                                          decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
                                           child: Text(
                                             'Админ группы',
                                             style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeXs, fontWeight: FontWeight.w500),

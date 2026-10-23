@@ -214,7 +214,11 @@ class SenderMessageState extends State<SenderMessage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Flexible(child: _buildContent()),
-          if (!Platform.isWindows && widget.message.type != MessageType.call && widget.message.type != MessageType.voice)
+          if (!Platform.isWindows && widget.message.type != MessageType.call
+              && widget.message.type != MessageType.voice
+              && widget.message.type != MessageType.survey
+              && widget.message.type != MessageType.event
+            )
             Center(
               child: Container(
                 width: 35,
@@ -261,40 +265,11 @@ class SenderMessageState extends State<SenderMessage> {
   Widget _buildTextMessage() {
     return MouseRegion(
       cursor: SystemMouseCursors.basic,
-      onEnter: (_) {
-        if (Platform.isWindows) {
-          hoverTimer?.cancel();
-          hoverTimer = Timer(const Duration(milliseconds: 500), () {
-            setState(() {
-              hoveredMessage = widget.message;
-            });
-          });
-        }
-      },
-      onExit: (_) {
-        if (Platform.isWindows) {
-          hoverTimer?.cancel();
-          if (!isPressed && hoveredMessage == widget.message) {
-            setState(() {
-              hoveredMessage = null;
-            });
-          }
-        }
-      },
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
       child: GestureDetector(
-        onTap: () {
-          setState(() {
-            isPressed = true;
-          });
-
-          Future.delayed(const Duration(milliseconds: 200), () {
-            if (mounted) {
-              setState(() {
-                isPressed = false;
-              });
-            }
-          });
-        },
+        onTap: _handleTap,
+        onSecondaryTap: _handleSecondaryTap,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -303,12 +278,7 @@ class SenderMessageState extends State<SenderMessage> {
               message: widget.message,
               isWebOrWindows: isWebOrWindows,
               isPressed: isPressed,
-              onSecondaryTap: () {
-                final renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
-                final position = renderBox.localToGlobal(Offset.zero);
-
-                showEditMessageDialog(context, position, _containerKey);
-              },
+              onSecondaryTap: _handleSecondaryTap,
               type: MessageBubbleType.sender,
               hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: _handleSecondaryTap, onMentionTap: _handleMentionTap),
@@ -339,22 +309,27 @@ class SenderMessageState extends State<SenderMessage> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            MessageBubble(
-              key: _containerKey,
-              message: widget.message,
-              type: MessageBubbleType.sender,
-              isWebOrWindows: isWebOrWindows,
-              isPressed: isPressed,
-              onSecondaryTap: _handleSecondaryTap,
-              showInnerContainer: true,
-              showMetaCheck: false,
-              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
-              child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: CallMessage(message: widget.message, isSender: true)),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                MessageBubble(
+                  key: _containerKey,
+                  message: widget.message,
+                  isWebOrWindows: isWebOrWindows,
+                  isPressed: isPressed,
+                  onSecondaryTap: _handleSecondaryTap,
+                  showInnerContainer: true,
+                  showMetaCheck: false,
+                  type: MessageBubbleType.sender,
+                  hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
+                  child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 170), child: CallMessage(message: widget.message, isSender: true)),
+                ),
+                if (!widget.hasReply)
+                  _buildMessageTail(),
+                if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+                  _buildHoverActions(),
+              ],
             ),
-            if (!widget.hasReply)
-              _buildMessageTail(),
-            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
-              _buildHoverActions(),
           ],
         ),
       ),

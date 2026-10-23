@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import '../../../config/config.dart';
 import '../../../features/personalization/models/gif_model.dart';
 
 class TenorService {
-  static const String _apiKey = 'AIzaSyAch9VHrkIjOTgr_VaswUhFILKUg3vhirM';
-  static const String _baseUrl = 'https://tenor.googleapis.com/v2/search';
-
   static Future<List<GifModel>> searchGifs(String query, {int limit = 100}) async {
-    final uri = Uri.parse('$_baseUrl?q=$query&key=$_apiKey&limit=$limit');
-
+    final uri = Uri.parse('${Config.tenorBaseUrl}?q=$query&key=${Config.tenorApiKey}&limit=$limit');
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {

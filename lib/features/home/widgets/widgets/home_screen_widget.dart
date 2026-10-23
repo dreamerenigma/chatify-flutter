@@ -36,7 +36,7 @@ import '../../../personalization/screens/favorite/favorite_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../../personalization/widgets/dialogs/new_list_bottom_dialog.dart';
 import '../../../personalization/widgets/lists/group_list.dart';
-import '../../../status/screens/status_screen.dart';
+import '../../../updates/screens/updates_screen.dart';
 import '../../../utils/widgets/dividers/custom_divider.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../../newsletter/models/newsletter_model.dart';
@@ -426,13 +426,13 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> with TickerProvider
                                       ),
                                     ],
                                   ),
-                                  StatusScreen(user: userController.currentUser),
+                                  UpdatesScreen(user: userController.currentUser),
                                   CommunitiesScreen(user: userController.currentUser),
                                   CallsScreen(user: userController.currentUser),
                                 ],
                               ),
                             ),
-                            StatusScreen(user: userController.currentUser),
+                            UpdatesScreen(user: userController.currentUser),
                             CommunitiesScreen(user: userController.currentUser),
                             CallsScreen(user: userController.currentUser),
                           ],

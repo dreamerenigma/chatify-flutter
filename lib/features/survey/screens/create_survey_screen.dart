@@ -116,6 +116,7 @@ class _CreateSurveyScreenState extends State<CreateSurveyScreen> {
         icon: SvgPicture.asset(ChatifyVectors.closeCircle, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.danger, BlendMode.srcIn)),
         iconColor: ChatifyColors.danger,
         position: SnackBarPositionType.bottom,
+        offset: 20,
       );
     }
   }

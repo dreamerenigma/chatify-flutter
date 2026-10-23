@@ -35,7 +35,7 @@ import '../../../chat/widgets/dialogs/user_complain_dialog.dart';
 import '../../../group/models/group_model.dart';
 import '../../../group/screens/add_groups_screen.dart';
 import '../../../group/screens/new_group_screen.dart';
-import '../../../status/widgets/options/action_option.dart';
+import '../../../updates/widgets/options/action_option.dart';
 import '../../../utils/dialogs/custom_dialog.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/add_list_bottom_sheet_dialog.dart';

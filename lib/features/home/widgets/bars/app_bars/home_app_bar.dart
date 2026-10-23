@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../../../../api/apis.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
@@ -9,25 +10,26 @@ import '../../../../../utils/constants/app_vectors.dart';
 import '../../../../personalization/widgets/dialogs/light_dialog.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final bool isSearching;
   final Function(String) onSearch;
-  final VoidCallback onToggleSearch;
   final Widget title;
   final Widget popupMenuButton;
   final Widget? moreButton;
+  final bool isSearching;
   final bool showSearch;
-  final VoidCallback? onCameraPressed;
   final bool showHomeIcon;
   final bool centerTitle;
-  final double titleSpacing;
-  final String hintText;
   final bool selectionMode;
   final bool isFavorite;
   final int selectedCount;
+  final String hintText;
+  final double titleSpacing;
+  final VoidCallback onToggleSearch;
   final VoidCallback? onSelectionBack;
   final VoidCallback? onDelete;
   final VoidCallback? onFavorite;
   final VoidCallback? onMore;
+  final VoidCallback? onCameraPressed;
+  final VoidCallback? onTestPressed;
 
   const HomeAppBar({
     super.key,
@@ -36,13 +38,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onToggleSearch,
     required this.title,
     required this.popupMenuButton,
+    required this.hintText,
     this.moreButton,
     this.showSearch = true,
-    this.onCameraPressed,
     this.showHomeIcon = false,
     this.centerTitle = false,
     this.titleSpacing = NavigationToolbar.kMiddleSpacing,
-    required this.hintText,
     this.selectionMode = false,
     this.isFavorite = false,
     this.selectedCount = 0,
@@ -50,6 +51,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onDelete,
     this.onFavorite,
     this.onMore,
+    this.onCameraPressed,
+    this.onTestPressed,
   });
 
   @override
@@ -93,11 +96,33 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   List<Widget> _buildNormalActions(BuildContext context) {
     if (showSearch && isSearching) {
       return [
-        IconButton(onPressed: onToggleSearch, icon: const Icon(CupertinoIcons.clear_circled_solid, size: 25)),
+        IconButton(onPressed: onToggleSearch, icon: const Icon(CupertinoIcons.clear_circled, size: 25)),
       ];
     }
 
     return [
+      // if (APIs.me.role == 'Admin')
+        TooltipTheme(
+          data: TooltipThemeData(
+            decoration: BoxDecoration(color: context.isDarkMode ? ChatifyColors.darkBackground : ChatifyColors.white, borderRadius: BorderRadius.circular(8)),
+            textStyle: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: 13, fontWeight: FontWeight.w400),
+          ),
+          child: Tooltip(
+            message: 'Тесты',
+            child: Theme(
+              data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
+              child: IconButton(
+                onPressed: onTestPressed,
+                icon: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.diagonal3Values(-1, 1, 1),
+                  child: SvgPicture.asset(ChatifyVectors.labTest, width: 22, height: 22, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, BlendMode.srcIn)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      SizedBox(width: 6),
       if (onCameraPressed != null)
         TooltipTheme(
           data: TooltipThemeData(
@@ -108,7 +133,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             message: S.of(context).camera,
             child: Theme(
               data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
-              child: IconButton(icon: const Icon(Icons.camera_alt_outlined, size: 26), onPressed: onCameraPressed),
+              child: IconButton(icon: Icon(Icons.camera_alt_outlined, size: 25, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), onPressed: onCameraPressed),
             ),
           ),
         ),
@@ -123,7 +148,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             message: S.of(context).camera,
             child: Theme(
               data: Theme.of(context).copyWith(splashColor: ChatifyColors.darkerGrey, highlightColor: ChatifyColors.darkerGrey, hoverColor: ChatifyColors.darkerGrey),
-              child: IconButton(onPressed: onToggleSearch, icon: const Icon(Icons.search, size: 25)),
+              child: IconButton(onPressed: onToggleSearch, icon: Icon(Icons.search, size: 25, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
             ),
           ),
         ),

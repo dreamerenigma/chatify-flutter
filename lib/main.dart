@@ -6,33 +6,37 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:media_kit/media_kit.dart';
 import 'app/app.dart';
+import 'app/di/dependency_injection.dart';
 import 'core/services/notifications/notification_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  /// -- Initialize application dependencies and services
+  /// -- Initialize application dependencies and services.
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// -- Initialize Notification service
+  /// -- Initialize Notification service.
   if (!kIsWeb && Platform.isWindows) {
     await NotificationService.init();
   }
 
-  /// -- Initialize Media Kit
+  /// -- Initialize Media Kit.
   MediaKit.ensureInitialized();
 
-  /// -- GetX Local Storage
+  /// -- GetX Local Storage.
   await GetStorage.init();
 
   /// -- Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((FirebaseApp value) {});
 
-  /// -- Initialize application services
+  /// -- Initialize application services.
   await initApp();
 
-  /// -- Shader Warm-Up
+  /// -- Shader Warm-Up.
   preloadShader();
 
-  /// -- Run the application
+  /// -- .
+  await initializeDependencies();
+
+  /// -- Run the application.
   runApp(const App());
 }

@@ -6,7 +6,6 @@ import 'package:chatify/features/community/widgets/lists/community_list.dart';
 import 'package:chatify/features/community/widgets/cards/new_community_card.dart';
 import 'package:chatify/utils/constants/app_images.dart';
 import 'package:get/get.dart';
-import '../../../api/apis.dart';
 import '../../../api/community_api.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -18,7 +17,7 @@ import '../../home/screens/home_screen.dart';
 import '../../home/widgets/bars/app_bars/home_app_bar.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../status/screens/status_screen.dart';
+import '../../updates/screens/updates_screen.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import 'created_community_screen.dart';
 
@@ -39,6 +38,7 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
   int selectedIndex = 2;
   DateTime? createdAt;
   bool _isLoading = true;
+  CommunityModel? selectedCommunity;
 
   @override
   void initState() {
@@ -60,7 +60,7 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
         Navigator.push(context, createPageRoute(HomeScreen(user: widget.user)));
         break;
       case 1:
-        Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
+        Navigator.push(context, createPageRoute(UpdatesScreen(user: widget.user)));
         break;
       case 2:
         break;
@@ -81,16 +81,19 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
       setState(() {
         list = communities;
         createdAt = communities.isNotEmpty ? communities.first.createdAt : null;
-        APIs.community = communities.isNotEmpty ? communities.first : null;
+        selectedCommunity = communities.isNotEmpty ? communities.first : null;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Failed to load communities: $e');
+      debugPrintStack(stackTrace: stackTrace);
+
       if (!mounted) return;
 
       setState(() {
         list = [];
         createdAt = null;
-        APIs.community = null;
+        selectedCommunity = null;
         _isLoading = false;
       });
     }
@@ -213,10 +216,20 @@ class CommunitiesScreenState extends State<CommunitiesScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Flexible(child: CommunityList(communities: list, onCommunitySelected: (community) {})),
+                    Flexible(
+                      child: CommunityList(
+                        communities: list,
+                        onCommunitySelected: (community) {
+                          setState(() {
+                            selectedCommunity = community;
+                          });
+                        },
+                      ),
+                    ),
                     CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, top: 6, bottom: 0),
                     const SizedBox(height: 6),
-                    CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: APIs.community!, user: widget.user),
+                    if (selectedCommunity != null)
+                      CommunityWidgets(isValidDate: isValidDate, showAllButton: true, community: selectedCommunity!, user: widget.user),
                   ],
                 ),
               ),

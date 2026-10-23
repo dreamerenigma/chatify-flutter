@@ -79,7 +79,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
   };
 
   final Map<String, String> optionSoundTexts = {
-    'no': 'Нет',
+    'none': 'Нет',
     'default': 'По умолчанию',
     'warning': 'Предупреждение',
   };
@@ -932,22 +932,22 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: selectedSoundOption == 'no' ? null : () async {
+            onTap: selectedSoundOption == 'none' ? null : () async {
               await handlePress(audioPlayer, isMessages);
             },
-            onLongPress: selectedSoundOption == 'no' ? null : () => onTappedSoundChange(true),
+            onLongPress: selectedSoundOption == 'none' ? null : () => onTappedSoundChange(true),
             onLongPressEnd: (_) => onTappedSoundChange(false),
             onLongPressUp: () => onTappedSoundChange(false),
             child: MouseRegion(
               onEnter: (_) {
-                if (selectedSoundOption != 'no') onHoveredSoundChange(true);
+                if (selectedSoundOption != 'none') onHoveredSoundChange(true);
               },
               onExit: (_) {
-                if (selectedSoundOption != 'no') onHoveredSoundChange(false);
+                if (selectedSoundOption != 'none') onHoveredSoundChange(false);
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: selectedSoundOption == 'no'
+                  color: selectedSoundOption == 'none'
                       ? (context.isDarkMode ? ChatifyColors.softNight.withAlpha(100) : ChatifyColors.grey.withAlpha(50))
                       : _isTappedSound
                       ? (context.isDarkMode ? ChatifyColors.mildNight : ChatifyColors.grey.withAlpha(100))
@@ -966,7 +966,7 @@ class _NotificationsOptionWidgetState extends State<NotificationsOptionWidget> {
                   height: 30,
                   child: Icon(
                     FluentIcons.play_20_regular,
-                    color: selectedSoundOption == 'no' ? (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black.withAlpha(100)) : (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                    color: selectedSoundOption == 'none' ? (context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black.withAlpha(100)) : (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
                     size: 20,
                   ),
                 ),

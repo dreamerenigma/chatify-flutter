@@ -6,7 +6,7 @@ import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../../status/screens/add_detail_image_screen.dart';
+import '../../../updates/screens/add_detail_image_screen.dart';
 import '../../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 

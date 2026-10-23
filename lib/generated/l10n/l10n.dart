@@ -809,6 +809,11 @@ class S {
     return Intl.message('Logout', name: 'logout', desc: '', args: []);
   }
 
+  /// `Logout?`
+  String get logoutQuestion {
+    return Intl.message('Logout?', name: 'logoutQuestion', desc: '', args: []);
+  }
+
   /// `Search...`
   String get settingsSearch {
     return Intl.message(
@@ -5075,8 +5080,8 @@ class S {
   }
 
   /// `No`
-  String get no {
-    return Intl.message('No', name: 'no', desc: '', args: []);
+  String get none {
+    return Intl.message('No', name: 'none', desc: '', args: []);
   }
 
   /// `Warning`
@@ -8769,6 +8774,16 @@ class S {
     );
   }
 
+  /// ` are no longer available for your version of Android.`
+  String get noLongerAvailableAndroidVersion {
+    return Intl.message(
+      ' are no longer available for your version of Android.',
+      name: 'noLongerAvailableAndroidVersion',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Not available`
   String get notAvailable {
     return Intl.message(
@@ -8785,8 +8800,38 @@ class S {
   }
 
   /// `White`
-  String get whiteNotify {
-    return Intl.message('White', name: 'whiteNotify', desc: '', args: []);
+  String get white {
+    return Intl.message('White', name: 'white', desc: '', args: []);
+  }
+
+  /// `Red`
+  String get red {
+    return Intl.message('Red', name: 'red', desc: '', args: []);
+  }
+
+  /// `Yellow`
+  String get yellow {
+    return Intl.message('Yellow', name: 'yellow', desc: '', args: []);
+  }
+
+  /// `Green`
+  String get green {
+    return Intl.message('Green', name: 'green', desc: '', args: []);
+  }
+
+  /// `Light blue`
+  String get lightBlue {
+    return Intl.message('Light blue', name: 'lightBlue', desc: '', args: []);
+  }
+
+  /// `Blue`
+  String get blue {
+    return Intl.message('Blue', name: 'blue', desc: '', args: []);
+  }
+
+  /// `Purple`
+  String get purple {
+    return Intl.message('Purple', name: 'purple', desc: '', args: []);
   }
 
   /// `Priority notifications`

@@ -8,6 +8,8 @@ class SettingsItem extends StatelessWidget {
   final String? subtitle;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? padding;
+  final Color? titleColor;
+  final Color? subtitleColor;
 
   const SettingsItem({
     super.key,
@@ -15,6 +17,8 @@ class SettingsItem extends StatelessWidget {
     this.subtitle,
     this.onTap,
     this.padding,
+    this.titleColor,
+    this.subtitleColor,
   });
 
   @override
@@ -33,10 +37,10 @@ class SettingsItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400)),
+              Text(title, style: TextStyle(color: titleColor, fontSize: 17, fontWeight: FontWeight.w400)),
               const SizedBox(height: 2),
               if (subtitle case final subtitle?) ...[
-                Text(subtitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
+                Text(subtitle, style: TextStyle( color: subtitleColor ?? ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
               ],
             ],
           ),

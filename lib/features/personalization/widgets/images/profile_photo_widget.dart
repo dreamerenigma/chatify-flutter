@@ -101,7 +101,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
             icon: const Icon(Icons.warning_amber_rounded, size: 26),
             iconColor: ChatifyColors.yellow,
             position: SnackBarPositionType.bottom,
-
+            offset: 20,
           );
 
           return;

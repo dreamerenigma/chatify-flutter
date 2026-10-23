@@ -9,9 +9,8 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_vectors.dart';
 import '../../../community/screens/emoji_sticker_screen.dart';
 import '../../../community/screens/search_internet_screen.dart';
+import '../../../community/widgets/dialogs/delete_confirmation_dialog.dart';
 import '../../../community/widgets/items/community_image_items.dart';
-import '../../../status/widgets/dialogs/delete_confirmation_dialog.dart';
-
 void showEditImageBottomDialog(
   BuildContext context, {
   required String title,

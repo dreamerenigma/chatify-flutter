@@ -7,7 +7,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/info_app_model.dart';
-import '../widgets/bars/support_app_bar.dart';
+import '../widgets/bars/bot_app_bar.dart';
 import '../widgets/dialogs/support_chat_bottom_sheet_dialog.dart';
 import '../widgets/widget/chat_date_badge_widget.dart';
 
@@ -22,7 +22,7 @@ class InfoAppChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SupportAppBar(infoApp: infoApp, user: APIs.me),
+      appBar: BotAppBar(infoApp: infoApp, user: APIs.me),
       body: _buildBodySection(context),
     );
   }

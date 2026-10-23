@@ -21,38 +21,41 @@ class LogoutDialog {
         return AlertDialog(
           titlePadding: EdgeInsets.only(left: 25, right: 8, top: 6, bottom: 6),
           backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
-          actionsPadding: EdgeInsets.only(left: 25, right: 25, bottom: 16),
+          actionsPadding: EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 16),
+          contentPadding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(logoutTitle),
+              Text(logoutTitle, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(Icons.close_rounded, size: 25),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
             ],
           ),
-          content: Text(logoutMessage, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+          content: Text(logoutMessage, style: TextStyle(color: context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.black, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
           actions: <Widget>[
             TextButton(
               onPressed: onCancel,
               style: TextButton.styleFrom(
+                splashFactory: NoSplash.splashFactory,
                 foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: Text(cancelText, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+              child: Text(cancelText, style: TextStyle(color: colorsController.getColor(colorsController.selectedColorScheme.value), fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             ),
             TextButton(
               onPressed: onConfirm,
               style: TextButton.styleFrom(
-                foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
+                splashFactory: NoSplash.splashFactory,
+                foregroundColor: ChatifyColors.danger,
+                backgroundColor: ChatifyColors.danger.withAlpha((0.1 * 255).toInt()),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: Text(confirmText, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: colorsController.getColor(colorsController.selectedColorScheme.value))),
+              child: Text(confirmText, style: TextStyle(color: ChatifyColors.danger, fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
             ),
           ],
         );

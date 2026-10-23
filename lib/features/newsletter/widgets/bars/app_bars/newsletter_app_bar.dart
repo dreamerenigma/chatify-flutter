@@ -153,7 +153,7 @@ class NewsletterAppBarState extends State<NewsletterAppBar> with SingleTickerPro
                   return CircleAvatar(
                     backgroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
                     foregroundColor: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.grey,
-                    child: SvgPicture.asset(ChatifyVectors.megaphone, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+                    child: SvgPicture.asset(ChatifyVectors.newsletter, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.darkGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
                   );
                 },
               ),

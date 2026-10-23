@@ -13,7 +13,7 @@ import '../../../utils/constants/app_vectors.dart';
 import '../../personalization/widgets/dialogs/add_list_bottom_sheet_dialog.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
 import '../../personalization/widgets/items/profile_settings_item.dart';
-import '../../status/widgets/options/action_option.dart';
+import '../../updates/widgets/options/action_option.dart';
 import '../../utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import '../models/info_app_model.dart';
 import '../widgets/dialogs/support_chat_bottom_sheet_dialog.dart';

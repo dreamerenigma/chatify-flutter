@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:heroicons/heroicons.dart';
 import '../../../../api/apis.dart';
 import '../../../../common/widgets/tiles/list_tile/settings_menu_tile.dart';
+import '../../../../core/enums/snack_bar_position_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -17,6 +18,8 @@ import '../../../chat/models/user_model.dart';
 import '../../widgets/dialogs/add_user_bottom_dialog.dart';
 import '../../widgets/dialogs/light_dialog.dart';
 import '../../widgets/dialogs/logout_dialog.dart';
+import '../notifications/notifications_screen.dart';
+import '../privacy/privacy_blocked_app_screen.dart';
 
 class LogoutScreen extends StatefulWidget {
   final UserModel user;
@@ -58,6 +61,8 @@ class _LogoutScreenState extends State<LogoutScreen> {
         S.of(context).errorLogout,
         icon: const HeroIcon(HeroIcons.exclamationTriangle),
         iconColor: ChatifyColors.error,
+        position: SnackBarPositionType.bottom,
+        offset: 20,
       );
 
       Dialogs.showSnackbar(context, S.of(context).errorDuringLogout);
@@ -66,6 +71,8 @@ class _LogoutScreenState extends State<LogoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final logoutMessage = 'Вы выйдете из аккаунта ${widget.user.phoneNumber} на этом устройстве. ''Через 14 дн. будет выполнен выход из аккаунта на связанных устройствах (2).';
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -92,13 +99,14 @@ class _LogoutScreenState extends State<LogoutScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 6),
             child: Text(
-              'Прежде чем выйти, ознакомьтесь с доступными дял вашего аккаунта вариантами.',
-              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.3),
+              'Прежде чем выйти, ознакомьтесь с доступными для вашего аккаунта вариантами.',
+              style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400, height: 1.4),
             ),
           ),
           _buildSettingsMenuTile(
             icon: Icons.person_add_alt,
             iconColor: ChatifyColors.darkGrey,
+            iconSize: 23,
             title: S.of(context).addAccount,
             titleColor: ChatifyColors.grey,
             onTap: () => showAddUserBottomSheet(context, widget.user.image, widget.user.name, widget.user.phoneNumber),
@@ -106,40 +114,40 @@ class _LogoutScreenState extends State<LogoutScreen> {
           _buildSettingsMenuTile(
             icon: Icons.lock_outline_rounded,
             iconColor: ChatifyColors.darkGrey,
+            iconSize: 23,
             title: 'Заблокировать приложение',
             titleColor: ChatifyColors.grey,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, createPageRoute(const PrivacyBlockedAppScreen()));
+            },
           ),
           _buildSettingsMenuTile(
             icon: Icons.notifications_none_rounded,
             iconColor: ChatifyColors.darkGrey,
             title: 'Управление уведомлениями',
+            iconSize: 25,
+            titleColor: ChatifyColors.grey,
+            onTap: () {
+              Navigator.push(context, createPageRoute(const NotificationsScreen()));
+            },
+          ),
+          _buildSettingsMenuTile(
+            icon: Icons.folder_outlined,
+            iconColor: ChatifyColors.darkGrey,
+            iconSize: 24,
+            title: 'Необходимо освободить место в хранилище',
             titleColor: ChatifyColors.grey,
             onTap: () {},
           ),
           _buildSettingsMenuTile(
-            icon: Icons.folder_outlined,
+            icon: SvgPicture.asset(ChatifyVectors.upload, width: 22, height: 22, colorFilter: ColorFilter.mode(ChatifyColors.darkGrey, BlendMode.srcIn)),
             iconColor: ChatifyColors.darkGrey,
-            title: 'Необходимо освободить место в хранилище',
-            titleColor: ChatifyColors.danger,
+            title: 'Создать резервную копию чатов',
+            titleColor: ChatifyColors.grey,
             onTap: () {},
           ),
           _buildSettingsMenuTile(
-            icon: Icons.folder_outlined,
-            iconColor: ChatifyColors.darkGrey,
-            title: 'Создать резервную копию чата',
-            titleColor: ChatifyColors.danger,
-            onTap: () {},
-          ),
-          _buildSettingsMenuTile(
-            icon: Icons.folder_outlined,
-            iconColor: ChatifyColors.darkGrey,
-            title: 'Необходимо освободить место в хранилище',
-            titleColor: ChatifyColors.danger,
-            onTap: () {},
-          ),
-          _buildSettingsMenuTile(
-            icon: SvgPicture.asset(ChatifyVectors.exit, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.danger, BlendMode.srcIn)),
+            icon: SvgPicture.asset(ChatifyVectors.exit, width: 28, height: 28, colorFilter: ColorFilter.mode(ChatifyColors.danger, BlendMode.srcIn)),
             iconColor: ChatifyColors.danger,
             title: S.of(context).logout,
             titleColor: ChatifyColors.danger,
@@ -153,13 +161,35 @@ class _LogoutScreenState extends State<LogoutScreen> {
                 onCancel: () {
                   Navigator.pop(context);
                 },
-                logoutTitle: S.of(context).logout,
-                logoutMessage: S.of(context).sureLogoutAccount,
+                logoutTitle: S.of(context).logoutQuestion,
+                logoutMessage: logoutMessage,
                 cancelText: S.of(context).cancel,
-                confirmText: S.of(context).sure,
+                confirmText: S.of(context).logout,
                 colorScheme: Theme.of(context).colorScheme,
               );
             },
+            subtitleWidget: Text.rich(
+              TextSpan(
+                style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400),
+                children: [
+                  TextSpan(
+                    text: 'Ваши учетные данные будут сохранены на этом устройстве. ',
+                    style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3),
+                  ),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.baseline,
+                    baseline: TextBaseline.alphabetic,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        'Подробнее',
+                        style: TextStyle(color: ChatifyColors.lightBlueLink, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.3, decoration: TextDecoration.none),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -174,11 +204,13 @@ class _LogoutScreenState extends State<LogoutScreen> {
     Color? iconColor,
     Color? titleColor,
     double? iconSize,
+    Widget? subtitleWidget,
   }) {
     return SettingsMenuTile(
       icon: icon,
       title: title,
       subTitle: subTitle,
+      subtitleWidget: subtitleWidget,
       titleFontSize: ChatifySizes.fontSizeMd,
       titleColor: titleColor,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),

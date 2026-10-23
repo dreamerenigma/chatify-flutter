@@ -88,6 +88,8 @@ dependencies:
   archive: ^4.5.1
   smooth_page_indicator: ^3.0.0
   geocoding: ^5.0.0
+  file_selector: ^1.1.0
+  device_info_plus: ^13.3.0
 
   # Icons
   akar_icons_flutter: ^1.1.21

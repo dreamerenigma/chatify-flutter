@@ -9,6 +9,7 @@ import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../../../../../utils/platforms/platform_utils.dart';
 import '../../../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../../../channel/widgets/dialogs/create_channel_bottom_sheet_dialog.dart';
 import '../../../../chat/models/user_model.dart';
 import '../../../../community/models/community_model.dart';
 import '../../../../group/screens/new_group_screen.dart';
@@ -22,21 +23,25 @@ import 'home_app_bar.dart';
 
 class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final bool isSearching;
+  final UserModel user;
   final List<UserModel> users;
   final List<UserModel> searchList;
   final Function(String) onSearch;
   final VoidCallback onToggleSearch;
   final VoidCallback onCameraPressed;
+  final VoidCallback onTestPressed;
   final String hintText;
 
   const HomeAppBarWidget({
     super.key,
+    required this.user,
     required this.isSearching,
     required this.users,
     required this.searchList,
     required this.onSearch,
     required this.onToggleSearch,
     required this.onCameraPressed,
+    required this.onTestPressed,
     required this.hintText,
   });
 
@@ -53,6 +58,7 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         onSearch: onSearch,
         onToggleSearch: onToggleSearch,
         onCameraPressed: onCameraPressed,
+        onTestPressed: onTestPressed,
         hintText: hintText,
         title: Obx(() {
           final seasonIcon = SeasonsController.instance.getSeasonalIcon();
@@ -172,6 +178,17 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   value: 4,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: AppPopupMenuItem(
+                    text: 'Новый канал',
+                    onTap: () {
+                      Navigator.pop(context);
+                      showCreateChannelBottomSheet(context, user);
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 5,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: AppPopupMenuItem(
                     text: S.of(context).appRelatedDevices,
                     onTap: () {
                       Navigator.pop(context);
@@ -180,7 +197,7 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  value: 5,
+                  value: 6,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: AppPopupMenuItem(
                     text: S.of(context).favorites,
@@ -191,7 +208,7 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  value: 6,
+                  value: 7,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: AppPopupMenuItem(
                     text: S.of(context).readAll,
@@ -201,7 +218,7 @@ class HomeAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  value: 7,
+                  value: 8,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: AppPopupMenuItem(
                     text: S.of(context).settings,

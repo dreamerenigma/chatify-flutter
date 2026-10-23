@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/enums/radio_position_type.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
+import '../../../utils/widgets/tiles/custom_radio_list_tile.dart';
 import 'light_dialog.dart';
 
 class VibrationController extends GetxController {
@@ -58,30 +60,41 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        RadioListTile<int>(
+                        CustomRadioListTile<int>(
+                          title: Text(S.of(context).off, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                          value: 0,
+                          radioScale: 1.13,
+                          inactiveIconColor: ChatifyColors.steelGrey,
+                          iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          radioPosition: RadioPositionType.left,
+                          padding: const EdgeInsets.only(left: 16, right: 12, top: 3, bottom: 3),
+                        ),
+                        CustomRadioListTile<int>(
+                          title: Text(S.of(context).byDefault, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                           value: 1,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          title: Text(S.of(context).off),
+                          radioScale: 1.13,
+                          inactiveIconColor: ChatifyColors.steelGrey,
+                          iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          radioPosition: RadioPositionType.left,
+                          padding: const EdgeInsets.only(left: 16, right: 12, top: 3, bottom: 3),
                         ),
-                        RadioListTile<int>(
+                        CustomRadioListTile<int>(
+                          title: Text(S.of(context).short, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                           value: 2,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value,),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          title: Text(S.of(context).byDefault),
+                          radioScale: 1.13,
+                          inactiveIconColor: ChatifyColors.steelGrey,
+                          iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          radioPosition: RadioPositionType.left,
+                          padding: const EdgeInsets.only(left: 16, right: 12, top: 3, bottom: 3),
                         ),
-
-                        RadioListTile<int>(
+                        CustomRadioListTile<int>(
+                          title: Text(S.of(context).long, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                           value: 3,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          title: Text(S.of(context).short),
-                        ),
-                        RadioListTile<int>(
-                          value: 4,
-                          activeColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          title: Text(S.of(context).long),
+                          radioScale: 1.13,
+                          inactiveIconColor: ChatifyColors.steelGrey,
+                          iconColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+                          radioPosition: RadioPositionType.left,
+                          padding: const EdgeInsets.only(left: 16, right: 12, top: 3, bottom: 3),
                         ),
                       ],
                     ),
@@ -97,11 +110,12 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                             Navigator.of(context).pop();
                           },
                           style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
                             foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).cancel, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         ),
                         const SizedBox(width: 8),
                         TextButton(
@@ -124,11 +138,12 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
                             Navigator.of(context).pop();
                           },
                           style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
                             foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                             backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.1 * 255).toInt()),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           ),
-                          child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
+                          child: Text(S.of(context).ok, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                         ),
                       ],
                     ),
@@ -142,4 +157,3 @@ void showVibrationDialog(BuildContext context, Function(String) onOptionSelected
     },
   );
 }
-

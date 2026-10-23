@@ -123,7 +123,7 @@ void showWindowsSettingsDialog(BuildContext context, String settingsUri) {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 6),
-                                child: Text(S.of(context).no, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.black)),
+                                child: Text(S.of(context).none, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, color: ChatifyColors.black)),
                               ),
                             ),
                           ),

@@ -21,7 +21,7 @@ void showVerifyCodeBottomSheetDialog(BuildContext context) {
             child: Align(
               alignment: Alignment.topLeft,
               child: IconButton(
-                icon: const Icon(Icons.close, size: 25),
+                icon: const Icon(Icons.close_rounded, size: 25),
                 color: ChatifyColors.darkGrey,
                 onPressed: () {
                   Navigator.pop(context);

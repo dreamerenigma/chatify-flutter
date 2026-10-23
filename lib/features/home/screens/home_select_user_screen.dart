@@ -9,6 +9,7 @@ import 'package:chatify/features/personalization/screens/qr_code/qr_code_screen.
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../api/apis.dart';
@@ -17,10 +18,12 @@ import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/constants/app_vectors.dart';
 import '../../../utils/formatters/phone_formatter.dart';
 import '../../../utils/popups/dialogs.dart';
 import '../../calls/widgets/dialog/save_contact_dialog.dart';
 import '../../calls/widgets/popups/items/app_popup_menu_item.dart';
+import '../../channel/widgets/dialogs/create_channel_bottom_sheet_dialog.dart';
 import '../../chat/models/user_model.dart';
 import '../../chat/screens/chat_screen.dart';
 import '../../community/screens/created_community_screen.dart';
@@ -303,6 +306,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
           },
         ),
         titleSpacing: 0,
+        elevation: 0,
         title: isSelectionMode
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -354,7 +358,7 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                     ),
                   ),
                 IconButton(
-                  icon: Icon(isSearching ? CupertinoIcons.clear_circled_solid : Icons.search),
+                  icon: Icon(isSearching ? CupertinoIcons.clear_circled : Icons.search, size: 25),
                   onPressed: _toggleSearch,
                 ),
               ],
@@ -464,14 +468,22 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                     children: [
                       SizedBox(height: 8),
                       AppActionMenuItem(
-                        icon: _buildIconContainer(Icons.group_add, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        icon: _buildIconContainer(icon: Icons.group_add, iconSize: 25, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newGroup,
                         onTap: () {
                           Navigator.push(context, createPageRoute(NewGroupScreen(selectedUsers: selectedUsers)));
                         },
                       ),
                       AppActionMenuItem(
-                        icon: _buildIconContainer(Icons.person_add_alt_1_rounded, iconSize: 24, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        icon: _buildIconContainer(svgAsset: ChatifyVectors.channel, iconSize: 25, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        title: 'Новый канал',
+                        onTap: () {
+                          Navigator.pop(context);
+                          showCreateChannelBottomSheet(context, widget.user);
+                        },
+                      ),
+                      AppActionMenuItem(
+                        icon: _buildIconContainer(icon: Icons.person_add_alt_1_rounded, iconSize: 25, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newContact,
                         onTap: () {
                           final saveContactController = SaveContactController.instance;
@@ -487,13 +499,14 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
                         ),
                       ),
                       AppActionMenuItem(
-                        icon: _buildIconContainer(Icons.groups, iconSize: 26, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
+                        icon: _buildIconContainer(icon: Icons.groups, iconSize: 25, color: colorsController.getColor(colorsController.selectedColorScheme.value)),
                         title: S.of(context).newCommunity,
                         subtitle: 'Объединяйте группы по темам',
                         onTap: () {
                           Navigator.push(context, createPageRoute(CreatedCommunityScreen(onCommunitySelected: (community) {})));
                         },
                       ),
+
                     ],
                   ),
                 if (matchedChatUsers.isNotEmpty)
@@ -582,12 +595,17 @@ class _HomeSelectUserScreenState extends State<HomeSelectUserScreen> {
     );
   }
 
-  Widget _buildIconContainer(IconData icon, {double iconSize = 24, required Color color}) {
+  Widget _buildIconContainer({IconData? icon, String? svgAsset, double iconSize = 24, required Color color}) {
     return Container(
       width: 45,
       height: 45,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-      child: Icon(icon, size: iconSize, color: ChatifyColors.black),
+      child: icon != null
+        ? Icon(icon, size: iconSize, color: ChatifyColors.black)
+        : Padding(
+          padding: const EdgeInsets.all(10),
+          child: SvgPicture.asset(svgAsset!, width: iconSize, height: iconSize, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+        ),
     );
   }
 

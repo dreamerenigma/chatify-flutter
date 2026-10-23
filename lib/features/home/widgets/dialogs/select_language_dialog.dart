@@ -1,3 +1,4 @@
+import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -104,7 +105,7 @@ void showSelectedLanguageDialog(BuildContext context) {
                                                   child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Text(S.of(context).byDefault),
+                                                      Text(S.of(context).byDefault, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
                                                     ],
                                                   ),
                                                 ),

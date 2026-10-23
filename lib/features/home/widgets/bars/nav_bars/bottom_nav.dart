@@ -79,9 +79,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
               _buildNavItem(
                 context,
                 index: 1,
-                label: S.of(context).status,
+                label: 'Актуальное',
                 iconWidget: SvgPicture.asset(
-                  widget.selectedIndex == 1 ? ChatifyVectors.statusFilled : ChatifyVectors.status,
+                  widget.selectedIndex == 1 ? ChatifyVectors.updatesFilled : ChatifyVectors.updatesOutline,
                   key: ValueKey('status-${widget.selectedIndex}'),
                   width: 26,
                   height: 26,

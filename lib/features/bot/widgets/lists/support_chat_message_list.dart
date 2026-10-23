@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../api/apis.dart';
+import '../../../../api/support_api.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/platforms/platform_utils.dart';
 import '../../../chat/widgets/painters/triangle_painter.dart';
@@ -22,7 +23,7 @@ class SupportChatMessageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: APIs.getSupportMessages(support.id),
+      stream: SupportApi.getSupportMessages(support.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(colorsController.getColor(colorsController.selectedColorScheme.value)), strokeWidth: 3));

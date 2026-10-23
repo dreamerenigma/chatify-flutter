@@ -130,14 +130,14 @@ class _StatusHeaderWidgetState extends State<StatusHeaderWidget> {
                               color: colorsController.getColor(colorsController.selectedColorScheme.value),
                               border: Border.all(color: context.isDarkMode ? ChatifyColors.black : ChatifyColors.white, width: 1.5),
                             ),
-                            child: const Icon(Icons.add, color: ChatifyColors.black, size: 18),
+                            child: const Icon(Icons.add_rounded, size: 18, color: ChatifyColors.black),
                           ),
                         ),
                       ),
                     ),
                 ],
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

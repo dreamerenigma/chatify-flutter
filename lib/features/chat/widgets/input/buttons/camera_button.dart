@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../domain/entities/chat_target.dart';
 import '../../../../../routes/custom_page_route.dart';
 import '../../../../../utils/constants/app_colors.dart';
-import '../../../../status/widgets/images/camera_screen.dart';
+import '../../../../updates/widgets/images/camera_screen.dart';
 
 class CameraButton extends StatefulWidget {
   final ChatTarget chatTarget;

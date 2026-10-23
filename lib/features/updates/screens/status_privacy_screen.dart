@@ -1,4 +1,4 @@
-import 'package:chatify/features/status/screens/share_screen.dart';
+import 'package:chatify/features/updates/screens/share_screen.dart';
 import 'package:chatify/features/utils/widgets/dividers/custom_divider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +76,14 @@ class StatusPrivacyScreenScreenState extends State<StatusPrivacyScreen> {
               icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 if (_hasChanges) {
-                  CustomIconSnackBar.showAnimatedSnackBar(context, S.of(context).settingsSaved, icon: const Icon(Icons.check_circle_rounded), iconColor: ChatifyColors.success, position: SnackBarPositionType.bottom, offset: 90);
+                  CustomIconSnackBar.showAnimatedSnackBar(
+                    context,
+                    S.of(context).settingsSaved,
+                    icon: const Icon(Icons.check_circle_rounded),
+                    iconColor: ChatifyColors.success,
+                    position: SnackBarPositionType.bottom,
+                    offset: 90,
+                  );
                 }
 
                 Navigator.pop(context);

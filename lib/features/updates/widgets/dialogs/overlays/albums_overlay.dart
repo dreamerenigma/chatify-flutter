@@ -1,4 +1,4 @@
-import 'package:chatify/features/status/widgets/dialogs/overlays/widgets/album_preview.dart';
+import 'package:chatify/features/updates/widgets/dialogs/overlays/widgets/album_preview.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:chatify/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';

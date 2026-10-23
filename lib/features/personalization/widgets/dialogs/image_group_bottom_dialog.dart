@@ -5,7 +5,7 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../chat/models/user_model.dart';
-import '../../../status/widgets/images/camera_screen.dart';
+import '../../../updates/widgets/images/camera_screen.dart';
 import 'light_dialog.dart';
 
 void showImageGroupBottomSheet(BuildContext context, UserModel user) {

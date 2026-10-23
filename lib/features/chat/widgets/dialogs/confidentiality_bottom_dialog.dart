@@ -7,8 +7,8 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../../utils/popups/dialogs.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../status/screens/exceptions_screen.dart';
-import '../../../status/screens/share_screen.dart';
+import '../../../updates/screens/exceptions_screen.dart';
+import '../../../updates/screens/share_screen.dart';
 
 void showConfidentialityBottomSheet(BuildContext context) {
   showModalBottomSheet(

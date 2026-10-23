@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/features/bot/models/support_model.dart';
 import 'package:chatify/features/newsletter/models/newsletter_model.dart';
-import 'package:chatify/features/status/widgets/images/camera_screen.dart';
+import 'package:chatify/features/updates/widgets/images/camera_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +14,13 @@ import '../../../api/apis.dart';
 import '../../../api/community_api.dart';
 import '../../../api/group_api.dart';
 import '../../../api/newsletter_api.dart';
+import '../../../api/support_api.dart';
 import '../../../core/enums/chat_list_type.dart';
+import '../../../core/enums/global_search_tab_type.dart';
 import '../../../core/enums/selection_type.dart';
 import '../../../generated/l10n/l10n.dart';
 import '../../../routes/custom_page_route.dart';
+import '../../../test/test.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/constants/app_vectors.dart';
@@ -29,12 +32,14 @@ import '../../community/models/community_model.dart';
 import '../../group/models/group_model.dart';
 import '../../personalization/controllers/user_controller.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
+import '../widgets/bars/app_bars/global_search_bar.dart';
 import '../widgets/bars/nav_bars/bottom_nav.dart';
 import '../widgets/bars/app_bars/home_app_bar_widget.dart';
 import '../widgets/bars/app_bars/selection_app_bar.dart';
 import '../widgets/dialogs/delete_chat_dialog.dart';
 import '../widgets/dialogs/no_sound_dialog.dart';
 import '../widgets/items/home_item.dart';
+import '../widgets/tabs/global_search_tabs.dart';
 import '../widgets/widgets/home_screen_widget.dart';
 import 'home_select_user_screen.dart';
 
@@ -57,6 +62,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final Set<String> mutedChats = <String>{};
   final UserController userController = Get.find<UserController>();
   final PageController _pageController = PageController();
+  final TextEditingController globalSearchController = TextEditingController();
+  final FocusNode globalSearchFocusNode = FocusNode();
   final Set<String> selectedNewsletterIds = {};
   final Set<String> selectedCommunityIds = {};
   final Set<String> selectedGroupIds = {};
@@ -66,8 +73,10 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool isToolbarVisible = true;
   bool isLoading = true;
   bool isRequestingPermissions = true;
+  bool isGlobalSearchActive = false;
   int selectedIndex = 0;
   int selectedChatsCount = 0;
+  String globalSearchQuery = '';
   List<GroupModel> groups = [];
   List<CommunityModel> communities = [];
   List<NewsletterModel> newsletters = [];
@@ -78,6 +87,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   List<HomeItem> homeItems = [];
   ChatListType chatListType = ChatListType.all;
   SelectionType selectionType = SelectionType.none;
+  GlobalSearchTabType? selectedGlobalSearchTab;
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _myUsersSubscription;
 
@@ -122,6 +132,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void dispose() {
     _myUsersSubscription?.cancel();
     _pageController.dispose();
+    globalSearchController.dispose();
+    globalSearchFocusNode.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -248,7 +260,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _fetchSupportChat() async {
-    List<SupportAppModel> fetchedSupports = await APIs.getSupportChat();
+    List<SupportAppModel> fetchedSupports = await SupportApi.getSupportChat();
     setState(() {
       supports = fetchedSupports;
       _rebuildHomeItems();
@@ -493,6 +505,37 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     homeItems = items;
   }
 
+
+  void openGlobalSearch() {
+    setState(() {
+      isGlobalSearchActive = true;
+      isSearching = false;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !isGlobalSearchActive) return;
+
+      globalSearchFocusNode.requestFocus();
+    });
+  }
+
+  void closeGlobalSearch() {
+    setState(() {
+      isGlobalSearchActive = false;
+      globalSearchQuery = '';
+      isSearching = false;
+    });
+
+    globalSearchFocusNode.unfocus();
+    globalSearchController.clear();
+  }
+
+  void onGlobalSearchChanged(String value) {
+    setState(() {
+      globalSearchQuery = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isMuted = selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id));
@@ -586,95 +629,117 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   isPinned: selectedChats.isNotEmpty && selectedChats.every((id) => pinnedChats.contains(id)),
                   isMuted: selectedChats.isNotEmpty && selectedChats.every((id) => mutedChats.contains(id)),
                 )
-            : selectedIndex == 0
-              ? HomeAppBarWidget(
-                  isSearching: isSearching,
-                  users: users,
-                  searchList: searchList,
-                  onSearch: (val) {
-                    searchList.clear();
-                    for (var i in users) {
-                      if (i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())) {
-                        searchList.add(i);
-                      }
-                    }
-                    setState(() {
-                      searchList;
-                    });
-                  },
-                  onToggleSearch: () {
-                    setState(() {
-                      isSearching = !isSearching;
-                    });
-                  },
-                  onCameraPressed: () {
-                    Navigator.push(context, createPageRoute(CameraScreen(chatTarget: widget.user)));
-                  },
-                  hintText: S.of(context).search,
-                )
-              : null,
-        floatingActionButton: defaultTargetPlatform == TargetPlatform.windows || selectedIndex != 0
+                : selectedIndex == 0
+                  ? isGlobalSearchActive
+                    ? GlobalSearchBar(
+                        controller: globalSearchController,
+                        focusNode: globalSearchFocusNode,
+                        onChanged: onGlobalSearchChanged,
+                        onBack: closeGlobalSearch,
+                        selectedTab: selectedGlobalSearchTab,
+                        onClearSelection: () {
+                          setState(() {
+                            selectedGlobalSearchTab = null;
+                          });
+                        },
+                      )
+                    : HomeAppBarWidget(
+                        isSearching: isSearching,
+                        users: users,
+                        user: widget.user,
+                        hintText: S.of(context).search,
+                        searchList: searchList,
+                        onSearch: (val) {
+                          searchList.clear();
+
+                          for (final user in users) {
+                            if (user.name.toLowerCase().contains(val.toLowerCase()) || user.email.toLowerCase().contains(val.toLowerCase())) {
+                              searchList.add(user);
+                            }
+                          }
+
+                          setState(() {});
+                        },
+                        onToggleSearch: openGlobalSearch,
+                        onCameraPressed: () {
+                          Navigator.push(context, createPageRoute(CameraScreen(chatTarget: widget.user)));
+                        },
+                        onTestPressed: () async {
+                          await Test.testCreateBotWithForeignOwner();
+                        },
+                      )
+                  : null,
+        floatingActionButton: isGlobalSearchActive || (selectedIndex != 0 && defaultTargetPlatform == TargetPlatform.windows)
           ? null
-          : isEmpty
-            ? FloatingActionButton.extended(
-                heroTag: 'home',
-                onPressed: () {
-                  Navigator.push(context, createPageRoute(HomeSelectUserScreen(user: widget.user)));
-                },
-                elevation: 2,
-                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                foregroundColor: ChatifyColors.white,
-                icon: SvgPicture.asset(
-                  ChatifyVectors.chatsAdd,
-                  width: 26,
-                  height: 26,
-                  colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
-                ),
-                label: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text('Отправить сообщение', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.black, fontWeight: FontWeight.w400)),
-                ),
-              )
-            : FloatingActionButton(
-                heroTag: 'home',
-                onPressed: () {
-                  Navigator.push(context, createPageRoute(HomeSelectUserScreen(user: widget.user)));
-                },
-                elevation: 2,
-                backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                foregroundColor: ChatifyColors.white,
-                child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+          : isEmpty ? FloatingActionButton.extended(
+              heroTag: 'home',
+              onPressed: () {
+                Navigator.push(context, createPageRoute(HomeSelectUserScreen(user: widget.user)));
+              },
+              elevation: 2,
+              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              foregroundColor: ChatifyColors.white,
+              icon: SvgPicture.asset(
+                ChatifyVectors.chatsAdd,
+                width: 26,
+                height: 26,
+                colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn),
               ),
-        body: HomeScreenWidget(
-          selectedIndex: selectedIndex,
-          pageController: _pageController,
-          isHomeScreen: isHomeScreen,
-          isSearching: isSearching,
-          groups: groups,
-          users: users,
-          newsletters: newsletters,
-          communities: communities,
-          searchList: searchList,
-          supports: supports,
-          infosApp: infosApp,
-          selectedChats: selectedChats,
-          onPageChanged: _onPageChanged,
-          onItemTapped: onItemTapped,
-          onUserSelected: onChatSelection,
-          onGroupSelected: onGroupSelection,
-          onNewsletterSelected: onNewsletterSelection,
-          onCommunitySelected: onCommunitySelection,
-          user: widget.user,
-          selectionType: selectionType,
-          selectedNewsletterIds: selectedNewsletterIds,
-          selectedCommunityIds: selectedCommunityIds,
-          selectedGroupIds: selectedGroupIds,
-          pinnedChats: pinnedChats,
-          mutedChats: mutedChats,
-          myUsers: myUsers,
-          userLastMessageTimes: userLastMessageTimes,
-        ),
-        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows
+              label: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text('Отправить сообщение', style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.black, fontWeight: FontWeight.w400)),
+              ),
+            )
+          : FloatingActionButton(
+              heroTag: 'home',
+              onPressed: () {
+                Navigator.push(context, createPageRoute(HomeSelectUserScreen(user: widget.user)));
+              },
+              elevation: 2,
+              backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
+              foregroundColor: ChatifyColors.white,
+              child: SvgPicture.asset(ChatifyVectors.chatsAdd, width: 26, height: 26, colorFilter: const ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+            ),
+        body: isGlobalSearchActive
+            ? selectedGlobalSearchTab == null
+                ? GlobalSearchTabs(
+                    onTabChanged: (tab) {
+                      setState(() {
+                        selectedGlobalSearchTab = tab;
+                      });
+                    },
+                  )
+                : const SizedBox.shrink()
+          : HomeScreenWidget(
+              selectedIndex: selectedIndex,
+              pageController: _pageController,
+              isHomeScreen: isHomeScreen,
+              isSearching: isSearching,
+              groups: groups,
+              users: users,
+              newsletters: newsletters,
+              communities: communities,
+              searchList: searchList,
+              supports: supports,
+              infosApp: infosApp,
+              selectedChats: selectedChats,
+              onPageChanged: _onPageChanged,
+              onItemTapped: onItemTapped,
+              onUserSelected: onChatSelection,
+              onGroupSelected: onGroupSelection,
+              onNewsletterSelected: onNewsletterSelection,
+              onCommunitySelected: onCommunitySelection,
+              user: widget.user,
+              selectionType: selectionType,
+              selectedNewsletterIds: selectedNewsletterIds,
+              selectedCommunityIds: selectedCommunityIds,
+              selectedGroupIds: selectedGroupIds,
+              pinnedChats: pinnedChats,
+              mutedChats: mutedChats,
+              myUsers: myUsers,
+              userLastMessageTimes: userLastMessageTimes,
+            ),
+        bottomNavigationBar: defaultTargetPlatform != TargetPlatform.windows && !isGlobalSearchActive
           ? BottomNavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped, unreadChatsCount: unreadChatsCount)
           : null,
       ),

@@ -54,6 +54,7 @@ class _NewContactScreenState extends State<NewContactScreen> {
         icon: const Icon(Icons.warning_amber_rounded, size: 26),
         iconColor: ChatifyColors.yellow,
         position: SnackBarPositionType.bottom,
+        offset: 20,
       );
     }
   }

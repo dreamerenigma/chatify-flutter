@@ -45,14 +45,7 @@ class SoundsOverlayEntry {
                       color: context.isDarkMode ? ChatifyColors.softNight : ChatifyColors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(color: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.3 * 255).toInt()) : ChatifyColors.grey),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -60,10 +53,10 @@ class SoundsOverlayEntry {
                         SizedBox(height: 3),
                         _buildOption(
                           context: context,
-                          label: S.of(context).no,
-                          isSelected: selectedOption == 'no',
+                          label: S.of(context).none,
+                          isSelected: selectedOption == 'none',
                           onTap: () {
-                            onSoundSelected('no', S.of(context).no);
+                            onSoundSelected('none', S.of(context).none);
                             onOptionTap();
                           },
                         ),
@@ -131,16 +124,14 @@ Widget _buildOption({required BuildContext context, required String label, requi
                 left: 0,
                 top: 8,
                 bottom: 8,
-                child: Container(width: 2.5, decoration: BoxDecoration(
-                  color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(2)),
-                ),
+                child: Container(width: 2.5, decoration: BoxDecoration(color: colorsController.getColor(colorsController.selectedColorScheme.value), borderRadius: BorderRadius.circular(2))),
               ),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Row(
                     children: [
-                      Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w300)),
+                      Text(label, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                     ],
                   ),
                 ),

@@ -23,7 +23,7 @@ import '../../home/widgets/bars/app_bars/home_app_bar.dart';
 import '../../personalization/screens/favorite/favorite_screen.dart';
 import '../../personalization/screens/settings/settings_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../status/screens/status_screen.dart';
+import '../../updates/screens/updates_screen.dart';
 import '../models/recent_call_model.dart';
 import '../widgets/actions/calls_quick_action.dart';
 import '../widgets/lists/recent_calls_list.dart';
@@ -71,7 +71,7 @@ class CallsScreenState extends State<CallsScreen> {
         Navigator.push(context, createPageRoute(HomeScreen(user: APIs.me)));
         break;
       case 1:
-        Navigator.push(context, createPageRoute(StatusScreen(user: APIs.me)));
+        Navigator.push(context, createPageRoute(UpdatesScreen(user: APIs.me)));
         break;
       case 2:
         Navigator.push(context, createPageRoute(CommunitiesScreen(user: APIs.me)));

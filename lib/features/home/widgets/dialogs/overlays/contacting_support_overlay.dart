@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../../api/apis.dart';
+import '../../../../../api/support_api.dart';
 import '../../../../../generated/l10n/l10n.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_links.dart';
@@ -133,7 +133,7 @@ class ContactingSupportOverlay {
                                       ProgressOverlay(context).show();
                                       final userId = FirebaseAuth.instance.currentUser?.uid;
                                       if (userId != null && !hasCreatedSupportChat) {
-                                        await APIs.createSupportChat(userId);
+                                        await SupportApi.createSupportChat(userId);
                                         hasCreatedSupportChat = true;
                                       }
 

@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import '../core/enums/snack_bar_position_type.dart';
 import '../core/services/media/media_service.dart';
 import '../features/community/models/community_model.dart';
 import '../generated/l10n/l10n.dart';
@@ -46,6 +47,8 @@ class CommunityApi {
             S.of(context).profileUpdated,
             icon: SvgPicture.asset(ChatifyVectors.closeCircle, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
             iconColor: ChatifyColors.danger,
+            position: SnackBarPositionType.bottom,
+            offset: 20,
           );
           Dialogs.showSnackbar(context, 'Failed to upload image.');
           return false;

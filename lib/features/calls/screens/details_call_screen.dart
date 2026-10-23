@@ -13,7 +13,7 @@ import '../../../utils/constants/app_vectors.dart';
 import '../../chat/models/user_model.dart';
 import '../../chat/screens/chat_screen.dart';
 import '../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../status/widgets/options/action_option.dart';
+import '../../updates/widgets/options/action_option.dart';
 import '../widgets/popups/items/app_popup_menu_item.dart';
 import 'audio/outgoing_audio_call_screen.dart';
 

@@ -1,4 +1,4 @@
-import '../../../api/apis.dart';
+import '../../../api/support_api.dart';
 
 class SupportBotService {
   static Future<void> processMessage({required String supportChatId, required String userMessage}) async {
@@ -20,6 +20,6 @@ class SupportBotService {
 
     response ??= 'Я пока не совсем понял ваш вопрос. ' 'Попробуйте описать проблему подробнее.';
 
-    await APIs.sendSupportBotMessage(supportChatId: supportChatId, message: response);
+    await SupportApi.sendSupportBotMessage(supportChatId: supportChatId, message: response);
   }
 }

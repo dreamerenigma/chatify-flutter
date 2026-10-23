@@ -21,7 +21,7 @@ import '../../community/screens/add_user_screen.dart';
 import '../../personalization/screens/data_storage/disappearing_messages_screen.dart';
 import '../../personalization/widgets/dialogs/add_list_bottom_sheet_dialog.dart';
 import '../../personalization/widgets/items/profile_settings_item.dart';
-import '../../status/widgets/options/action_option.dart';
+import '../../updates/widgets/options/action_option.dart';
 import '../../utils/widgets/dialogs/edit_image_bottom_dialog.dart';
 import '../../utils/widgets/dividers/custom_divider.dart';
 import '../controllers/photo_group_controller.dart';

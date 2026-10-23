@@ -163,7 +163,8 @@ class _ReserveUsernameScreenState extends State<ReserveUsernameScreen> {
         'Не удалось сохранить имя пользователя',
         icon: SvgPicture.asset(ChatifyVectors.closeCircle, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.white, BlendMode.srcIn)),
         iconColor: ChatifyColors.danger,
-        position: SnackBarPositionType.bottom
+        position: SnackBarPositionType.bottom,
+        offset: 20,
       );
     }
   }

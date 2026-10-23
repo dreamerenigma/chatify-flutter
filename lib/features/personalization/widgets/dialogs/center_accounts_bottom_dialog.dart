@@ -22,7 +22,7 @@ void showCenterAccountsBottomDialog(BuildContext context) {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(icon: const Icon(Icons.close, size: 24), onPressed: () => Navigator.pop(context)),
+                      IconButton(icon: const Icon(Icons.close_rounded, size: 25), onPressed: () => Navigator.pop(context)),
                       Image.asset(ChatifyImages.logoIS, height: 18),
                       const SizedBox(width: 48),
                     ],

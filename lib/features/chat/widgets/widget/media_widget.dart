@@ -313,7 +313,7 @@ class MediaWidgetState extends State<MediaWidget> {
               if (showLoadingOverlay)
                 _buildImageLoadingOverlay(),
               if (widget.isUploadFailed)
-                Container(color: ChatifyColors.black, alignment: Alignment.center, child: const Icon(Icons.error_outline, color: ChatifyColors.white, size: 32)),
+                Container(color: ChatifyColors.black, alignment: Alignment.center, child: const Icon(Icons.error_outline, size: 32, color: ChatifyColors.white)),
             ],
           ),
         ),

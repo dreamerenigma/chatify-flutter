@@ -4,7 +4,7 @@ import 'package:chatify/features/home/widgets/dialogs/confirmation_dialog.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../api/apis.dart';
+import '../../../../api/support_api.dart';
 import '../../../../common/widgets/badges/creation_date_badge.dart';
 import '../../../../common/widgets/cards/encryption_notice_card.dart';
 import '../../../../generated/l10n/l10n.dart';
@@ -24,7 +24,7 @@ import '../../../personalization/widgets/dialogs/attach_files_dialog.dart';
 import '../../../personalization/widgets/dialogs/emoji_stickers_dialog.dart';
 import '../../../personalization/widgets/dialogs/overlays/info_chat_support_app_overlay.dart';
 import '../../models/support_model.dart';
-import '../bars/support_app_bar.dart';
+import '../bars/bot_app_bar.dart';
 
 class SupportChatWidget extends StatefulWidget {
   final SupportAppModel support;
@@ -89,7 +89,7 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
 
     if (text.isEmpty) return;
 
-    await APIs.sendSupportBotMessage(message: text, supportChatId: support.id);
+    await SupportApi.sendSupportBotMessage(message: text, supportChatId: support.id);
 
     setState(() {
       textController.clear();
@@ -117,7 +117,7 @@ class _SupportChatWidgetState extends State<SupportChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SupportAppBar(support: widget.support, user: widget.user),
+      appBar: BotAppBar(support: widget.support, user: widget.user),
       body: _buildBody(),
       bottomNavigationBar: BottomInput(
         textFieldKey: _textFieldKey,

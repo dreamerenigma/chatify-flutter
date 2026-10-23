@@ -366,8 +366,8 @@ class RecipientMessageState extends State<RecipientMessage> {
               type: MessageBubbleType.recipient,
               isWebOrWindows: isWebOrWindows,
               isPressed: isPressed,
-              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               onSecondaryTap: _handleSecondaryTap,
+              hasReply: widget.message.replyToMessageId != null && widget.message.replyToMessageId!.isNotEmpty,
               child: MessageText(message: widget.message, isWebOrWindows: isWebOrWindows, onSecondaryTap: _handleSecondaryTap, onMentionTap: _handleMentionTap),
             ),
             if (!widget.hasReply)
@@ -413,11 +413,10 @@ class RecipientMessageState extends State<RecipientMessage> {
                 ),
                 if (!widget.hasReply)
                   _buildMessageTail(),
+                if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
+                  _buildHoverActions(),
               ],
             ),
-
-            if (hoveredMessage == widget.message && Platform.isWindows && !isPressed && !isDialogVisible)
-              _buildHoverActions(),
           ],
         ),
       ),

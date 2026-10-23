@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:chatify/api/apis.dart';
-import 'package:chatify/features/status/screens/status_screen.dart';
+import 'package:chatify/features/updates/screens/updates_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -197,7 +197,7 @@ class AddDetailImageScreenState extends State<AddDetailImageScreen> with Widgets
                         return;
                       }
 
-                      Navigator.push(context, createPageRoute(StatusScreen(user: widget.user)));
+                      Navigator.push(context, createPageRoute(UpdatesScreen(user: widget.user)));
                     } catch (e, stackTrace) {
                       log('STATUS ERROR: $e');
                       log('STATUS STACK: $stackTrace');

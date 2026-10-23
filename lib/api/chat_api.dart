@@ -529,6 +529,15 @@ class ChatApi {
 
       log('SEND VIDEO: uploaded = $path');
 
+      log('SEND VIDEO: uploadLargeFile returned: $uploaded');
+
+      if (!uploaded) {
+        log('SEND VIDEO: upload failed');
+        return false;
+      }
+
+      log('SEND VIDEO: upload complete, sending message');
+
       await sendMessage(
         chatUser,
         path,
@@ -540,8 +549,8 @@ class ChatApi {
       );
 
       log('SEND VIDEO: message sent');
-
       return true;
+
     } catch (e, st) {
       log('SEND VIDEO: error = $e', stackTrace: st);
 
@@ -549,7 +558,7 @@ class ChatApi {
     }
   }
 
-  /// --- Send chat audio.
+  /// -- Send chat audio.
   static Future<void> sendChatAudio(UserModel chatUser, File file, String fileName, {int? audioDuration, String? replyToMessageId}) async {
     final chatId = getConversationId(chatUser.id);
     final path = 'Chats/$chatId/messages/audio/$fileName';
@@ -574,7 +583,7 @@ class ChatApi {
     }
   }
 
-  /// --- Send chat document.
+  /// -- Send chat document.
   static Future<void> sendChatDocument(UserModel chatUser, File file, {String? replyToMessageId}) async {
     final ext = file.path.split('.').last.toLowerCase();
     final chatId = getConversationId(chatUser.id);
@@ -602,7 +611,7 @@ class ChatApi {
     }
   }
 
-  /// --- Send chat contact.
+  /// -- Send chat contact.
   static Future<void> sendChatContact(UserModel chatUser, UserModel contact, {bool includePhone = true, bool includeUsername = true, String? replyToMessageId}) async {
     if (!includePhone && !includeUsername) {
       throw ArgumentError('Необходимо выбрать хотя бы одно поле контакта.');
@@ -618,7 +627,7 @@ class ChatApi {
     await sendMessage(chatUser, jsonEncode(contactData), MessageType.contact, replyToMessageId: replyToMessageId);
   }
 
-  /// --- Send chat geolocation.
+  /// -- Send chat geolocation.
   static Future<void> sendChatGeolocation(UserModel chatUser, {required double latitude, required double longitude}) async {
     final addressData = await getAddressFromCoordinates(latitude, longitude);
 
@@ -633,7 +642,7 @@ class ChatApi {
     await sendMessage(chatUser, 'Геолокация', MessageType.location, location: location);
   }
 
-  /// --- .
+  /// -- .
   static Future<Map<String, String>> getAddressFromCoordinates(double latitude, double longitude) async {
     try {
       final Geocoding _geocoding = Geocoding();
@@ -708,7 +717,7 @@ class ChatApi {
     }
   }
 
-  /// --- Send chat sticker.
+  /// -- Send chat sticker.
   static Future<void> sendChatSticker(UserModel chatUser, String stickerPath, {String? replyToMessageId}) async {
     if (stickerPath.trim().isEmpty) {
       log('SEND STICKER: path is empty');

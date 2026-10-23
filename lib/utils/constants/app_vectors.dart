@@ -75,6 +75,7 @@ class ChatifyVectors {
   static const String message = "assets/vectors/message.svg";
   static const String messageFilled = "assets/vectors/message_filled.svg";
   static const String messageOutline = "assets/vectors/message_outline.svg";
+  static const String messageUnreadOutline = "assets/vectors/message_unread_outline.svg";
   static const String messageWarningOutline = "assets/vectors/message_warning_outline.svg";
   static const String messageLock = "assets/vectors/message_lock.svg";
   static const String messagePrivacy = "assets/vectors/message_privacy.svg";
@@ -328,6 +329,17 @@ class ChatifyVectors {
   static const String brightnessHigh = "assets/vectors/brightness_high.svg";
   static const String moon = "assets/vectors/moon.svg";
   static const String refreshTime = "assets/vectors/refresh_time.svg";
+  static const String channel = "assets/vectors/channel.svg";
+  static const String createChannel = "assets/vectors/create_channel.svg";
+  static const String channelOutline = "assets/vectors/channel_outline.svg";
+  static const String channelFilled = "assets/vectors/channel_filled.svg";
+  static const String updatesOutline = "assets/vectors/updates_outline.svg";
+  static const String updatesFilled = "assets/vectors/updates_filled.svg";
+  static const String eyeOff = "assets/vectors/eye_off.svg";
+  static const String apps = "assets/vectors/apps.svg";
+  static const String labTest = "assets/vectors/lab_test.svg";
+  static const String upload = "assets/vectors/upload.svg";
+  static const String bot = "assets/vectors/bot.svg";
 
   /// -- Flags Country
   static const String abw = '${pathFlags}abw$format';

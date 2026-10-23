@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
+import '../../../../common/widgets/switches/custom_switch.dart';
 import '../../../../generated/l10n/l10n.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
-import '../../widgets/dialogs/light_dialog.dart';
+import '../../../utils/widgets/dividers/custom_divider.dart';
 
 class PrivacyBlockedAppScreen extends StatefulWidget {
   const PrivacyBlockedAppScreen({super.key});
@@ -16,9 +17,9 @@ class PrivacyBlockedAppScreen extends StatefulWidget {
 }
 
 class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
-  bool isBiometricEnabled = false;
   final storage = GetStorage();
   final LocalAuthentication auth = LocalAuthentication();
+  bool isBiometricEnabled = false;
 
   @override
   void initState() {
@@ -70,21 +71,15 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: ChatifyColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.1 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
           ),
           child: AppBar(
             title: Text(S.of(context).blockingApp, style: TextStyle(fontSize: ChatifySizes.fontSizeMg, fontWeight: FontWeight.w400)),
             titleSpacing: 0,
+            elevation: 0,
             backgroundColor: context.isDarkMode ? ChatifyColors.blackGrey : ChatifyColors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded, size: 25),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -95,52 +90,60 @@ class PrivacyBlockedAppScreenState extends State<PrivacyBlockedAppScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              InkWell(
-                onTap: () {
-                  toggleSwitch(!isBiometricEnabled);
-                },
-                splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-                highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.5 * 255).toInt()) : ChatifyColors.grey.withAlpha((0.5 * 255).toInt()),
-                child: Container(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(S.of(context).biometric, style: TextStyle(fontSize: ChatifySizes.fontSizeMd)),
-                            RichText(
-                              text: TextSpan(
-                                text: S.of(context).enabledAppUnlockedFingerprint,
-                                style: TextStyle(fontSize: ChatifySizes.fontSizeSm, color: ChatifyColors.darkGrey, height: 1.5),
+              Material(
+                color: ChatifyColors.transparent,
+                child: InkWell(
+                  splashFactory: NoSplash.splashFactory,
+                  splashColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                  highlightColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                  hoverColor: context.isDarkMode ? ChatifyColors.darkerGrey.withAlpha((0.15 * 255).toInt()) : ChatifyColors.grey,
+                  onTap: () {
+                    toggleSwitch(!isBiometricEnabled);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(S.of(context).biometric, style: TextStyle(fontSize: ChatifySizes.fontSizeMd, fontWeight: FontWeight.w400)),
+                              RichText(
+                                text: TextSpan(
+                                  text: S.of(context).enabledAppUnlockedFingerprint,
+                                  style: TextStyle(color: ChatifyColors.darkGrey, fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, height: 1.5),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Switch(
-                          value: isBiometricEnabled,
-                          activeThumbColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                          activeTrackColor: colorsController.getColor(colorsController.selectedColorScheme.value).withAlpha((0.5 * 255).toInt()),
-                          onChanged: (value) {
-                            toggleSwitch(value);
-                          },
+                        Container(
+                          alignment: Alignment.topRight,
+                          child: CustomSwitch(
+                            value: isBiometricEnabled,
+                            onChanged: (value) {
+                              toggleSwitch(value);
+                            },
+                            switchWidth: 55,
+                            switchHeight: 33,
+                            thumbSize: 25,
+                            thumbPadding: 3,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          Divider(height: 0, thickness: 1, color: context.isDarkMode ? ChatifyColors.darkSlate : ChatifyColors.grey),
+          CustomDivider(indent: 0, endIndent: 0, left: 0, right: 0, bottom: 15),
         ],
       ),
     );

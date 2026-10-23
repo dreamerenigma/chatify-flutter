@@ -14,31 +14,34 @@ import '../../../chat/models/chat_theme_target.dart';
 import '../../../chat/models/user_model.dart';
 import '../../../personalization/screens/chats/theme_chat_screen.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
+import '../../models/bot_model.dart';
 import '../../models/info_app_model.dart';
 import '../../models/support_model.dart';
 import '../../screens/info_app_info_screen.dart';
 import '../../screens/support_info_screen.dart';
 
-class SupportAppBar extends StatefulWidget implements PreferredSizeWidget {
+class BotAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final UserModel user;
   final SupportAppModel? support;
   final InfoAppModel? infoApp;
-  final UserModel user;
+  final BotModel? bot;
 
-  const SupportAppBar({
+  const BotAppBar({
     super.key,
+    required this.user,
     this.support,
     this.infoApp,
-    required this.user,
+    this.bot,
   });
 
   @override
-  State<SupportAppBar> createState() => SupportAppBarState();
+  State<BotAppBar> createState() => BotAppBarState();
 
   @override
   Size get preferredSize => Size.fromHeight(Platform.isWindows ? kToolbarHeight + 10 : kToolbarHeight + 4);
 }
 
-class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderStateMixin {
+class BotAppBarState extends State<BotAppBar> with SingleTickerProviderStateMixin {
   bool showRealStatus = false;
   String? imagePath;
 
@@ -181,13 +184,24 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
   Widget _buildSupportInfo(BuildContext context) {
     final String name;
     final String description;
+    final bool isVerified;
+    final String? avatar;
 
-    if (widget.infoApp != null) {
+    if (widget.bot != null) {
+      name = widget.bot!.name;
+      description = '@${widget.bot!.username}';
+      isVerified = widget.bot!.isVerified;
+      avatar = widget.bot!.avatar;
+    } else if (widget.infoApp != null) {
       name = widget.infoApp!.name;
       description = widget.infoApp!.description;
+      isVerified = true;
+      avatar = null;
     } else {
       name = S.of(context).chatifySupport;
       description = widget.support!.description;
+      isVerified = true;
+      avatar = null;
     }
 
     return Material(
@@ -225,7 +239,10 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
               CircleAvatar(
                 backgroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
                 foregroundColor: colorsController.getColor(colorsController.selectedColorScheme.value),
-                child: SvgPicture.asset(ChatifyVectors.logoApp, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn)),
+                backgroundImage: avatar != null && avatar.isNotEmpty ? NetworkImage(avatar) : null,
+                child: avatar == null || avatar.isEmpty
+                  ? SvgPicture.asset(ChatifyVectors.logoApp, width: 24, height: 24, colorFilter: ColorFilter.mode(ChatifyColors.black, BlendMode.srcIn))
+                  : null,
               ),
               SizedBox(width: Platform.isWindows ? 14 : 10),
               Column(
@@ -240,8 +257,10 @@ class SupportAppBarState extends State<SupportAppBar> with SingleTickerProviderS
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: Platform.isWindows ? ChatifySizes.fontSizeSm : ChatifySizes.fontSizeMd, fontWeight: Platform.isWindows ? FontWeight.w600 : FontWeight.w400, height: 1.3),
                         ),
-                        SizedBox(width: 4),
-                        SvgPicture.asset(ChatifyVectors.starburstCheck, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.blue, BlendMode.srcIn)),
+                        if (isVerified) ...[
+                          SizedBox(width: 4),
+                          SvgPicture.asset(ChatifyVectors.starburstCheck, width: 14, height: 14, colorFilter: ColorFilter.mode(ChatifyColors.blue, BlendMode.srcIn)),
+                        ],
                       ],
                     ),
                   ),

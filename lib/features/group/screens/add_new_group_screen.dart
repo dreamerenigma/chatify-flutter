@@ -131,7 +131,7 @@ class AddNewGroupScreenState extends State<AddNewGroupScreen> {
         icon: const Icon(Icons.warning_amber_rounded),
         iconColor: ChatifyColors.yellow,
         position: SnackBarPositionType.bottom,
-        offset: 40
+        offset: 40,
       );
       return;
     }

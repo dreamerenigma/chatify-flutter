@@ -1,0 +1,1 @@
+enum BotRoleType { standard, orchestrator }

@@ -30,9 +30,9 @@ Future<bool> showConfirmationDialog({
   final dialogController = Get.find<DialogController>();
   final overlay = Overlay.of(context);
   final completer = Completer<bool>();
-  late OverlayEntry overlayEntry;
   final String finalConfirmText = confirmText ?? S.of(context).yes;
-  final String finalCancelText = cancelText ?? S.of(context).no;
+  final String finalCancelText = cancelText ?? S.of(context).none;
+  late OverlayEntry overlayEntry;
 
   overlayEntry = OverlayEntry(
     builder: (context) {
@@ -61,14 +61,7 @@ Future<bool> showConfirmationDialog({
                   decoration: BoxDecoration(
                     border: Border.all(color: ChatifyColors.darkerGrey, width: 1),
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: ChatifyColors.black.withAlpha((0.3 * 255).toInt()), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 1))],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -93,7 +86,7 @@ Future<bool> showConfirmationDialog({
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                 child: Text(
                                   title,
-                                  style: TextStyle(fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w300, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black),
+                                  style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeLm, fontWeight: FontWeight.w400),
                                 ),
                               ),
                             ],
@@ -107,9 +100,9 @@ Future<bool> showConfirmationDialog({
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (title != null) Text(title, style: TextStyle(fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400, color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black)),
+                                  if (title != null) Text(title, style: TextStyle(color: context.isDarkMode ? ChatifyColors.white : ChatifyColors.black, fontSize: ChatifySizes.fontSizeBg, fontWeight: FontWeight.w400)),
                                   SizedBox(height: description != null ? 10 : 0),
-                                  if (description != null) Text(description, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400, fontFamily: 'Roboto')),
+                                  if (description != null) Text(description, style: TextStyle(fontSize: ChatifySizes.fontSizeSm, fontWeight: FontWeight.w400)),
                                   if (additionalWidget != null) ...[
                                     SizedBox(height: 10),
                                     additionalWidget,

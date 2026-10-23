@@ -2,7 +2,7 @@ import 'package:chatify/features/authentication/screens/add_account_screen.dart'
 import 'package:chatify/features/authentication/screens/login_screen.dart';
 import 'package:chatify/features/community/screens/communities_screen.dart';
 import 'package:chatify/features/group/screens/new_group_screen.dart';
-import 'package:chatify/features/status/screens/status_screen.dart';
+import 'package:chatify/features/updates/screens/updates_screen.dart';
 import 'package:chatify/routes/routes.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
@@ -29,7 +29,7 @@ class AppRoutes {
     GetPage(name: ChatifyRoutes.chat, page: () => ChatsScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.community, page: () => CommunityChatScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.communities, page: () => CommunitiesScreen(user: APIs.me)),
-    GetPage(name: ChatifyRoutes.status, page: () => StatusScreen(user: APIs.me)),
+    GetPage(name: ChatifyRoutes.status, page: () => UpdatesScreen(user: APIs.me)),
     GetPage(name: ChatifyRoutes.newGroup, page: () => const NewGroupScreen(selectedUsers: [])),
     GetPage(name: ChatifyRoutes.newNewsletter, page: () => const NewNewsletterScreen(selectedUsers: [])),
     GetPage(name: ChatifyRoutes.favorite, page: () => const FavoriteMessageScreen()),

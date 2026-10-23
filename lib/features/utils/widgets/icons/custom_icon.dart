@@ -28,6 +28,10 @@ class CustomIcon extends StatelessWidget {
       return SvgPicture.asset(icon as String, width: size, height: size, colorFilter: ColorFilter.mode(color, BlendMode.srcIn));
     }
 
+    if (icon is Widget) {
+      return SizedBox(width: size, height: size, child: icon);
+    }
+
     return SizedBox(width: size, height: size);
   }
 }

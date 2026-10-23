@@ -1,9 +1,10 @@
-import 'package:chatify/features/bot/widgets/bars/support_app_bar.dart';
+import 'package:chatify/features/bot/widgets/bars/bot_app_bar.dart';
 import 'package:chatify/features/utils/widgets/scrolls/no_glow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:provider/provider.dart';
 import '../../../api/apis.dart';
+import '../../../api/support_api.dart';
 import '../../../core/services/bot/support_bot_service.dart';
 import '../../../provider/wallpaper_provider.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -60,7 +61,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     }
 
     return Scaffold(
-      appBar: SupportAppBar(support: support, infoApp: widget.infoApp, user: APIs.me),
+      appBar: BotAppBar(support: support, infoApp: widget.infoApp, user: APIs.me),
       body: _buildBodySection(context, support),
     );
   }
@@ -147,7 +148,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
                     focusNode: inputFocusNode,
                     onToggleEmojiKeyboard: toggleEmojiKeyboard,
                     onSendMessage: (text) async {
-                      await APIs.sendSupportUserMessage(supportChatId: support.id, message: text);
+                      await SupportApi.sendSupportUserMessage(supportChatId: support.id, message: text);
                       await SupportBotService.processMessage(supportChatId: support.id, userMessage: text);
                     },
                   ),

@@ -19,9 +19,9 @@ import '../../../../routes/custom_page_route.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_sizes.dart';
 import '../../../personalization/widgets/dialogs/light_dialog.dart';
-import '../../../status/screens/add_detail_image_screen.dart';
-import '../../../status/widgets/dialogs/overlays/albums_overlay.dart';
-import '../../../status/widgets/images/camera_screen.dart';
+import '../../../updates/screens/add_detail_image_screen.dart';
+import '../../../updates/widgets/dialogs/overlays/albums_overlay.dart';
+import '../../../updates/widgets/images/camera_screen.dart';
 import '../../../survey/screens/create_survey_screen.dart';
 import '../../models/message_model.dart';
 import '../../models/user_model.dart';
@@ -236,61 +236,79 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
     }
   }
 
+
   Future<void> _loadGallery() async {
     try {
       final permission = await PhotoManager.requestPermissionExtend();
 
       if (!permission.isAuth) {
+        if (!mounted) return;
+
         setState(() {
           _isLoading = false;
         });
-
         return;
       }
 
-      final albums = await PhotoManager.getAssetPathList(
-        type: RequestType.common,
-        filterOption: FilterOptionGroup(imageOption: const FilterOption(sizeConstraint: SizeConstraint(minWidth: 0, minHeight: 0))),
-        onlyAll: false,
-      );
+      final images = await _loadAllAssets(RequestType.image);
+      final videos = await _loadAllAssets(RequestType.video);
 
-      if (albums.isEmpty) {
-        setState(() {
-          _isLoading = false;
-          _hasMore = false;
-        });
+      final assetsById = <String, AssetEntity>{};
 
-        return;
+      for (final asset in [...images, ...videos]) {
+        assetsById[asset.id] = asset;
       }
 
-      AssetPathEntity selectedAlbum;
+      final allAssets = assetsById.values.toList()..sort((a, b) => b.createDateTime.compareTo(a.createDateTime));
 
-      final allAlbum = albums.where((album) => album.isAll).toList();
-
-      if (allAlbum.isNotEmpty) {
-        selectedAlbum = allAlbum.first;
-      } else {
-        selectedAlbum = albums.first;
-      }
+      if (!mounted) return;
 
       setState(() {
-        _albums = albums;
-        _currentAlbum = selectedAlbum;
+        _albums = [];
+        _currentAlbum = null;
+        _assets..clear()..addAll(allAssets);
         _page = 0;
-        _assets.clear();
-        _isLoading = true;
+        _hasMore = false;
+        _isLoading = false;
+        _isLoadingMore = false;
       });
-
-      await _loadPage();
     } catch (e, stackTrace) {
-      log('GALLERY LOAD ERROR: $e', stackTrace: stackTrace);
+      debugPrint('Gallery load error: $e');
+      debugPrintStack(stackTrace: stackTrace);
 
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _isLoadingMore = false;
         });
       }
     }
+  }
+
+  Future<List<AssetEntity>> _loadAllAssets(RequestType type) async {
+    final paths = await PhotoManager.getAssetPathList(type: type, onlyAll: true);
+
+    if (paths.isEmpty) return [];
+
+    final path = paths.first;
+    const pageSize = 200;
+    final result = <AssetEntity>[];
+
+    var page = 0;
+
+    while (true) {
+      final assets = await path.getAssetListPaged(page: page, size: pageSize);
+
+      if (assets.isEmpty) break;
+
+      result.addAll(assets);
+
+      if (assets.length < pageSize) break;
+
+      page++;
+    }
+
+    return result;
   }
 
   Future<void> _loadPage() async {
@@ -298,6 +316,16 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
 
     try {
       final assets = await _currentAlbum!.getAssetListPaged(page: _page, size: _pageSize);
+
+      for (final asset in assets) {
+        if (asset.type == AssetType.video) {
+          log('VIDEO FOUND: ${asset.title} | ''path=${asset.relativePath} | ''created=${asset.createDateTime}');
+        }
+      }
+
+      final cameraVideoFound = assets.any((asset) => asset.title == 'VID_20261020_171522.mp4');
+
+      log('Camera video in this page: $cameraVideoFound');
 
       if (!mounted) return;
 
@@ -502,7 +530,7 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
                           height: 25,
                           colorFilter: ColorFilter.mode(colorsController.getColor(colorsController.selectedColorScheme.value), BlendMode.srcIn),
                         )
-                      : const Icon(Icons.hd_outlined, key: ValueKey('hd_outlined'), size: 24, color: ChatifyColors.grey,
+                      : const Icon(key: ValueKey('hd_outlined'), Icons.hd_outlined, size: 24, color: ChatifyColors.grey,
                     ),
                   ),
                 ),
@@ -582,7 +610,20 @@ class EditMediaBottomSheetState extends State<EditMediaBottomSheet> {
               itemCount: _assets.length,
               itemBuilder: (context, index) {
                 final asset = _assets[index];
+                if (asset.type == AssetType.video) {
+                  log('GRID VIDEO: index=$index, ''title=${asset.title}, ''id=${asset.id}');
+                }
                 final selectionIndex = _selectedAssets.indexWhere((item) => item.id == asset.id);
+
+                log('BUILD GALLERY: assets=${_assets.length}');
+
+                for (var i = 0; i < _assets.length; i++) {
+                  final asset = _assets[i];
+
+                  if (asset.type == AssetType.video) {
+                    log('ASSET BEFORE GRID: index=$i, title=${asset.title}');
+                  }
+                }
 
                 return GalleryImage(
                   asset: asset,

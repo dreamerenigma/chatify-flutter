@@ -18,6 +18,7 @@ class SettingsMenuTile extends StatelessWidget {
   final EdgeInsetsGeometry margin;
   final Color? backgroundColor;
   final bool noRoundedCorners;
+  final Widget? subtitleWidget;
 
   const SettingsMenuTile({
     super.key,
@@ -35,6 +36,7 @@ class SettingsMenuTile extends StatelessWidget {
     this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
     this.backgroundColor,
     this.noRoundedCorners = false,
+    this.subtitleWidget,
   });
 
   @override
@@ -60,7 +62,7 @@ class SettingsMenuTile extends StatelessWidget {
             decoration: BoxDecoration(borderRadius: borderRadius),
             child: Row(
               children: [
-                CustomIcon(icon: icon, color: iconColor, size: iconSize ?? 26),
+                SizedBox(width: iconSize ?? 26, height: iconSize ?? 26, child: CustomIcon(icon: icon, color: iconColor, size: iconSize ?? 26)),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
@@ -70,9 +72,13 @@ class SettingsMenuTile extends StatelessWidget {
                         title,
                         style: TextStyle(color: titleColor ?? (context.isDarkMode ? ChatifyColors.white : ChatifyColors.black), fontSize: titleFontSize, fontWeight: FontWeight.w400),
                       ),
-                      SizedBox(height: 2),
-                      if (subTitle.isNotEmpty)
+                      if (subtitleWidget != null) ...[
+                        const SizedBox(height: 4),
+                        subtitleWidget!,
+                      ] else if (subTitle.isNotEmpty) ...[
+                        const SizedBox(height: 2),
                         Text(subTitle, style: TextStyle(color: ChatifyColors.darkGrey, fontSize: subTitleFontSize, fontWeight: FontWeight.w400)),
+                      ],
                     ],
                   ),
                 ),

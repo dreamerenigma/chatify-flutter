@@ -423,7 +423,7 @@ class CommunityAppBarState extends State<CommunityAppBar> with SingleTickerProvi
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(ChatifyVectors.megaphoneOutline, width: 26, height: 26, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
+          SvgPicture.asset(ChatifyVectors.newsletter, width: 26, height: 26, colorFilter: ColorFilter.mode(context.isDarkMode ? ChatifyColors.steelGrey : ChatifyColors.iconGrey, BlendMode.srcIn)),
           const SizedBox(width: 12),
           Expanded(
             child: RichText(

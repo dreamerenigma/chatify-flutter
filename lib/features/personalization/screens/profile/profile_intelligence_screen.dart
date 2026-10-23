@@ -623,7 +623,7 @@ class ProfileIntelligenceScreenState extends State<ProfileIntelligenceScreen> {
                                       ],
                                     ),
                                   ),
-                                  /// --- Облачко
+                                  /// -- Cloud --
                                   Positioned(
                                     top: 30,
                                     left: 7,

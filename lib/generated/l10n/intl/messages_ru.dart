@@ -367,6 +367,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "blockingApp": MessageLookupByLibrary.simpleMessage(
       "Блокировка приложения",
     ),
+    "blue": MessageLookupByLibrary.simpleMessage("Синий"),
     "blueColor": MessageLookupByLibrary.simpleMessage("Синий"),
     "bright": MessageLookupByLibrary.simpleMessage("Светлые"),
     "brightWallpaper": MessageLookupByLibrary.simpleMessage("Яркие"),
@@ -1226,6 +1227,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Авторизация Google",
     ),
     "greekLanguage": MessageLookupByLibrary.simpleMessage("Греческий"),
+    "green": MessageLookupByLibrary.simpleMessage("Зеленый"),
     "greenColor": MessageLookupByLibrary.simpleMessage("Зеленый"),
     "groupAdminsReceiveNotify": MessageLookupByLibrary.simpleMessage(
       "Только админы группы получат уведомления о том, что вы покинули группу",
@@ -1445,6 +1447,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "licenses": MessageLookupByLibrary.simpleMessage("Лицензии"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),
+    "lightBlue": MessageLookupByLibrary.simpleMessage("Голубой"),
     "lightNotify": MessageLookupByLibrary.simpleMessage("Свет"),
     "linkCopied": MessageLookupByLibrary.simpleMessage("Ссылка скопирована"),
     "linkOtherDevicesToAccount": MessageLookupByLibrary.simpleMessage(
@@ -1487,6 +1490,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWith": MessageLookupByLibrary.simpleMessage("Войдите с "),
     "logout": MessageLookupByLibrary.simpleMessage("Выйти"),
     "logoutAccount": MessageLookupByLibrary.simpleMessage("Выход из аккаунта"),
+    "logoutQuestion": MessageLookupByLibrary.simpleMessage("Выйти?"),
     "long": MessageLookupByLibrary.simpleMessage("Длинный"),
     "longPressMessageChannelFavorites": MessageLookupByLibrary.simpleMessage(
       "Нажмите и удерживайте сообщение, чтобы добавить его в Избранные. Таким образом вы сможете легко найти его позже.",
@@ -1652,7 +1656,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "next": MessageLookupByLibrary.simpleMessage("Далее"),
     "nextChat": MessageLookupByLibrary.simpleMessage("Следующий чат"),
     "nineHours": MessageLookupByLibrary.simpleMessage("8 часов"),
-    "no": MessageLookupByLibrary.simpleMessage("Нет"),
     "noBlockedContacts": MessageLookupByLibrary.simpleMessage(
       "Нет заблокированных контактов",
     ),
@@ -1689,6 +1692,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нет соединения с интернетом",
     ),
     "noLinks": MessageLookupByLibrary.simpleMessage("Нет ссылок"),
+    "noLongerAvailableAndroidVersion": MessageLookupByLibrary.simpleMessage(
+      " больше не доступны для вашей версии Android.",
+    ),
     "noMediaFiles": MessageLookupByLibrary.simpleMessage("Нет медиафайлов"),
     "noMembers": MessageLookupByLibrary.simpleMessage("Нет участников"),
     "noNewStatus": MessageLookupByLibrary.simpleMessage("Новых статусов нет"),
@@ -1711,6 +1717,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нет доступных видео",
     ),
     "nobody": MessageLookupByLibrary.simpleMessage("Никто"),
+    "none": MessageLookupByLibrary.simpleMessage("Нет"),
     "notAffectApplyMessageTimerExistingChats": MessageLookupByLibrary.simpleMessage(
       "Это никак не повлияет на уже имеющиеся чаты. Чтобы применить этот таймер сообщений к имеющимся чатам, ",
     ),
@@ -1974,6 +1981,7 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Обеспечьте дополнительную защиту для вашего аккаунта",
         ),
+    "purple": MessageLookupByLibrary.simpleMessage("Фиолетовый"),
     "qrCode": MessageLookupByLibrary.simpleMessage("QR-код"),
     "qrCodeExpired": MessageLookupByLibrary.simpleMessage(
       "Срок действия QR-кода истёк",
@@ -2036,6 +2044,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recorderInitialized": MessageLookupByLibrary.simpleMessage(
       "Регистратор инициализирован",
     ),
+    "red": MessageLookupByLibrary.simpleMessage("Красный"),
     "redColor": MessageLookupByLibrary.simpleMessage("Красный"),
     "registerNewAccount": MessageLookupByLibrary.simpleMessage(
       "Зарегистрировать новый аккаунт",
@@ -2445,7 +2454,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "support": MessageLookupByLibrary.simpleMessage("Поддержка"),
     "sure": MessageLookupByLibrary.simpleMessage("Уверен"),
     "sureLogoutAccount": MessageLookupByLibrary.simpleMessage(
-      "Вы точно уверены, что хотите выйти из аккаунта?",
+      "Вы выйдете из аккаунта на этом устройстве. Через 14 дн. будет выполнен выход из аккаунта на связанных устройствах.",
     ),
     "surname": MessageLookupByLibrary.simpleMessage("Фамилия"),
     "survey": MessageLookupByLibrary.simpleMessage("Опрос"),
@@ -2710,7 +2719,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Добро пожаловать в наше сообщество!",
     ),
     "whatMyNumber": MessageLookupByLibrary.simpleMessage("Какой у меня номер?"),
-    "whiteNotify": MessageLookupByLibrary.simpleMessage("Белый"),
+    "white": MessageLookupByLibrary.simpleMessage("Белый"),
     "whoCanAddGroups": MessageLookupByLibrary.simpleMessage(
       "Кто может добавлять меня в группы",
     ),
@@ -2743,6 +2752,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Написать сообщение...",
     ),
     "writeToUs": MessageLookupByLibrary.simpleMessage("Напишите нам"),
+    "yellow": MessageLookupByLibrary.simpleMessage("Желтый"),
     "yes": MessageLookupByLibrary.simpleMessage("Да"),
     "you": MessageLookupByLibrary.simpleMessage("Вы"),
     "youAddedStickers": MessageLookupByLibrary.simpleMessage(
